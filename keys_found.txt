@@ -1,0 +1,555 @@
+﻿=== KEY: 1.1a ===
+Match at line 802:
+1945–63\">\r\n        <option value=\"1.1a\">1.1: The bombing of the King David Hotel</option>\r\n        <option 
+value=\"1.1b\">1.1: UN Resolution 181</option>\r\n        <option value=\"1.2a\">1.2: The creation of the Israeli 
+Defence Forces</option>\r\n        <option value=\"1.2b\">1.2: The Law of Return</option>\r\n        <option 
+value=\"1.3a\">1.3: Israeli attacks on Gaza in 1955</option>\r\n        <option value=\"1.3b\">1.3: The Suez Crisis 
+(1956)</option>\r\n      </optgroup>\r\n      <optgroup label=\"Key\n<truncated 9786 bytes>\nestinian National 
+Authority (PNA). Israel agreed to withdraw its military from areas like Jericho and Gaza, allowing Yasser Arafat to 
+return from exile and giving the Palestinians limited self-government for the first time.\"\r\n    }\r\n  };\r\n\r\n  
+function updateExamSection() {\r\n    const topic = document.getElementById(\"topic-select\").value;\r\n    const 
+qDisplay = document.getElementById(\"question-display\");\r\n    const cDisplay = 
+document.getElementById(\"clue-display\");\r\n    const aDisplay = document.getElementById(\"answer-display\");\r\n    
+const textArea = document.getElementById(\"student-answer\");\r\n\r\n    if(topic && examData[topic]) {\r\n      
+qDisplay.innerHTML = \"<strong>Question:</strong> \" + examData[topic].q;\r\n      cDisplay.innerHTML = 
+\"<strong>Clue:</strong> \" + examData[topic].c;\r\n      aDisplay.innerHTML = \"<strong>Model Answer:</strong> \" + 
+------------------
+Match at line 849:
+specification-aligned version.\"","ReplacementContent":"\"const EXAM_SKILLS_DATA = {\\n  \\\"1.1a\\\": {\\n    
+topicCode: \\\"1.1\\\",\\n    question: \\\"Explain one consequence of the bombing of the King David Hotel.\\\",\\n    
+clue: \\\"Think about the British public's reaction and what the government decided to do with the Mandate.\\\",\\n    
+answer: \\\"It caused massive outrage among the British public, severely damaging morale. This put intense pressure on 
+the British government to withdraw, leading directly to their decision to hand the Palestine problem over to the UN in 
+February 1947.\\\"\\n  },\\n  \\\"1.1b\\\": {\\n    topicCode: \\\"1.1\\\",\\n    question: \\\"Explain one 
+consequence of UN Resolution 181.\\\",\\n    clue: \\\"Think about how Arab states reacted to the partition 
+plan.\\\",\\n    answer: \\\"The outbreak of civil war in Palestine. Because the Arab states completely rejected the 
+UN's plan to partition the land into two states, violent clashes broke out immediately, eventually escalating into the 
+1948–49 Arab-Israeli War when surrounding Arab armies invaded following the British withdrawal.\\\"\\n  },\\n  
+\\\"1.2a\\\": {\\n    topicCode: \\\"1.2\\\",\\n    question: \\\"Explain one consequence of the creation of the 
+Israeli Defence Forces.\\\",\\n    clue: \\\"Think about how it helped Israel during the 1948-49 war.\\\",\\n    
+answer: \\\"It allowed Israel to survive the 1948-49 war. By uniting separate paramilitary groups like Haganah and 
+------------------
+Match at line 1016:
+esData = {\\n    \\\"1.1a\\\": {\\n      \\\"topicCode\\\": \\\"1.1\\\",\\n      \\\"question\\\": \\\"Explain one 
+consequence of the bombing of the King David Hotel.\\\",\\n      \\\"clue\\\": \\\"Think about the British public's 
+reaction and what the government decided to do with the Mandate.\\\",\\n      \\\"answer\\\": \\\"It caused massive 
+outrage among the British public, severely damaging morale. This put intense pressure on the British government to 
+withdraw, leading directly to their decision to hand the Palestine problem over to the UN in February 1947.\\\"\\n    
+},\\n    \\\"1.1b\\\": {\\n      \\\"topicCode\\\": \\\"1.1\\\",\\n      \\\"question\\\": \\\"Explain one consequence 
+of UN Resolution 181.\\\",\\n      \\\"clue\\\": \\\"Think about how Arab states reacted to the partition 
+plan.\\\",\\n      \\\"answer\\\": \\\"The outbreak of civil war in Palestine. Because the Arab states completely 
+rejected the UN's plan to partition the land into two states, violent clashes broke out immediately, eventually 
+escalating into the 1948–49 Arab-Israeli War when surrounding Arab armies invaded following the British 
+withdrawal.\\\"\\n    },\\n    \\\"1.2a\\\": {\\n      \\\"topicCode\\\": \\\"1.2\\\",\\n      \\\"question\\\": 
+\\\"Explain one consequence of the creation of the Israeli Defence Forces.\\\",\\n      \\\"clue\\\": \\\"Think about 
+how it helped Israel during the 1948-49 war.\\\",\\n      \\\"answer\\\": \\\"It allowed Israel to survive the 1948-49 
+------------------
+
+=== KEY: 1.1b ===
+Match at line 803:
+value=\"1.1b\">1.1: UN Resolution 181</option>\r\n        <option value=\"1.2a\">1.2: The creation of the Israeli 
+Defence Forces</option>\r\n        <option value=\"1.2b\">1.2: The Law of Return</option>\r\n        <option 
+value=\"1.3a\">1.3: Israeli attacks on Gaza in 1955</option>\r\n        <option value=\"1.3b\">1.3: The Suez Crisis 
+(1956)</option>\r\n      </optgroup>\r\n      <optgroup label=\"Key\n<truncated 9786 bytes>\nestinian National 
+Authority (PNA). Israel agreed to withdraw its military from areas like Jericho and Gaza, allowing Yasser Arafat to 
+return from exile and giving the Palestinians limited self-government for the first time.\"\r\n    }\r\n  };\r\n\r\n  
+function updateExamSection() {\r\n    const topic = document.getElementById(\"topic-select\").value;\r\n    const 
+qDisplay = document.getElementById(\"question-display\");\r\n    const cDisplay = 
+document.getElementById(\"clue-display\");\r\n    const aDisplay = document.getElementById(\"answer-display\");\r\n    
+const textArea = document.getElementById(\"student-answer\");\r\n\r\n    if(topic && examData[topic]) {\r\n      
+qDisplay.innerHTML = \"<strong>Question:</strong> \" + examData[topic].q;\r\n      cDisplay.innerHTML = 
+\"<strong>Clue:</strong> \" + examData[topic].c;\r\n      aDisplay.innerHTML = \"<strong>Model Answer:</strong> \" + 
+examData[topic].a + \"<br><br><em>Tip: Always start your answer directly (e.g. 'One consequence was...'). Support your 
+------------------
+Match at line 854:
+February 1947.\\\"\\n  },\\n  \\\"1.1b\\\": {\\n    topicCode: \\\"1.1\\\",\\n    question: \\\"Explain one 
+consequence of UN Resolution 181.\\\",\\n    clue: \\\"Think about how Arab states reacted to the partition 
+plan.\\\",\\n    answer: \\\"The outbreak of civil war in Palestine. Because the Arab states completely rejected the 
+UN's plan to partition the land into two states, violent clashes broke out immediately, eventually escalating into the 
+1948–49 Arab-Israeli War when surrounding Arab armies invaded following the British withdrawal.\\\"\\n  },\\n  
+\\\"1.2a\\\": {\\n    topicCode: \\\"1.2\\\",\\n    question: \\\"Explain one consequence of the creation of the 
+Israeli Defence Forces.\\\",\\n    clue: \\\"Think about how it helped Israel during the 1948-49 war.\\\",\\n    
+answer: \\\"It allowed Israel to survive the 1948-49 war. By uniting separate paramilitary groups like Haganah and 
+Irgun under one command and introducing conscription, Israel could produce a co-ordinated defence to defeat the 
+invading Arab armies.\\\"\\n  },\\n  \\\"1.2b\\\": {\\n    topicCode: \\\"1.2\\\",\\n    question: \\\"Explain one 
+consequence of the Law of Return.\\\",\\n    clue: \\\"Think about who this law applied to and what happened to 
+Israel's population.\\\",\\n    answer: \\\"A massive demographic shift and expansion of Israel. The law granted every 
+Jew worldwide the right to immigrate to Israel, leading to a huge influx of hundreds of thousands of immigrants 
+------------------
+Match at line 1021:
+},\\n    \\\"1.1b\\\": {\\n      \\\"topicCode\\\": \\\"1.1\\\",\\n      \\\"question\\\": \\\"Explain one consequence 
+of UN Resolution 181.\\\",\\n      \\\"clue\\\": \\\"Think about how Arab states reacted to the partition 
+plan.\\\",\\n      \\\"answer\\\": \\\"The outbreak of civil war in Palestine. Because the Arab states completely 
+rejected the UN's plan to partition the land into two states, violent clashes broke out immediately, eventually 
+escalating into the 1948–49 Arab-Israeli War when surrounding Arab armies invaded following the British 
+withdrawal.\\\"\\n    },\\n    \\\"1.2a\\\": {\\n      \\\"topicCode\\\": \\\"1.2\\\",\\n      \\\"question\\\": 
+\\\"Explain one consequence of the creation of the Israeli Defence Forces.\\\",\\n      \\\"clue\\\": \\\"Think about 
+how it helped Israel during the 1948-49 war.\\\",\\n      \\\"answer\\\": \\\"It allowed Israel to survive the 1948-49 
+war. By uniting separate paramilitary groups like Haganah and Irgun under one command and introducing conscription, 
+Israel could produce a co-ordinated defence to defeat the invading Arab armies.\\\"\\n    },\\n    \\\"1.2b\\\": {\\n  
+    \\\"topicCode\\\": \\\"1.2\\\",\\n      \\\"question\\\": \\\"Explain one consequence of the Law of 
+Return.\\\",\\n      \\\"clue\\\": \\\"Think about who this law applied to and what happened to Israel's 
+population.\\\",\\n      \\\"answer\\\": \\\"A massive demographic shift and expansion of Israel. The law granted 
+------------------
+
+=== KEY: 1.2a ===
+Match at line 803:
+value=\"1.1b\">1.1: UN Resolution 181</option>\r\n        <option value=\"1.2a\">1.2: The creation of the Israeli 
+Defence Forces</option>\r\n        <option value=\"1.2b\">1.2: The Law of Return</option>\r\n        <option 
+value=\"1.3a\">1.3: Israeli attacks on Gaza in 1955</option>\r\n        <option value=\"1.3b\">1.3: The Suez Crisis 
+(1956)</option>\r\n      </optgroup>\r\n      <optgroup label=\"Key\n<truncated 9786 bytes>\nestinian National 
+Authority (PNA). Israel agreed to withdraw its military from areas like Jericho and Gaza, allowing Yasser Arafat to 
+return from exile and giving the Palestinians limited self-government for the first time.\"\r\n    }\r\n  };\r\n\r\n  
+function updateExamSection() {\r\n    const topic = document.getElementById(\"topic-select\").value;\r\n    const 
+qDisplay = document.getElementById(\"question-display\");\r\n    const cDisplay = 
+document.getElementById(\"clue-display\");\r\n    const aDisplay = document.getElementById(\"answer-display\");\r\n    
+const textArea = document.getElementById(\"student-answer\");\r\n\r\n    if(topic && examData[topic]) {\r\n      
+qDisplay.innerHTML = \"<strong>Question:</strong> \" + examData[topic].q;\r\n      cDisplay.innerHTML = 
+\"<strong>Clue:</strong> \" + examData[topic].c;\r\n      aDisplay.innerHTML = \"<strong>Model Answer:</strong> \" + 
+examData[topic].a + \"<br><br><em>Tip: Always start your answer directly (e.g. 'One consequence was...'). Support your 
+------------------
+Match at line 859:
+\\\"1.2a\\\": {\\n    topicCode: \\\"1.2\\\",\\n    question: \\\"Explain one consequence of the creation of the 
+Israeli Defence Forces.\\\",\\n    clue: \\\"Think about how it helped Israel during the 1948-49 war.\\\",\\n    
+answer: \\\"It allowed Israel to survive the 1948-49 war. By uniting separate paramilitary groups like Haganah and 
+Irgun under one command and introducing conscription, Israel could produce a co-ordinated defence to defeat the 
+invading Arab armies.\\\"\\n  },\\n  \\\"1.2b\\\": {\\n    topicCode: \\\"1.2\\\",\\n    question: \\\"Explain one 
+consequence of the Law of Return.\\\",\\n    clue: \\\"Think about who this law applied to and what happened to 
+Israel's population.\\\",\\n    answer: \\\"A massive demographic shift and expansion of Israel. The law granted every 
+Jew worldwide the right to immigrate to Israel, leading to a huge influx of hundreds of thousands of immigrants 
+(including many Holocaust survivors) which helped Israel rapidly build up its population and military strength.\\\"\\n 
+ },\\n  \\\"1.3a\\\": {\\n    top\n<truncated 6905 bytes>","StartLine":"1042","TargetContent":"\"const 
+EXAM_SKILLS_DATA = {\\n  \\\"subtopic_1_1\\\": {\\n    topicCode: \\\"1.1\\\",\\n    question: \\\"Explain one 
+consequence of the bombing of the King David Hotel (1946).\\\",\\n    clue: \\\"Think about the British public's 
+reaction and what the British government decided to do with their Mandate.\\\",\\n    answer: \\\"One consequence was 
+------------------
+Match at line 1026:
+withdrawal.\\\"\\n    },\\n    \\\"1.2a\\\": {\\n      \\\"topicCode\\\": \\\"1.2\\\",\\n      \\\"question\\\": 
+\\\"Explain one consequence of the creation of the Israeli Defence Forces.\\\",\\n      \\\"clue\\\": \\\"Think about 
+how it helped Israel during the 1948-49 war.\\\",\\n      \\\"answer\\\": \\\"It allowed Israel to survive the 1948-49 
+war. By uniting separate paramilitary groups like Haganah and Irgun under one command and introducing conscription, 
+Israel could produce a co-ordinated defence to defeat the invading Arab armies.\\\"\\n    },\\n    \\\"1.2b\\\": {\\n  
+    \\\"topicCode\\\": \\\"1.2\\\",\\n      \\\"question\\\": \\\"Explain one consequence of the Law of 
+Return.\\\",\\n      \\\"clue\\\": \\\"Think about who this law applied to and what happened to Israel's 
+population.\\\",\\n      \\\"answer\\\": \\\"A massive demographic shift and expansion of Israel. The law granted 
+every Jew worldwide the right to immigrate to Israel, leading to a huge influx of hundreds of thousands of immigrants 
+(including many Holocaust survivors) whic\n<truncated 7401 bytes>","StartLine":"397","TargetContent":"\"  const esData 
+= {\\n    \\\"subtopic_1_1\\\": {\\n      \\\"topicCode\\\": \\\"1.1\\\",\\n      \\\"question\\\": \\\"Explain one 
+consequence of the bombing of the King David Hotel (1946).\\\",\\n      \\\"clue\\\": \\\"Think about the British 
+public's reaction and what the British government decided to do with their Mandate.\\\",\\n      \\\"answer\\\": 
+------------------
+
+=== KEY: 1.2b ===
+Match at line 804:
+Defence Forces</option>\r\n        <option value=\"1.2b\">1.2: The Law of Return</option>\r\n        <option 
+value=\"1.3a\">1.3: Israeli attacks on Gaza in 1955</option>\r\n        <option value=\"1.3b\">1.3: The Suez Crisis 
+(1956)</option>\r\n      </optgroup>\r\n      <optgroup label=\"Key\n<truncated 9786 bytes>\nestinian National 
+Authority (PNA). Israel agreed to withdraw its military from areas like Jericho and Gaza, allowing Yasser Arafat to 
+return from exile and giving the Palestinians limited self-government for the first time.\"\r\n    }\r\n  };\r\n\r\n  
+function updateExamSection() {\r\n    const topic = document.getElementById(\"topic-select\").value;\r\n    const 
+qDisplay = document.getElementById(\"question-display\");\r\n    const cDisplay = 
+document.getElementById(\"clue-display\");\r\n    const aDisplay = document.getElementById(\"answer-display\");\r\n    
+const textArea = document.getElementById(\"student-answer\");\r\n\r\n    if(topic && examData[topic]) {\r\n      
+qDisplay.innerHTML = \"<strong>Question:</strong> \" + examData[topic].q;\r\n      cDisplay.innerHTML = 
+\"<strong>Clue:</strong> \" + examData[topic].c;\r\n      aDisplay.innerHTML = \"<strong>Model Answer:</strong> \" + 
+examData[topic].a + \"<br><br><em>Tip: Always start your answer directly (e.g. 'One consequence was...'). Support your 
+point with specific historical detail to show the examiner you understand the 'before and after' effect.</em>\";\r\n   
+------------------
+Match at line 863:
+invading Arab armies.\\\"\\n  },\\n  \\\"1.2b\\\": {\\n    topicCode: \\\"1.2\\\",\\n    question: \\\"Explain one 
+consequence of the Law of Return.\\\",\\n    clue: \\\"Think about who this law applied to and what happened to 
+Israel's population.\\\",\\n    answer: \\\"A massive demographic shift and expansion of Israel. The law granted every 
+Jew worldwide the right to immigrate to Israel, leading to a huge influx of hundreds of thousands of immigrants 
+(including many Holocaust survivors) which helped Israel rapidly build up its population and military strength.\\\"\\n 
+ },\\n  \\\"1.3a\\\": {\\n    top\n<truncated 6905 bytes>","StartLine":"1042","TargetContent":"\"const 
+EXAM_SKILLS_DATA = {\\n  \\\"subtopic_1_1\\\": {\\n    topicCode: \\\"1.1\\\",\\n    question: \\\"Explain one 
+consequence of the bombing of the King David Hotel (1946).\\\",\\n    clue: \\\"Think about the British public's 
+reaction and what the British government decided to do with their Mandate.\\\",\\n    answer: \\\"One consequence was 
+that it caused massive outrage among the British public, severely damaging morale. This put intense pressure on the 
+British government to withdraw its troops, leading directly to their decision to hand the Palestine problem over to 
+the United Nations in 1947.\\\"\\n  },\\n  \\\"subtopic_1_2\\\": {\\n    topicCode: \\\"1.2\\\",\\n    question: 
+\\\"Explain one consequence of the territorial changes following the 1948–49 Arab-Israeli war.\\\",\\n    clue: 
+------------------
+Match at line 1030:
+Israel could produce a co-ordinated defence to defeat the invading Arab armies.\\\"\\n    },\\n    \\\"1.2b\\\": {\\n  
+    \\\"topicCode\\\": \\\"1.2\\\",\\n      \\\"question\\\": \\\"Explain one consequence of the Law of 
+Return.\\\",\\n      \\\"clue\\\": \\\"Think about who this law applied to and what happened to Israel's 
+population.\\\",\\n      \\\"answer\\\": \\\"A massive demographic shift and expansion of Israel. The law granted 
+every Jew worldwide the right to immigrate to Israel, leading to a huge influx of hundreds of thousands of immigrants 
+(including many Holocaust survivors) whic\n<truncated 7401 bytes>","StartLine":"397","TargetContent":"\"  const esData 
+= {\\n    \\\"subtopic_1_1\\\": {\\n      \\\"topicCode\\\": \\\"1.1\\\",\\n      \\\"question\\\": \\\"Explain one 
+consequence of the bombing of the King David Hotel (1946).\\\",\\n      \\\"clue\\\": \\\"Think about the British 
+public's reaction and what the British government decided to do with their Mandate.\\\",\\n      \\\"answer\\\": 
+\\\"One consequence was that it caused massive outrage among the British public, severely damaging morale. This put 
+intense pressure on the British government to withdraw its troops, leading directly to their decision to hand the 
+Palestine problem over to the United Nations in 1947.\\\"\\n    },\\n    \\\"subtopic_1_2\\\": {\\n      
+\\\"topicCode\\\": \\\"1.2\\\",\\n      \\\"question\\\": \\\"Explain one consequence of the territorial changes 
+------------------
+
+=== KEY: 1.3a ===
+Match at line 805:
+value=\"1.3a\">1.3: Israeli attacks on Gaza in 1955</option>\r\n        <option value=\"1.3b\">1.3: The Suez Crisis 
+(1956)</option>\r\n      </optgroup>\r\n      <optgroup label=\"Key\n<truncated 9786 bytes>\nestinian National 
+Authority (PNA). Israel agreed to withdraw its military from areas like Jericho and Gaza, allowing Yasser Arafat to 
+return from exile and giving the Palestinians limited self-government for the first time.\"\r\n    }\r\n  };\r\n\r\n  
+function updateExamSection() {\r\n    const topic = document.getElementById(\"topic-select\").value;\r\n    const 
+qDisplay = document.getElementById(\"question-display\");\r\n    const cDisplay = 
+document.getElementById(\"clue-display\");\r\n    const aDisplay = document.getElementById(\"answer-display\");\r\n    
+const textArea = document.getElementById(\"student-answer\");\r\n\r\n    if(topic && examData[topic]) {\r\n      
+qDisplay.innerHTML = \"<strong>Question:</strong> \" + examData[topic].q;\r\n      cDisplay.innerHTML = 
+\"<strong>Clue:</strong> \" + examData[topic].c;\r\n      aDisplay.innerHTML = \"<strong>Model Answer:</strong> \" + 
+examData[topic].a + \"<br><br><em>Tip: Always start your answer directly (e.g. 'One consequence was...'). Support your 
+point with specific historical detail to show the examiner you understand the 'before and after' effect.</em>\";\r\n   
+ } else {\r\n      qDisplay.innerHTML = \"<em>Please select a specification point to begin.</em>\";\r\n      
+------------------
+Match at line 868:
+ },\\n  \\\"1.3a\\\": {\\n    top\n<truncated 6905 bytes>","StartLine":"1042","TargetContent":"\"const 
+EXAM_SKILLS_DATA = {\\n  \\\"subtopic_1_1\\\": {\\n    topicCode: \\\"1.1\\\",\\n    question: \\\"Explain one 
+consequence of the bombing of the King David Hotel (1946).\\\",\\n    clue: \\\"Think about the British public's 
+reaction and what the British government decided to do with their Mandate.\\\",\\n    answer: \\\"One consequence was 
+that it caused massive outrage among the British public, severely damaging morale. This put intense pressure on the 
+British government to withdraw its troops, leading directly to their decision to hand the Palestine problem over to 
+the United Nations in 1947.\\\"\\n  },\\n  \\\"subtopic_1_2\\\": {\\n    topicCode: \\\"1.2\\\",\\n    question: 
+\\\"Explain one consequence of the territorial changes following the 1948–49 Arab-Israeli war.\\\",\\n    clue: 
+\\\"Think about the Palestinian Arabs and what happened to the land that was supposed to be their state.\\\",\\n    
+answer: \\\"One consequence was the mass displacement of Palestinian Arabs (the Nakba). Because Israel expanded its 
+borders and Egypt and Jordan took over the Gaza Strip and West Bank, no Palestinian state was created, leaving over 
+700,000 Palestinians as stateless refugees living in UNRWA camps.\\\"\\n  },\\n  \\\"subtopic_1_3\\\": {\\n    
+topicCode: \\\"1.3\\\",\\n    question: \\\"Explain one consequence of the Suez Crisis (1956) for Israel.\\\",\\n    
+------------------
+
+=== KEY: 1.3b ===
+Match at line 805:
+value=\"1.3a\">1.3: Israeli attacks on Gaza in 1955</option>\r\n        <option value=\"1.3b\">1.3: The Suez Crisis 
+(1956)</option>\r\n      </optgroup>\r\n      <optgroup label=\"Key\n<truncated 9786 bytes>\nestinian National 
+Authority (PNA). Israel agreed to withdraw its military from areas like Jericho and Gaza, allowing Yasser Arafat to 
+return from exile and giving the Palestinians limited self-government for the first time.\"\r\n    }\r\n  };\r\n\r\n  
+function updateExamSection() {\r\n    const topic = document.getElementById(\"topic-select\").value;\r\n    const 
+qDisplay = document.getElementById(\"question-display\");\r\n    const cDisplay = 
+document.getElementById(\"clue-display\");\r\n    const aDisplay = document.getElementById(\"answer-display\");\r\n    
+const textArea = document.getElementById(\"student-answer\");\r\n\r\n    if(topic && examData[topic]) {\r\n      
+qDisplay.innerHTML = \"<strong>Question:</strong> \" + examData[topic].q;\r\n      cDisplay.innerHTML = 
+\"<strong>Clue:</strong> \" + examData[topic].c;\r\n      aDisplay.innerHTML = \"<strong>Model Answer:</strong> \" + 
+examData[topic].a + \"<br><br><em>Tip: Always start your answer directly (e.g. 'One consequence was...'). Support your 
+point with specific historical detail to show the examiner you understand the 'before and after' effect.</em>\";\r\n   
+ } else {\r\n      qDisplay.innerHTML = \"<em>Please select a specification point to begin.</em>\";\r\n      
+------------------
+
+=== KEY: 2.1a ===
+NO MATCH FOR 2.1a
+
+=== KEY: 2.1b ===
+NO MATCH FOR 2.1b
+
+=== KEY: 2.2a ===
+Match at line 353:
+'Outfit', sans-serif; color: #372f2a; margin-top: 30px; box-shadow: 0 4px 12px rgba(55, 47, 42, 0.06);\\\">\\\\n`;\\n  
+html += `  <h3 style=\\\"margin-top: 0; color: #c2410c; font-size: 1.4rem; border-bottom: 2px solid rgba(194, 65, 12, 
+0.1); padding-bottom: 10px; font-weight: 700;\\\">\\\\n`;\\n  html += `    Exam Skills: 'Explain One Consequence' (4 
+Marks)\\\\n`;\\n  html += `  </h3>\\\\n`;\\n  html += `  <p style=\\\"font-size: 0.9rem; line-height: 1.5; color: 
+#7c6e65; margin-bottom: 16px;\\\">\\\\n`;\\n  html += `    Select a topic below to generate a 4-mark consequence 
+question. Type your answer in the box, making sure to use\n<truncated 9536 
+bytes>","StartLine":"582","TargetContent":"\"function renderFireflyView() {\\n  let html = `<h1>Conflict in the Middle 
+East (1945-95) - Master Recall Quizzes</h1>\\\\n`;\\n  html += `<p>Welcome! Mastering these core chronological recall 
+questions is the foundation for achieving top marks in your Edexcel Paper 2 exam. Read the question, test yourself, 
+and then click to reveal the correct answer and a deeper explanation to stretch your understanding.</p>\\\\n`;\\n  
+html += `<hr>\\\\n`;\\n\\n  QUIZ_DATA.forEach(topic => {\\n    html += `\\\\n<h2>${topic.title}</h2>\\\\n`;\\n    
+topic.subtopics.forEach(subtopic => {\\n      html += `\\\\n<h3>${subtopic.title}</h3>\\\\n`;\\n      \\n      html += 
+`<h4>Standard Recall</h4>\\\\n`;\\n      subtopic.standard.forEach((q, idx) => {\\n        html += 
+------------------
+Match at line 382:
+'Outfit', sans-serif; color: #372f2a; margin-top: 30px; box-shadow: 0 4px 12px rgba(55, 47, 42, 0.06);\">\\n`;\n+  
+html += `  <h3 style=\"margin-top: 0; color: #c2410c; font-size: 1.4rem; border-bottom: 2px solid rgba(194, 65, 12, 
+0.1); padding-bottom: 10px; font-weight: 700;\">\\n`;\n+  html += `    Exam Skills: 'Explain One Consequence' (4 
+Marks)\\n`;\n+  html += `  </h3>\\n`;\n+  html += `  <p style=\"font-size: 0.9rem; line-height: 1.5; color: #7c6e65; 
+margin-bottom: 16px;\">\\n`;\n+  html += `    Select a topic below to generate a 4-mark consequence question. Type 
+your answer in the box, making sure to use phrases like <em>'As a result...'</em> or <em>'This led to...'</em>. If you 
+get stuck, click for a clue. When you are finished, click 'Self-Check' to compare your response to the model 
+answer.\\n`;\n+  html += `  </p>\\n`;\n+  html += `\\n`;\n+  html += `  <div style=\"margin: 20px 0;\">\\n`;\n+  html 
++= `    <label style=\"display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 6px; text-transform: 
+uppercase; color: #7c6e65;\">Select Consequence Topic</label>\\n`;\n+  html += `    <select id=\"es-topic-select\" 
+style=\"width: 100%; padding: 11px; border: 1px solid rgba(194, 65, 12, 0.2); border-radius: 6px; font-size: 0.9rem; 
+color: #372f2a; background: #fff; cursor: pointer; font-family: inherit; outline: none;\">\\n`;\n+  html += `      
+<option value=\"\" disabled selected>-- Select a Topic --</option>\\n`;\n+\n<truncated 6783 bytes>\n+  html += `  
+------------------
+Match at line 393:
+color: #372f2a; background: #fff; cursor: pointer; font-family: inherit; outline: none;\">\\n`;\n+  html += `      
+<option value=\"\" disabled selected>-- Select a Topic --</option>\\n`;\n+\n<truncated 6783 bytes>\n+  html += `  
+document.getElementById('es-btn-clue').addEventListener('click', function() {\\n`;\n+  html += `    const box = 
+document.getElementById('es-clue-box');\\n`;\n+  html += `    const sub = 
+document.getElementById('es-topic-select').value;\\n`;\n+  html += `    if (!sub) return;\\n`;\n+  html += `    if 
+(box.style.display === 'none') {\\n`;\n+  html += `      document.getElementById('es-clue-text').innerText = 
+esData[sub].clue;\\n`;\n+  html += `      box.style.display = 'block';\\n`;\n+  html += `    } else {\\n`;\n+  html += 
+`      box.style.display = 'none';\\n`;\n+  html += `    }\\n`;\n+  html += `  });\\n`;\n+  html += `  \\n`;\n+  html 
++= `  document.getElementById('es-btn-check').addEventListener('click', function() {\\n`;\n+  html += `    const box = 
+document.getElementById('es-answer-box');\\n`;\n+  html += `    const sub = 
+document.getElementById('es-topic-select').value;\\n`;\n+  html += `    if (!sub) return;\\n`;\n+  html += `    if 
+(box.style.display === 'none') {\\n`;\n+  html += `      document.getElementById('es-model-answer').innerText = 
+esData[sub].answer;\\n`;\n+  html += `      box.style.display = 'block';\\n`;\n+  html += `    } else {\\n`;\n+  html 
+------------------
+Match at line 426:
+padding: 24px; font-family: 'Outfit', sans-serif; color: #372f2a; margin-top: 30px; box-shadow: 0 4px 12px rgba(55, 
+47, 42, 0.06);\\\">\\n  <h3 style=\\\"margin-top: 0; color: #c2410c; font-size: 1.4rem; border-bottom: 2px solid 
+rgba(194, 65, 12, 0.1); padding-bottom: 10px; font-weight: 700;\\\">\\n    Exam Skills: 'Explain One Consequence' (4 
+Marks)\\n  </h3>\\n  <p style=\\\"font-size: 0.9rem; line-height: 1.5; color: #7c6e65; margin-bottom: 16px;\\\">\\n    
+Select a topic below to generate a 4-mark consequence question. Type your answer in the box, making sure to use 
+phrases like <em>'As a result...'</em> or <em>'This led to...'</em>. If you get stuck, click for a clue. When you are 
+finished, click 'Self-Check' to compare your response to the model answer.\\n  </p>\\n\\n  <div style=\\\"margin: 20px 
+0;\\\">\\n    <label style=\\\"display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 6px; 
+text-transform: uppercase; color: #7c6e65;\\\">Select Consequence Topic</label>\\n    <select 
+id=\\\"es-topic-select\\\" style=\\\"width: 100%; padding: 11px; border: 1px solid rgba(194, 65, 12, 0.2); 
+border-radius: 6px; font-size: 0.9rem; color: #372f2a; background: #fff; cursor: pointer; font-family: inherit; 
+outline: none;\\\">\\n      <option value=\\\"\\\" disabled selected>-- Select a Topic --</option>\\n      <option 
+value=\\\"subtopic_1_1\\\">Topic 1.1: Bombing of the King David Hotel (1946)</option>\\n      <option 
+------------------
+Match at line 436:
+border-radius: 6px; font-size: 0.9rem; color: #372f2a; background: #fff; cursor: pointer; font-family: inherit; 
+outline: none;\\\">\\n      <option value=\\\"\\\" disabled selected>-- Select a Topic --</option>\\n      <option 
+value=\\\"subtopic_1_1\\\">Topic 1.1: Bombing of the King David Hotel (1946)</option>\\n      <option 
+value=\\\"subtopic_1_2\\\">Topic 1.2: Territorial changes following the 1948–49 War</option>\\n      <option 
+value=\\\"subtopic_1_3\\\">Topic 1.3: Suez Crisis (1956) for Israel</option>\\n      <option 
+value=\\\"subtopic_2_1\\\">Topic 2.1: Six Day War (1967)</option>\\n      <option value=\\\"subtopic_2_2\\\">Topic 
+2.2: Expulsion of the PLO from Jordan (1970)</option>\\n      <option value=\\\"subtopic_2_3\\\">Topic 2.3: Yom Kippur 
+War (1973)</option>\\n      <option value=\\\"subtopic_3_1\\\">Topic 3.1: Pr\n<truncated 11458 bytes>","StartLine":"316
+","TargetContent":"\"<br>\"","TargetFile":"\"C:\\\\Users\\\\fives\\\\.gemini\\\\antigravity\\\\scratch\\\\firefly_recal
+l_quizzes\\\\firefly_embed.html\""}}]}
+C:\Users\fives\.gemini\antigravity\brain\1844f957-6c6e-45bc-a32f-52f6a520a16c\.system_generated\logs\transcript.jsonl:4
+98:{"step_index":500,"source":"MODEL","type":"CODE_ACTION","status":"DONE","created_at":"2026-05-25T07:15:25Z","content
+":"Created At: 2026-05-25T07:15:25Z\nCompleted At: 2026-05-25T07:15:25Z\nThe following changes were made by the 
+------------------
+Match at line 456:
+border-radius: 12px; padding: 24px; font-family: 'Outfit', sans-serif; color: #372f2a; margin-top: 30px; box-shadow: 0 
+4px 12px rgba(55, 47, 42, 0.06);\">\r\n+  <h3 style=\"margin-top: 0; color: #c2410c; font-size: 1.4rem; border-bottom: 
+2px solid rgba(194, 65, 12, 0.1); padding-bottom: 10px; font-weight: 700;\">\r\n+    Exam Skills: 'Explain One 
+Consequence' (4 Marks)\r\n+  </h3>\r\n+  <p style=\"font-size: 0.9rem; line-height: 1.5; color: #7c6e65; 
+margin-bottom: 16px;\">\r\n+    Select a topic below to generate a 4-mark consequence question. Type your answer in 
+the box, making sure to use phrases like <em>'As a result...'</em> or <em>'This led to...'</em>. If you get stuck, 
+click for a clue. When you are finished, click 'Self-Check' to compare your response to the model answer.\r\n+  
+</p>\r\n+\r\n+  <div style=\"margin: 20px 0;\">\r\n+    <label style=\"display: block; font-weight: 600; font-size: 
+0.85rem; margin-bottom: 6px; text-transform: uppercase; color: #7c6e65;\">Select Consequence Topic</label>\r\n+    
+<select id=\"es-topic-select\" style=\"width: 100%; padding: 11px; border: 1px solid rgba(194, 65, 12, 0.2); 
+border-radius: 6px; font-size: 0.9rem; color: #372f2a; background: #fff; cursor: pointer; font-family: inherit; 
+outline: none;\">\r\n<truncated 10210 bytes>\nner('change', function(e) {\r\n+    const sub = e.target.value;\r\n+    
+if (!sub || !esData[sub]) return;\r\n+    document.getElementById('es-question-title').innerText = 
+------------------
+Match at line 466:
+border-radius: 6px; font-size: 0.9rem; color: #372f2a; background: #fff; cursor: pointer; font-family: inherit; 
+outline: none;\">\r\n<truncated 10210 bytes>\nner('change', function(e) {\r\n+    const sub = e.target.value;\r\n+    
+if (!sub || !esData[sub]) return;\r\n+    document.getElementById('es-question-title').innerText = 
+esData[sub].question;\r\n+    document.getElementById('es-user-answer').value = '';\r\n+    
+document.getElementById('es-clue-box').style.display = 'none';\r\n+    
+document.getElementById('es-answer-box').style.display = 'none';\r\n+    
+document.getElementById('es-question-area').style.display = 'block';\r\n+    
+document.getElementById('es-input-area').style.display = 'flex';\r\n+    \r\n+    // Uncheck boxes\r\n+    const 
+checkboxes = document.querySelectorAll('.es-practice-box input[type=\"checkbox\"]');\r\n+    checkboxes.forEach(c => 
+c.checked = false);\r\n+  });\r\n+\r\n+  document.getElementById('es-btn-clue').addEventListener('click', function() 
+{\r\n+    const box = document.getElementById('es-clue-box');\r\n+    const sub = 
+document.getElementById('es-topic-select').value;\r\n+    if (!sub) return;\r\n+    if (box.style.display === 'none') 
+{\r\n+      document.getElementById('es-clue-text').innerText = esData[sub].clue;\r\n+      box.style.display = 
+------------------
+Match at line 525:
+#c2410c; border-radius: 12px; padding: 24px; font-family: 'Outfit', -apple-system, sans-serif; color: #372f2a; 
+margin-top: 30px; box-shadow: 0 4px 12px rgba(55, 47, 42, 0.06); box-sizing: border-box;\">\n  <h3 style=\"margin-top: 
+0; color: #c2410c; font-size: 1.4rem; border-bottom: 2px solid rgba(194, 65, 12, 0.1); padding-bottom: 10px; 
+font-weight: 700; font-family: inherit;\">\n    Exam Skills: 'Explain One Consequence' (4 Marks)\n  </h3>\n  <p 
+style=\"font-size: 0.9rem; line-height: 1.5; color: #7c6e65; margin-bottom: 16px;\">\n    Select a topic below to 
+generate a 4-mark consequence question. Type your answer in the box, making sure to use phrases like <em>'As a 
+result...'</em> or <em>'This led to...'</em>. If you get stuck, click for a clue. When you are finished, click 
+'Self-Check' to compare your response to the model answer.\n  </p>\n\n  <div style=\"margin: 20px 0;\">\n    <label 
+style=\"display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 6px; text-transform: uppercase; color: 
+#7c6e65;\">Select Consequence Topic</label>\n    <select id=\"es-topic-select\" style=\"width: 100%; padding: 11px; 
+border: 1px solid rgba(194, 65, 12, 0.2); border-radius: 6px; font-size: 0.9rem; color: #372f2a; background: #fff; 
+cursor: pointer; font-family: inherit; outline: none; box-sizing: border-box;\">\n      <option value=\"\" disabled 
+selected>-- Select a Topic --</option>\n      <option value=\"subtopic_1_1\">Topic 1.1: Bombing of the King David 
+------------------
+Match at line 535:
+border: 1px solid rgba(194, 65, 12, 0.2); border-radius: 6px; font-size: 0.9rem; color: #372f2a; background: #fff; 
+cursor: pointer; font-family: inherit; outline: none; box-sizing: border-box;\">\n      <option value=\"\" disabled 
+selected>-- Select a Topic --</option>\n      <option value=\"subtopic_1_1\">Topic 1.1: Bombing of the King David 
+Hotel (1946)</option>\n      <option value=\"subtopic_1_2\">Topic 1.2: Territorial changes following the 1948–49 
+War</option>\n      <option valu\n<truncated 10979 bytes>\nr('click', function() {\n    const box = 
+document.getElementById('es-answer-box');\n    const sub = document.getElementById('es-topic-select').value;\n    if 
+(!sub) return;\n    if (box.style.display === 'none') {\n      // Bold core causal links in output model answer\n      
+document.getElementById('es-model-answer').innerHTML = esData[sub].answer.replace(/(As a result|This led 
+to|Consequently)/gi, '<strong>$1</strong>');\n      box.style.display = 'block';\n    } else {\n      
+box.style.display = 'none';\n    }\n  });\n})();\n</script>\n```\n\n---\n\n### Project Changes Summary\n\nWe have 
+fully implemented this interactive module inside the local SPA project directories:\n1. 
+**[index.html](file:///C:/Users/fives/.gemini/antigravity/scratch/firefly_recall_quizzes/index.html)**:\n   - Added a 
+new sidebar item **Exam Practice (4 Marks)**.\n   - Built the structure for the Exam Skills tab using custom variables 
+------------------
+Match at line 597:
+'Outfit', -apple-system, sans-serif; color: #372f2a; margin-top: 30px; box-shadow: 0 4px 12px rgba(55, 47, 42, 0.06); 
+box-sizing: border-box;\">\n  <h3 style=\"margin-top: 0; color: #c2410c; font-size: 1.4rem; border-bottom: 2px solid 
+rgba(194, 65, 12, 0.1); padding-bottom: 10px; font-weight: 700; font-family: inherit;\">\n    Exam Skills: 'Explain 
+One Consequence' (4 Marks)\n  </h3>\n  <p style=\"font-size: 0.9rem; line-height: 1.5; color: #7c6e65; margin-bottom: 
+16px;\">\n    Select a topic below to generate a 4-mark consequence question. Type your answer in the box, making sure 
+to use phrases like <em>'As a result...'</em> or <em>'This led to...'</em>. If you get stuck, click for a clue. When 
+you are finished, click 'Self-Check' to compare your response to the model answer.\n  </p>\n\n  <div style=\"margin: 
+20px 0;\">\n    <label style=\"display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 6px; 
+text-transform: uppercase; color: #7c6e65;\">Select Consequence Topic</label>\n    <select id=\"es-topic-select\" 
+style=\"width: 100%; padding: 11px; border: 1px solid rgba(194, 65, 12, 0.2); border-radius: 6px; font-size: 0.9rem; 
+color: #372f2a; background: #fff; cursor: pointer; font-family: inherit; outline: none; box-sizing: border-box;\">\n   
+   <option value=\"\" disabled selected>-- Select a Topic --</option>\n      <option value=\"subtopic_1_1\">Topic 1.1: 
+Bombing of the King David Hotel (1946)</option>\n      <option value=\"subtopic_1_2\">Topic 1.2: Territorial changes 
+------------------
+Match at line 607:
+color: #372f2a; background: #fff; cursor: pointer; font-family: inherit; outline: none; box-sizing: border-box;\">\n   
+   <option value=\"\" disabled selected>-- Select a Topic --</option>\n      <option value=\"subtopic_1_1\">Topic 1.1: 
+Bombing of the King David Hotel (1946)</option>\n      <option value=\"subtopic_1_2\">Topic 1.2: Territorial changes 
+following the 1948–49 War</option>\n      <option value=\"subtopic_1_3\">Topic 1.3: Suez Crisis (1956) for 
+Israel</option>\n      <option\n<truncated 11012 bytes>\nmentById('es-topic-select').value;\n    if (!sub) return;\n   
+ if (box.style.display === 'none') {\n      // Bold core causal links in output model answer\n      
+document.getElementById('es-model-answer').innerHTML = esData[sub].answer.replace(/(As a result|This led 
+to|Consequently)/gi, '<strong>$1</strong>');\n      box.style.display = 'block';\n    } else {\n      
+box.style.display = 'none';\n    }\n  });\n})();\n</script>\n```\n\n---\n\n### Project Files Modified\n1. 
+**[index.html](file:///C:/Users/fives/.gemini/antigravity/scratch/firefly_recall_quizzes/index.html)**:\n   - Moved 
+the **Study Center** section to the top of the sidebar.\n   - Added hover-animated quick navigation shortcut tiles on 
+the Dashboard view.\n   - Renamed \"Level 9 Depth\" occurrences to \"1% Margins\".\n2. 
+**[app.js](file:///C:/Users/fives/.gemini/antigravity/scratch/firefly_recall_quizzes/app.js)**:\n   - Updated 
+------------------
+Match at line 941:
+24px; font-family: 'Outfit', sans-serif; color: #372f2a; margin-top: 30px; box-shadow: 0 4px 12px rgba(55, 47, 42, 
+0.06);\">\\n`;\n625:   html += `  <h3 style=\"margin-top: 0; color: #c2410c; font-size: 1.4rem; border-bottom: 2px 
+solid rgba(194, 65, 12, 0.1); padding-bottom: 10px; font-weight: 700;\">\\n`;\n626:   html += `    Exam Skills: 
+'Explain One Consequence' (4 Marks)\\n`;\n627:   html += `  </h3>\\n`;\n628:   html += `  <p style=\"font-size: 
+0.9rem; line-height: 1.5; color: #7c6e65; margin-bottom: 16px;\">\\n`;\n629:   html += `    Select a topic below to 
+generate a 4-mark consequence question. Type your answer in the box, making sure to use phrases like <em>'As a 
+result...'</em> or <em>'This led to...'</em>. If you get stuck, click for a clue. When you are finished, click 
+'Self-Check' to compare your response to the model answer.\\n`;\n630:   html += `  </p>\\n`;\n631:   html += 
+`\\n`;\n632:   html += `  <div style=\"margin: 20px 0;\">\\n`;\n633:   html += `    <label style=\"display: block; 
+font-weight: 600; font-size: 0.85rem\n<truncated 6982 bytes>\n'es-answer-box').style.display = 'none';\\n`;\n695:   
+html += `    document.getElementById('es-question-area').style.display = 'block';\\n`;\n696:   html += `    
+document.getElementById('es-input-area').style.display = 'flex';\\n`;\n697:   html += `    \\n`;\n698:   html += `    
+// Uncheck boxes\\n`;\n699:   html += `    const checkboxes = document.querySelectorAll('.es-practice-box 
+------------------
+Match at line 982:
+#15803d; color: #372f2a; box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);\"></p>\r\n363:       \r\n364:       <h4 
+style=\"margin: 0 0 4px 0; color: #b45309; font-size: 0.9rem; font-weight: 700;\">Examiner Tip:</h4>\r\n365:       <p 
+style=\"margin: 0 0 14px 0; font-size: 0.8rem; line-height: 1.4; color: #7c6e65;\">\r\n366:         To score the full 
+4 marks, you must state one consequence supported by historical details, then explain how it led to a subsequent event 
+using causal words such as \"this led to...\" or \"as a result...\".\r\n367:       </p>\r\n368: \r\n369:       <div 
+style=\"border-top: 1px solid rgba(194, 65, 12, 0.1); padding-top: 12px;\">\r\n370:         <span style=\"font-size: 
+0.8rem; font-weight: 600; color: #372f2a; display: block; margin-bottom: 8px; text-transform: uppercase; 
+letter-spacing: 0.03em;\">Self-Check Checklist:</span>\r\n371:         <label style=\"display: flex; align-items: 
+flex-start; font-size: 0.8rem; margin-bottom: 6px; color: #372f2a; cursor: pointer;\"><input type=\"checkbox\" 
+style=\"margin: 2px 6px 0 0; cursor: pointer;\">Stated a clear consequence \n<truncated 4543 bytes>\n\"3.1\",\r\n421:  
+     \"question\": \"Explain one consequence of President Sadat's visit to Israel (1977).\",\r\n422:       \"clue\": 
+\"Think about the psychological barrier and what this led to at Camp David.\",\r\n423:       \"answer\": \"One 
+consequence was the breaking of the psychological barrier between Arabs and Israelis. By travelling to Jerusalem and 
+------------------
+Match at line 988:
+0.8rem; font-weight: 600; color: #372f2a; display: block; margin-bottom: 8px; text-transform: uppercase; 
+letter-spacing: 0.03em;\">Self-Check Checklist:</span>\r\n371:         <label style=\"display: flex; align-items: 
+flex-start; font-size: 0.8rem; margin-bottom: 6px; color: #372f2a; cursor: pointer;\"><input type=\"checkbox\" 
+style=\"margin: 2px 6px 0 0; cursor: pointer;\">Stated a clear consequence \n<truncated 4543 bytes>\n\"3.1\",\r\n421:  
+     \"question\": \"Explain one consequence of President Sadat's visit to Israel (1977).\",\r\n422:       \"clue\": 
+\"Think about the psychological barrier and what this led to at Camp David.\",\r\n423:       \"answer\": \"One 
+consequence was the breaking of the psychological barrier between Arabs and Israelis. By travelling to Jerusalem and 
+addressing the Knesset, Sadat convinced the deeply suspicious Israeli public of his genuine desire for peace, leading 
+directly to the diplomatic breakthrough at the Camp David Accords in 1978.\"\r\n424:     },\r\n425:     
+\"subtopic_3_2\": {\r\n426:       \"topicCode\": \"3.2\",\r\n427:       \"question\": \"Explain one consequence of the 
+First Palestinian Intifada (1987–93).\",\r\n428:       \"clue\": \"Think about Israel's international reputation and 
+the 'Iron Fist' policy.\",\r\n429:       \"answer\": \"One consequence was severe damage to Israel's international 
+reputation. Global television coverage of heavily armed Israeli soldiers using 'Iron Fist' tactics (like beatings and 
+------------------
+Match at line 990:
+flex-start; font-size: 0.8rem; margin-bottom: 6px; color: #372f2a; cursor: pointer;\"><input type=\"checkbox\" 
+style=\"margin: 2px 6px 0 0; cursor: pointer;\">Stated a clear consequence \n<truncated 4543 bytes>\n\"3.1\",\r\n421:  
+     \"question\": \"Explain one consequence of President Sadat's visit to Israel (1977).\",\r\n422:       \"clue\": 
+\"Think about the psychological barrier and what this led to at Camp David.\",\r\n423:       \"answer\": \"One 
+consequence was the breaking of the psychological barrier between Arabs and Israelis. By travelling to Jerusalem and 
+addressing the Knesset, Sadat convinced the deeply suspicious Israeli public of his genuine desire for peace, leading 
+directly to the diplomatic breakthrough at the Camp David Accords in 1978.\"\r\n424:     },\r\n425:     
+\"subtopic_3_2\": {\r\n426:       \"topicCode\": \"3.2\",\r\n427:       \"question\": \"Explain one consequence of the 
+First Palestinian Intifada (1987–93).\",\r\n428:       \"clue\": \"Think about Israel's international reputation and 
+the 'Iron Fist' policy.\",\r\n429:       \"answer\": \"One consequence was severe damage to Israel's international 
+reputation. Global television coverage of heavily armed Israeli soldiers using 'Iron Fist' tactics (like beatings and 
+live ammunition) against unarmed, stone-throwing Palestinian youths generated immense international condemnation and 
+pressure on Israel to negotiate peace.\"\r\n430:     },\r\n431:     \"subtopic_3_3\": {\r\n432:       \"topicCode\": 
+------------------
+
+=== KEY: 2.2b ===
+NO MATCH FOR 2.2b
+
+=== KEY: 2.3a ===
+NO MATCH FOR 2.3a
+
+=== KEY: 2.3b ===
+NO MATCH FOR 2.3b
+
+=== KEY: 3.1a ===
+NO MATCH FOR 3.1a
+
+=== KEY: 3.1b ===
+NO MATCH FOR 3.1b
+
+=== KEY: 3.2a ===
+NO MATCH FOR 3.2a
+
+=== KEY: 3.2b ===
+NO MATCH FOR 3.2b
+
+=== KEY: 3.3a ===
+Match at line 913:
+immense international condemnation and pressure to negotiate a peace settlement.\"\n+  },\n+  \"3.3a\": {\n+    
+topicCode: \"3.3\",\n+    question: \"Explain one consequence of Arafat's renunciation of terrorism in a speech at the 
+UN (1988).\",\n+    clue: \"Think about who agreed to start talking to the PLO.\",\n+    answer: \"The opening of 
+official dialogue with the USA. By renouncing terrorism and officially accepting the 'two-state solution', Arafat met 
+the strict preconditions set by the American government, meaning the USA formally recognised the PLO as a legitimate 
+negotiating partner for the first time.\"\n+  },\n+  \"3.3b\": {\n     topicCode: \"3.3\",\n     question: \"Explain 
+one consequence of the Oslo Accords (1993).\",\n-    clue: \"Think about what was set up for the Palestinians to 
+govern themselves.\",\n-    answer: \"One consequence was the creation of the Palestinian National Authority (PNA). 
+Israel agreed to withdraw its military from areas like Jericho and Gaza, allowing Yasser Arafat to return from exile 
+and giving the Palestinians limited self-government for the first time.\"\n+    clue: \"Think about what was set up 
+for Palestinian self-government.\",\n+    answer: \"The creation of the Palestinian National Authority (PNA). Israel 
+agreed to withdraw its military from areas like Jericho and Gaza, allowing Yasser Arafat to return from exile and 
+giving the Palestinians limited self-government for the first time.\"\n   }\n };\n-\n \n[diff_block_end]\n\nPlease 
+------------------
+Match at line 1083:
+settlement.\"\r\n+    },\r\n+    \"3.3a\": {\r\n+      \"topicCode\": \"3.3\",\r\n+      \"question\": \"Explain one 
+consequence of Arafat's renunciation of terrorism in a speech at the UN (1988).\",\r\n+      \"clue\": \"Think about 
+who agreed to start talking to the PLO.\",\r\n+      \"answer\": \"The opening of official dialogue with the USA. By 
+renouncing terrorism and officially accepting the 'two-state solution', Arafat met the strict preconditions set by the 
+American government, meaning the USA formally recognised the PLO as a legitimate negotiating partner for the first 
+time.\"\r\n+    },\r\n+    \"3.3b\": {\r\n       \"topicCode\": \"3.3\",\r\n       \"question\": \"Explain one 
+consequence of the Oslo Accords (1993).\",\r\n-      \"clue\": \"Think about what was set up for the Palestinians to 
+govern themselves.\",\r\n-      \"answer\": \"One consequence was the creation of the Palestinian National Authority 
+(PNA). Israel agreed to withdraw its military from areas like Jericho and Gaza, allowing Yasser Arafat to return from 
+exile and giving the Palestinians limited self-government for the first time.\"\r\n+      \"clue\": \"Think about what 
+was set up for Palestinian self-government.\",\r\n+      \"answer\": \"The creation of the Palestinian National 
+Authority (PNA). Israel agreed to withdraw its military from areas like Jericho and Gaza, allowing Yasser Arafat to 
+return from exile and giving the Palestinians limited self-government for the first time.\"\r\n     }\r\n   };\r\n 
+------------------
+
+=== KEY: 3.3b ===
+Match at line 918:
+negotiating partner for the first time.\"\n+  },\n+  \"3.3b\": {\n     topicCode: \"3.3\",\n     question: \"Explain 
+one consequence of the Oslo Accords (1993).\",\n-    clue: \"Think about what was set up for the Palestinians to 
+govern themselves.\",\n-    answer: \"One consequence was the creation of the Palestinian National Authority (PNA). 
+Israel agreed to withdraw its military from areas like Jericho and Gaza, allowing Yasser Arafat to return from exile 
+and giving the Palestinians limited self-government for the first time.\"\n+    clue: \"Think about what was set up 
+for Palestinian self-government.\",\n+    answer: \"The creation of the Palestinian National Authority (PNA). Israel 
+agreed to withdraw its military from areas like Jericho and Gaza, allowing Yasser Arafat to return from exile and 
+giving the Palestinians limited self-government for the first time.\"\n   }\n };\n-\n \n[diff_block_end]\n\nPlease 
+note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged 
+lines before and after the modified lines. The actual file contents may have many more lines not shown.\n\nWe did our 
+best to apply changes despite some inaccuracies. Double check if the edit applied is what you intended."}
+C:\Users\fives\.gemini\antigravity\brain\1844f957-6c6e-45bc-a32f-52f6a520a16c\.system_generated\logs\transcript.jsonl:6
+66:{"step_index":669,"source":"MODEL","type":"VIEW_FILE","status":"DONE","created_at":"2026-05-25T10:50:36Z","content":
+------------------
+Match at line 1088:
+time.\"\r\n+    },\r\n+    \"3.3b\": {\r\n       \"topicCode\": \"3.3\",\r\n       \"question\": \"Explain one 
+consequence of the Oslo Accords (1993).\",\r\n-      \"clue\": \"Think about what was set up for the Palestinians to 
+govern themselves.\",\r\n-      \"answer\": \"One consequence was the creation of the Palestinian National Authority 
+(PNA). Israel agreed to withdraw its military from areas like Jericho and Gaza, allowing Yasser Arafat to return from 
+exile and giving the Palestinians limited self-government for the first time.\"\r\n+      \"clue\": \"Think about what 
+was set up for Palestinian self-government.\",\r\n+      \"answer\": \"The creation of the Palestinian National 
+Authority (PNA). Israel agreed to withdraw its military from areas like Jericho and Gaza, allowing Yasser Arafat to 
+return from exile and giving the Palestinians limited self-government for the first time.\"\r\n     }\r\n   };\r\n 
+\r\n[diff_block_end]\n\nPlease note that the above snippet only shows the MODIFIED lines from the last change. It 
+shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many 
+more lines not shown."}
+C:\Users\fives\.gemini\antigravity\brain\1844f957-6c6e-45bc-a32f-52f6a520a16c\.system_generated\logs\transcript.jsonl:7
+07:{"step_index":711,"source":"MODEL","type":"VIEW_FILE","status":"DONE","created_at":"2026-05-25T11:03:47Z","content":
+------------------
+
