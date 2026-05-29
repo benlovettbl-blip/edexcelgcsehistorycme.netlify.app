@@ -7,7 +7,9 @@
     "build:js": "powershell -ExecutionPolicy Bypass -File build.ps1",
     "build:copy": "node build_assets.js",
     "build": "npm run build:js && npm run build:copy",
-    "cap:sync": "npx cap sync"
+    "cap:sync": "npx cap sync",
+    "build:apk": "cd android && gradlew.bat assembleDebug",
+    "build:aab": "cd android && gradlew.bat bundleRelease"
   },
   "keywords": [
     "education",
