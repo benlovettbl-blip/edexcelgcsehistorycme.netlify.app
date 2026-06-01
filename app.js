@@ -10468,8 +10468,6 @@
     
     ${chainHtml}
     
-    ${summaryHtml}
-    
     ${revisionQuestionsHtml}
     
     ${kcHtml}
@@ -10477,6 +10475,8 @@
     ${impHtml}
     
     ${vaultHtml}
+    
+    ${summaryHtml}
 
     <!-- Mastery Progress Button -->
     <div style="max-width: 800px; margin: 0 auto 40px auto; padding: 0 10px;">

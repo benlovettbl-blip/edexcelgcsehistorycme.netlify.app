@@ -703,8 +703,6 @@ export function renderMasteryView(subtopicId) {
     
     ${chainHtml}
     
-    ${summaryHtml}
-    
     ${revisionQuestionsHtml}
     
     ${kcHtml}
@@ -712,6 +710,8 @@ export function renderMasteryView(subtopicId) {
     ${impHtml}
     
     ${vaultHtml}
+    
+    ${summaryHtml}
 
     <!-- Mastery Progress Button -->
     <div style="max-width: 800px; margin: 0 auto 40px auto; padding: 0 10px;">
