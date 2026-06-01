@@ -11,6 +11,7 @@ import { VIDEOS_DATA } from './videos_data.js';
 import { getFallbackUrl } from './image_fallback.js';
 import { LESSON_EXTENSIONS } from './lesson_extensions.js';
 import { SPEC_CHECKLIST_DATA } from './spec_checklist_data.js';
+import { SCHOLARLY_EXTENSIONS } from './scholarly_extensions.js';
 
 export function renderPracticeRoomContent() {
   const example = PRACTICE_ROOM_DATA[practiceState.currentExampleIndex];
@@ -290,28 +291,33 @@ export function renderMasteryView(subtopicId) {
   data.steps.forEach((step, index) => {
     const processedBodyHtml = injectInlineBios(step.bodyHtml, matchedFigures);
     let scholarlyHtml = '';
-    if (step.scholarlyDepth) {
+    
+    // Retrieve scholarly perspective for this subtopic and step index from database
+    const dbScholarly = SCHOLARLY_EXTENSIONS[subtopicId]?.[index];
+    const scholarlyDepth = dbScholarly || step.scholarlyDepth;
+    
+    if (scholarlyDepth) {
       let scholarlyImgHtml = '';
-      if (step.scholarlyDepth.image) {
+      if (scholarlyDepth.image) {
         let provenanceHtml = '';
-        if (step.scholarlyDepth.imageProvenance) {
+        if (scholarlyDepth.imageProvenance) {
           provenanceHtml = `
             <div class="scholarly-image-provenance" style="font-size: 0.8rem; color: #cbd5e1; margin-top: 8px; font-weight: 500; line-height: 1.4; max-width: 600px; margin-left: auto; margin-right: auto; text-align: center; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); padding: 8px 12px; border-radius: 4px; box-sizing: border-box;">
-              <strong style="color: inherit;">Provenance:</strong> ${step.scholarlyDepth.imageProvenance}
+              <strong style="color: inherit;">Provenance:</strong> ${scholarlyDepth.imageProvenance}
             </div>
           `;
         }
         scholarlyImgHtml = `
           <div class="scholarly-image-wrapper" style="margin-bottom: 16px; text-align: center;">
-            <img src="${step.scholarlyDepth.image}" alt="${step.scholarlyDepth.imageAlt || 'Scholarly Source'}" class="scholarly-source-img" style="max-width: 100%; max-height: 300px; object-fit: contain; border-radius: var(--border-radius-sm); border: 1px solid var(--border-glass); box-shadow: var(--shadow-sm);" 
-              onerror="const fallback = '${getFallbackUrl(step.scholarlyDepth.image) || ''}'; if (fallback && this.src !== fallback) { this.referrerPolicy = 'no-referrer'; this.src = fallback; } else { this.style.display='none'; }">
+            <img src="${scholarlyDepth.image}" alt="${scholarlyDepth.imageAlt || 'Scholarly Source'}" class="scholarly-source-img" style="max-width: 100%; max-height: 300px; object-fit: contain; border-radius: var(--border-radius-sm); border: 1px solid var(--border-glass); box-shadow: var(--shadow-sm);" 
+              onerror="const fallback = '${getFallbackUrl(scholarlyDepth.image) || ''}'; if (fallback && this.src !== fallback) { this.referrerPolicy = 'no-referrer'; this.src = fallback; } else { this.style.display='none'; }">
             ${provenanceHtml}
           </div>
         `;
       }
       let scholarlySourceHtml = '';
-      if (step.scholarlyDepth.vietnameseSource) {
-        const vs = step.scholarlyDepth.vietnameseSource;
+      if (scholarlyDepth.vietnameseSource) {
+        const vs = scholarlyDepth.vietnameseSource;
         scholarlySourceHtml = `
           <div class="scholarly-vietnamese-source" style="margin-top: 16px; padding: 14px; background: rgba(0, 0, 0, 0.2); border-left: 4px solid var(--accent); border-radius: var(--border-radius-sm);">
             <strong style="display: block; margin-bottom: 6px; color: var(--accent); font-size: 0.85rem; text-transform: uppercase;">
@@ -337,8 +343,8 @@ export function renderMasteryView(subtopicId) {
           </summary>
           <div class="scholarly-content" style="margin-top: 12px; font-size: 0.88rem; line-height: 1.5; color: var(--text-muted);">
             ${scholarlyImgHtml}
-            <strong style="display: block; margin-bottom: 6px; color: var(--primary); font-size: 0.95rem;">${step.scholarlyDepth.title.replace(/^Scholarly Perspective:\s*/i, '')}</strong>
-            <p style="margin: 0 0 12px 0; font-style: italic;">${step.scholarlyDepth.body}</p>
+            <strong style="display: block; margin-bottom: 6px; color: var(--primary); font-size: 0.95rem;">${scholarlyDepth.title.replace(/^(Scholarly Perspective|Scholarly Insight|Perspective):\s*/i, '')}</strong>
+            <p style="margin: 0 0 12px 0; font-style: italic;">${scholarlyDepth.body}</p>
             ${scholarlySourceHtml}
           </div>
         </details>
