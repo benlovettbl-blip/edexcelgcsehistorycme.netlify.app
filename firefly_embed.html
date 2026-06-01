@@ -996,7 +996,7 @@ details > summary::marker {
 .flashcard-stage {
   perspective: 1000px;
   width: 100%;
-  height: 280px;
+  height: 340px;
   cursor: pointer;
   position: relative;
 }
@@ -14252,7 +14252,7 @@ if (typeof exports !== 'undefined') {
       overlay.style.flexDirection = "column";
       overlay.style.alignItems = "center";
       overlay.style.justifyContent = "center";
-      overlay.style.padding = "20px";
+      overlay.style.padding = "14px 16px";
       overlay.style.borderRadius = "var(--border-radius-lg)";
       overlay.style.boxSizing = "border-box";
       overlay.style.border = "1px solid var(--border-glass)";
@@ -14260,23 +14260,23 @@ if (typeof exports !== 'undefined') {
     }
     overlay.style.display = "flex";
     overlay.innerHTML = `
-    <div class="mcq-overlay-content" style="width: 100%; max-width: 420px; text-align: center; display: flex; flex-direction: column; gap: 16px;">
+    <div class="mcq-overlay-content" style="width: 100%; max-width: 420px; text-align: center; display: flex; flex-direction: column; gap: 12px;">
       <div style="font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: var(--primary); letter-spacing: 1.5px; display: flex; align-items: center; justify-content: center; gap: 6px;">
         <span>\u{1F3AF} ACTIVE RECALL CHECK</span>
       </div>
       <h3 style="font-size: 1.05rem; margin: 0; color: var(--text-main); font-weight: 700; line-height: 1.4; max-height: 70px; overflow-y: auto;">
         ${q.question}
       </h3>
-      <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 6px;">
+      <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 4px;">
         ${choices.map((choice, i) => `
           <button class="mcq-choice-btn" data-choice="${encodeURIComponent(choice)}" style="
             width: 100%;
-            padding: 10px 14px;
+            padding: 8px 12px;
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid var(--border-glass);
             border-radius: var(--border-radius-md);
             color: var(--text-muted);
-            font-size: 0.88rem;
+            font-size: 0.85rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -14285,7 +14285,7 @@ if (typeof exports !== 'undefined') {
             align-items: center;
           ">
             <span style="display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: rgba(255, 255, 255, 0.08); color: var(--text-muted); font-size: 0.72rem; font-weight: 800; margin-right: 12px; border: 1px solid var(--border-glass); flex-shrink: 0;">${["A", "B", "C", "D"][i]}</span>
-            <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${choice}</span>
+            <span style="flex: 1; min-width: 0; line-height: 1.3; overflow-wrap: break-word; word-break: break-word;">${choice}</span>
           </button>
         `).join("")}
       </div>
