@@ -12,6 +12,7 @@ import { getFallbackUrl } from './image_fallback.js';
 import { LESSON_EXTENSIONS } from './lesson_extensions.js';
 import { SPEC_CHECKLIST_DATA } from './spec_checklist_data.js';
 import { SCHOLARLY_EXTENSIONS } from './scholarly_extensions.js';
+import { CONTEMPORARY_SOURCES } from './contemporary_sources.js';
 
 export function renderPracticeRoomContent() {
   const example = PRACTICE_ROOM_DATA[practiceState.currentExampleIndex];
@@ -631,6 +632,32 @@ export function renderMasteryView(subtopicId) {
     }
   }
 
+  // Generate Contemporary Source HTML
+  let sourceCardHtml = '';
+  const sourceData = CONTEMPORARY_SOURCES[subtopicId];
+  if (sourceData) {
+    sourceCardHtml = `
+      <div class="mastery-card contemporary-source-card" style="max-width: 800px; margin: 0 auto 24px auto; border-left: 4px solid var(--accent); background: rgba(245, 158, 11, 0.02); position: relative; padding: 24px;">
+        <h3 class="mastery-card-title" style="display: flex; align-items: center; gap: 8px; border: none; margin-bottom: 12px; font-size: 1.1rem; color: var(--accent);">
+          <i class="fa-solid fa-scroll"></i> Contemporary Historical Source
+        </h3>
+        <div style="background: rgba(0, 0, 0, 0.15); border: 1px solid var(--border-glass); border-radius: var(--border-radius-sm); padding: 16px; margin-bottom: 14px;">
+          <strong style="display: block; margin-bottom: 8px; font-size: 0.95rem; color: var(--text-main);">${sourceData.title}</strong>
+          <span style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; display: inline-block; background: rgba(245, 158, 11, 0.1); padding: 2px 8px; border-radius: 4px; margin-bottom: 10px; letter-spacing: 0.5px;">
+            ${sourceData.type}
+          </span>
+          <p style="margin: 0; font-family: Georgia, serif; font-size: 1rem; line-height: 1.5; color: var(--text-main); font-style: italic;">
+            ${sourceData.excerpt}
+          </p>
+        </div>
+        <div style="font-size: 0.88rem; line-height: 1.5; color: var(--text-muted);">
+          <strong style="color: var(--accent); display: block; margin-bottom: 4px;"><i class="fa-solid fa-lightbulb"></i> Source Insight & Context:</strong>
+          ${sourceData.insight}
+        </div>
+      </div>
+    `;
+  }
+
   // Set the container innerHTML
   container.innerHTML = `
     ${doNowHtml}
@@ -667,6 +694,8 @@ export function renderMasteryView(subtopicId) {
         </div>
       </label>
     </div>
+
+    ${sourceCardHtml}
 
     ${stepsHtml}
     
