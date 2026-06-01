@@ -8913,7 +8913,7 @@
         "<strong>Nasser's Rise:</strong> Colonel Gamal Abdel Nasser seized power in Egypt in 1954. He championed <strong>Pan-Arabism</strong>, aiming to unify Arab states and dismantle Israel.",
         "<strong>The Gaza Raid & Soviet Arms:</strong> After Israel killed 38 Egyptian soldiers in the Gaza Raid (Feb 1955), Nasser realized Egypt's weakness. Rejected by the West, he signed the <strong>Czech Arms Deal</strong> in September 1955 to buy Soviet aircraft and tanks, upsetting the regional power balance.",
         "<strong>Canal Nationalisation:</strong> In July 1956, after the US and Britain cancelled funding for the Aswan High Dam to punish his Soviet ties, Nasser nationalised the British and French-owned <strong>Suez Canal</strong> to fund the project.",
-        "<strong>S\xE8vres Collusion & Invasion:</strong> Britain, France, and Israel secretly signed the **Protocol of S\xE8vres** to invade Egypt. Israel captured Sinai, but US President Eisenhower forced a withdrawal by threatening the British economy, leaving Nasser as a Pan-Arab hero. Egypt and Syria formed the UAR (1958\u20131961) in response."
+        "<strong>S\xE8vres Collusion & Invasion:</strong> Britain, France, and Israel secretly signed the <strong>Protocol of S\xE8vres</strong> to invade Egypt. Israel captured Sinai, but US President Eisenhower forced a withdrawal by threatening the British economy, leaving Nasser as a Pan-Arab hero. Egypt and Syria formed the UAR (1958\u20131961) in response."
       ],
       "revisionQuestions": [
         {
@@ -9190,7 +9190,7 @@
     },
     "subtopic_3_1": {
       "wrapUpSummary": [
-        "<strong>Diplomatic Re-alignment:</strong> The 1973 oil crisis made Middle Eastern stability a US security priority. US Secretary of State Kissinger conducted **shuttle diplomacy** (1974\u201375) to negotiate troop separation agreements.",
+        "<strong>Diplomatic Re-alignment:</strong> The 1973 oil crisis made Middle Eastern stability a US security priority. US Secretary of State Kissinger conducted <strong>shuttle diplomacy</strong> (1974\u201375) to negotiate troop separation agreements.",
         "<strong>Peace Breakthrough:</strong> In November 1977, Anwar Sadat made a stunning trip to Jerusalem, addressing the Knesset. Israeli PM Menachem Begin paid a reciprocal visit to Egypt, shattering decades of diplomatic deadlocks.",
         "<strong>Camp David Accords (1978):</strong> US President Jimmy Carter hosted Sadat and Begin at Camp David for 13 days of secret talks. They agreed on a framework returning Sinai to Egypt and establishing limited self-rule for Palestinians.",
         "<strong>Treaty of Washington (1979):</strong> They signed a formal peace treaty in March 1979. While it secured Egypt's borders, it led to Egypt being expelled from the Arab League, and Sadat was assassinated by Islamist extremists in Cairo in 1981."
@@ -9261,9 +9261,9 @@
     "subtopic_3_2": {
       "wrapUpSummary": [
         "<strong>PLO in Lebanon:</strong> Expelled from Jordan, the PLO established base camps in southern Lebanon ('Fatahland'), launching cross-border rocket attacks and guerrilla raids into northern Israel.",
-        "<strong>1982 Invasion:</strong> Israel launched **Operation Peace for Galilee** in June 1982, besieging West Beirut. The siege forced Yasser Arafat and the PLO leadership to evacuate their headquarters to Tunis.",
+        "<strong>1982 Invasion:</strong> Israel launched <strong>Operation Peace for Galilee</strong> in June 1982, besieging West Beirut. The siege forced Yasser Arafat and the PLO leadership to evacuate their headquarters to Tunis.",
         "<strong>Sabra & Shatila Massacres:</strong> In September 1982, pro-Israeli Lebanese Christian Phalangist militias massacred hundreds of Palestinian refugees. Israel's Kahan Commission held Defense Minister Ariel Sharon indirectly responsible, forcing his resignation.",
-        "<strong>First Intifada (1987\u201393):</strong> A traffic accident in Gaza sparked a massive grassroots uprising across the occupied territories. Handled with Yitzhak Rabin's harsh **'Iron Fist'** policy, the images of stone-throwing youth facing tanks drew international sympathy for Palestinians."
+        "<strong>First Intifada (1987\u201393):</strong> A traffic accident in Gaza sparked a massive grassroots uprising across the occupied territories. Handled with Yitzhak Rabin's harsh <strong>'Iron Fist'</strong> policy, the images of stone-throwing youth facing tanks drew international sympathy for Palestinians."
       ],
       "revisionQuestions": [
         {
@@ -9332,7 +9332,7 @@
       "wrapUpSummary": [
         "<strong>PLO's Realignment:</strong> In 1988, Yasser Arafat declared a Palestinian state in exile, officially renounced terrorism, and recognized Israel's right to exist, opening paths to peace.",
         "<strong>End of Cold War:</strong> The collapse of the Soviet Union cut off military aid to Syria and Iraq, leaving the US as the sole superpower. The US used this leverage to organize the <strong>Madrid Peace Conference (1991)</strong>.",
-        "<strong>Oslo I Accord (1993):</strong> Secret talks in Norway led to the Oslo Accords. Arafat and Rabin shook hands at the White House. The **Palestinian Authority (PA)** was created, providing limited self-rule in Gaza and Jericho.",
+        "<strong>Oslo I Accord (1993):</strong> Secret talks in Norway led to the Oslo Accords. Arafat and Rabin shook hands at the White House. The <strong>Palestinian Authority (PA)</strong> was created, providing limited self-rule in Gaza and Jericho.",
         "<strong>Oslo II & Collapse:</strong> The 1995 Oslo II accord divided the West Bank into Areas A, B, and C. Hardliners on both sides opposed the treaty, and the peace process was derailed in November 1995 when right-wing extremist Yigal Amir assassinated PM Yitzhak Rabin."
       ],
       "revisionQuestions": [
