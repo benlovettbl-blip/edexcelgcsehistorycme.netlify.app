@@ -2535,8 +2535,20 @@
         },
         {
           "title": "Step 3: The Protocol of S\xE8vres Collusion",
-          "isSplit": false,
-          "bodyHtml": "<ul>\r\n          <li><strong>The Secret Plan:</strong> In October 1956, Britain, France, and Israel met secretly in France and signed the **Protocol of S\xE8vres**, a conspiracy to capture the canal and overthrow Nasser.</li>\r\n          <li><strong>The Pretext:</strong> Under the plan, Israel would launch a surprise invasion of the Sinai Peninsula. Britain and France would then pretend to act as 'peacekeepers', ordering both sides to withdraw from the canal, and immediately invade to take control of it when Nasser refused.</li>\r\n        </ul>"
+          "isSplit": true,
+          "bodyHtml": `<div class="mastery-text-column">\r
+          <div class="mastery-card-body card-content">\r
+            <ul>\r
+              <li><strong>The Secret Plan:</strong> In October 1956, Britain, France, and Israel met secretly in France and signed the <strong>Protocol of S\xE8vres</strong>, a conspiracy to capture the canal and overthrow Nasser.</li>\r
+              <li><strong>The Pretext:</strong> Under the plan, Israel would launch a surprise invasion of the Sinai Peninsula. Britain and France would then pretend to act as 'peacekeepers', ordering both sides to withdraw from the canal, and immediately invade to take control of it when Nasser refused.</li>\r
+            </ul>\r
+          </div>\r
+        </div>\r
+        <div class="mastery-media-column">\r
+          <div class="map-vector-box" style="padding: 0;">\r
+            <img class="map-image-display" src="assets/sources/suez_crisis_map.png" alt="1956 Suez Crisis Map" style="width: 100%; height: 100%; object-fit: contain; display: block; border-radius: var(--border-radius-md);">\r
+          </div>\r
+        </div>`
         },
         {
           "title": "Step 4: Invasion and Superpower Intervention",
@@ -2703,8 +2715,8 @@
         },
         {
           "title": "Step 5: The Ground Campaigns on Three Fronts (5\u201310 June 1967)",
-          "isSplit": false,
-          "bodyHtml": "<ul>\r\n          <li><strong>The Sinai & Gaza Front:</strong> Israeli ground forces breached Egyptian defenses, reaching the Suez Canal by 8 June and trapping the Egyptian army.</li>\r\n          <li><strong>The West Bank & Jerusalem Front:</strong> After Jordan opened fire, the IDF counter-attacked, capturing the entire <strong>West Bank</strong> and <strong>East Jerusalem</strong> (including the Western Wall) by 7 June, reunifying the city.</li>\r\n          <li><strong>The Golan Heights Front:</strong> On 9 June, Israeli troops scaled the steep volcanic cliffs of the <strong>Golan Heights</strong>, defeating the Syrian defenders and securing the border before a UN ceasefire on 10 June.</li>\r\n        </ul>"
+          "isSplit": true,
+          "bodyHtml": '<div class="mastery-text-column">\r\n          <div class="mastery-card-body card-content">\r\n            <ul>\r\n              <li><strong>The Sinai & Gaza Front:</strong> Israeli ground forces breached Egyptian defenses, reaching the Suez Canal by 8 June and trapping the Egyptian army.</li>\r\n              <li><strong>The West Bank & Jerusalem Front:</strong> After Jordan opened fire, the IDF counter-attacked, capturing the entire <strong>West Bank</strong> and <strong>East Jerusalem</strong> (including the Western Wall) by 7 June, reunifying the city.</li>\r\n              <li><strong>The Golan Heights Front:</strong> On 9 June, Israeli troops scaled the steep volcanic cliffs of the <strong>Golan Heights</strong>, defeating the Syrian defenders and securing the border before a UN ceasefire on 10 June.</li>\r\n            </ul>\r\n          </div>\r\n        </div>\r\n        <div class="mastery-media-column">\r\n          <div class="map-vector-box" style="padding: 0;">\r\n            <img class="map-image-display" src="assets/sources/six_day_war_fronts.png" alt="Six-Day War Military Fronts" style="width: 100%; height: 100%; object-fit: contain; display: block; border-radius: var(--border-radius-md);">\r\n          </div>\r\n        </div>'
         }
       ],
       "dualPerspective": null,
@@ -3006,8 +3018,8 @@
         },
         {
           "title": "Step 4: The OPEC Oil Crisis and Ceasefire (1973)",
-          "isSplit": false,
-          "bodyHtml": "<ul>\r\n          <li><strong>The Oil Embargo:</strong> Furious at U.S. military support for Israel, Arab oil ministers cut production and embargoed oil exports to the West, quadrupling prices. This caused fuel shortages, electricity rationing, and recession in the USA and Europe.</li>\r\n          <li><strong>UN Resolution 338:</strong> To avoid direct conflict, the USA and USSR jointly negotiated a ceasefire under **Resolution 338**.</li>\r\n          <li><strong>The Aftermath:</strong> Egypt held its canal positions, restoring Arab pride, while Israel realized its security could not rely purely on military force. This paved the way for future peace negotiations.</li>\r\n        </ul>"
+          "isSplit": true,
+          "bodyHtml": '<div class="mastery-text-column">\r\n          <div class="mastery-card-body card-content">\r\n            <ul>\r\n              <li><strong>The Oil Embargo:</strong> Furious at U.S. military support for Israel, Arab oil ministers cut production and embargoed oil exports to the West, quadrupling prices. This caused fuel shortages, electricity rationing, and recession in the USA and Europe.</li>\r\n              <li><strong>UN Resolution 338:</strong> To avoid direct conflict, the USA and USSR jointly negotiated a ceasefire under <strong>Resolution 338</strong>.</li>\r\n              <li><strong>The Aftermath:</strong> Egypt held its canal positions, restoring Arab pride, while Israel realized its security could not rely purely on military force. This paved the way for future peace negotiations.</li>\r\n            </ul>\r\n          </div>\r\n        </div>\r\n        <div class="mastery-media-column">\r\n          <div class="map-vector-box" style="padding: 0;">\r\n            <img class="map-image-display" src="assets/sources/yom_kippur_map.png" alt="Yom Kippur War Map" style="width: 100%; height: 100%; object-fit: contain; display: block; border-radius: var(--border-radius-md);">\r\n          </div>\r\n        </div>'
         }
       ],
       "dualPerspective": null,
@@ -3121,8 +3133,8 @@
         },
         {
           "title": "Step 2: Kissinger's Shuttle Diplomacy (1974\u201375)",
-          "isSplit": false,
-          "bodyHtml": "<ul>\r\n          <li><strong>The Mediator:</strong> U.S. Secretary of State **Henry Kissinger** conducted intensive travel between Middle Eastern capitals to broker agreements. Because Arab states refused to sit in the same room as Israelis, Kissinger literally flew back and forth (hence **Shuttle Diplomacy**).</li>\r\n          <li><strong>Early Success:</strong> He successfully negotiated disengagement agreements, separating the armies. This led to Egypt reopening the **Suez Canal** to global shipping in June 1975.</li>\r\n        </ul>"
+          "isSplit": true,
+          "bodyHtml": '<div class="mastery-text-column">\r\n          <div class="mastery-card-body card-content">\r\n            <ul>\r\n              <li><strong>The Mediator:</strong> U.S. Secretary of State <strong>Henry Kissinger</strong> conducted intensive travel between Middle Eastern capitals to broker agreements. Because Arab states refused to sit in the same room as Israelis, Kissinger literally flew back and forth (hence <strong>Shuttle Diplomacy</strong>).</li>\r\n              <li><strong>Early Success:</strong> He successfully negotiated disengagement agreements, separating the armies. This led to Egypt reopening the <strong>Suez Canal</strong> to global shipping in June 1975.</li>\r\n            </ul>\r\n          </div>\r\n        </div>\r\n        <div class="mastery-media-column">\r\n          <div class="map-vector-box" style="padding: 0;">\r\n            <img class="map-image-display" src="assets/sources/sinai_withdrawal_map.png" alt="Sinai Withdrawal Map" style="width: 100%; height: 100%; object-fit: contain; display: block; border-radius: var(--border-radius-md);">\r\n          </div>\r\n        </div>'
         },
         {
           "title": "Step 3: The Reciprocal Visits: Jerusalem & Ismailia (1977)",
@@ -3306,8 +3318,21 @@
         },
         {
           "title": "Step 2: The Invasion of Lebanon (1982)",
-          "isSplit": false,
-          "bodyHtml": "<ul>\r\n          <li><strong>The Trigger:</strong> In June 1982, following an assassination attempt on the Israeli ambassador in London by a Palestinian splinter group, Israel launched a massive invasion called <strong>Operation Peace for Galilee</strong>.</li>\r\n          <li><strong>Sharon's Plan:</strong> The official aim was to push the PLO back 40km to create a buffer zone for northern Israel, but Defence Minister <strong>Ariel Sharon</strong> secretly planned to destroy the PLO completely and install a friendly Christian government in Beirut.</li>\r\n          <li><strong>The Siege of Beirut:</strong> The IDF rapidly bypassed UN peacekeepers and surrounded the Lebanese capital. Israel subjected West Beirut to a devastating two-month bombardment, cutting off food and water. This forced the PLO to agree to evacuate; Arafat and approximately 14,000 fighters were exiled to <strong>Tunis</strong> under international supervision.</li>\r\n        </ul>",
+          "isSplit": true,
+          "bodyHtml": `<div class="mastery-text-column">\r
+          <div class="mastery-card-body card-content">\r
+            <ul>\r
+              <li><strong>The Trigger:</strong> In June 1982, following an assassination attempt on the Israeli ambassador in London by a Palestinian splinter group, Israel launched a massive invasion called <strong>Operation Peace for Galilee</strong>.</li>\r
+              <li><strong>Sharon's Plan:</strong> The official aim was to push the PLO back 40km to create a buffer zone for northern Israel, but Defence Minister <strong>Ariel Sharon</strong> secretly planned to destroy the PLO completely and install a friendly Christian government in Beirut.</li>\r
+              <li><strong>The Siege of Beirut:</strong> The IDF rapidly bypassed UN peacekeepers and surrounded the Lebanese capital. Israel subjected West Beirut to a devastating two-month bombardment, cutting off food and water. This forced the PLO to agree to evacuate; Arafat and approximately 14,000 fighters were exiled to <strong>Tunis</strong> under international supervision.</li>\r
+            </ul>\r
+          </div>\r
+        </div>\r
+        <div class="mastery-media-column">\r
+          <div class="map-vector-box" style="padding: 0;">\r
+            <img class="map-image-display" src="assets/sources/lebanon_invasion_map.png" alt="1982 Lebanon Invasion Map" style="width: 100%; height: 100%; object-fit: contain; display: block; border-radius: var(--border-radius-md);">\r
+          </div>\r
+        </div>`,
           "scholarlyDepth": {
             "title": "Scholarly Perspective: The Sabra and Shatila Investigation",
             "body": "The 1982 invasion of Lebanon culminated in a massive domestic crisis for Israel. Following the massacre of hundreds of Palestinian refugees in Beirut by Israeli-allied Christian Phalangists, the Kahan Commission found Defense Minister Ariel Sharon 'personally responsible' for failing to prevent the slaughter, forcing his resignation."
@@ -3516,17 +3541,26 @@
         },
         {
           "title": "Step 4: Oslo II (1995) and the Collapse of Peace",
-          "isSplit": false,
-          "bodyHtml": `<ul>\r
-          <li><strong>Oslo II:</strong> In 1995, the second Oslo agreement divided the West Bank into <strong>Areas A, B, and C</strong>, giving the PNA varying levels of control and preparing for democratic Palestinian elections.</li>\r
-          <li><strong>Hamas Opposition:</strong> Radical Islamic militant groups like <strong>Hamas</strong> completely rejected the peace deal and launched devastating suicide bombings inside Israel to derail it.</li>\r
-          <li><strong>Israeli Opposition:</strong> Right-wing Israelis and settlers were furious at the prospect of giving up 'Promised Land' to the Palestinians. They viewed Prime Minister Rabin as a traitor.</li>\r
-          <li><strong>Rabin's Assassination:</strong> In November 1995, Yitzhak Rabin was assassinated at a peace rally by an Israeli religious extremist, <strong>Yigal Amir</strong>. This horrific event shattered the optimism of the Oslo Accords and brought the peace process to a grinding halt.</li>\r
-        </ul>\r
-        <div class="examiner-tip-box">\r
-          <span class="tip-icon">\u{1F4A1}</span>\r
-          <div>\r
-            <strong>Examiner Tip:</strong> For an 8-mark 'Narrative Account' question on the peace process, use Rabin's assassination by Yigal Amir in 1995 as your endpoint to show how the peace process was ultimately derailed!\r
+          "isSplit": true,
+          "bodyHtml": `<div class="mastery-text-column">\r
+          <div class="mastery-card-body card-content">\r
+            <ul>\r
+              <li><strong>Oslo II:</strong> In 1995, the second Oslo agreement divided the West Bank into <strong>Areas A, B, and C</strong>, giving the PNA varying levels of control and preparing for democratic Palestinian elections.</li>\r
+              <li><strong>Hamas Opposition:</strong> Radical Islamic militant groups like <strong>Hamas</strong> completely rejected the peace deal and launched devastating suicide bombings inside Israel to derail it.</li>\r
+              <li><strong>Israeli Opposition:</strong> Right-wing Israelis and settlers were furious at the prospect of giving up 'Promised Land' to the Palestinians. They viewed Prime Minister Rabin as a traitor.</li>\r
+              <li><strong>Rabin's Assassination:</strong> In November 1995, Yitzhak Rabin was assassinated at a peace rally by an Israeli religious extremist, <strong>Yigal Amir</strong>. This horrific event shattered the optimism of the Oslo Accords and brought the peace process to a grinding halt.</li>\r
+            </ul>\r
+            <div class="examiner-tip-box">\r
+              <span class="tip-icon">\u{1F4A1}</span>\r
+              <div>\r
+                <strong>Examiner Tip:</strong> For an 8-mark 'Narrative Account' question on the peace process, use Rabin's assassination by Yigal Amir in 1995 as your endpoint to show how the peace process was ultimately derailed!\r
+              </div>\r
+            </div>\r
+          </div>\r
+        </div>\r
+        <div class="mastery-media-column">\r
+          <div class="map-vector-box" style="padding: 0;">\r
+            <img class="map-image-display" src="assets/sources/oslo_accord_map.png" alt="Oslo II Areas A, B, C Map" style="width: 100%; height: 100%; object-fit: contain; display: block; border-radius: var(--border-radius-md);">\r
           </div>\r
         </div>`,
           "scholarlyDepth": {
@@ -4285,6 +4319,12 @@
     "assets/sources/straits_of_tiran.jpg": "https://upload.wikimedia.org/wikipedia/commons/c/cc/Tiran_R01.jpg",
     "assets/sources/un_partition_plan_1947.png": "https://upload.wikimedia.org/wikipedia/commons/b/bd/UN_Palestine_Partition_Versions_1947.jpg",
     "assets/sources/six_day_war_map_1967.png": "https://upload.wikimedia.org/wikipedia/commons/9/97/Six_Day_War_Territories.svg",
+    "assets/sources/suez_crisis_map.png": "https://upload.wikimedia.org/wikipedia/commons/e/ec/Sinai_1956_campaign_map.png",
+    "assets/sources/six_day_war_fronts.png": "https://upload.wikimedia.org/wikipedia/commons/c/c5/Six_Day_War_Territories.svg",
+    "assets/sources/yom_kippur_map.png": "https://upload.wikimedia.org/wikipedia/commons/e/ea/1973_yom_kippur_war_fronts.png",
+    "assets/sources/sinai_withdrawal_map.png": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Sinai_disengagement_lines_map.png",
+    "assets/sources/lebanon_invasion_map.png": "https://upload.wikimedia.org/wikipedia/commons/3/30/1982_Lebanon_War_military_map.png",
+    "assets/sources/oslo_accord_map.png": "https://upload.wikimedia.org/wikipedia/commons/a/af/West_Bank_Areas_A_B_C_Map.png",
     "assets/sources/portraits/saddam_hussein.jpg": "https://upload.wikimedia.org/wikipedia/commons/a/a7/Kurdish_fighters_and_a_destroyed_portrait_of_dictator_Saddam_Hussein_during_the_1991_Iraqi_uprisings.jpg",
     "assets/sources/western_wall_1967.jpg": "https://upload.wikimedia.org/wikipedia/commons/6/62/%D7%A6%D7%A0%D7%97%D7%A0%D7%99%D7%9D_%D7%91%D7%9B%D7%95%D7%AA%D7%9C_%D7%94%D7%9E%D7%A2%D7%A8%D7%91%D7%99.jpg",
     "assets/sources/portraits/folke_bernadotte.jpg": "https://upload.wikimedia.org/wikipedia/commons/9/99/Folke_Bernadotte%2C_Count_of_Wisborg.png",
