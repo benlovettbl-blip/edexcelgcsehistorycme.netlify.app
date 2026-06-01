@@ -929,7 +929,7 @@ export function renderMasteryView(subtopicId) {
       AudioEngine.play('click');
       btnPartition.classList.add('active');
       btnBorders.classList.remove('active');
-      mapImg.src = "assets/sources/un_partition_plan_1947.svg";
+      mapImg.src = "assets/sources/un_partition_plan_1947.png";
       setTimeout(() => {
         if (mapImg.naturalWidth === 0) {
           mapImg.src = map1DataUrl;
