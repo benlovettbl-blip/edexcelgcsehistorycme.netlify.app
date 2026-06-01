@@ -4671,76 +4671,32 @@
     if (!overlay) {
       overlay = document.createElement("div");
       overlay.id = "flashcard-mcq-overlay";
-      overlay.style.position = "absolute";
-      overlay.style.top = "0";
-      overlay.style.left = "0";
-      overlay.style.width = "100%";
-      overlay.style.height = "100%";
-      overlay.style.background = "rgba(15, 23, 42, 0.98)";
-      overlay.style.backdropFilter = "blur(8px)";
-      overlay.style.zIndex = "100";
-      overlay.style.display = "flex";
-      overlay.style.flexDirection = "column";
-      overlay.style.alignItems = "center";
-      overlay.style.justifyContent = "center";
-      overlay.style.padding = "14px 16px";
-      overlay.style.borderRadius = "var(--border-radius-lg)";
-      overlay.style.boxSizing = "border-box";
-      overlay.style.border = "1px solid var(--border-glass)";
       document.getElementById("flashcard-stage").appendChild(overlay);
     }
     overlay.style.display = "flex";
     overlay.innerHTML = `
-    <div class="mcq-overlay-content" style="width: 100%; max-width: 420px; text-align: center; display: flex; flex-direction: column; gap: 12px;">
-      <div style="font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: var(--primary); letter-spacing: 1.5px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+    <div class="mcq-overlay-content">
+      <div class="mcq-header">
         <span>\u{1F3AF} ACTIVE RECALL CHECK</span>
       </div>
-      <h3 style="font-size: 1.05rem; margin: 0; color: var(--text-main); font-weight: 700; line-height: 1.4; max-height: 70px; overflow-y: auto;">
+      <h3 class="mcq-question">
         ${q.question}
       </h3>
-      <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 4px;">
+      <div class="mcq-choices-container">
         ${choices.map((choice, i) => `
-          <button class="mcq-choice-btn" data-choice="${encodeURIComponent(choice)}" style="
-            width: 100%;
-            padding: 8px 12px;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border-glass);
-            border-radius: var(--border-radius-md);
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-align: left;
-            display: flex;
-            align-items: center;
-          ">
-            <span style="display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: rgba(255, 255, 255, 0.08); color: var(--text-muted); font-size: 0.72rem; font-weight: 800; margin-right: 12px; border: 1px solid var(--border-glass); flex-shrink: 0;">${["A", "B", "C", "D"][i]}</span>
-            <span style="flex: 1; min-width: 0; line-height: 1.3; overflow-wrap: break-word; word-break: break-word;">${choice}</span>
+          <button class="mcq-choice-btn" data-choice="${encodeURIComponent(choice)}">
+            <span class="mcq-choice-badge">${["A", "B", "C", "D"][i]}</span>
+            <span class="mcq-choice-text">${choice}</span>
           </button>
         `).join("")}
       </div>
-      <div id="mcq-feedback-text" style="font-size: 0.85rem; font-weight: 600; min-height: 20px; color: var(--text-muted);">
+      <div id="mcq-feedback-text" class="mcq-feedback">
         Select the correct answer to verify your recall.
       </div>
     </div>
   `;
     const buttons = overlay.querySelectorAll(".mcq-choice-btn");
     buttons.forEach((btn) => {
-      btn.addEventListener("mouseenter", () => {
-        if (!overlay.classList.contains("answered")) {
-          btn.style.background = "rgba(255, 255, 255, 0.08)";
-          btn.style.borderColor = "var(--primary)";
-          btn.style.color = "var(--text-main)";
-        }
-      });
-      btn.addEventListener("mouseleave", () => {
-        if (!overlay.classList.contains("answered")) {
-          btn.style.background = "rgba(255, 255, 255, 0.02)";
-          btn.style.borderColor = "var(--border-glass)";
-          btn.style.color = "var(--text-muted)";
-        }
-      });
       btn.addEventListener("click", (e) => {
         e.stopPropagation();
         if (overlay.classList.contains("answered")) return;
@@ -4749,38 +4705,29 @@
         const isCorrect = chosen === q.answer;
         const feedbackText = document.getElementById("mcq-feedback-text");
         if (isCorrect) {
-          btn.style.background = "rgba(16, 185, 129, 0.15)";
-          btn.style.borderColor = "var(--success)";
-          btn.style.color = "var(--success)";
-          btn.querySelector("span").style.background = "var(--success)";
-          btn.querySelector("span").style.color = "#000";
-          feedbackText.innerHTML = `<span style="color: var(--success);"><i class="fa-solid fa-circle-check"></i> Correct! Fact Memorized.</span>`;
+          btn.classList.add("correct");
+          feedbackText.innerHTML = `<span class="feedback-success"><i class="fa-solid fa-circle-check"></i> Correct! Fact Memorized.</span>`;
           AudioEngine.play("success");
           setTimeout(() => {
             overlay.style.display = "none";
             overlay.classList.remove("answered");
+            btn.classList.remove("correct");
             executeFlashcardGrade(true, q);
           }, 1200);
         } else {
-          btn.style.background = "rgba(239, 68, 68, 0.15)";
-          btn.style.borderColor = "var(--accent)";
-          btn.style.color = "var(--accent)";
-          btn.querySelector("span").style.background = "var(--accent)";
-          btn.querySelector("span").style.color = "#000";
+          btn.classList.add("incorrect");
           buttons.forEach((b) => {
             if (decodeURIComponent(b.getAttribute("data-choice")) === q.answer) {
-              b.style.background = "rgba(16, 185, 129, 0.1)";
-              b.style.borderColor = "var(--success)";
-              b.style.color = "var(--success)";
-              b.querySelector("span").style.background = "var(--success)";
-              b.querySelector("span").style.color = "#000";
+              b.classList.add("correct");
             }
           });
-          feedbackText.innerHTML = `<span style="color: var(--accent);"><i class="fa-solid fa-circle-xmark"></i> Incorrect. Spacing this card for review.</span>`;
+          feedbackText.innerHTML = `<span class="feedback-error"><i class="fa-solid fa-circle-xmark"></i> Incorrect. Spacing this card for review.</span>`;
           AudioEngine.play("fail");
           setTimeout(() => {
             overlay.style.display = "none";
             overlay.classList.remove("answered");
+            btn.classList.remove("incorrect");
+            buttons.forEach((b) => b.classList.remove("correct"));
             executeFlashcardGrade(false, q);
           }, 2200);
         }
