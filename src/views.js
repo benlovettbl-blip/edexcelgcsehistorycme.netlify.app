@@ -344,6 +344,41 @@ function renderClassicView() {
 }
 
 // 5. Flashcard View logic
+function adaptQuestionText(question) {
+  let text = question;
+  // 1. Replace 4-digit years with [Year]
+  text = text.replace(/\b19\d\d\b/g, '[Year]');
+  
+  // 2. Replace common key actors/places with blanks if present
+  const keys = [
+    'Palestine', 'Israel', 'Britain', 'British', 'League of Nations', 'United Nations', 'UN',
+    'Holocaust', 'Haganah', 'Irgun', 'Jerusalem', 'Zionism', 'Balfour', 'Exodus', 'Egypt',
+    'Syria', 'Jordan', 'Lebanon', 'Suez', 'Sinai', 'Nasser', 'Truman', 'Sadat', 'Begin',
+    'Carter', 'Arafat', 'PLO', 'Fatah', 'Sharon', 'Rabin', 'Oslo', 'Gaza', 'West Bank'
+  ];
+  
+  let replacedCount = 0;
+  for (const key of keys) {
+    const regex = new RegExp('\\b' + key + '\\b', 'gi');
+    if (regex.test(text)) {
+      text = text.replace(regex, '____');
+      replacedCount++;
+      if (replacedCount >= 2) break; // Limit to 2 key blanks to keep sentence readable
+    }
+  }
+  
+  // If we didn't replace any key entities or years, blank out the first proper noun
+  if (replacedCount === 0 && !/\[Year\]/.test(text)) {
+    const properNounRegex = /\b(?<!^)[A-Z][a-z]+\b/g;
+    const matches = text.match(properNounRegex);
+    if (matches && matches.length > 0) {
+      text = text.replace(new RegExp('\\b' + matches[0] + '\\b', 'g'), '____');
+    }
+  }
+  
+  return text;
+}
+
 function startFlashcardSession(subtopicId) {
   const questions = state.allQuestions.filter(q => q.subtopicId === subtopicId);
   
@@ -352,6 +387,7 @@ function startFlashcardSession(subtopicId) {
   state.flashcardSession.activeIndex = 0;
   state.flashcardSession.originalLength = questions.length;
   state.flashcardSession.masteredCount = 0;
+  state.flashcardSession.attempts = {}; // Track attempts per question ID
   
   renderFlashcard();
 }
@@ -384,7 +420,20 @@ function renderFlashcard() {
   backBadge.textContent = q.type === 'standard' ? 'Standard' : 'Top Tier Trivia';
   backBadge.className = `badge ${q.type === 'standard' ? 'badge-standard' : 'badge-depth'}`;
   
-  document.getElementById('card-front-question').textContent = q.question;
+  const attemptCount = state.flashcardSession.attempts?.[q.id] || 0;
+  const isReattempt = attemptCount >= 1;
+  
+  if (isReattempt) {
+    document.getElementById('card-front-question').innerHTML = `
+      <div style="font-size: 0.72rem; text-transform: uppercase; color: var(--accent); font-weight: 800; letter-spacing: 1px; margin-bottom: 8px;">
+        ⚠️ RE-ATTEMPT CHALLENGE (Cloze Recall)
+      </div>
+      <div>${adaptQuestionText(q.question)}</div>
+    `;
+  } else {
+    document.getElementById('card-front-question').textContent = q.question;
+  }
+  
   document.getElementById('card-back-answer').textContent = q.answer;
   document.getElementById('card-back-explanation').textContent = q.explanation;
   
@@ -447,6 +496,9 @@ function getMultipleChoiceChoices(q) {
 
 function showFlashcardMCQ(q) {
   const choices = getMultipleChoiceChoices(q);
+  const attemptCount = state.flashcardSession.attempts?.[q.id] || 0;
+  const isReattempt = attemptCount >= 1;
+  const displayQuestion = isReattempt ? adaptQuestionText(q.question) : q.question;
   
   let overlay = document.getElementById('flashcard-mcq-overlay');
   if (!overlay) {
@@ -460,10 +512,10 @@ function showFlashcardMCQ(q) {
   overlay.innerHTML = `
     <div class="mcq-overlay-content">
       <div class="mcq-header">
-        <span>🎯 ACTIVE RECALL CHECK</span>
+        <span>${isReattempt ? '⚠️ RE-ATTEMPT CHALLENGE' : '🎯 ACTIVE RECALL CHECK'}</span>
       </div>
       <h3 class="mcq-question">
-        ${q.question}
+        ${displayQuestion}
       </h3>
       <div class="mcq-choices-container">
         ${choices.map((choice, i) => `
