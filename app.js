@@ -4641,8 +4641,172 @@
     const cardEl = document.getElementById("flashcard-card");
     cardEl.classList.remove("flipped");
     cardEl.className = "flashcard-card";
+    const overlay = document.getElementById("flashcard-mcq-overlay");
+    if (overlay) {
+      overlay.style.display = "none";
+      overlay.classList.remove("answered");
+    }
     document.getElementById("btn-flashcard-reveal").style.display = "flex";
     document.getElementById("flashcard-self-grade-actions").style.display = "none";
+  }
+  function getMultipleChoiceChoices(q) {
+    const correct = q.answer;
+    let pool = state.allQuestions.filter((other) => other.subtopicId === q.subtopicId && other.answer !== correct).map((other) => other.answer);
+    if (pool.length < 3) {
+      const allPool = state.allQuestions.filter((other) => other.answer !== correct).map((other) => other.answer);
+      pool = pool.concat(allPool);
+    }
+    pool = Array.from(new Set(pool));
+    const distractors = [];
+    while (distractors.length < 3 && pool.length > 0) {
+      const randIdx = Math.floor(Math.random() * pool.length);
+      distractors.push(pool.splice(randIdx, 1)[0]);
+    }
+    const choices = [correct, ...distractors].sort(() => Math.random() - 0.5);
+    return choices;
+  }
+  function showFlashcardMCQ(q) {
+    const choices = getMultipleChoiceChoices(q);
+    let overlay = document.getElementById("flashcard-mcq-overlay");
+    if (!overlay) {
+      overlay = document.createElement("div");
+      overlay.id = "flashcard-mcq-overlay";
+      overlay.style.position = "absolute";
+      overlay.style.top = "0";
+      overlay.style.left = "0";
+      overlay.style.width = "100%";
+      overlay.style.height = "100%";
+      overlay.style.background = "rgba(15, 23, 42, 0.98)";
+      overlay.style.backdropFilter = "blur(8px)";
+      overlay.style.zIndex = "100";
+      overlay.style.display = "flex";
+      overlay.style.flexDirection = "column";
+      overlay.style.alignItems = "center";
+      overlay.style.justifyContent = "center";
+      overlay.style.padding = "20px";
+      overlay.style.borderRadius = "var(--border-radius-lg)";
+      overlay.style.boxSizing = "border-box";
+      overlay.style.border = "1px solid var(--border-glass)";
+      document.getElementById("flashcard-stage").appendChild(overlay);
+    }
+    overlay.style.display = "flex";
+    overlay.innerHTML = `
+    <div class="mcq-overlay-content" style="width: 100%; max-width: 420px; text-align: center; display: flex; flex-direction: column; gap: 16px;">
+      <div style="font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: var(--primary); letter-spacing: 1.5px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+        <span>\u{1F3AF} ACTIVE RECALL CHECK</span>
+      </div>
+      <h3 style="font-size: 1.05rem; margin: 0; color: var(--text-main); font-weight: 700; line-height: 1.4; max-height: 70px; overflow-y: auto;">
+        ${q.question}
+      </h3>
+      <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 6px;">
+        ${choices.map((choice, i) => `
+          <button class="mcq-choice-btn" data-choice="${encodeURIComponent(choice)}" style="
+            width: 100%;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--border-radius-md);
+            color: var(--text-muted);
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            display: flex;
+            align-items: center;
+          ">
+            <span style="display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: rgba(255, 255, 255, 0.08); color: var(--text-muted); font-size: 0.72rem; font-weight: 800; margin-right: 12px; border: 1px solid var(--border-glass); flex-shrink: 0;">${["A", "B", "C", "D"][i]}</span>
+            <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${choice}</span>
+          </button>
+        `).join("")}
+      </div>
+      <div id="mcq-feedback-text" style="font-size: 0.85rem; font-weight: 600; min-height: 20px; color: var(--text-muted);">
+        Select the correct answer to verify your recall.
+      </div>
+    </div>
+  `;
+    const buttons = overlay.querySelectorAll(".mcq-choice-btn");
+    buttons.forEach((btn) => {
+      btn.addEventListener("mouseenter", () => {
+        if (!overlay.classList.contains("answered")) {
+          btn.style.background = "rgba(255, 255, 255, 0.08)";
+          btn.style.borderColor = "var(--primary)";
+          btn.style.color = "var(--text-main)";
+        }
+      });
+      btn.addEventListener("mouseleave", () => {
+        if (!overlay.classList.contains("answered")) {
+          btn.style.background = "rgba(255, 255, 255, 0.02)";
+          btn.style.borderColor = "var(--border-glass)";
+          btn.style.color = "var(--text-muted)";
+        }
+      });
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (overlay.classList.contains("answered")) return;
+        overlay.classList.add("answered");
+        const chosen = decodeURIComponent(btn.getAttribute("data-choice"));
+        const isCorrect = chosen === q.answer;
+        const feedbackText = document.getElementById("mcq-feedback-text");
+        if (isCorrect) {
+          btn.style.background = "rgba(16, 185, 129, 0.15)";
+          btn.style.borderColor = "var(--success)";
+          btn.style.color = "var(--success)";
+          btn.querySelector("span").style.background = "var(--success)";
+          btn.querySelector("span").style.color = "#000";
+          feedbackText.innerHTML = `<span style="color: var(--success);"><i class="fa-solid fa-circle-check"></i> Correct! Fact Memorized.</span>`;
+          AudioEngine.play("success");
+          setTimeout(() => {
+            overlay.style.display = "none";
+            overlay.classList.remove("answered");
+            executeFlashcardGrade(true, q);
+          }, 1200);
+        } else {
+          btn.style.background = "rgba(239, 68, 68, 0.15)";
+          btn.style.borderColor = "var(--accent)";
+          btn.style.color = "var(--accent)";
+          btn.querySelector("span").style.background = "var(--accent)";
+          btn.querySelector("span").style.color = "#000";
+          buttons.forEach((b) => {
+            if (decodeURIComponent(b.getAttribute("data-choice")) === q.answer) {
+              b.style.background = "rgba(16, 185, 129, 0.1)";
+              b.style.borderColor = "var(--success)";
+              b.style.color = "var(--success)";
+              b.querySelector("span").style.background = "var(--success)";
+              b.querySelector("span").style.color = "#000";
+            }
+          });
+          feedbackText.innerHTML = `<span style="color: var(--accent);"><i class="fa-solid fa-circle-xmark"></i> Incorrect. Spacing this card for review.</span>`;
+          AudioEngine.play("fail");
+          setTimeout(() => {
+            overlay.style.display = "none";
+            overlay.classList.remove("answered");
+            executeFlashcardGrade(false, q);
+          }, 2200);
+        }
+      });
+    });
+  }
+  function executeFlashcardGrade(correct, q) {
+    const cardEl = document.getElementById("flashcard-card");
+    if (!cardEl) return;
+    if (correct) {
+      setMastered(q.id, true);
+      state.flashcardSession.masteredCount++;
+      cardEl.classList.add("swipe-right");
+      setTimeout(() => {
+        state.flashcardSession.activeIndex++;
+        renderFlashcard();
+      }, 300);
+    } else {
+      setMastered(q.id, false);
+      cardEl.classList.add("swipe-left");
+      setTimeout(() => {
+        state.flashcardSession.deck.push(q);
+        state.flashcardSession.activeIndex++;
+        renderFlashcard();
+      }, 300);
+    }
   }
   function handleFlashcardGrade(correct) {
     if (state.flashcardSession.activeIndex >= state.flashcardSession.deck.length) return;
@@ -4652,23 +4816,10 @@
     const idx = state.flashcardSession.activeIndex;
     const q = deck[idx];
     if (correct) {
-      setMastered(q.id, true);
-      state.flashcardSession.masteredCount++;
-      AudioEngine.play("success");
-      cardEl.classList.add("swipe-right");
-      setTimeout(() => {
-        state.flashcardSession.activeIndex++;
-        renderFlashcard();
-      }, 300);
+      showFlashcardMCQ(q);
     } else {
-      setMastered(q.id, false);
       AudioEngine.play("fail");
-      cardEl.classList.add("swipe-left");
-      setTimeout(() => {
-        state.flashcardSession.deck.push(q);
-        state.flashcardSession.activeIndex++;
-        renderFlashcard();
-      }, 300);
+      executeFlashcardGrade(false, q);
     }
   }
   function showFlashcardCompletion() {
