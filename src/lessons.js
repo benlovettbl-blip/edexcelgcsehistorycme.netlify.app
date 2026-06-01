@@ -10,6 +10,7 @@ import { QUIZ_DATA } from '../questions.js';
 import { VIDEOS_DATA } from './videos_data.js';
 import { getFallbackUrl } from './image_fallback.js';
 import { LESSON_EXTENSIONS } from './lesson_extensions.js';
+import { SPEC_CHECKLIST_DATA } from './spec_checklist_data.js';
 
 export function renderPracticeRoomContent() {
   const example = PRACTICE_ROOM_DATA[practiceState.currentExampleIndex];
@@ -102,23 +103,38 @@ export function renderSpecChecklistCard(subtopicId, checklist) {
   const itemsHtml = checklist.map((item, idx) => {
     const key = `${subtopicId}_${idx}`;
     const isChecked = checkedStates[key] || false;
+    
+    const keyFactsHtml = item.keyFacts.map(fact => `
+      <li style="margin-bottom: 8px; font-size: 0.88rem; line-height: 1.5; color: var(--text-muted); position: relative; padding-left: 18px; list-style-type: none;">
+        <span style="position: absolute; left: 0; top: 0; color: var(--primary); font-size: 1.1rem; line-height: 1;">&bull;</span>
+        ${fact}
+      </li>
+    `).join('');
+
     return `
       <div class="spec-checklist-item ${isChecked ? 'checked' : ''}" data-key="${key}">
-        <div class="spec-checklist-checkbox">
-          <i class="fa-solid fa-check"></i>
+        <div class="spec-checklist-main" style="display: flex; align-items: flex-start; gap: 12px; width: 100%;">
+          <div class="spec-checklist-checkbox">
+            <i class="fa-solid fa-check"></i>
+          </div>
+          <div class="spec-checklist-text" style="font-weight: 600; font-size: 0.95rem; color: var(--text-main);">${item.point}</div>
         </div>
-        <div class="spec-checklist-text">${item}</div>
+        <div class="spec-checklist-expansion">
+          <ul style="margin: 0; padding: 0;">
+            ${keyFactsHtml}
+          </ul>
+        </div>
       </div>
     `;
   }).join('');
 
   return `
     <div class="spec-checklist-card" style="max-width: 800px; margin: 0 auto 24px auto;">
-      <h4 class="spec-checklist-title">
-        <i class="fa-solid fa-clipboard-list"></i> Edexcel Specification Tracker
+      <h4 class="spec-checklist-title" style="display: flex; align-items: center; gap: 8px;">
+        <i class="fa-solid fa-clipboard-list" style="color: var(--primary);"></i> Official Spec Checklist: Topic study goals
       </h4>
-      <p class="spec-checklist-subtitle">
-        Cross-reference and check off each syllabus requirement for this subtopic:
+      <p class="spec-checklist-subtitle" style="margin-top: 6px; font-size: 0.85rem; color: var(--text-muted); line-height: 1.4;">
+        Tick each official Edexcel specification point to expand the key facts you need for the exam:
       </p>
       <div class="spec-checklist-items">
         ${itemsHtml}
@@ -247,6 +263,22 @@ export function renderMasteryView(subtopicId) {
             </div>
           </div>
           
+        </div>
+      </div>
+    `;
+  } else if (subtopicId === 'subtopic_1_1') {
+    doNowHtml = `
+      <div class="mastery-card background-context-card" style="max-width: 800px; margin: 18px auto 24px auto; border-left: 4px solid var(--primary); background: rgba(59, 130, 246, 0.03); position: relative; padding: 24px;">
+        <div style="position: absolute; top: -12px; left: 16px; background: var(--primary); color: var(--text-inverse); font-size: 0.68rem; font-weight: 800; text-transform: uppercase; padding: 3px 10px; border-radius: 12px; letter-spacing: 0.8px; box-shadow: var(--shadow-sm); z-index: 10;">
+          📖 Prior Context & Background (Pre-1945)
+        </div>
+        <div class="mastery-card-body" style="padding-top: 8px; margin: 0; font-size: 0.92rem; line-height: 1.55; color: var(--text-base);">
+          <p style="margin: 0 0 12px 0;">
+            To understand the crisis in 1945, you must know what happened under the British Mandate since the end of the First World War. In <strong>1917</strong>, Britain issued the <strong>Balfour Declaration</strong>, promising to support a 'national home for the Jewish people' in Palestine. Following the collapse of the Ottoman Empire, the <strong>League of Nations (1922)</strong> granted Britain official administrative control (the Mandate) over the territory.
+          </p>
+          <p style="margin: 0;">
+            Throughout the 1920s and 1930s, escalating Jewish immigration (driven by rising European antisemitism) caused intense Palestinian Arab fear of displacement, culminating in the <strong>Arab Revolt (1936–39)</strong>. To restore order, Britain issued the <strong>1939 White Paper</strong>, which placed a strict limit on Jewish immigration (75,000 over five years) and restricted land sales. Consequently, by 1945, Britain was caught in an impossible trap: Zionists were furious that immigration was blocked during the Holocaust, while Arab leaders demanded immediate independence and an end to all Zionist expansion.
+          </p>
         </div>
       </div>
     `;
@@ -588,7 +620,7 @@ export function renderMasteryView(subtopicId) {
     </div>
 
     <!-- Specification Checklist Card -->
-    ${renderSpecChecklistCard(subtopicId, data.specChecklist)}
+    ${renderSpecChecklistCard(subtopicId, SPEC_CHECKLIST_DATA[subtopicId])}
 
     <!-- Interactive Legend and Switch -->
     <div class="mastery-controls" style="max-width: 800px; margin: 0 auto 20px auto;">
@@ -723,7 +755,10 @@ export function renderMasteryView(subtopicId) {
   // Bind Specification Checklist click listeners
   const checklistItems = container.querySelectorAll('.spec-checklist-item');
   checklistItems.forEach(item => {
-    item.addEventListener('click', () => {
+    item.addEventListener('click', (e) => {
+      if (e.target.closest('.spec-checklist-expansion')) {
+        return;
+      }
       AudioEngine.play('click');
       const key = item.getAttribute('data-key');
       const isChecked = item.classList.contains('checked');
