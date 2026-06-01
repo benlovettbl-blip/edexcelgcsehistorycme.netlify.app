@@ -9,6 +9,7 @@ import { Confetti } from './confetti.js';
 import { QUIZ_DATA } from '../questions.js';
 import { VIDEOS_DATA } from './videos_data.js';
 import { getFallbackUrl } from './image_fallback.js';
+import { LESSON_EXTENSIONS } from './lesson_extensions.js';
 
 export function renderPracticeRoomContent() {
   const example = PRACTICE_ROOM_DATA[practiceState.currentExampleIndex];
@@ -83,6 +84,47 @@ export function renderPracticeRoomContent() {
       });
     }
   });
+}
+
+export function renderSpecChecklistCard(subtopicId, checklist) {
+  if (!checklist || checklist.length === 0) return '';
+  
+  let checkedStates = {};
+  try {
+    const saved = localStorage.getItem('edexcel_spec_checklist');
+    if (saved) {
+      checkedStates = JSON.parse(saved);
+    }
+  } catch (e) {
+    console.error(e);
+  }
+
+  const itemsHtml = checklist.map((item, idx) => {
+    const key = `${subtopicId}_${idx}`;
+    const isChecked = checkedStates[key] || false;
+    return `
+      <div class="spec-checklist-item ${isChecked ? 'checked' : ''}" data-key="${key}">
+        <div class="spec-checklist-checkbox">
+          <i class="fa-solid fa-check"></i>
+        </div>
+        <div class="spec-checklist-text">${item}</div>
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <div class="spec-checklist-card" style="max-width: 800px; margin: 0 auto 24px auto;">
+      <h4 class="spec-checklist-title">
+        <i class="fa-solid fa-clipboard-list"></i> Edexcel Specification Tracker
+      </h4>
+      <p class="spec-checklist-subtitle">
+        Cross-reference and check off each syllabus requirement for this subtopic:
+      </p>
+      <div class="spec-checklist-items">
+        ${itemsHtml}
+      </div>
+    </div>
+  `;
 }
 
 export function renderMasteryView(subtopicId) {
@@ -263,7 +305,7 @@ export function renderMasteryView(subtopicId) {
           </summary>
           <div class="scholarly-content" style="margin-top: 12px; font-size: 0.88rem; line-height: 1.5; color: var(--text-muted);">
             ${scholarlyImgHtml}
-            <strong style="display: block; margin-bottom: 6px; color: var(--primary); font-size: 0.95rem;">${step.scholarlyDepth.title}</strong>
+            <strong style="display: block; margin-bottom: 6px; color: var(--primary); font-size: 0.95rem;">${step.scholarlyDepth.title.replace(/^Scholarly Perspective:\s*/i, '')}</strong>
             <p style="margin: 0 0 12px 0; font-style: italic;">${step.scholarlyDepth.body}</p>
             ${scholarlySourceHtml}
           </div>
@@ -451,6 +493,80 @@ export function renderMasteryView(subtopicId) {
     `;
   }
 
+  // Generate Wrap-Up Summary and Revision Questions from lesson extensions
+  let summaryHtml = '';
+  let revisionQuestionsHtml = '';
+  const extensionData = LESSON_EXTENSIONS[subtopicId];
+  if (extensionData) {
+    if (extensionData.wrapUpSummary && extensionData.wrapUpSummary.length > 0) {
+      const summaryItems = extensionData.wrapUpSummary.map(item => `
+        <li style="margin-bottom: 10px; line-height: 1.5; font-size: 0.9rem; position: relative; padding-left: 24px; list-style-type: none;">
+          <span style="position: absolute; left: 0; top: 2px; color: var(--accent);"><i class="fa-solid fa-circle-check"></i></span>
+          ${item}
+        </li>
+      `).join('');
+      
+      summaryHtml = `
+        <div class="mastery-card wrap-up-card" style="max-width: 800px; margin: 0 auto 24px auto; border-left: 4px solid var(--accent); background: rgba(245, 158, 11, 0.03);">
+          <h3 class="mastery-card-title" style="display: flex; align-items: center; gap: 8px; border: none; margin-bottom: 0;">
+            <i class="fa-solid fa-graduation-cap" style="color: var(--accent);"></i> What have you learned today?
+          </h3>
+          <div class="mastery-card-body" style="padding-top: 12px; margin-top: 0;">
+            <ul style="margin: 0; padding: 0;">
+              ${summaryItems}
+            </ul>
+          </div>
+        </div>
+      `;
+    }
+
+    if (extensionData.revisionQuestions && extensionData.revisionQuestions.length > 0) {
+      let questionsListHtml = '';
+      extensionData.revisionQuestions.forEach(q => {
+        let badgeColor = 'rgba(34, 197, 94, 0.2)'; // default green
+        let textColor = 'var(--success)';
+        if (q.number > 7) {
+          badgeColor = 'rgba(239, 68, 68, 0.2)'; // red
+          textColor = '#f87171';
+        } else if (q.number > 4) {
+          badgeColor = 'rgba(245, 158, 11, 0.2)'; // orange/amber
+          textColor = 'var(--accent)';
+        }
+        
+        questionsListHtml += `
+          <div class="revision-question-item">
+            <div class="revision-question-header">
+              <span class="revision-question-title">Question ${q.number}</span>
+              <span class="revision-difficulty-badge" style="background: ${badgeColor}; color: ${textColor};">
+                ${q.difficulty}
+              </span>
+            </div>
+            <div class="revision-question-text">${q.question}</div>
+            
+            <div class="revision-answer-text">
+              <strong style="color: var(--success); display: block; margin-bottom: 4px;"><i class="fa-solid fa-lightbulb"></i> Answer Guide:</strong>
+              ${q.answer}
+            </div>
+          </div>
+        `;
+      });
+
+      revisionQuestionsHtml = `
+        <div class="mastery-card revision-questions-card" style="max-width: 800px; margin: 0 auto 24px auto;">
+          <h3 class="mastery-card-title">🛡️ 10-Step Unit Mastery Journey</h3>
+          <div class="mastery-card-body">
+            <p style="font-style: italic; margin-top: 0; margin-bottom: 16px; color: var(--text-muted); font-size: 0.85rem;">
+              Missed this lesson or need a thorough refresh? Click through these 10 structured questions (ranging from basic recall to expert challenge) to master the unit!
+            </p>
+            <div class="revision-questions-list">
+              ${questionsListHtml}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+  }
+
   // Set the container innerHTML
   container.innerHTML = `
     ${doNowHtml}
@@ -471,6 +587,9 @@ export function renderMasteryView(subtopicId) {
       ${videoHtml}
     </div>
 
+    <!-- Specification Checklist Card -->
+    ${renderSpecChecklistCard(subtopicId, data.specChecklist)}
+
     <!-- Interactive Legend and Switch -->
     <div class="mastery-controls" style="max-width: 800px; margin: 0 auto 20px auto;">
       <div class="legend-box">
@@ -490,6 +609,10 @@ export function renderMasteryView(subtopicId) {
     ${dualHtml}
     
     ${chainHtml}
+    
+    ${summaryHtml}
+    
+    ${revisionQuestionsHtml}
     
     ${kcHtml}
     
@@ -597,7 +720,35 @@ export function renderMasteryView(subtopicId) {
     });
   });
 
-  // Bind Hard Mode Toggle
+  // Bind Specification Checklist click listeners
+  const checklistItems = container.querySelectorAll('.spec-checklist-item');
+  checklistItems.forEach(item => {
+    item.addEventListener('click', () => {
+      AudioEngine.play('click');
+      const key = item.getAttribute('data-key');
+      const isChecked = item.classList.contains('checked');
+      
+      if (isChecked) {
+        item.classList.remove('checked');
+      } else {
+        item.classList.add('checked');
+      }
+
+      // Save to localStorage
+      try {
+        let checkedStates = {};
+        const saved = localStorage.getItem('edexcel_spec_checklist');
+        if (saved) {
+          checkedStates = JSON.parse(saved);
+        }
+        checkedStates[key] = !isChecked;
+        localStorage.setItem('edexcel_spec_checklist', JSON.stringify(checkedStates));
+      } catch (e) {
+        console.error(e);
+      }
+    });
+  });
+
   const hardModeToggle = document.getElementById('mastery-hard-mode-toggle');
   if (hardModeToggle) {
     hardModeToggle.addEventListener('change', () => {
@@ -632,6 +783,18 @@ export function renderMasteryView(subtopicId) {
   if (questionsList) {
     questionsList.addEventListener('click', (e) => {
       const item = e.target.closest('.quiz-question-item');
+      if (item) {
+        AudioEngine.play('click');
+        item.classList.toggle('revealed');
+      }
+    });
+  }
+
+  // Individual revision question click to toggle answer reveal
+  const revisionQuestionsList = container.querySelector('.revision-questions-list');
+  if (revisionQuestionsList) {
+    revisionQuestionsList.addEventListener('click', (e) => {
+      const item = e.target.closest('.revision-question-item');
       if (item) {
         AudioEngine.play('click');
         item.classList.toggle('revealed');
@@ -1024,7 +1187,7 @@ export function injectInlineBios(htmlString, matchedFigures) {
           
           const button = doc.createElement('button');
           button.className = 'inline-bio-btn';
-          const bioId = `bio-drawer-${key.replace(/\\s+/g, '-')}-${Math.random().toString(36).substr(2, 9)}`;
+          const bioId = `bio-drawer-${key.replace(/\s+/g, '-')}-${Math.random().toString(36).substr(2, 9)}`;
           button.setAttribute('data-bio-target', bioId);
           button.innerHTML = `${matchedText} <i class="fa-solid fa-address-card" style="font-size: 0.85em; opacity: 0.85;"></i>`;
           
