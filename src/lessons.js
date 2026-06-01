@@ -389,11 +389,37 @@ export function renderMasteryView(subtopicId) {
           <p class="dual-perspective-text">${data.dualPerspective.leftText}</p>
         </div>
         <div class="dual-perspective-slider-row">
-          <span class="perspective-label label-left active">🇮🇱 Israeli Perspective</span>
+          <span class="perspective-label label-left active">
+            <svg class="flag-icon" viewBox="0 0 220 160" style="width: 20px; height: 14px; border-radius: 2px; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 1px 3px rgba(0,0,0,0.2); display: inline-block; vertical-align: middle; margin-right: 6px;">
+              <rect width="220" height="160" fill="white"/>
+              <rect y="15" width="220" height="25" fill="#0038b8"/>
+              <rect y="120" width="220" height="25" fill="#0038b8"/>
+              <polygon points="110,48 128,80 92,80" fill="none" stroke="#0038b8" stroke-width="5.5"/>
+              <polygon points="110,92 128,60 92,60" fill="none" stroke="#0038b8" stroke-width="5.5"/>
+            </svg>
+            Israeli Perspective
+          </span>
           <div class="slider-wrapper">
             <input type="range" class="perspective-range-slider" min="0" max="100" value="0">
           </div>
-          <span class="perspective-label label-right">🇵🇸/🇪🇬 Arab Perspective</span>
+          <span class="perspective-label label-right">
+            <span style="display: inline-flex; align-items: center; gap: 4px; vertical-align: middle; margin-right: 6px;">
+              <svg class="flag-icon" viewBox="0 0 24 12" style="width: 20px; height: 14px; border-radius: 2px; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 1px 3px rgba(0,0,0,0.2); display: inline-block;">
+                <rect width="24" height="12" fill="#007a3d"/>
+                <rect width="24" height="8" fill="#fff"/>
+                <rect width="24" height="4" fill="#000"/>
+                <polygon points="0,0 0,12 8,6" fill="#e4312b"/>
+              </svg>
+              <span style="color: var(--text-muted); font-size: 0.8rem;">/</span>
+              <svg class="flag-icon" viewBox="0 0 24 12" style="width: 20px; height: 14px; border-radius: 2px; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 1px 3px rgba(0,0,0,0.2); display: inline-block;">
+                <rect width="24" height="4" fill="#c00"/>
+                <rect y="4" width="24" height="4" fill="#fff"/>
+                <rect y="8" width="24" height="4" fill="#000"/>
+                <polygon points="12,5 13,6.5 12.5,7.5 11.5,7.5 11,6.5" fill="#c90"/>
+              </svg>
+            </span>
+            Arab Perspective
+          </span>
         </div>
         ${data.dualPerspective.tipHtml || ''}
       </div>
