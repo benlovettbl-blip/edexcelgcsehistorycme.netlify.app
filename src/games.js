@@ -1,17 +1,67 @@
-function formatDoomsdayTime(pct) {
+import { state } from './state.js';
+import { AudioEngine } from './audio.js';
+import { Confetti } from './confetti.js';
+import { switchView } from './navigation.js';
+import { saveProgress } from './storage.js';
+import { renderSidebarNav, updateGlobalStats } from './views.js';
+import { QUIZ_DATA } from '../questions.js';
+
+export const CRISIS_SCENARIOS = [
+  {
+    text: "FLASHPOINT I [6 Oct 1973]: Egypt and Syria have launched a surprise assault on Yom Kippur. The Pentagon reports heavy armor losses. The Joint Chiefs want to send tanks immediately, but doing so might upset the delicate balance of global energy stocks.",
+    choices: [
+      {
+        text: "DENY KNOWLEDGE: Inform Prime Minister Golda Meir that the US Switchboard is down for scheduled maintenance until next Tuesday.",
+        effects: { tension: -10, oil: +15, arab: +10, israel: -25 }
+      },
+      {
+        text: "SABOTAGE NEGOTIATIONS: Order a massive, highly visible military transport airlift (Nickel Grass) directly into the warzone to see how much smoke the Kremlin breathes.",
+        effects: { tension: +25, oil: -20, arab: -15, israel: +30 }
+      }
+    ]
+  },
+  {
+    text: "FLASHPOINT II [17 Oct 1973]: King Faisal and OAPEC are furious about the US airlift. They threaten to cut off the West's petroleum supply entirely, plunging civilization into a pre-industrial horse-and-carriage era.",
+    choices: [
+      {
+        text: "PANIC BUYING: Ration domestic fuel to 3 drops per citizen. Mandate that all American commuters must roller-skate to work to preserve industrial vitality.",
+        effects: { tension: -5, oil: +25, arab: +15, israel: -10 }
+      },
+      {
+        text: "DOUBLE DOWN: Inform OPEC that we have invented a secret nuclear-powered automobile and do not require their organic dinosaur fluids anyway.",
+        effects: { tension: +15, oil: -35, arab: -20, israel: +5 }
+      }
+    ]
+  },
+  {
+    text: "FLASHPOINT III [22 Oct 1973]: UN Resolution 338 demands a truce, but Israel's General Sharon has fully encircled Egypt's Third Army. Leonid Brezhnev sends an angry telegram threatening to deploy Soviet paratroopers to Cairo.",
+    choices: [
+      {
+        text: "DEFCON 3 BLUFF: Crank the global military alert scale to DEFCON 3. Order strategic bombers to circle the North Pole while playing high-volume jazz over the radio frequencies to confuse Russian radar.",
+        effects: { tension: +35, oil: -10, arab: -15, israel: +25 }
+      },
+      {
+        text: "DIPLOMATIC SURRENDER: Apologize profusely, demand Israel surrender the Sinai, and offer Brezhnev a signed portrait of President Nixon as a peace offering.",
+        effects: { tension: -30, oil: +10, arab: +20, israel: -35 }
+      }
+    ]
+  }
+];
+
+export function formatDoomsdayTime(pct) {
   if (pct >= 90) return '11:59 PM (ALARM)';
   if (pct <= 10) return '11:40 PM (ICE AGE)';
   let mins = 60 - Math.floor(pct / 2);
   return `11:${mins < 10 ? '0' : ''}${mins} PM`;
 }
 
-function getCrisisColor(value) {
+export function getCrisisColor(value) {
   if (value > 80 || value < 20) return 'var(--accent)';
   if (value > 65 || value < 35) return '#f59e0b';
   return 'var(--primary)';
 }
 
-function initCrisisGame() {
+export function initCrisisGame() {
   state.crisisGameSession.currentStep = 0;
   state.crisisGameSession.metrics = { tension: 50, oil: 50, arab: 50, israel: 50 };
   
@@ -54,7 +104,7 @@ function initCrisisGame() {
   renderCrisisScenario();
 }
 
-function updateCrisisUI() {
+export function updateCrisisUI() {
   const session = state.crisisGameSession;
   
   const tensionEl = document.getElementById('val-tension');
@@ -78,7 +128,7 @@ function updateCrisisUI() {
   });
 }
 
-function checkCrisisGameOver() {
+export function checkCrisisGameOver() {
   const m = state.crisisGameSession.metrics;
   if (m.tension >= 100) return "MUTUAL ASSURED DESTRUCTION VALIDATED: The Doomsday Clock strikes midnight. Strategic missiles launched. There is no recovery program for Paper 2.";
   if (m.tension <= 0) return "GEOPOLITICAL ERASURE: The US surrenders global relevance. Washington is converted into a collective wheat farm for the Eastern Bloc.";
@@ -88,7 +138,7 @@ function checkCrisisGameOver() {
   return null;
 }
 
-function selectCrisisChoice(index) {
+export function selectCrisisChoice(index) {
   const session = state.crisisGameSession;
   const choice = CRISIS_SCENARIOS[session.currentStep].choices[index];
   
@@ -115,7 +165,7 @@ function selectCrisisChoice(index) {
   }
 }
 
-function renderCrisisScenario() {
+export function renderCrisisScenario() {
   const session = state.crisisGameSession;
   const current = CRISIS_SCENARIOS[session.currentStep];
   const textEl = document.getElementById('crisis-scenario-text');
@@ -134,7 +184,7 @@ function renderCrisisScenario() {
   }
 }
 
-function endCrisisGame(msg, isWin) {
+export function endCrisisGame(msg, isWin) {
   const panel = document.getElementById('crisis-game-panel');
   if (!panel) return;
   
@@ -149,10 +199,13 @@ function endCrisisGame(msg, isWin) {
     </div>
   `;
   
-  document.getElementById('btn-restart-crisis').addEventListener('click', () => {
-    AudioEngine.play('click');
-    initCrisisGame();
-  });
+  const restartBtn = document.getElementById('btn-restart-crisis');
+  if (restartBtn) {
+    restartBtn.addEventListener('click', () => {
+      AudioEngine.play('click');
+      initCrisisGame();
+    });
+  }
 }
 
 const TUG_HISTORICAL_POOL = [
@@ -170,7 +223,7 @@ const TUG_HISTORICAL_POOL = [
   { text: "1979: The formal Egypt-Israel Peace Treaty is signed in Washington DC.", type: "deescalation" }
 ];
 
-function initTugGame() {
+export function initTugGame() {
   if (state.tugGameSession.timeoutId) {
     clearTimeout(state.tugGameSession.timeoutId);
     state.tugGameSession.timeoutId = null;
@@ -216,7 +269,7 @@ function initTugGame() {
   nextTugEvent();
 }
 
-function updateTugUI() {
+export function updateTugUI() {
   const session = state.tugGameSession;
   const scoreEl = document.getElementById('stat-score');
   const streakEl = document.getElementById('stat-streak');
@@ -239,7 +292,7 @@ function updateTugUI() {
   }
 }
 
-function nextTugEvent() {
+export function nextTugEvent() {
   if (state.tugGameSession.timeoutId) {
     clearTimeout(state.tugGameSession.timeoutId);
     state.tugGameSession.timeoutId = null;
@@ -268,7 +321,7 @@ function nextTugEvent() {
   if (feedbackEl) feedbackEl.innerText = "";
 }
 
-function processTugIntercept(playerChoice) {
+export function processTugIntercept(playerChoice) {
   const session = state.tugGameSession;
   const feedback = document.getElementById('feedback-display');
   
@@ -305,7 +358,7 @@ function processTugIntercept(playerChoice) {
   state.tugGameSession.timeoutId = setTimeout(nextTugEvent, 900);
 }
 
-function endTugGame(isWin) {
+export function endTugGame(isWin) {
   if (state.tugGameSession.timeoutId) {
     clearTimeout(state.tugGameSession.timeoutId);
     state.tugGameSession.timeoutId = null;
@@ -340,13 +393,16 @@ function endTugGame(isWin) {
     `;
   }
 
-  document.getElementById('btn-restart-tug').addEventListener('click', () => {
-    AudioEngine.play('click');
-    initTugGame();
-  });
+  const restartBtn = document.getElementById('btn-restart-tug');
+  if (restartBtn) {
+    restartBtn.addEventListener('click', () => {
+      AudioEngine.play('click');
+      initTugGame();
+    });
+  }
 }
 
-const jswKeys = {};
+export const jswKeys = {};
 window.addEventListener("keydown", e => {
   if (state.currentView === 'jsw-game') {
     const keysToPrevent = ["Space", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "KeyW", "KeyA", "KeyS", "KeyD"];
@@ -360,7 +416,7 @@ window.addEventListener("keyup", e => {
   jswKeys[e.code] = false;
 });
 
-function initJswGame() {
+export function initJswGame() {
   const session = state.jswGameSession;
   session.score = 0;
   session.lives = 3;
@@ -390,20 +446,55 @@ function initJswGame() {
   if (livesEl) livesEl.innerText = "★★★";
   if (reviewEl) reviewEl.innerHTML = `<strong>INTELLIGENCE FEED:</strong> Collect the 4 floating white spec dispatch cubes to decrypt critical Paper 2 data files. Avoid moving hazards and structural dead zones.`;
 
+  // Bind mobile on-screen touch controls
+  const btnLeft = document.getElementById('jsw-btn-left');
+  const btnRight = document.getElementById('jsw-btn-right');
+  const btnJump = document.getElementById('jsw-btn-jump');
+  
+  if (btnLeft && btnRight && btnJump && !btnLeft.dataset.bound) {
+    btnLeft.dataset.bound = "true";
+    
+    // Left button events
+    const startLeft = (e) => { e.preventDefault(); jswKeys["ArrowLeft"] = true; };
+    const stopLeft = (e) => { e.preventDefault(); jswKeys["ArrowLeft"] = false; };
+    btnLeft.addEventListener('pointerdown', startLeft);
+    btnLeft.addEventListener('pointerup', stopLeft);
+    btnLeft.addEventListener('pointerleave', stopLeft);
+    btnLeft.addEventListener('touchstart', startLeft);
+    btnLeft.addEventListener('touchend', stopLeft);
+    
+    // Right button events
+    const startRight = (e) => { e.preventDefault(); jswKeys["ArrowRight"] = true; };
+    const stopRight = (e) => { e.preventDefault(); jswKeys["ArrowRight"] = false; };
+    btnRight.addEventListener('pointerdown', startRight);
+    btnRight.addEventListener('pointerup', stopRight);
+    btnRight.addEventListener('pointerleave', stopRight);
+    btnRight.addEventListener('touchstart', startRight);
+    btnRight.addEventListener('touchend', stopRight);
+    
+    // Jump button events
+    const startJump = (e) => { e.preventDefault(); jswKeys["Space"] = true; };
+    const stopJump = (e) => { e.preventDefault(); jswKeys["Space"] = false; };
+    btnJump.addEventListener('pointerdown', startJump);
+    btnJump.addEventListener('pointerup', stopJump);
+    btnJump.addEventListener('touchstart', startJump);
+    btnJump.addEventListener('touchend', stopJump);
+  }
+
   startJswLoop();
 }
 
-function stopJswLoop() {
+export function stopJswLoop() {
   state.jswGameSession.loopActive = false;
 }
 
-function startJswLoop() {
+export function startJswLoop() {
   if (state.jswGameSession.loopActive) return;
   state.jswGameSession.loopActive = true;
   requestAnimationFrame(jswGameLoop);
 }
 
-function jswGameLoop() {
+export function jswGameLoop() {
   const session = state.jswGameSession;
   if (!session.loopActive || state.currentView !== 'jsw-game') {
     session.loopActive = false;
@@ -414,7 +505,7 @@ function jswGameLoop() {
   requestAnimationFrame(jswGameLoop);
 }
 
-function updateJswGame() {
+export function updateJswGame() {
   const session = state.jswGameSession;
   const player = session.player;
 
@@ -505,7 +596,7 @@ function updateJswGame() {
   }
 }
 
-function handleJswDeath() {
+export function handleJswDeath() {
   const session = state.jswGameSession;
   session.lives--;
   
@@ -525,13 +616,13 @@ function handleJswDeath() {
   }
 }
 
-function handleJswVictory() {
+export function handleJswVictory() {
   const session = state.jswGameSession;
   AudioEngine.play('cheer');
   session.isGameWon = true;
 }
 
-function drawJswGame() {
+export function drawJswGame() {
   const canvas = document.getElementById("jswCanvas");
   if (!canvas) return;
   const ctx = canvas.getContext("2d");
@@ -595,7 +686,7 @@ function drawJswGame() {
   }
 }
 
-const PRACTICE_ROOM_DATA = [
+export const PRACTICE_ROOM_DATA = [
   {
     id: 'practice_1',
     subtopicId: 'subtopic_1_1',
@@ -746,8 +837,7 @@ const PRACTICE_ROOM_DATA = [
   }
 ];
 
-let practiceState = {
+export const practiceState = {
   currentExampleIndex: 0,
   clickedErrors: new Set()
 };
-

@@ -1,56 +1,12 @@
-// --- Past Exam Papers Engine ---
-function getKeywordsForQuestion(questionObj) {
-  if (questionObj.keywords && questionObj.keywords.length > 0) {
-    return questionObj.keywords;
-  }
-  
-  const textToScan = (questionObj.question || '') + ' ' + (questionObj.clue || '') + ' ' + (questionObj.answer || questionObj.model || '');
-  
-  // Extract proper noun phrases (sequences of capitalized words)
-  const words = textToScan.match(/(?:[A-Z][a-zA-Z0-9\-]+)(?:\s+[A-Z][a-zA-Z0-9\-]+)*/g) || [];
-  
-  const uniqueWords = [];
-  const ignored = [
-    'Explain', 'Consequence', 'One', 'Another', 'Think', 'Also', 'Section', 'Question', 
-    'Write', 'Narrative', 'Topic', 'Summer', 'Autumn', 'Winter', 'Spring', 'Year', 
-    'Level', 'Point', 'For', 'The', 'In', 'This', 'To', 'And', 'Of', 'With', 'How', 
-    'Who', 'What', 'Where', 'Why', 'When', 'Detail', 'Start', 'You', 'Your', 'About', 
-    'Are', 'Was', 'Were', 'Is', 'Not', 'Or', 'As', 'At', 'By', 'An', 'It', 'From', 
-    'Be', 'They', 'Them', 'Their', 'He', 'She', 'His', 'Her', 'Its', 'But', 'No', 
-    'Has', 'Have', 'Had', 'Been', 'Will', 'Would', 'Can', 'Could', 'Should', 'May', 
-    'Might', 'Must', 'Choose', 'Select', 'Draft', 'Key', 'Terms', 'Clue', 'Official',
-    'Answer', 'Model', 'Section', 'Marks', 'Total'
-  ];
-  
-  words.forEach(w => {
-    const cleaned = w.trim().replace(/[.,;:()?!]/g, '');
-    if (cleaned.length > 2 && !ignored.includes(cleaned) && !uniqueWords.includes(cleaned)) {
-      // Don't add if it's a sub-part of an existing phrase
-      if (!uniqueWords.some(existing => existing.includes(cleaned))) {
-        uniqueWords.push(cleaned);
-      }
-    }
-  });
-  
-  // Also scan for predefined critical historical Middle East keywords in lowercase/anycase
-  const historicalTerms = [
-    "Nakba", "refugee", "West Bank", "Gaza", "partition", "mandate", "Suez", "nationalise",
-    "Fedayeen", "Sinai", "Tiran", "Cairo", "Samu", "PLO", "Six Day", "Resolution 242",
-    "Three Nos", "Khartoum", "Yom Kippur", "Sadat", "Knesset", "shuttle diplomacy",
-    "Camp David", "peace treaty", "Fatah", "Lebanon", "Litani", "Hezbollah", "Intifada",
-    "Oslo", "Rabin", "Arafat", "Hamas"
-  ];
-  
-  historicalTerms.forEach(term => {
-    if (textToScan.toLowerCase().includes(term.toLowerCase()) && !uniqueWords.some(w => w.toLowerCase().includes(term.toLowerCase()))) {
-      uniqueWords.push(term);
-    }
-  });
-  
-  return uniqueWords.slice(0, 5); // Max 5 keywords
-}
+import { state } from './state.js';
+import { saveProgress } from './storage.js';
+import { AudioEngine } from './audio.js';
+import { getKeywordsForQuestion } from './layout.js';
+import { PAST_PAPERS_DATA, CONSEQUENCE_SKILLS_DATA, NARRATIVE_SKILLS_DATA, EXAM_SKILLS_DATA } from '../questions.js';
 
-function updateDraftFeedback(qId, value, questionObj) {
+// --- Past Exam Papers Engine ---
+
+export function updateDraftFeedback(qId, value, questionObj) {
   const badge = document.getElementById(`feedback-badge-${qId}`);
   const fill = document.getElementById(`feedback-fill-${qId}`);
   const connTags = document.getElementById(`connective-tags-${qId}`);
@@ -113,17 +69,18 @@ function updateDraftFeedback(qId, value, questionObj) {
     if (keyRow) keyRow.style.display = 'none';
   }
 }
-function renderPastPapersView() {
+
+export function renderPastPapersView() {
   const container = document.getElementById('past-paper-sheet-container');
   if (state.pastPaperSession.activePaperId) {
     renderExamSheet();
-    container.style.display = 'block';
+    if (container) container.style.display = 'block';
   } else {
-    container.style.display = 'none';
+    if (container) container.style.display = 'none';
   }
 }
 
-function startPastPaper(paperId) {
+export function startPastPaper(paperId) {
   const paper = PAST_PAPERS_DATA.find(p => p.id === paperId);
   if (!paper) return;
 
@@ -134,10 +91,11 @@ function startPastPaper(paperId) {
   }
   
   renderExamSheet();
-  document.getElementById('past-paper-sheet-container').style.display = 'block';
+  const sheetContainer = document.getElementById('past-paper-sheet-container');
+  if (sheetContainer) sheetContainer.style.display = 'block';
 }
 
-function generateMockExam() {
+export function generateMockExam() {
   const consequenceKeys = Object.keys(CONSEQUENCE_SKILLS_DATA);
   const randomC1 = consequenceKeys[Math.floor(Math.random() * consequenceKeys.length)];
   const randomC2 = consequenceKeys.filter(k => k !== randomC1)[Math.floor(Math.random() * (consequenceKeys.length - 1))];
@@ -203,10 +161,11 @@ function generateMockExam() {
   state.pastPaperSession.answers[paper.id] = {};
 
   renderExamSheet();
-  document.getElementById('past-paper-sheet-container').style.display = 'block';
+  const sheetContainer = document.getElementById('past-paper-sheet-container');
+  if (sheetContainer) sheetContainer.style.display = 'block';
 }
 
-function togglePastClue(qId) {
+export function togglePastClue(qId) {
   const box = document.getElementById(`past-clue-box-${qId}`);
   if (!box) return;
   const isHidden = box.style.display === 'none';
@@ -214,7 +173,7 @@ function togglePastClue(qId) {
   AudioEngine.play(isHidden ? 'flip' : 'click');
 }
 
-function togglePastAnswer(qId) {
+export function togglePastAnswer(qId) {
   const box = document.getElementById(`past-answer-box-${qId}`);
   if (!box) return;
   const isHidden = box.style.display === 'none';
@@ -222,7 +181,7 @@ function togglePastAnswer(qId) {
   AudioEngine.play(isHidden ? 'success' : 'click');
 }
 
-function togglePastQuestionComplete(qId, checked) {
+export function togglePastQuestionComplete(qId, checked) {
   const session = state.pastPaperSession;
   if (checked) {
     if (!session.completedQuestions.includes(qId)) {
@@ -239,11 +198,11 @@ function togglePastQuestionComplete(qId, checked) {
   saveProgress();
 }
 
-function renderExamSheet() {
+export function renderExamSheet() {
   const session = state.pastPaperSession;
   const paper = session.activePaperData;
   const container = document.getElementById('past-paper-sheet-container');
-  if (!paper) return;
+  if (!paper || !container) return;
 
   const questionsList = [];
   if (paper.q1) {
@@ -329,7 +288,6 @@ function renderExamSheet() {
   container.innerHTML = html;
 
   questionsList.forEach(qId => {
-    // Find the question object in the active paper
     let qObj = null;
     if (paper.q1) {
       if (paper.q1.type === 'consequence_split_4') {
@@ -376,16 +334,20 @@ function renderExamSheet() {
     }
   });
 
-  document.getElementById('btn-close-exam-sheet').addEventListener('click', () => {
-    AudioEngine.play('click');
-    state.pastPaperSession.activePaperId = null;
-    state.pastPaperSession.activePaperData = null;
-    document.getElementById('past-paper-sheet-container').style.display = 'none';
-    document.getElementById('past-paper-select').value = '';
-  });
+  const closeBtn = document.getElementById('btn-close-exam-sheet');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', () => {
+      AudioEngine.play('click');
+      state.pastPaperSession.activePaperId = null;
+      state.pastPaperSession.activePaperData = null;
+      container.style.display = 'none';
+      const selectEl = document.getElementById('past-paper-select');
+      if (selectEl) selectEl.value = '';
+    });
+  }
 }
 
-function renderPastQuestionMarkup(qId, questionText, clue, modelAnswer, marks, stimulus = null) {
+export function renderPastQuestionMarkup(qId, questionText, clue, modelAnswer, marks, stimulus = null) {
   let stimulusHTML = '';
   if (stimulus && stimulus.length > 0) {
     stimulusHTML = `
@@ -451,7 +413,7 @@ function renderPastQuestionMarkup(qId, questionText, clue, modelAnswer, marks, s
   `;
 }
 
-function renderExamSheetStats() {
+export function renderExamSheetStats() {
   const session = state.pastPaperSession;
   const paper = session.activePaperData;
   if (!paper) return;
@@ -482,46 +444,3 @@ function renderExamSheetStats() {
     `;
   }
 }
-
-const CRISIS_SCENARIOS = [
-  {
-    text: "FLASHPOINT I [6 Oct 1973]: Egypt and Syria have launched a surprise assault on Yom Kippur. The Pentagon reports heavy armor losses. The Joint Chiefs want to send tanks immediately, but doing so might upset the delicate balance of global energy stocks.",
-    choices: [
-      {
-        text: "DENY KNOWLEDGE: Inform Prime Minister Golda Meir that the US Switchboard is down for scheduled maintenance until next Tuesday.",
-        effects: { tension: -10, oil: +15, arab: +10, israel: -25 }
-      },
-      {
-        text: "SABOTAGE NEGOTIATIONS: Order a massive, highly visible military transport airlift (Nickel Grass) directly into the warzone to see how much smoke the Kremlin breathes.",
-        effects: { tension: +25, oil: -20, arab: -15, israel: +30 }
-      }
-    ]
-  },
-  {
-    text: "FLASHPOINT II [17 Oct 1973]: King Faisal and OAPEC are furious about the US airlift. They threaten to cut off the West's petroleum supply entirely, plunging civilization into a pre-industrial horse-and-carriage era.",
-    choices: [
-      {
-        text: "PANIC BUYING: Ration domestic fuel to 3 drops per citizen. Mandate that all American commuters must roller-skate to work to preserve industrial vitality.",
-        effects: { tension: -5, oil: +25, arab: +15, israel: -10 }
-      },
-      {
-        text: "DOUBLE DOWN: Inform OPEC that we have invented a secret nuclear-powered automobile and do not require their organic dinosaur fluids anyway.",
-        effects: { tension: +15, oil: -35, arab: -20, israel: +5 }
-      }
-    ]
-  },
-  {
-    text: "FLASHPOINT III [22 Oct 1973]: UN Resolution 338 demands a truce, but Israel's General Sharon has fully encircled Egypt's Third Army. Leonid Brezhnev sends an angry telegram threatening to deploy Soviet paratroopers to Cairo.",
-    choices: [
-      {
-        text: "DEFCON 3 BLUFF: Crank the global military alert scale to DEFCON 3. Order strategic bombers to circle the North Pole while playing high-volume jazz over the radio frequencies to confuse Russian radar.",
-        effects: { tension: +35, oil: -10, arab: -15, israel: +25 }
-      },
-      {
-        text: "DIPLOMATIC SURRENDER: Apologize profusely, demand Israel surrender the Sinai, and offer Brezhnev a signed portrait of President Nixon as a peace offering.",
-        effects: { tension: -30, oil: +10, arab: +20, israel: -35 }
-      }
-    ]
-  }
-];
-

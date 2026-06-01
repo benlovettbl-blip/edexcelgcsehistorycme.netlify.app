@@ -5,7 +5,7 @@
 */
 
 // --- Global Application State ---
-const state = {
+export const state = {
   currentView: 'dashboard',         // 'dashboard' | 'classic' | 'flashcards' | 'exam' | 'timeline' | 'bookmarks'
   selectedSubtopicId: null,         // Active sub-topic ID (e.g. 'subtopic_1_1')
   currentMode: 'lessons',           // 'lessons' | 'classic' | 'flashcards' (sub-topic study modes)
@@ -88,4 +88,3 @@ const state = {
     ]
   }
 };
-

@@ -1,4 +1,4 @@
-$questionsFile = "C:\Users\fives\.gemini\antigravity\scratch\firefly_recall_quizzes\questions.js"
+$questionsFile = "$PSScriptRoot\questions.js"
 $content = Get-Content -Raw -Path $questionsFile
 # Remove single-line comments
 $content = $content -replace "(?m)^\s*//.*$", ""

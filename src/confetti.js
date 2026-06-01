@@ -1,5 +1,5 @@
 // --- HTML5 Canvas Confetti Celebrator ---
-const Confetti = {
+export const Confetti = {
   canvas: null,
   ctx: null,
   particles: [],
@@ -76,4 +76,3 @@ const Confetti = {
     }
   }
 };
-

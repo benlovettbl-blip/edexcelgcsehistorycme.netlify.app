@@ -1,8 +1,8 @@
 # check_ids.ps1
 # This script extracts all IDs defined in index.html and matches them against references in JS files.
 
-$htmlFile = "C:\Users\fives\.gemini\antigravity\scratch\firefly_recall_quizzes\index.html"
-$jsDir = "C:\Users\fives\.gemini\antigravity\scratch\firefly_recall_quizzes\src"
+$htmlFile = "$PSScriptRoot\index.html"
+$jsDir = "$PSScriptRoot\src"
 
 # Extract IDs from HTML using regex
 $htmlContent = Get-Content $htmlFile -Raw

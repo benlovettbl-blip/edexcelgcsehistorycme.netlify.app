@@ -1,7 +1,43 @@
+import { state } from './state.js';
+import { stopJswLoop } from './games.js';
+import { 
+  renderDashboard, 
+  renderBookmarksView, 
+  renderTimelineView, 
+  renderExamSkillsView, 
+  renderFireflyView,
+  renderClassicView,
+  startFlashcardSession,
+  renderGamesView
+} from './views.js';
+import { showExamSetup } from './exam.js';
+import { renderPastPapersView } from './past_papers.js';
+import { renderMasteryView } from './lessons.js';
+import { updateBrandBanner } from './brand_config.js';
+import { closeMobileSidebar } from './layout.js';
+import { AudioEngine } from './audio.js';
+
+const INQUIRY_QUESTIONS = {
+  "subtopic_1_1": "Inquiry: How did the British withdrawal lead to the creation of Israel, 1945–48?",
+  "subtopic_1_2": "Inquiry: What were the causes and consequences of the 1948–49 Arab-Israeli War?",
+  "subtopic_1_3": "Inquiry: Why did the nationalisation of the Suez Canal spark a major international crisis in 1956?",
+  "subtopic_2_1": "Inquiry: How did tensions escalate to cause the outbreak and swift outcome of the 1967 Six Day War?",
+  "subtopic_2_2": "Inquiry: Why did Palestinian nationalism grow and what impact did it have on the conflict?",
+  "subtopic_2_3": "Inquiry: Why did the Yom Kippur War break out in 1973 and how did it change the balance of power?",
+  "subtopic_3_1": "Inquiry: How was a historic peace accord achieved between Egypt and Israel at Camp David?",
+  "subtopic_3_2": "Inquiry: What were the causes and consequences of the Israeli invasion of Lebanon and the First Intifada?",
+  "subtopic_3_3": "Inquiry: How did the Oslo Accords attempt to resolve the conflict, and why did they ultimately stall?"
+};
+
 // --- Navigation Controller ---
-function switchView(viewName, subtopicId = null) {
+export function switchView(viewName, subtopicId = null) {
   state.currentView = viewName;
   stopJswLoop();
+
+  const inquiryEl = document.getElementById('header-inquiry-question');
+  if (inquiryEl) {
+    inquiryEl.style.display = 'none';
+  }
 
   if (state.tugGameSession && state.tugGameSession.timeoutId) {
     clearTimeout(state.tugGameSession.timeoutId);
@@ -16,80 +52,90 @@ function switchView(viewName, subtopicId = null) {
   const headerModeSwitcher = document.getElementById('subtopic-mode-switcher');
   
   if (viewName === 'dashboard') {
-    document.getElementById('nav-dashboard').classList.add('active');
-    headerModeSwitcher.style.display = 'none';
-    document.getElementById('current-view-title').textContent = "Study Dashboard";
+    const dashboardNav = document.getElementById('nav-dashboard');
+    if (dashboardNav) dashboardNav.classList.add('active');
+    if (headerModeSwitcher) headerModeSwitcher.style.display = 'none';
+    const viewTitle = document.getElementById('current-view-title');
+    if (viewTitle) viewTitle.textContent = "Study Dashboard";
     state.selectedSubtopicId = null;
     renderDashboard();
   } else if (viewName === 'bookmarks') {
-    document.getElementById('nav-bookmarks').classList.add('active');
-    headerModeSwitcher.style.display = 'none';
-    document.getElementById('current-view-title').textContent = "Bookmarked Deck";
+    const bookmarksNav = document.getElementById('nav-bookmarks');
+    if (bookmarksNav) bookmarksNav.classList.add('active');
+    if (headerModeSwitcher) headerModeSwitcher.style.display = 'none';
+    const viewTitle = document.getElementById('current-view-title');
+    if (viewTitle) viewTitle.textContent = "Bookmarked Deck";
     state.selectedSubtopicId = null;
     renderBookmarksView();
   } else if (viewName === 'timeline') {
-    document.getElementById('nav-timeline').classList.add('active');
-    headerModeSwitcher.style.display = 'none';
-    document.getElementById('current-view-title').textContent = "Chronology Timeline";
+    const timelineNav = document.getElementById('nav-timeline');
+    if (timelineNav) timelineNav.classList.add('active');
+    if (headerModeSwitcher) headerModeSwitcher.style.display = 'none';
+    const viewTitle = document.getElementById('current-view-title');
+    if (viewTitle) viewTitle.textContent = "Chronology Timeline";
     state.selectedSubtopicId = null;
     renderTimelineView();
   } else if (viewName === 'exam') {
-    document.getElementById('nav-exam-sim').classList.add('active');
-    headerModeSwitcher.style.display = 'none';
-    document.getElementById('current-view-title').textContent = "Quiz Generator";
+    const examNav = document.getElementById('nav-exam-sim');
+    if (examNav) examNav.classList.add('active');
+    if (headerModeSwitcher) headerModeSwitcher.style.display = 'none';
+    const viewTitle = document.getElementById('current-view-title');
+    if (viewTitle) viewTitle.textContent = "Quiz Generator";
     state.selectedSubtopicId = null;
-    // Don't interrupt if an exam is already running
     if (!state.examSession.isActive) {
       showExamSetup();
     }
   } else if (viewName === 'exam-skills') {
-    document.getElementById('nav-exam-skills').classList.add('active');
-    headerModeSwitcher.style.display = 'none';
-    document.getElementById('current-view-title').textContent = "Exam Practice (Q1-Q3)";
+    const skillsNav = document.getElementById('nav-exam-skills');
+    if (skillsNav) skillsNav.classList.add('active');
+    if (headerModeSwitcher) headerModeSwitcher.style.display = 'none';
+    const viewTitle = document.getElementById('current-view-title');
+    if (viewTitle) viewTitle.textContent = "Exam Practice (Q1-Q3)";
     state.selectedSubtopicId = null;
     renderExamSkillsView();
   } else if (viewName === 'past-papers') {
-    document.getElementById('nav-past-papers').classList.add('active');
-    headerModeSwitcher.style.display = 'none';
-    document.getElementById('current-view-title').textContent = "Past Exam Papers";
+    const papersNav = document.getElementById('nav-past-papers');
+    if (papersNav) papersNav.classList.add('active');
+    if (headerModeSwitcher) headerModeSwitcher.style.display = 'none';
+    const viewTitle = document.getElementById('current-view-title');
+    if (viewTitle) viewTitle.textContent = "Past Exam Papers";
     state.selectedSubtopicId = null;
     renderPastPapersView();
-  } else if (viewName === 'crisis-game') {
-    document.getElementById('nav-crisis-game').classList.add('active');
-    headerModeSwitcher.style.display = 'none';
-    document.getElementById('current-view-title').textContent = "Crisis Hotline: 1973";
+  } else if (viewName === 'games') {
+    const gamesNav = document.getElementById('nav-games');
+    if (gamesNav) gamesNav.classList.add('active');
+    if (headerModeSwitcher) headerModeSwitcher.style.display = 'none';
+    const viewTitle = document.getElementById('current-view-title');
+    if (viewTitle) viewTitle.textContent = "Revision Games Hub";
     state.selectedSubtopicId = null;
-    initCrisisGame();
-  } else if (viewName === 'tug-game') {
-    document.getElementById('nav-tug-game').classList.add('active');
-    headerModeSwitcher.style.display = 'none';
-    document.getElementById('current-view-title').textContent = "Timeline Intercept";
-    state.selectedSubtopicId = null;
-    initTugGame();
-  } else if (viewName === 'jsw-game') {
-    document.getElementById('nav-jsw-game').classList.add('active');
-    headerModeSwitcher.style.display = 'none';
-    document.getElementById('current-view-title').textContent = "Jet Set Willy";
-    state.selectedSubtopicId = null;
-    initJswGame();
+    renderGamesView();
   } else if (viewName === 'firefly') {
-    document.getElementById('nav-firefly').classList.add('active');
-    headerModeSwitcher.style.display = 'none';
-    document.getElementById('current-view-title').textContent = "Firefly HTML Export";
+    const fireflyNav = document.getElementById('nav-firefly');
+    if (fireflyNav) fireflyNav.classList.add('active');
+    if (headerModeSwitcher) headerModeSwitcher.style.display = 'none';
+    const viewTitle = document.getElementById('current-view-title');
+    if (viewTitle) viewTitle.textContent = "Firefly HTML Export";
     state.selectedSubtopicId = null;
     renderFireflyView();
   } else if (viewName === 'subtopic' && subtopicId) {
     state.selectedSubtopicId = subtopicId;
-    headerModeSwitcher.style.display = 'flex';
+    if (headerModeSwitcher) headerModeSwitcher.style.display = 'flex';
     
     // Highlight correct subtopic in sidebar
     const subNavBtn = document.getElementById(`nav-subtopic-${subtopicId}`);
     if (subNavBtn) subNavBtn.classList.add('active');
     
     const subtopic = state.allQuestions.find(q => q.subtopicId === subtopicId);
-    document.getElementById('current-view-title').textContent = subtopic ? subtopic.subtopicTitle.replace(/^Topic \d\.\d:\s*/, "") : "Study Mode";
+    const viewTitle = document.getElementById('current-view-title');
+    if (viewTitle) {
+      viewTitle.textContent = subtopic ? subtopic.subtopicTitle.replace(/^Topic \d\.\d:\s*/, "") : "Study Mode";
+    }
     
-    // Switch to active subtopic sub-mode (classic accordion list or flashcard view)
+    if (inquiryEl && INQUIRY_QUESTIONS[subtopicId]) {
+      inquiryEl.textContent = INQUIRY_QUESTIONS[subtopicId];
+      inquiryEl.style.display = 'block';
+    }
+    
     switchSubtopicMode(state.currentMode);
   }
 
@@ -105,9 +151,7 @@ function switchView(viewName, subtopicId = null) {
     'firefly': 'view-firefly',
     'exam-skills': 'view-exam-skills',
     'past-papers': 'view-past-papers',
-    'crisis-game': 'view-crisis-game',
-    'tug-game': 'view-tug-game',
-    'jsw-game': 'view-jsw-game'
+    'games': 'view-games'
   };
 
   const targetViewId = viewName === 'subtopic' ? viewIdMap[state.currentMode] : viewIdMap[viewName];
@@ -119,10 +163,11 @@ function switchView(viewName, subtopicId = null) {
   const targetView = document.getElementById(targetViewId);
   if (targetView) targetView.classList.add('active');
   
-  // Close mobile sidebar if overlay is open
   closeMobileSidebar();
+  updateBrandBanner();
 }
-function switchSubtopicMode(mode) {
+
+export function switchSubtopicMode(mode) {
   state.currentMode = mode;
   
   // Update header buttons active state
@@ -140,14 +185,18 @@ function switchSubtopicMode(mode) {
   });
 
   if (mode === 'lessons') {
-    document.getElementById('view-mastery').classList.add('active');
+    const masteryView = document.getElementById('view-mastery');
+    if (masteryView) masteryView.classList.add('active');
     renderMasteryView(state.selectedSubtopicId);
   } else if (mode === 'classic') {
-    document.getElementById('view-classic').classList.add('active');
+    const classicView = document.getElementById('view-classic');
+    if (classicView) classicView.classList.add('active');
     renderClassicView();
   } else if (mode === 'flashcards') {
-    document.getElementById('view-flashcards').classList.add('active');
+    const flashcardsView = document.getElementById('view-flashcards');
+    if (flashcardsView) flashcardsView.classList.add('active');
     startFlashcardSession(state.selectedSubtopicId);
   }
+
+  updateBrandBanner();
 }
-

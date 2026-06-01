@@ -1,12 +1,12 @@
 {
-  "name": "middle-east-history-mastery",
+  "name": "edexcelgcsehistorycme",
   "version": "1.0.0",
   "description": "Edexcel GCSE History Paper 2 Conflict in the Middle East Mastery",
   "main": "index.html",
   "scripts": {
-    "build:js": "powershell -ExecutionPolicy Bypass -File build.ps1",
-    "build:copy": "node build_assets.js",
-    "build": "npm run build:js && npm run build:copy",
+    "dev": "vite",
+    "bundle": "npx esbuild src/main.js --bundle --outfile=app.js",
+    "build": "npm run bundle && vite build && node -e \"const fs = require('fs'); fs.copyFileSync('app.js', 'dist/app.js'); fs.copyFileSync('questions.js', 'dist/questions.js');\"",
     "cap:sync": "npx cap sync",
     "build:apk": "cd android && gradlew.bat assembleDebug",
     "build:aab": "cd android && gradlew.bat bundleRelease"
@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "@capacitor/android": "^8.3.4",
-    "@capacitor/cli": "^8.3.4"
+    "@capacitor/cli": "^8.3.4",
+    "vite": "^8.0.14"
   }
 }

@@ -1,5 +1,5 @@
-$dumpPath = "C:\Users\fives\.gemini\antigravity\scratch\firefly_recall_quizzes\consequence_dump_utf8.txt"
-$outputPath = "C:\Users\fives\.gemini\antigravity\scratch\firefly_recall_quizzes\keys_found.txt"
+$dumpPath = "$PSScriptRoot\consequence_dump_utf8.txt"
+$outputPath = "$PSScriptRoot\keys_found.txt"
 
 $keys = @(
     "1.1a", "1.1b", "1.2a", "1.2b", "1.3a", "1.3b",

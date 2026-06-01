@@ -1,5 +1,5 @@
 $transcriptPath = "C:\Users\fives\.gemini\antigravity\brain\1844f957-6c6e-45bc-a32f-52f6a520a16c\.system_generated\logs\transcript.jsonl"
-$outputPath = "C:\Users\fives\.gemini\antigravity\scratch\firefly_recall_quizzes\consequence_questions_only.txt"
+$outputPath = "$PSScriptRoot\consequence_questions_only.txt"
 
 $lines = Get-Content -Path $transcriptPath
 $found = $false

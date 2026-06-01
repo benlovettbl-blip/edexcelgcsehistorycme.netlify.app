@@ -7,3 +7,10 @@ local.properties
 *.apk
 *.aab
 .idea/
+
+# Local Netlify folder
+.netlify
+
+# Build zip
+dist.zip
+

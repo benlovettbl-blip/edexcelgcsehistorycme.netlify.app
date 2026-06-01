@@ -1,4 +1,4 @@
-﻿// Middle East Conflict (1945-95) Quiz Data
+// Middle East Conflict (1945-95) Quiz Data
 // Stored as a global variable to prevent CORS issues when run via file:// protocol.
 
 const QUIZ_DATA = [
@@ -8,7 +8,7 @@ const QUIZ_DATA = [
     subtopics: [
       {
         id: "subtopic_1_1",
-        embedVideo: "https://drive.google.com/file/d/1Xsr4nwvw07s8NOAIf0cDnVOEk2-z_RQ7/preview",
+        embedVideo: "https://youtu.be/PgnQeDoypO8",
         title: "Topic 1.1: The British withdrawal and the creation of Israel",
         standard: [
           {
@@ -117,12 +117,19 @@ const QUIZ_DATA = [
             answer: "Kibbutz",
             explanation: "These highly socialist, collective farming communities were crucial not only for agricultural development but also acted as strategic military outposts that delayed Arab advances in 1948.",
             year: 1910
+          },
+          {
+            id: "q_1_1_d6",
+            question: "Which prominent Palestinian leader and Grand Mufti of Jerusalem led the Arab Higher Committee in opposing Jewish immigration during the British Mandate?",
+            answer: "Haj Amin al-Husseini",
+            explanation: "Haj Amin al-Husseini was the Grand Mufti of Jerusalem who became the main leader of Arab opposition to Zionism and British rule. He led the Arab Higher Committee during the 1936–39 Arab Revolt, fiercely fighting Jewish immigration.",
+            year: 1936
           }
         ]
       },
       {
         id: "subtopic_1_2",
-        embedVideo: "https://drive.google.com/file/d/1rK1XjRnoKZTyr2exL8s7Xv12UEZ6jcLf/preview",
+        embedVideo: "https://youtu.be/fXk_n_ww6GU",
         title: "Topic 1.2: Aftermath of the 1948–49 war",
         standard: [
           {
@@ -231,12 +238,19 @@ const QUIZ_DATA = [
             answer: "The Reparations Agreement",
             explanation: "The Reparations Agreement provided Israel with hundreds of millions of dollars in vital foreign currency and equipment, essential for absorbing massive immigration.",
             year: 1952
+          },
+          {
+            id: "q_1_2_d6",
+            question: "Which UN mediator, dispatched to negotiate a peace settlement during the 1948 Arab-Israeli War, was assassinated in Jerusalem by the extremist Jewish Stern Gang?",
+            answer: "Count Folke Bernadotte",
+            explanation: "Count Folke Bernadotte of Sweden was appointed by the UN Security Council as the mediator. He successfully arranged two truces but was shot in September 1948 by members of Lehi (the Stern Gang) who feared his peace plan would hand Jerusalem to Jordan.",
+            year: 1948
           }
         ]
       },
       {
         id: "subtopic_1_3",
-        embedVideo: "https://drive.google.com/file/d/1o3KjocWEoxWK8Wf71X8-hisr_9S5LnXa/preview",
+        embedVideo: "https://youtu.be/PnZ2tG_PYpc",
         title: "Topic 1.3: Increased tension, 1955–63",
         standard: [
           {
@@ -356,7 +370,7 @@ const QUIZ_DATA = [
     subtopics: [
       {
         id: "subtopic_2_1",
-        embedVideo: "https://drive.google.com/file/d/1YP2VmcsuHh2pVTktbI_5YIKn2q7jagUV/preview",
+        embedVideo: "https://youtu.be/W7KFi6ZmZdU",
         title: "Topic 2.1: The Six Day War, 1967",
         standard: [
           {
@@ -470,7 +484,7 @@ const QUIZ_DATA = [
       },
       {
         id: "subtopic_2_2",
-        embedVideo: "https://drive.google.com/file/d/1uQAJi7Vf9_sr0GOHQmu71B4C9EpHwYVh/preview",
+        embedVideo: "https://youtu.be/hMOIIdnkrDY",
         title: "Topic 2.2: Aftermath of the 1967 war",
         standard: [
           {
@@ -584,7 +598,7 @@ const QUIZ_DATA = [
       },
       {
         id: "subtopic_2_3",
-        embedVideo: "https://drive.google.com/file/d/13hY6RUiwbmqVWTrcAvBJO-Pknc6DlWEQ/preview",
+        embedVideo: "https://youtu.be/F4GGpOxJW7I",
         title: "Topic 2.3: Israel and Egypt, 1967–73",
         standard: [
           {
@@ -704,7 +718,7 @@ const QUIZ_DATA = [
     subtopics: [
       {
         id: "subtopic_3_1",
-        embedVideo: "https://drive.google.com/file/d/1IlMl1uxTLd1_P3zknpdyRi49Wcj-EUcN/preview",
+        embedVideo: "https://youtu.be/iK729p_-ZRg",
         title: "Topic 3.1: Diplomatic negotiations",
         standard: [
           {
@@ -813,12 +827,19 @@ const QUIZ_DATA = [
             answer: "Aharon Barak",
             explanation: "Aharon Barak's legal genius allowed both Begin and Sadat to claim political victories to their home audiences without losing face.",
             year: 1978
+          },
+          {
+            id: "q_3_1_d6",
+            question: "Which commander of the Egyptian Air Force during the Yom Kippur War succeeded Anwar Sadat as President of Egypt after Sadat's assassination in 1981?",
+            answer: "Hosni Mubarak",
+            explanation: "Hosni Mubarak served as Commander of the Air Force and Vice President, and assumed the presidency after Anwar Sadat was assassinated by Islamic extremists in 1981. He maintained the peace treaty with Israel and ruled Egypt for nearly 30 years.",
+            year: 1981
           }
         ]
       },
       {
         id: "subtopic_3_2",
-        embedVideo: "https://drive.google.com/file/d/1CE0cHirKdaBYlo8WRbeGiOpITeHqq88r/preview",
+        embedVideo: "https://youtu.be/-XkX1UUe7HQ",
         title: "Topic 3.2: The Palestinian issue",
         standard: [
           {
@@ -927,12 +948,19 @@ const QUIZ_DATA = [
             answer: "Yitzhak Rabin",
             explanation: "Yitzhak Rabin's 'Iron Fist' policy severely damaged his international image, but the exhaustion of fighting eventually convinced him to seek peace.",
             year: 1987
+          },
+          {
+            id: "q_3_2_d6",
+            question: "Which former leader of the militant Stern Gang served as the hardline Prime Minister of Israel during the First Intifada and the 1991 Madrid Peace Conference?",
+            answer: "Yitzhak Shamir",
+            explanation: "Yitzhak Shamir was a hardline Likud politician who had previously co-led the underground Stern Gang. As Prime Minister, he strongly opposed territorial compromise and was pressured by the US to attend the 1991 Madrid Conference.",
+            year: 1991
           }
         ]
       },
       {
         id: "subtopic_3_3",
-        embedVideo: "https://drive.google.com/file/d/1kaK-iINCM7nYriy-GCuqJqCEMId_kLt_/preview",
+        embedVideo: "https://youtu.be/nXddsCeaCDw",
         title: "Topic 3.3: Attempts at a solution, 1974–95",
         standard: [
           {
@@ -1041,6 +1069,27 @@ const QUIZ_DATA = [
             answer: "Yigal Amir",
             explanation: "Yigal Amir's bullets shattered the Israeli political consensus, empowering hardliners and fundamentally derailing the Oslo Accords.",
             year: 1995
+          },
+          {
+            id: "q_3_3_d6",
+            question: "Which Soviet leader's reforms ended the Cold War, halted military aid to Arab states, and co-sponsored the 1991 Madrid Peace Conference?",
+            answer: "Mikhail Gorbachev",
+            explanation: "Mikhail Gorbachev introduced glasnost and perestroika, ending the Cold War. As Soviet influence collapsed, the USSR cut off military funding to Arab states like Syria and co-sponsored the landmark 1991 Madrid Peace Conference with the USA.",
+            year: 1991
+          },
+          {
+            id: "q_3_3_d7",
+            question: "Which US President leveraged victory in the 1991 Gulf War and threatened to withhold $10 billion in loan guarantees to force Israel to attend the Madrid Peace Conference?",
+            answer: "George H.W. Bush",
+            explanation: "George H.W. Bush used the diplomatic capital gained from defeating Iraq in the Gulf War to push for a regional peace settlement. He took a tough stance against Israeli settlement expansion, forcing Prime Minister Yitzhak Shamir to the negotiating table in Madrid.",
+            year: 1991
+          },
+          {
+            id: "q_3_3_d8",
+            question: "Which founding member of Fatah and future Palestinian President was the key coordinator of the secret PLO negotiations in Norway that culminated in the 1993 Oslo Accords?",
+            answer: "Mahmoud Abbas (Abu Mazen)",
+            explanation: "Mahmoud Abbas (also known as Abu Mazen) was a key Fatah diplomat who directed the back-channel negotiations in Oslo behind the scenes, signing the Declaration of Principles alongside Shimon Peres in Washington.",
+            year: 1993
           }
         ]
       }
@@ -1503,8 +1552,11 @@ const PAST_PAPERS_DATA = [
       model: "One consequence was a major diplomatic breakthrough, leading to mutual recognition between Israel and the PLO, and the creation of the Palestinian National Authority (PNA) to provide limited self-rule in Gaza and Jericho. Another consequence was a violent backlash from extremists on both sides; Palestinian militant groups like Hamas launched suicide bombings to derail the peace process, while a right-wing Jewish extremist assassinated Israeli Prime Minister Yitzhak Rabin in 1995."
     },
     q2: {
-      type: "none",
-      question: "No narrative question was present in this section for this paper."
+      type: "narrative",
+      question: "Write a narrative account analysing the key developments of the Suez Crisis in 1956. (8 marks)",
+      stimulus: ["Nasser", "British and French troops"],
+      clue: "Start with Nasser nationalising the Suez Canal in July 1956. Explain how this led to Britain and France colluding with Israel at the Protocol of Sèvres. Describe the subsequent invasion of Sinai and the landing of British and French troops, and how international pressure from the USA and USSR ultimately forced a withdrawal, boosting Nasser's prestige.",
+      model: "In July 1956, Egyptian President Gamal Abdel Nasser nationalised the Suez Canal, aiming to use its toll revenues to fund the Aswan High Dam after Western financing was withdrawn. <span class='highlight-link'>Enraged by this action</span>, Britain and France colluded with Israel in secret talks, signing the Protocol of Sèvres to plan a military response. <span class='highlight-link'>In October 1956</span>, Israel launched a pre-emptive invasion of the Sinai Peninsula. This <span class='highlight-word'>resulted in</span> a pretext for Britain and France to intervene, sending troops to seize the canal under the guise of separating the combatants. <span class='highlight-link'>However, the invasion provoked</span> immense international outrage. The USA, concerned about Cold War escalation, threatened to bankrupt the British economy, which <span class='highlight-word'>forced</span> a ceasefire and a humiliating Anglo-French withdrawal. <span class='highlight-link'>This outcome left</span> Nasser as a Pan-Arab hero and established the canal firmly under Egyptian control."
     },
     q3: {
       type: "importance_choice",
@@ -1578,8 +1630,10 @@ const PAST_PAPERS_DATA = [
     title: "Summer 2022 Past Paper",
     year: "2022",
     q1: {
-      type: "none",
-      question: "No consequence question was present in this section for this paper."
+      type: "consequence_8",
+      question: "Explain two consequences of Syria’s support for Fatah in the years 1964–67. (8 marks)",
+      clue: "Think about how Syrian training and bases enabled Fatah to launch bomb attacks inside Israel, leading to Israeli border retaliation. Also consider how the support raised regional tensions, directly leading to major military clashes like the air battle over Damascus in April 1967 and setting the stage for the Six-Day War.",
+      model: "One consequence of Syria's support for Fatah in the years 1964–67 was an increase in guerrilla raids and border violence. With Syrian military training, financing, and bases, Fatah was able to launch mines and bomb attacks against Israeli agricultural settlements, which provoked retaliatory Israeli reprisal raids and heightened border insecurity. Another consequence was the direct military escalation that led to the Six-Day War. The Syrian-Fatah alliance drew direct Israeli responses, resulting in major military clashes, such as the air battle of April 1967 where Israeli jets shot down six Syrian fighters over Damascus, driving both countries closer to full-scale mobilization and conflict."
     },
     q2: {
       type: "narrative",
@@ -1666,8 +1720,11 @@ const PAST_PAPERS_DATA = [
       model: "One consequence was the shattering of the long-standing diplomatic deadlock and the Arab League's 'Three Nos' policy. By travelling to Jerusalem and addressing the Knesset, Sadat officially recognized Israel, breaking the psychological barrier to negotiations. Another consequence was that this breakthrough paved the way for formal peace talks, enabling US President Jimmy Carter to invite Sadat and Prime Minister Begin to Camp David in 1978, which resulted in the historic Camp David Accords."
     },
     q2: {
-      type: "none",
-      question: "No narrative question was present in this section for this paper."
+      type: "narrative",
+      question: "Write a narrative account analysing relations between Israel and Egypt in the years 1949–56. (8 marks)",
+      stimulus: ["The abdication of King Farouk of Egypt (1952)", "The Suez Canal"],
+      clue: "Start with the hostile borders established after the 1949 armistices. Explain how the Free Officers coup in 1952 and the abdication of King Farouk brought Nasser to power, escalating tensions. Link this to the rise of Fedayeen raids from Gaza and Israel's Gaza reprisal raid (1955). Describe how Nasser's nationalisation of the Suez Canal led to the 1956 Suez War.",
+      model: "Following the armistice agreements of 1949, relations between Israel and Egypt were marked by deep mutual suspicion and border instability. In 1952, the Egyptian Free Officers coup led to the abdication of King Farouk, which eventually brought Gamal Abdel Nasser to power. <span class='highlight-link'>Nasser's rise to power</span> intensified hostilities, as he supported cross-border Fedayeen guerrilla raids into Israel from the Gaza Strip. <span class='highlight-link'>These constant raids provoked</span> a massive Israeli military reprisal in Gaza in February 1955, which humiliated Egypt. <span class='highlight-link'>To rebuild his military strength</span>, Nasser signed the Czech Arms Deal and subsequently nationalised the Suez Canal in July 1956. <span class='highlight-link'>This nationalisation threatened</span> British and French interests and led to collusion with Israel. Ultimately, this collusion <span class='highlight-word'>provoked</span> Israel's pre-emptive invasion of Sinai in October 1956, culminating in the Suez War."
     },
     q3: {
       type: "importance_choice",
@@ -1724,9 +1781,43 @@ const PAST_PAPERS_DATA = [
       model: "In 1970, following the Black September conflict, the PLO was expelled from Jordan. <span class='highlight-link'>This forced</span> Yasser Arafat and thousands of fighters to move their base to southern Lebanon, establishing a 'state within a state' known as 'Fatahland'. <span class='highlight-link'>From Lebanon, the PLO launched</span> cross-border rocket attacks and guerrilla raids into northern Israel, including the deadly 1978 Coastal Road Massacre. <span class='highlight-link'>These attacks escalated tensions</span> and provoked Israel's initial incursion (Operation Litani) in 1978. <span class='highlight-link'>As the threat persisted</span>, an attempted assassination of the Israeli ambassador in London in June 1982 served as the final trigger. This <span class='highlight-word'>provoked</span> Israel to launch Operation Peace for Galilee, a full-scale invasion of Lebanon that besieged Beirut and successfully forced the PLO to evacuate to Tunisia."
     },
     q3: {
-      type: "none",
-      question: "No importance questions were present in this section for this paper."
+      type: "importance_choice",
+      question: "Explain two of the following: (16 marks)",
+      choices: [
+        {
+          id: "2025_q3_a",
+          title: "The importance of the Suez Crisis (1956) for Egypt’s status in the Arab world.",
+          clue: "Explain how standing up to the British, French, and Israeli invasion made Nasser a Pan-Arab hero, increasing his influence and leadership across the Arab world.",
+          model: "<strong>Point 1:</strong> Nasser's leadership was important because it transformed him into an undisputed hero of Arab nationalism (Pan-Arabism). By politically surviving the tripartite invasion of 1956, he was seen as the first Arab leader to successfully defy Western imperial powers, which dramatically elevated Egypt's prestige across the Middle East.<br><br><strong>Point 2:</strong> It was also important because it established Egypt as the undisputed leader of the Arab world. Nasser's newfound popularity and status enabled Egypt to pursue concrete political unions, leading directly to the merger with Syria to form the United Arab Republic (UAR) in 1958 and cementing Egyptian influence over regional politics."
+        },
+        {
+          id: "2025_q3_b",
+          title: "The importance of the Yom Kippur War (1973) for superpower involvement in the Middle East.",
+          clue: "Explain how the threat of direct conflict between the USA and USSR forced both to negotiate a ceasefire, and how it brought Egypt into the US diplomatic sphere.",
+          model: "<strong>Point 1:</strong> The war was important because it brought the USA and the Soviet Union to the brink of direct military confrontation. The massive superpower arms airlifts and the Soviet threat to intervene unilaterally to support Egypt forced both superpowers to coordinate on UN Resolution 338, establishing a joint diplomatic framework for a ceasefire.<br><br><strong>Point 2:</strong> It was also important because it enabled the United States to shut the Soviet Union out of future Middle Eastern peace talks. US Secretary of State Henry Kissinger used 'shuttle diplomacy' to negotiate disengagement treaties, successfully bringing Egypt into the US diplomatic orbit and making the US the sole mediator in subsequent peace processes."
+        },
+        {
+          id: "2025_q3_c",
+          title: "The importance of the Camp David Accords (1978) for attempts to find a solution to the Arab-Israeli conflict.",
+          clue: "Detail how it led to the first formal peace treaty between Israel and an Arab nation (Egypt), but divided the Arab world because it ignored the Palestinian issue.",
+          model: "<strong>Point 1:</strong> The Accords were important because they resulted in the historic 1979 Egypt-Israel Peace Treaty, the first peace agreement between Israel and an Arab nation. This treaty ended decades of hostility, returned the Sinai Peninsula to Egypt, and permanently secured Israel's southern border.<br><br><strong>Point 2:</strong> However, they were also important because they isolated Egypt and divided the Arab world. Because the Accords failed to secure a clear path for Palestinian self-determination or statehood, the PLO and other Arab nations rejected the agreement, and Egypt was expelled from the Arab League, which hardened diplomatic resistance elsewhere."
+        }
+      ]
     }
   }
 ];
+
+if (typeof exports !== 'undefined') {
+  exports.QUIZ_DATA = QUIZ_DATA;
+  exports.EXAM_SKILLS_DATA = EXAM_SKILLS_DATA;
+  exports.CONSEQUENCE_SKILLS_DATA = CONSEQUENCE_SKILLS_DATA;
+  exports.NARRATIVE_SKILLS_DATA = NARRATIVE_SKILLS_DATA;
+  exports.PAST_PAPERS_DATA = PAST_PAPERS_DATA;
+} else if (typeof window !== 'undefined') {
+  window.QUIZ_DATA = QUIZ_DATA;
+  window.EXAM_SKILLS_DATA = EXAM_SKILLS_DATA;
+  window.CONSEQUENCE_SKILLS_DATA = CONSEQUENCE_SKILLS_DATA;
+  window.NARRATIVE_SKILLS_DATA = NARRATIVE_SKILLS_DATA;
+  window.PAST_PAPERS_DATA = PAST_PAPERS_DATA;
+}
 

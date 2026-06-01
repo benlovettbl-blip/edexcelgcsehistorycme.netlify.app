@@ -1,3 +1,16 @@
+import { state } from './state.js';
+import { QUIZ_DATA, CONSEQUENCE_SKILLS_DATA, NARRATIVE_SKILLS_DATA, EXAM_SKILLS_DATA } from '../questions.js';
+import { AudioEngine } from './audio.js';
+import { switchView, switchSubtopicMode } from './navigation.js';
+import { setMastered, toggleBookmark } from './storage.js';
+import { Confetti } from './confetti.js';
+import { LESSONS_DATA } from './lessons_data.js';
+import { MASTERY_DATA } from './mastery_data.js';
+import { DECISIONS_DATA } from './decisions_data.js';
+import { MINDMAP_DATA } from './mindmap_data.js';
+import { stopJswLoop, initCrisisGame, initTugGame, initJswGame } from './games.js';
+import { getFallbackUrl } from './image_fallback.js';
+
 // --- Dynamic Renders ---
 
 // 1. Sidebar sub-topic items
@@ -7,7 +20,7 @@ function renderSidebarNav() {
   
   QUIZ_DATA.forEach(topic => {
     const section = document.createElement('div');
-    section.style.marginBottom = '12px';
+    section.style.marginBottom = '6px';
     
     const title = document.createElement('span');
     title.className = 'nav-section-title';
@@ -20,9 +33,11 @@ function renderSidebarNav() {
       const a = document.createElement('a');
       a.className = 'nav-item';
       a.id = `nav-subtopic-${sub.id}`;
+      a.title = sub.title;
       
       const numCode = sub.title.match(/Topic\s(\d\.\d)/);
-      const shortName = numCode ? `Topic ${numCode[1]}` : sub.title;
+      const shortName = numCode ? numCode[1] : sub.title;
+      const subDescText = sub.title.split(':').slice(1).join(':').trim() || '';
       
       // Calculate individual subtopic progress
       const subQuestions = state.allQuestions.filter(q => q.subtopicId === sub.id);
@@ -30,11 +45,13 @@ function renderSidebarNav() {
       const pct = subQuestions.length > 0 ? Math.round((mastered.length / subQuestions.length) * 100) : 0;
       
       a.innerHTML = `
-        <span class="nav-item-content">
-          <i class="fa-solid fa-circle-question"></i>
-          ${shortName}
+        <span class="nav-item-content" style="flex-shrink: 0; font-weight: 600;">
+          <span class="topic-prefix">Topic </span>${shortName}
         </span>
-        <span class="nav-item-progress" id="nav-pct-${sub.id}">${pct}%</span>
+        <span class="nav-item-desc" style="flex: 1; min-width: 0; margin: 0 8px; font-size: 0.72rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left; opacity: 0.85;">
+          ${subDescText}
+        </span>
+        <span class="nav-item-progress" id="nav-pct-${sub.id}" style="flex-shrink: 0;">${pct}%</span>
       `;
       
       a.addEventListener('click', () => {
@@ -78,15 +95,15 @@ function updateGlobalStats() {
   // Update DOM values
   document.getElementById('stat-overall-progress').textContent = `${overallPct}%`;
   document.getElementById('stat-overall-progress-bar').style.width = `${overallPct}%`;
-  document.getElementById('stat-overall-fraction').textContent = `${totalMastered} / ${total} Accords Signed`;
+  document.getElementById('stat-overall-fraction').textContent = `${totalMastered} / ${total}`;
   
   document.getElementById('stat-standard-progress').textContent = `${standardPct}%`;
   document.getElementById('stat-standard-progress-bar').style.width = `${standardPct}%`;
-  document.getElementById('stat-standard-fraction').textContent = `${standardMastered} / ${standardQuestions.length} Milestones Recalled`;
+  document.getElementById('stat-standard-fraction').textContent = `${standardMastered} / ${standardQuestions.length}`;
   
   document.getElementById('stat-depth-progress').textContent = `${depthPct}%`;
   document.getElementById('stat-depth-progress-bar').style.width = `${depthPct}%`;
-  document.getElementById('stat-depth-fraction').textContent = `${depthMastered} / ${depthQuestions.length} Top Tier Trivia Secured`;
+  document.getElementById('stat-depth-fraction').textContent = `${depthMastered} / ${depthQuestions.length}`;
   
   // Update sidebar subtopic nav percentages
   QUIZ_DATA.forEach(topic => {
@@ -157,78 +174,6 @@ function renderDashboard() {
     
     container.appendChild(card);
   });
-
-  // Render OneNote board of videos
-  renderOneNoteBoard();
-}
-
-function renderOneNoteBoard() {
-  const boardContainer = document.getElementById('onenote-video-board');
-  if (!boardContainer) return;
-  
-  boardContainer.innerHTML = '';
-  
-  // Create header
-  const header = document.createElement('div');
-  header.className = 'onenote-header';
-  header.innerHTML = `
-    <h2 class="onenote-title"><i class="fa-solid fa-thumbtack" style="color: var(--accent);"></i> 📌 GCSE 2-Minute Revision Videos</h2>
-    <p class="onenote-subtitle">Watch quick spec-aligned video summaries on the board to review key topics.</p>
-  `;
-  boardContainer.appendChild(header);
-  
-  // Create grid
-  const grid = document.createElement('div');
-  grid.className = 'onenote-grid';
-  
-  let colorIndex = 1;
-  QUIZ_DATA.forEach(topic => {
-    topic.subtopics.forEach(sub => {
-      if (sub.embedVideo) {
-        const card = document.createElement('div');
-        card.className = `onenote-card onenote-color-${colorIndex}`;
-        
-        // Match numbers like "Topic 1.1" or "1.1"
-        const numCodeMatch = sub.title.match(/Topic\s+(\d\.\d)/i) || sub.title.match(/(\d\.\d)/);
-        const subtopicNum = numCodeMatch ? `Topic ${numCodeMatch[1]}` : 'Revision';
-        const cleanTitle = sub.title.replace(/^Topic\s+\d\.\d:\s*/i, "");
-        
-        card.innerHTML = `
-          <div class="onenote-pin"></div>
-          <span class="onenote-card-topic">${subtopicNum}</span>
-          <h3 class="onenote-card-title">${cleanTitle}</h3>
-          <div class="onenote-iframe-container">
-            <div class="onenote-video-thumbnail" data-video-src="${sub.embedVideo}" data-video-title="${subtopicNum}: ${cleanTitle}">
-              <div class="onenote-thumbnail-placeholder">
-                <i class="fa-regular fa-circle-play"></i>
-              </div>
-            </div>
-          </div>
-        `;
-        
-        // Bind video play thumbnail click to open modal
-        const thumbnail = card.querySelector('.onenote-video-thumbnail');
-        thumbnail.addEventListener('click', (e) => {
-          e.stopPropagation();
-          openVideoModal(sub.embedVideo, `${subtopicNum}: ${cleanTitle}`);
-        });
-        
-        // Click on sticky note navigates to subtopic lessons (excluding thumbnail interaction)
-        card.addEventListener('click', (e) => {
-          if (e.target.closest('.onenote-iframe-container')) return;
-          AudioEngine.play('click');
-          switchView('subtopic', sub.id);
-        });
-        
-        grid.appendChild(card);
-        
-        // Cycle colors 1 to 5
-        colorIndex = (colorIndex % 5) + 1;
-      }
-    });
-  });
-  
-  boardContainer.appendChild(grid);
 }
 
 
@@ -303,17 +248,14 @@ function renderExamSkillsView() {
     if (chk) chk.checked = false;
   }
 
-  // Default to Consequence tab active
-  document.querySelectorAll('.exam-tab-btn').forEach(btn => btn.classList.remove('active'));
-  const firstTab = document.getElementById('tab-consequence');
-  if (firstTab) firstTab.classList.add('active');
-  document.querySelectorAll('.exam-panel-content').forEach(p => p.style.display = 'none');
-  const firstPanel = document.getElementById('panel-consequence');
-  if (firstPanel) firstPanel.style.display = 'block';
+  // Show all exam practice panels stacked vertically
+  document.querySelectorAll('.exam-panel-content').forEach(p => p.style.display = 'block');
 }
 
-// 4. Render Classic Accordion List View
-let activeClassicFilter = 'all';
+export let activeClassicFilter = 'all';
+export function setActiveClassicFilter(val) {
+  activeClassicFilter = val;
+}
 
 function renderClassicView() {
   const container = document.getElementById('classic-list-container');
@@ -614,21 +556,564 @@ function flipFlashcard() {
 }
 
 // 6. Timeline View Assembly
+export const KEY_FIGURES_BIO = {
+  "david ben-gurion": {
+    name: "David Ben-Gurion",
+    role: "First Prime Minister of Israel & Zionist Leader",
+    bio: "The indispensable leader of the Zionist movement who officially declared the creation of the State of Israel in May 1948 and served as its first Prime Minister.",
+    image: "assets/sources/portraits/david_ben_gurion.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/David_Ben-Gurion"
+  },
+  "ben-gurion": {
+    name: "David Ben-Gurion",
+    role: "First Prime Minister of Israel & Zionist Leader",
+    bio: "The indispensable leader of the Zionist movement who officially declared the creation of the State of Israel in May 1948 and served as its first Prime Minister.",
+    image: "assets/sources/portraits/david_ben_gurion.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/David_Ben-Gurion"
+  },
+  "menachem begin": {
+    name: "Menachem Begin",
+    role: "Prime Minister of Israel (1977–1983)",
+    bio: "Originally the leader of the militant Irgun group (which carried out the King David Hotel bombing and the Deir Yassin massacre), he later founded the right-wing Likud party, became Prime Minister, and signed the historic Camp David Accords and the 1979 peace treaty with Egypt.",
+    image: "assets/sources/portraits/menachem_begin.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Menachem_Begin"
+  },
+  "begin": {
+    name: "Menachem Begin",
+    role: "Prime Minister of Israel (1977–1983)",
+    bio: "Originally the leader of the militant Irgun group (which carried out the King David Hotel bombing and the Deir Yassin massacre), he later founded the right-wing Likud party, became Prime Minister, and signed the historic Camp David Accords and the 1979 peace treaty with Egypt.",
+    image: "assets/sources/portraits/menachem_begin.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Menachem_Begin"
+  },
+  "yitzhak rabin": {
+    name: "Yitzhak Rabin",
+    role: "Prime Minister of Israel (1974–77, 1992–95)",
+    bio: "A prominent IDF commander during the 1948 and 1967 wars who later served as Prime Minister. He implemented the harsh 'Iron Fist' policy during the First Intifada, but later famously shook hands with Yasser Arafat to sign the Oslo Accords in 1993, for which he won the Nobel Peace Prize. He was assassinated in 1995 by an Israeli right-wing extremist, Yigal Amir.",
+    image: "assets/sources/portraits/yitzhak_rabin.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Yitzhak_Rabin"
+  },
+  "rabin": {
+    name: "Yitzhak Rabin",
+    role: "Prime Minister of Israel (1974–77, 1992–95)",
+    bio: "A prominent IDF commander during the 1948 and 1967 wars who later served as Prime Minister. He implemented the harsh 'Iron Fist' policy during the First Intifada, but later famously shook hands with Yasser Arafat to sign the Oslo Accords in 1993, for which he won the Nobel Peace Prize. He was assassinated in 1995 by an Israeli right-wing extremist, Yigal Amir.",
+    image: "assets/sources/portraits/yitzhak_rabin.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Yitzhak_Rabin"
+  },
+  "golda meir": {
+    name: "Golda Meir",
+    role: "Prime Minister of Israel (1969–1974)",
+    bio: "Israel's first and only female Prime Minister (1969–1974), who led the country during the shock of the 1973 Yom Kippur War and subsequently ordered 'Operation Wrath of God' to hunt down the Munich Olympics terrorists.",
+    image: "assets/sources/portraits/golda_meir.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Golda_Meir"
+  },
+  "meir": {
+    name: "Golda Meir",
+    role: "Prime Minister of Israel (1969–1974)",
+    bio: "Israel's first and only female Prime Minister (1969–1974), who led the country during the shock of the 1973 Yom Kippur War and subsequently ordered 'Operation Wrath of God' to hunt down the Munich Olympics terrorists.",
+    image: "assets/sources/portraits/golda_meir.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Golda_Meir"
+  },
+  "moshe dayan": {
+    name: "Moshe Dayan",
+    role: "Israeli Defense Minister & General",
+    bio: "A highly recognizable Israeli military commander and Defense Minister (known for his eye patch) who played a pivotal role in the Suez Crisis, the Six Day War, and the Yom Kippur War.",
+    image: "assets/sources/portraits/moshe_dayan.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Moshe_Dayan"
+  },
+  "dayan": {
+    name: "Moshe Dayan",
+    role: "Israeli Defense Minister & General",
+    bio: "A highly recognizable Israeli military commander and Defense Minister (known for his eye patch) who played a pivotal role in the Suez Crisis, the Six Day War, and the Yom Kippur War.",
+    image: "assets/sources/portraits/moshe_dayan.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Moshe_Dayan"
+  },
+  "ariel sharon": {
+    name: "Ariel Sharon",
+    role: "Israeli General & Defense Minister",
+    bio: "A ruthless and controversial Israeli general and Defense Minister who spearheaded the 1982 invasion of Lebanon (Operation Peace for Galilee), driving the IDF all the way to Beirut to expel the PLO.",
+    image: "assets/sources/portraits/ariel_sharon.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Ariel_Sharon"
+  },
+  "sharon": {
+    name: "Ariel Sharon",
+    role: "Israeli General & Defense Minister",
+    bio: "A ruthless and controversial Israeli general and Defense Minister who spearheaded the 1982 invasion of Lebanon (Operation Peace for Galilee), driving the IDF all the way to Beirut to expel the PLO.",
+    image: "assets/sources/portraits/ariel_sharon.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Ariel_Sharon"
+  },
+  "levi eshkol": {
+    name: "Levi Eshkol",
+    role: "Prime Minister of Israel (1963–1969)",
+    bio: "The Israeli Prime Minister who led the country through the escalating tensions and outbreak of the 1967 Six Day War.",
+    image: "assets/sources/portraits/levi_eshkol.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Levi_Eshkol"
+  },
+  "eshkol": {
+    name: "Levi Eshkol",
+    role: "Prime Minister of Israel (1963–1969)",
+    bio: "The Israeli Prime Minister who led the country through the escalating tensions and outbreak of the 1967 Six Day War.",
+    image: "assets/sources/portraits/levi_eshkol.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Levi_Eshkol"
+  },
+  "yitzhak shamir": {
+    name: "Yitzhak Shamir",
+    role: "Prime Minister of Israel (1983–84, 1986–92)",
+    bio: "A former leader of the militant Stern Gang who later became a hardline Israeli Prime Minister during the First Intifada and the 1991 Madrid Conference.",
+    image: "assets/sources/portraits/yitzhak_shamir.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Yitzhak_Shamir"
+  },
+  "shamir": {
+    name: "Yitzhak Shamir",
+    role: "Prime Minister of Israel (1983–84, 1986–92)",
+    bio: "A former leader of the militant Stern Gang who later became a hardline Israeli Prime Minister during the First Intifada and the 1991 Madrid Conference.",
+    image: "assets/sources/portraits/yitzhak_shamir.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Yitzhak_Shamir"
+  },
+  "yasser arafat": {
+    name: "Yasser Arafat",
+    role: "Chairman of the PLO & Fatah Founder",
+    bio: "The Chairman of the Palestine Liberation Organisation (PLO) and founder of Fatah. He spoke at the UN in 1974 bearing a 'gun and an olive branch', formally renounced terrorism in 1988, and signed the 1993 Oslo Accords, becoming the head of the newly formed Palestinian National Authority.",
+    image: "assets/sources/portraits/yasser_arafat.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Yasser_Arafat"
+  },
+  "arafat": {
+    name: "Yasser Arafat",
+    role: "Chairman of the PLO & Fatah Founder",
+    bio: "The Chairman of the Palestine Liberation Organisation (PLO) and founder of Fatah. He spoke at the UN in 1974 bearing a 'gun and an olive branch', formally renounced terrorism in 1988, and signed the 1993 Oslo Accords, becoming the head of the newly formed Palestinian National Authority.",
+    image: "assets/sources/portraits/yasser_arafat.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Yasser_Arafat"
+  },
+  "george habash": {
+    name: "George Habash",
+    role: "Founder of the PFLP",
+    bio: "The founder of the Popular Front for the Liberation of Palestine (PFLP), a radical Marxist group that pioneered international terrorism, including the 1970 Dawson's Field airplane hijackings.",
+    image: "assets/sources/portraits/george_habash.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/George_Habash"
+  },
+  "habash": {
+    name: "George Habash",
+    role: "Founder of the PFLP",
+    bio: "The founder of the Popular Front for the Liberation of Palestine (PFLP), a radical Marxist group that pioneered international terrorism, including the 1970 Dawson's Field airplane hijackings.",
+    image: "assets/sources/portraits/george_habash.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/George_Habash"
+  },
+  "mahmoud abbas": {
+    name: "Mahmoud Abbas (Abu Mazen)",
+    role: "Founding Member of Fatah & negotiator",
+    bio: "A founding member of Fatah who managed the PLO's secret negotiations with Israel that led to the Oslo Accords, later becoming Prime Minister and President of the Palestinian Authority.",
+    image: "assets/sources/portraits/mahmoud_abbas.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Mahmoud_Abbas"
+  },
+  "abu mazen": {
+    name: "Mahmoud Abbas (Abu Mazen)",
+    role: "Founding Member of Fatah & negotiator",
+    bio: "A founding member of Fatah who managed the PLO's secret negotiations with Israel that led to the Oslo Accords, later becoming Prime Minister and President of the Palestinian Authority.",
+    image: "assets/sources/portraits/mahmoud_abbas.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Mahmoud_Abbas"
+  },
+  "abbas": {
+    name: "Mahmoud Abbas (Abu Mazen)",
+    role: "Founding Member of Fatah & negotiator",
+    bio: "A founding member of Fatah who managed the PLO's secret negotiations with Israel that led to the Oslo Accords, later becoming Prime Minister and President of the Palestinian Authority.",
+    image: "assets/sources/portraits/mahmoud_abbas.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Mahmoud_Abbas"
+  },
+  "haj amin al-husseini": {
+    name: "Haj Amin al-Husseini",
+    role: "Grand Mufti of Jerusalem",
+    bio: "The Grand Mufti of Jerusalem and leader of the Arab Higher Committee, who fiercely opposed Jewish immigration during the British Mandate.",
+    image: "assets/sources/portraits/grand_mufti.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Amin_al-Husseini"
+  },
+  "al-husseini": {
+    name: "Haj Amin al-Husseini",
+    role: "Grand Mufti of Jerusalem",
+    bio: "The Grand Mufti of Jerusalem and leader of the Arab Higher Committee, who fiercely opposed Jewish immigration during the British Mandate.",
+    image: "assets/sources/portraits/grand_mufti.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Amin_al-Husseini"
+  },
+  "gamal abdel nasser": {
+    name: "Gamal Abdel Nasser",
+    role: "President of Egypt & Pan-Arab Champion",
+    bio: "The charismatic President of Egypt and champion of Pan-Arabism. He nationalised the Suez Canal in 1956, formed the United Arab Republic, and his aggressive posturing (such as closing the Straits of Tiran) directly triggered the Six Day War.",
+    image: "assets/sources/portraits/gamal_abdel_nasser.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Gamal_Abdel_Nasser"
+  },
+  "nasser": {
+    name: "Gamal Abdel Nasser",
+    role: "President of Egypt & Pan-Arab Champion",
+    bio: "The charismatic President of Egypt and champion of Pan-Arabism. He nationalised the Suez Canal in 1956, formed the United Arab Republic, and his aggressive posturing (such as closing the Straits of Tiran) directly triggered the Six Day War.",
+    image: "assets/sources/portraits/gamal_abdel_nasser.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Gamal_Abdel_Nasser"
+  },
+  "anwar sadat": {
+    name: "Anwar Sadat",
+    role: "President of Egypt (1970–1981)",
+    bio: "Nasser's successor who launched the surprise attack on Israel in the 1973 Yom Kippur War to force diplomatic negotiations. He stunned the world by visiting the Israeli Knesset in 1977, leading to the Camp David Accords and the 1979 peace treaty, for which he won the Nobel Peace Prize.",
+    image: "assets/sources/portraits/anwar_sadat.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Anwar_Sadat"
+  },
+  "sadat": {
+    name: "Anwar Sadat",
+    role: "President of Egypt (1970–1981)",
+    bio: "Nasser's successor who launched the surprise attack on Israel in the 1973 Yom Kippur War to force diplomatic negotiations. He stunned the world by visiting the Israeli Knesset in 1977, leading to the Camp David Accords and the 1979 peace treaty, for which he won the Nobel Peace Prize.",
+    image: "assets/sources/portraits/anwar_sadat.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Anwar_Sadat"
+  },
+  "hosni mubarak": {
+    name: "Hosni Mubarak",
+    role: "President of Egypt (1981–2011)",
+    bio: "Commander of the Egyptian Air Force during the Yom Kippur War who became President of Egypt following Sadat's assassination in 1981.",
+    image: "assets/sources/portraits/hosni_mubarak.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Hosni_Mubarak"
+  },
+  "mubarak": {
+    name: "Hosni Mubarak",
+    role: "President of Egypt (1981–2011)",
+    bio: "Commander of the Egyptian Air Force during the Yom Kippur War who became President of Egypt following Sadat's assassination in 1981.",
+    image: "assets/sources/portraits/hosni_mubarak.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Hosni_Mubarak"
+  },
+  "king hussein": {
+    name: "King Hussein of Jordan",
+    role: "King of Jordan (1952–1999)",
+    bio: "Ruled Jordan for decades, fighting Israel in 1967 but later expelling the PLO from his country during the brutal 'Black September' conflict in 1970. He signed a formal peace treaty with Israel in 1994.",
+    image: "assets/sources/portraits/king_hussein.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Hussein_of_Jordan"
+  },
+  "king abdullah": {
+    name: "King Abdullah I of Transjordan",
+    role: "King of Transjordan (1946–1951)",
+    bio: "King Hussein's grandfather, who held secret talks with the Jewish Agency before 1948 but ultimately joined the Arab invasion, successfully capturing the West Bank and East Jerusalem with his Arab Legion forces.",
+    image: "assets/sources/portraits/abdullah_i.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Abdullah_I_of_Jordan"
+  },
+  "abdullah i": {
+    name: "King Abdullah I of Transjordan",
+    role: "King of Transjordan (1946–1951)",
+    bio: "King Hussein's grandfather, who held secret talks with the Jewish Agency before 1948 but ultimately joined the Arab invasion, successfully capturing the West Bank and East Jerusalem with his Arab Legion forces.",
+    image: "assets/sources/portraits/abdullah_i.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Abdullah_I_of_Jordan"
+  },
+  "transjordan": {
+    name: "King Abdullah I of Transjordan",
+    role: "King of Transjordan (1946–1951)",
+    bio: "King Hussein's grandfather, who held secret talks with the Jewish Agency before 1948 but ultimately joined the Arab invasion, successfully capturing the West Bank and East Jerusalem with his Arab Legion forces.",
+    image: "assets/sources/portraits/abdullah_i.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Abdullah_I_of_Jordan"
+  },
+  "hafez al-assad": {
+    name: "Hafez al-Assad",
+    role: "President of Syria (1971–2000)",
+    bio: "The President of Syria who coordinated the surprise two-front attack with Egypt against Israel in the 1973 Yom Kippur War.",
+    image: "assets/sources/portraits/hafez_al_assad.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Hafez_al-Assad"
+  },
+  "assad": {
+    name: "Hafez al-Assad",
+    role: "President of Syria (1971–2000)",
+    bio: "The President of Syria who coordinated the surprise two-front attack with Egypt against Israel in the 1973 Yom Kippur War.",
+    image: "assets/sources/portraits/hafez_al_assad.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Hafez_al-Assad"
+  },
+  "saddam hussein": {
+    name: "Saddam Hussein",
+    role: "President of Iraq (1979–2003)",
+    bio: "The President of Iraq. While not a direct party to the Arab-Israeli wars, his 1990 invasion of Kuwait (the Gulf War) had massive repercussions, as Yasser Arafat's decision to support him caused wealthy Arab states to cut off all funding to the PLO, forcing them to the negotiating table.",
+    image: "assets/sources/portraits/saddam_hussein.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Saddam_Hussein"
+  },
+  "saddam": {
+    name: "Saddam Hussein",
+    role: "President of Iraq (1979–2003)",
+    bio: "The President of Iraq. While not a direct party to the Arab-Israeli wars, his 1990 invasion of Kuwait (the Gulf War) had massive repercussions, as Yasser Arafat's decision to support him caused wealthy Arab states to cut off all funding to the PLO, forcing them to the negotiating table.",
+    image: "assets/sources/portraits/saddam_hussein.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Saddam_Hussein"
+  },
+  "henry kissinger": {
+    name: "Henry Kissinger",
+    role: "US Secretary of State & Diplomat",
+    bio: "The US Secretary of State famous for his exhaustive 'shuttle diplomacy' (flying back and forth between Middle Eastern capitals) to secure disengagement agreements after the 1973 Yom Kippur War.",
+    image: "assets/sources/portraits/henry_kissinger.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Henry_Kissinger"
+  },
+  "kissinger": {
+    name: "Henry Kissinger",
+    role: "US Secretary of State & Diplomat",
+    bio: "The US Secretary of State famous for his exhaustive 'shuttle diplomacy' (flying back and forth between Middle Eastern capitals) to secure disengagement agreements after the 1973 Yom Kippur War.",
+    image: "assets/sources/portraits/henry_kissinger.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Henry_Kissinger"
+  },
+  "jimmy carter": {
+    name: "Jimmy Carter",
+    role: "39th President of the United States (1977–1981)",
+    bio: "The US President who personally mediated the 13 days of secret talks between Begin and Sadat at the Camp David presidential retreat in 1978.",
+    image: "assets/sources/portraits/jimmy_carter.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Jimmy_Carter"
+  },
+  "carter": {
+    name: "Jimmy Carter",
+    role: "39th President of the United States (1977–1981)",
+    bio: "The US President who personally mediated the 13 days of secret talks between Begin and Sadat at the Camp David presidential retreat in 1978.",
+    image: "assets/sources/portraits/jimmy_carter.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Jimmy_Carter"
+  },
+  "bill clinton": {
+    name: "Bill Clinton",
+    role: "42nd President of the United States (1993–2001)",
+    bio: "The US President who hosted the historic handshake between Yitzhak Rabin and Yasser Arafat on the White House lawn during the signing of the Oslo Accords in 1993.",
+    image: "assets/sources/portraits/bill_clinton.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Bill_Clinton"
+  },
+  "clinton": {
+    name: "Bill Clinton",
+    role: "42nd President of the United States (1993–2001)",
+    bio: "The US President who hosted the historic handshake between Yitzhak Rabin and Yasser Arafat on the White House lawn during the signing of the Oslo Accords in 1993.",
+    image: "assets/sources/portraits/bill_clinton.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Bill_Clinton"
+  },
+  "mikhail gorbachev": {
+    name: "Mikhail Gorbachev",
+    role: "Leader of the Soviet Union (1985–1991)",
+    bio: "The leader of the Soviet Union whose reforms ended the Cold War, cutting off Soviet military aid to Arab states and paving the way for the 1991 Madrid Peace Conference.",
+    image: "assets/sources/portraits/mikhail_gorbachev.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Mikhail_Gorbachev"
+  },
+  "gorbachev": {
+    name: "Mikhail Gorbachev",
+    role: "Leader of the Soviet Union (1985–1991)",
+    bio: "The leader of the Soviet Union whose reforms ended the Cold War, cutting off Soviet military aid to Arab states and paving the way for the 1991 Madrid Peace Conference.",
+    image: "assets/sources/portraits/mikhail_gorbachev.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Mikhail_Gorbachev"
+  },
+  "george h.w. bush": {
+    name: "George H.W. Bush",
+    role: "41st President of the United States (1989–1993)",
+    bio: "The US President who emerged from the 1991 Gulf War as the leader of the sole remaining superpower, using this leverage to force Israel and Arab nations to negotiate at the Madrid Conference.",
+    image: "assets/sources/portraits/george_h_w_bush.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/George_H._W._Bush"
+  },
+  "george bush": {
+    name: "George H.W. Bush",
+    role: "41st President of the United States (1989–1993)",
+    bio: "The US President who emerged from the 1991 Gulf War as the leader of the sole remaining superpower, using this leverage to force Israel and Arab nations to negotiate at the Madrid Conference.",
+    image: "assets/sources/portraits/george_h_w_bush.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/George_H._W._Bush"
+  },
+  "bush": {
+    name: "George H.W. Bush",
+    role: "41st President of the United States (1989–1993)",
+    bio: "The US President who emerged from the 1991 Gulf War as the leader of the sole remaining superpower, using this leverage to force Israel and Arab nations to negotiate at the Madrid Conference.",
+    image: "assets/sources/portraits/george_h_w_bush.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/George_H._W._Bush"
+  },
+  "ernest bevin": {
+    name: "Ernest Bevin",
+    role: "British Foreign Secretary (1945–1951)",
+    bio: "The British Foreign Secretary who ultimately decided to hand the 'unworkable' Palestine Mandate over to the United Nations in 1947.",
+    image: "assets/sources/portraits/ernest_bevin.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Ernest_Bevin"
+  },
+  "bevin": {
+    name: "Ernest Bevin",
+    role: "British Foreign Secretary (1945–1951)",
+    bio: "The British Foreign Secretary who ultimately decided to hand the 'unworkable' Palestine Mandate over to the United Nations in 1947.",
+    image: "assets/sources/portraits/ernest_bevin.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Ernest_Bevin"
+  },
+  "count folke bernadotte": {
+    name: "Count Folke Bernadotte",
+    role: "UN Mediator in Palestine",
+    bio: "The UN mediator dispatched to negotiate a truce during the 1948 war, who was assassinated by the Jewish extremist Stern Gang.",
+    image: "assets/sources/portraits/folke_bernadotte.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Folke_Bernadotte"
+  },
+  "bernadotte": {
+    name: "Count Folke Bernadotte",
+    role: "UN Mediator in Palestine",
+    bio: "The UN mediator dispatched to negotiate a truce during the 1948 war, who was assassinated by the Jewish extremist Stern Gang.",
+    image: "assets/sources/portraits/folke_bernadotte.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Folke_Bernadotte"
+  },
+  "folke bernadotte": {
+    name: "Count Folke Bernadotte",
+    role: "UN Mediator in Palestine",
+    bio: "The UN mediator dispatched to negotiate a truce during the 1948 war, who was assassinated by the Jewish extremist Stern Gang.",
+    image: "assets/sources/portraits/folke_bernadotte.jpg",
+    sourceUrl: "https://en.wikipedia.org/wiki/Folke_Bernadotte"
+  }
+};
+
+const TIMELINE_IMAGES = [
+  {
+    keywords: ["partition plan", "resolution 181", "partition map"],
+    imageSvg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="150" style="background:#090d16; border-radius:4px;"><rect width="120" height="120" fill="#0b132b" /><path d="M 40,5 L 55,5 L 62,35 L 75,60 L 68,90 L 52,112 L 44,115 L 43,90 L 41,70 L 32,50 Z" fill="#1c2541" stroke="#3a506b" stroke-width="1" /><path d="M 40,5 L 55,5 L 60,20 L 44,20 Z" fill="#ffedd5" stroke="#f97316" stroke-width="0.5" /><path d="M 41,20 L 48,20 L 48,60 L 41,70 L 32,50 Z" fill="#ffedd5" stroke="#f97316" stroke-width="0.5" /><path d="M 41,70 L 50,70 L 52,112 L 44,115 L 43,90 Z" fill="#ffedd5" stroke="#f97316" stroke-width="0.5" /><path d="M 48,20 L 62,35 L 75,60 L 58,60 L 48,45 Z" fill="#dcfce7" stroke="#22c55e" stroke-width="0.5" /><path d="M 58,60 L 75,60 L 68,90 L 50,70 Z" fill="#dcfce7" stroke="#22c55e" stroke-width="0.5" /><circle cx="51" cy="58" r="3" fill="#ef4444" /><text x="56" y="60" font-family="sans-serif" font-size="4" fill="#ef4444">UN Zone</text><text x="80" y="30" font-family="sans-serif" font-size="5" font-weight="bold" fill="#f97316">Jewish State</text><text x="80" y="40" font-family="sans-serif" font-size="5" font-weight="bold" fill="#22c55e">Arab State</text></svg>`,
+    provenance: "UN Partition Plan map showing the proposed division of Palestine in November 1947."
+  },
+  {
+    keywords: ["suez canal", "nationalise the suez", "suez crisis", "nationalised the suez"],
+    imageSvg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="150" style="background:#090d16; border-radius:4px;"><rect width="120" height="120" fill="#0b132b" /><path d="M 50,0 Q 45,60 50,120 L 70,120 Q 75,60 70,0 Z" fill="#0284c7" opacity="0.3" /><path d="M 52,0 Q 47,60 52,120 M 68,120 Q 73,60 68,0" fill="none" stroke="#0284c7" stroke-width="1.5" /><rect x="52" y="45" width="16" height="30" rx="3" fill="#ef4444" stroke="#ffffff" stroke-width="0.5" /><polygon points="60,35 60,45 56,45" fill="#f97316" /><text x="10" y="60" font-family="sans-serif" font-size="5" font-weight="bold" fill="#0284c7">Suez Canal</text><text x="75" y="60" font-family="sans-serif" font-size="5" font-weight="bold" fill="#ef4444">Nationalised ship</text></svg>`,
+    provenance: "The Suez Canal in Egypt, a strategic trade link nationalised by President Nasser in July 1956."
+  },
+  {
+    keywords: ["yom kippur war", "bar-lev", "bar lev", "crossed the suez"],
+    imageSvg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="150" style="background:#090d16; border-radius:4px;"><rect width="120" height="120" fill="#0b132b" /><path d="M 0,90 L 120,90 L 120,120 L 0,120 Z" fill="#0284c7" opacity="0.3" /><path d="M 0,90 L 120,90" stroke="#0284c7" stroke-width="2" /><path d="M 80,40 L 95,90 L 120,90 L 120,20 Z" fill="#eab308" opacity="0.5" /><path d="M 80,40 L 95,90" stroke="#eab308" stroke-width="3" /><path d="M 20,90 Q 50,50 82,45" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-dasharray="3,3" /><text x="10" y="30" font-family="sans-serif" font-size="5" font-weight="bold" fill="#38bdf8">High-pressure Water</text><text x="85" y="30" font-family="sans-serif" font-size="5" font-weight="bold" fill="#eab308">Bar-Lev Sand Wall</text></svg>`,
+    provenance: "Egyptian soldiers crossing the Suez Canal and using high-pressure water hoses to breach the Bar-Lev Line, October 1973."
+  },
+  {
+    keywords: ["oslo accords", "oslo i", "handshake", "oslo agreement"],
+    imageSvg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="150" style="background:#090d16; border-radius:4px;"><rect width="120" height="120" fill="#0b132b" /><circle cx="60" cy="60" r="30" fill="none" stroke="#22c55e" stroke-width="1.5" stroke-dasharray="4,4" /><path d="M 30,70 L 45,55 L 55,65 M 90,70 L 75,55 L 65,65 M 50,60 L 70,60 M 45,55 C 45,55 52,50 58,55 C 64,60 70,55 70,55" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" /><text x="35" y="25" font-family="sans-serif" font-size="5" font-weight="bold" fill="#22c55e">Oslo Peace Handshake</text><text x="45" y="105" font-family="sans-serif" font-size="4" fill="#cbd5e1">Rabin &amp; Arafat 1993</text></svg>`,
+    provenance: "Historic handshake between Yitzhak Rabin and Yasser Arafat on the White House lawn, September 1993."
+  },
+  {
+    keywords: ["ben-gurion declared", "birth of israel", "14 may 1948", "creation of the state", "creation of israel"],
+    imageSvg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="150" style="background:#090d16; border-radius:4px;"><rect width="120" height="120" fill="#0b132b" /><rect x="20" y="30" width="80" height="50" fill="#ffffff" stroke="#cbd5e1" stroke-width="0.5" /><rect x="20" y="38" width="80" height="6" fill="#0038b8" /><rect x="20" y="66" width="80" height="6" fill="#0038b8" /><polygon points="60,46 64,56 54,50 66,50 56,56" stroke="#0038b8" stroke-width="1.5" fill="none" /><text x="35" y="95" font-family="sans-serif" font-size="5" font-weight="bold" fill="#0038b8">State of Israel Proclaimed</text></svg>`,
+    provenance: "The proclamation of the State of Israel by David Ben-Gurion under the portrait of Theodor Herzl, Tel Aviv, 14 May 1948."
+  }
+];
+
+function showFigureBioModal(figureKey) {
+  const figure = KEY_FIGURES_BIO[figureKey];
+  if (!figure) return;
+
+  AudioEngine.play('flip');
+
+  let modal = document.getElementById('timeline-bio-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'timeline-bio-modal';
+    modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 10000; padding: 20px; box-sizing: border-box;';
+    document.body.appendChild(modal);
+  }
+
+  // Parse initials from name
+  const parenMatch = figure.name.match(/\(([^)]+)\)/);
+  let initials = '';
+  if (parenMatch) {
+    initials = parenMatch[1].toUpperCase();
+  } else {
+    const cleanName = figure.name.replace(/Jr\.|Chief Justice|General|Dr\./gi, '').trim();
+    const parts = cleanName.split(/\s+/).filter(p => p.length > 0);
+    if (parts.length >= 3) {
+      initials = (parts[0][0] + parts[1][0] + parts[2][0]).toUpperCase();
+    } else if (parts.length === 2) {
+      initials = (parts[0][0] + parts[1][0]).toUpperCase();
+    } else if (parts.length === 1) {
+      initials = parts[0].substring(0, 2).toUpperCase();
+    }
+  }
+  initials = initials.substring(0, 3);
+
+  modal.innerHTML = `
+    <div class="bio-modal-card" style="background: var(--bg-sidebar); border: 2px solid var(--accent); border-radius: var(--border-radius-lg); width: 100%; max-width: 480px; padding: 24px; box-shadow: var(--shadow-lg); animation: scaleIn 0.3s ease-out; position: relative; color: var(--text-main); box-sizing: border-box;">
+      <button id="btn-close-bio-modal" style="position: absolute; top: 12px; right: 12px; background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; transition: color 0.2s;"><i class="fa-solid fa-xmark"></i></button>
+      
+      <div style="display: flex; gap: 16px; align-items: center; margin-bottom: 16px;">
+        <div style="width: 70px; height: 70px; border-radius: 50%; border: 2px solid var(--accent); flex-shrink: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; background: var(--gradient-primary); box-shadow: var(--shadow-sm);">
+          ${figure.image ? `
+            <img src="${figure.image}" alt="${figure.name}" style="width: 100%; height: 100%; object-fit: cover;" 
+              onerror="const fallback = '${getFallbackUrl(figure.image) || ''}'; if (fallback && this.src !== fallback) { this.referrerPolicy = 'no-referrer'; this.src = fallback; } else { this.style.display='none'; this.nextElementSibling.style.display='flex'; }">
+            <span style="display: none; font-size: 1.4rem; font-weight: 800; color: #fff; font-family: var(--font-heading); text-shadow: 0 1px 3px rgba(0,0,0,0.3);">${initials}</span>
+          ` : `
+            <span style="font-size: 1.4rem; font-weight: 800; color: #fff; font-family: var(--font-heading); text-shadow: 0 1px 3px rgba(0,0,0,0.3);">${initials}</span>
+          `}
+        </div>
+        <div>
+          <h3 style="margin: 0; font-family: var(--font-heading); color: var(--text-main); font-size: 1.25rem; font-weight: 700; letter-spacing: -0.2px;">${figure.name}</h3>
+          <span style="font-size: 0.82rem; color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; display: inline-block; margin-top: 2px;">${figure.role}</span>
+          ${figure.sourceUrl ? `
+            <div style="margin-top: 4px;">
+              <a href="${figure.sourceUrl}" target="_blank" style="font-size: 0.72rem; color: var(--primary); text-decoration: underline; display: inline-flex; align-items: center; gap: 4px;"><i class="fa-solid fa-arrow-up-right-from-square"></i> Portrait Source</a>
+            </div>
+          ` : ''}
+        </div>
+      </div>
+      
+      <div style="font-size: 0.95rem; line-height: 1.6; color: var(--text-main); margin-bottom: 24px; border-top: 1px solid var(--border-glass); padding-top: 16px; box-sizing: border-box;">
+        <strong style="color: var(--accent); display: block; margin-bottom: 8px; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">GCSE Biography & Significance:</strong>
+        <p style="margin: 0; font-style: normal; color: var(--text-main); font-weight: 400; line-height: 1.6;">${figure.bio}</p>
+      </div>
+      
+      <button id="btn-ok-bio-modal" class="mastery-btn" style="width: 100%; justify-content: center; background: var(--gradient-primary); border: none; color: white; padding: 12px; font-weight: bold; border-radius: var(--border-radius-sm); cursor: pointer; transition: transform 0.2s, opacity 0.2s;">Got it!</button>
+    </div>
+  `;
+
+  if (!document.getElementById('bio-modal-styles')) {
+    const styleEl = document.createElement('style');
+    styleEl.id = 'bio-modal-styles';
+    styleEl.textContent = `
+      @keyframes scaleIn {
+        from { transform: scale(0.9); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+      }
+      #btn-close-bio-modal:hover {
+        color: var(--accent) !important;
+      }
+      #btn-ok-bio-modal:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+      }
+    `;
+    document.head.appendChild(styleEl);
+  }
+
+  modal.style.display = 'flex';
+
+  const close = () => {
+    modal.style.display = 'none';
+  };
+
+  document.getElementById('btn-close-bio-modal').addEventListener('click', close);
+  document.getElementById('btn-ok-bio-modal').addEventListener('click', close);
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) close();
+  });
+}
+
 function renderTimelineView() {
   const wrapper = document.getElementById('timeline-items-wrapper');
   wrapper.innerHTML = '';
   
   const eraFilter = document.getElementById('timeline-era-select').value;
+  const searchInputEl = document.getElementById('timeline-search-input');
+  const searchQuery = searchInputEl ? searchInputEl.value.trim().toLowerCase() : '';
+  const filterPeopleBtn = document.getElementById('btn-timeline-filter-people');
+  const peopleOnlyActive = filterPeopleBtn ? filterPeopleBtn.classList.contains('active') : false;
+
   let questions = [...state.allQuestions];
   
+  // 1. Era filter
   if (eraFilter !== 'all') {
     questions = questions.filter(q => q.topicId === eraFilter);
+  }
+
+  // 2. Search Query filter
+  if (searchQuery) {
+    questions = questions.filter(q => {
+      const yearStr = (q.year || '').toString();
+      const questionText = (q.question || '').toLowerCase();
+      const answerText = (q.answer || '').toLowerCase();
+      const explanationText = (q.explanation || '').toLowerCase();
+      return yearStr.includes(searchQuery) ||
+             questionText.includes(searchQuery) ||
+             answerText.includes(searchQuery) ||
+             explanationText.includes(searchQuery);
+    });
+  }
+
+  // 3. People Only filter
+  if (peopleOnlyActive) {
+    const figureKeys = Object.keys(KEY_FIGURES_BIO);
+    questions = questions.filter(q => {
+      const textToSearch = `${q.question} ${q.answer} ${q.explanation || ''}`.toLowerCase();
+      return figureKeys.some(key => textToSearch.includes(key));
+    });
   }
   
   // Sort chronologically by year ascending
   questions.sort((a, b) => a.year - b.year);
   
-  document.getElementById('timeline-count-display').textContent = `${questions.length} chronological milestones mapped`;
+  document.getElementById('timeline-count-display').textContent = `${questions.length} chronological milestone${questions.length === 1 ? '' : 's'} mapped`;
   
   if (questions.length === 0) {
     wrapper.innerHTML = `
@@ -639,36 +1124,121 @@ function renderTimelineView() {
     `;
     return;
   }
+
+  // Clear matched visual states
+  TIMELINE_IMAGES.forEach(ti => ti.used = false);
   
   questions.forEach(q => {
     const item = document.createElement('div');
     item.className = 'timeline-item';
+    item.setAttribute('data-subtopic', q.subtopicId);
     
     let topicName = "Key Topic 1";
     if (q.topicId === 'topic_2') topicName = "Key Topic 2";
     if (q.topicId === 'topic_3') topicName = "Key Topic 3";
+
+    const textToSearch = `${q.question} ${q.answer} ${q.explanation || ''}`.toLowerCase();
+
+    // Check for timeline visual source
+    let visualHtml = '';
+    const matchedImg = TIMELINE_IMAGES.find(ti => !ti.used && ti.keywords.some(kw => textToSearch.includes(kw)));
+    if (matchedImg) {
+      matchedImg.used = true;
+      const base64Svg = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(matchedImg.imageSvg)));
+      visualHtml = `
+        <div class="timeline-image-wrapper" style="margin-top: 10px; margin-bottom: 8px; border-radius: var(--border-radius-sm); overflow: hidden; background: #000; max-height: 200px; display: flex; align-items: center; justify-content: center;">
+          <img src="${base64Svg}" alt="Visual Source" style="max-width: 100%; max-height: 200px; object-fit: contain; opacity: 0.9;">
+        </div>
+        <div class="timeline-image-provenance" style="font-size: 0.75rem; color: #cbd5e1; font-weight: 500; background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); padding: 8px 10px; border-radius: 4px; margin-bottom: 10px; line-height: 1.4; box-sizing: border-box;">
+          <strong style="color: inherit;">Source Provenance:</strong> ${matchedImg.provenance}
+        </div>
+      `;
+    }
+
+    // Check for key figures
+    let figureButtonsHtml = '';
+    const figureKeys = Object.keys(KEY_FIGURES_BIO);
+    const matchedFigures = new Set();
+    
+    figureKeys.forEach(key => {
+      if (textToSearch.includes(key)) {
+        matchedFigures.add(KEY_FIGURES_BIO[key].name);
+      }
+    });
+
+    let buttons = '';
+    if (matchedFigures.size > 0) {
+      buttons = Array.from(matchedFigures).map(name => {
+        const key = figureKeys.find(k => KEY_FIGURES_BIO[k].name === name);
+        const fig = KEY_FIGURES_BIO[key];
+        const initials = name.split(/\s+/).map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        return `
+          <button class="timeline-bio-btn" data-figure="${key}" style="margin-right: 6px; margin-top: 6px; padding: 2px 10px 2px 4px; font-size: 0.72rem; border-radius: 16px; background: rgba(245, 158, 11, 0.1); border: 1px solid var(--accent); color: var(--accent); font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+            <div style="width: 20px; height: 20px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; background: var(--gradient-primary); border: 1px solid var(--accent); flex-shrink: 0;">
+              ${fig.image ? `
+                <img src="${fig.image}" alt="${name}" style="width: 100%; height: 100%; object-fit: cover;" 
+                  onerror="const fallback = '${getFallbackUrl(fig.image) || ''}'; if (fallback && this.src !== fallback) { this.referrerPolicy = 'no-referrer'; this.src = fallback; } else { this.style.display='none'; this.nextElementSibling.style.display='flex'; }">
+                <span style="display: none; font-size: 0.5rem; font-weight: 800; color: #fff;">${initials}</span>
+              ` : `
+                <span style="font-size: 0.5rem; font-weight: 800; color: #fff;">${initials}</span>
+              `}
+            </div>
+            <span>Figure: ${name}</span>
+          </button>
+        `;
+      }).join('');
+    }
+    
+    const lessonButton = `<button class="timeline-lesson-btn" data-subtopic="${q.subtopicId}" style="margin-right: 6px; margin-top: 6px; padding: 4px 10px; font-size: 0.72rem; border-radius: 12px; background: rgba(59, 130, 246, 0.1); border: 1px solid var(--primary); color: var(--primary); font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;"><i class="fa-solid fa-book-open"></i> Go to Lesson</button>`;
+    const combinedButtonsHtml = `<div class="timeline-buttons-row" style="margin-top: 8px; display: flex; flex-wrap: wrap;">${lessonButton}${buttons}</div>`;
     
     item.innerHTML = `
       <div class="timeline-marker"></div>
       <div class="timeline-year">${q.year}</div>
-      <div class="timeline-content-card">
+      <div class="timeline-content-card" style="cursor: pointer;">
         <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
           <span style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted);">${topicName}</span>
           <span class="badge ${q.type === 'standard' ? 'badge-standard' : 'badge-depth'}">${q.type === 'standard' ? 'Standard' : 'Top Tier Trivia'}</span>
         </div>
-        <div class="timeline-q-title">${q.question}</div>
+        <div class="timeline-q-title" style="font-weight: bold; line-height: 1.4;">${q.question}</div>
         
-        <details class="quiz-card-details" style="border: none; border-radius: 0; background: none; box-shadow: none; margin-top: 4px;">
-          <summary style="padding: 4px 0; font-size: 0.8rem; font-weight: 600; color: var(--primary); display: flex; align-items: center; gap: 6px;">
-            Reveal Historical Key Term & Analysis <i class="fa-solid fa-chevron-down" style="font-size: 0.7rem;"></i>
-          </summary>
+        <div class="timeline-reveal-panel">
+          ${visualHtml}
           <div class="timeline-a-box" style="margin-top: 8px;">
-            <div class="timeline-a-text">${q.answer}</div>
-            <p class="timeline-exp">${q.explanation}</p>
+            <div class="timeline-a-text" style="color: var(--primary); font-weight: bold;">${q.answer}</div>
+            <p class="timeline-exp" style="margin-top: 4px; font-size: 0.85rem; color: var(--text-muted); line-height: 1.4;">${q.explanation}</p>
           </div>
-        </details>
+        </div>
+        ${combinedButtonsHtml}
       </div>
     `;
+    
+    const card = item.querySelector('.timeline-content-card');
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('.timeline-bio-btn') || e.target.closest('.timeline-lesson-btn')) return;
+      AudioEngine.play('click');
+      card.classList.toggle('revealed');
+    });
+
+    const bioBtns = item.querySelectorAll('.timeline-bio-btn');
+    bioBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const figKey = btn.getAttribute('data-figure');
+        showFigureBioModal(figKey);
+      });
+    });
+
+    const lessonBtns = item.querySelectorAll('.timeline-lesson-btn');
+    lessonBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        AudioEngine.play('click');
+        const subtopicId = btn.getAttribute('data-subtopic');
+        state.currentMode = 'lessons';
+        switchView('subtopic', subtopicId);
+      });
+    });
     
     wrapper.appendChild(item);
   });
@@ -870,11 +1440,56 @@ function openVideoModal(src, title) {
   const modal = document.getElementById('video-modal-overlay');
   const iframe = document.getElementById('video-modal-iframe');
   const modalTitle = document.getElementById('video-modal-title');
+  const externalLink = document.getElementById('video-modal-external-link');
   
   if (!modal || !iframe || !modalTitle) return;
   
   modalTitle.textContent = title;
-  iframe.src = src;
+  
+  let embedUrl = src;
+  let watchUrl = src;
+  let videoId = '';
+  
+  try {
+    if (src.includes('youtube.com/watch')) {
+      const url = new URL(src);
+      videoId = url.searchParams.get('v');
+    } else if (src.includes('youtu.be/')) {
+      const parts = src.split('youtu.be/');
+      videoId = parts[1]?.split('?')[0];
+    } else if (src.includes('youtube.com/embed/')) {
+      const parts = src.split('youtube.com/embed/');
+      videoId = parts[1]?.split('?')[0];
+    } else if (src.includes('youtube-nocookie.com/embed/')) {
+      const parts = src.split('youtube-nocookie.com/embed/');
+      videoId = parts[1]?.split('?')[0];
+    }
+    
+    if (videoId) {
+      // Build standard youtube embed URL
+      embedUrl = `https://www.youtube.com/embed/${videoId}`;
+      // Standard watch URL for fallback link
+      watchUrl = `https://www.youtube.com/watch?v=${videoId}`;
+      
+      // Append origin parameters for security check if running on web server
+      const currentOrigin = window.location.origin;
+      const params = ['rel=0'];
+      
+      if (currentOrigin && currentOrigin !== 'null' && !currentOrigin.startsWith('file:')) {
+        params.push(`origin=${encodeURIComponent(currentOrigin)}`);
+      }
+      
+      embedUrl = `${embedUrl}?${params.join('&')}`;
+    }
+  } catch (e) {
+    console.error("Failed to parse video URL:", e);
+  }
+  
+  iframe.src = embedUrl;
+  if (externalLink) {
+    externalLink.href = watchUrl;
+  }
+  
   modal.style.display = 'flex';
   AudioEngine.play('click');
 }
@@ -891,4 +1506,2194 @@ function closeVideoModal() {
 }
 
 
-
+// ==========================================
+// PORTED REVISION GAMES HUB IMPLEMENTATION
+// ==========================================
+
+export const GOOGLE_SHEET_WEBAPP_URL = "";
+
+// --- Spaced Repetition / Missed Terms Helpers ---
+function getMissedTerms() {
+  try {
+    const list = localStorage.getItem('antigravity_mastery_missed_terms');
+    return list ? JSON.parse(list) : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function recordMissedTerm(term) {
+  try {
+    const list = getMissedTerms();
+    if (!list.includes(term)) {
+      list.push(term);
+      localStorage.setItem('antigravity_mastery_missed_terms', JSON.stringify(list));
+    }
+  } catch (e) {}
+}
+
+function resolveMissedTerm(term) {
+  try {
+    let list = getMissedTerms();
+    list = list.filter(t => t !== term);
+    localStorage.setItem('antigravity_mastery_missed_terms', JSON.stringify(list));
+  } catch (e) {}
+}
+
+// --- Game States ---
+let chronoState = {
+  selectedEvents: [],
+  shuffledEvents: [],
+  placedEvents: [null, null, null, null, null],
+  score: 0,
+  hasChecked: false
+};
+
+let masteryState = {
+  unitId: null,
+  items: [],
+  selectedTermCard: null,
+  selectedDefCard: null,
+  score: 0,
+  timerVal: 60,
+  timerInterval: null,
+  isSpeedRun: false,
+  matchedCount: 0
+};
+
+let mindmapState = {
+  subtopicId: null,
+  nodes: [],
+  shuffledNodes: [],
+  placedCount: 0,
+  score: 0,
+  timerVal: 60,
+  timerInterval: null,
+  isSpeedRun: false
+};
+
+// --- Chronology Challenge Data & Generator ---
+const CHRONOLOGY_EVENTS = {};
+
+function populateChronologyEvents() {
+  if (Object.keys(CHRONOLOGY_EVENTS).length > 0) return;
+
+  QUIZ_DATA.forEach(topic => {
+    const topicId = topic.id;
+    CHRONOLOGY_EVENTS[topicId] = [];
+
+    topic.subtopics.forEach(sub => {
+      const subtopicId = sub.id;
+      CHRONOLOGY_EVENTS[subtopicId] = [];
+
+      const subQuestions = [
+        ...(sub.standard || []),
+        ...(sub.depth || [])
+      ].filter(q => q.year && q.answer && q.question);
+
+      subQuestions.forEach(q => {
+        const ev = {
+          id: `chrono_${q.id}`,
+          year: q.year,
+          answer: q.answer,
+          question: q.question
+        };
+        CHRONOLOGY_EVENTS[subtopicId].push(ev);
+        CHRONOLOGY_EVENTS[topicId].push(ev);
+      });
+    });
+  });
+}
+
+// --- Causal Link Builder ---
+function playCausalGame(subtopicId) {
+  const container = document.getElementById('causal-game-play-area');
+  if (!container) return;
+
+  const data = LESSONS_DATA[subtopicId];
+  if (!data || !data.causalLinks) return;
+
+  const causalLinks = data.causalLinks;
+  const totalFactors = causalLinks.factors.length;
+  const linkedFactors = new Set();
+  const pooledLinks = causalLinks.factors.map(factor => factor.linkageText);
+
+  let factorsHtml = '';
+  causalLinks.factors.forEach((f, idx) => {
+    const correctIdx = pooledLinks.indexOf(f.linkageText);
+    const optionsMarkup = pooledLinks.map((linkText, lIdx) => {
+      return `<option value="${lIdx}">${linkText}</option>`;
+    }).join('');
+
+    factorsHtml += `
+      <div class="causal-factor-card" id="causal-game-factor-card-${f.id}" style="padding: 16px; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-glass); border-radius: var(--border-radius-sm); margin-bottom: 16px; transition: all 0.3s;">
+        <div class="causal-factor-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <span style="font-weight: 600; font-size: 0.95rem; color: var(--text-main);">Factor ${idx + 1}: ${f.title}</span>
+          <span class="causal-status-badge" id="causal-game-status-${f.id}" style="font-size: 0.7rem; font-weight: 700; padding: 4px 8px; border-radius: 4px; background: rgba(239, 68, 68, 0.1); color: #f87171;">UNLINKED</span>
+        </div>
+        <div class="causal-select-wrapper" id="causal-game-select-wrapper-${f.id}">
+          <label style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 6px;">Select the correct analytical consequence / evidence link:</label>
+          <select class="causal-select" id="causal-game-select-${f.id}" data-factor-id="${f.id}" data-correct="${correctIdx}" style="width: 100%; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); border-radius: 4px; color: var(--text-main); font-size: 0.88rem; outline: none; cursor: pointer;">
+            <option value="" disabled selected>-- Match the consequence link --</option>
+            ${optionsMarkup}
+          </select>
+        </div>
+        <div class="causal-link-result" id="causal-game-result-${f.id}" style="display: none; margin-top: 10px; padding: 10px; background: rgba(16, 185, 129, 0.1); border-left: 3px solid #10b981; border-radius: 0 4px 4px 0; font-size: 0.88rem; color: #a7f3d0; line-height: 1.4;">
+          <strong>✓ Consequence Link:</strong> ${f.linkageText}
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = `
+    <div class="causal-connector-container" style="background: var(--bg-card); padding: 24px; border: 1px solid var(--border-glass); border-radius: var(--border-radius-md); box-shadow: var(--shadow-md);">
+      <h3 style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 700; color: var(--text-main); margin-top: 0; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+        <i class="fa-solid fa-link" style="color: var(--primary);"></i> Causal Link Builder
+      </h3>
+      <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; margin: 0 0 16px 0;">
+        Revision essays require you to link specific factors to their historical consequences. Select the correct link for each factor.
+      </p>
+      <div class="causal-question" style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.2); padding: 16px; border-radius: var(--border-radius-sm); margin-bottom: 20px; font-size: 0.92rem; line-height: 1.5; color: var(--text-main);">
+        <strong style="color: var(--primary);">Essay Question:</strong> &nbsp;${causalLinks.question}
+      </div>
+      <div class="causal-factors-grid">
+        ${factorsHtml}
+      </div>
+      <div class="causal-success-panel" id="causal-game-success-panel" style="display: none; text-align: center; margin-top: 24px; padding: 24px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: var(--border-radius-md); transition: all 0.3s;">
+        <h4 style="font-family: var(--font-heading); font-size: 1.3rem; font-weight: 700; color: #34d399; margin: 0 0 8px 0; display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <i class="fa-solid fa-trophy"></i> Causation Mastered!
+        </h4>
+        <p style="font-size: 0.92rem; line-height: 1.5; color: #a7f3d0; margin: 0;">${causalLinks.successText}</p>
+      </div>
+    </div>
+  `;
+
+  causalLinks.factors.forEach(f => {
+    const select = document.getElementById(`causal-game-select-${f.id}`);
+    if (select) {
+      select.addEventListener('change', (e) => {
+        const selectedVal = parseInt(e.target.value);
+        const correctVal = parseInt(select.getAttribute('data-correct'));
+        const card = document.getElementById(`causal-game-factor-card-${f.id}`);
+        const status = document.getElementById(`causal-game-status-${f.id}`);
+        const result = document.getElementById(`causal-game-result-${f.id}`);
+        const wrapper = document.getElementById(`causal-game-select-wrapper-${f.id}`);
+
+        if (selectedVal === correctVal) {
+          AudioEngine.play('success');
+          card.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+          card.style.background = 'rgba(16, 185, 129, 0.03)';
+          status.textContent = "LINKED!";
+          status.style.background = 'rgba(16, 185, 129, 0.15)';
+          status.style.color = '#34d399';
+          wrapper.style.display = 'none';
+          result.style.display = 'block';
+          linkedFactors.add(f.id);
+
+          if (linkedFactors.size === totalFactors) {
+            AudioEngine.play('cheer');
+            Confetti.spawn();
+            const panel = document.getElementById('causal-game-success-panel');
+            if (panel) panel.style.display = 'block';
+          }
+        } else {
+          AudioEngine.play('fail');
+          card.style.transform = 'translateX(-6px)';
+          setTimeout(() => card.style.transform = 'translateX(6px)', 60);
+          setTimeout(() => card.style.transform = 'translateX(-4px)', 120);
+          setTimeout(() => card.style.transform = 'translateX(4px)', 180);
+          setTimeout(() => card.style.transform = 'translateX(0)', 240);
+          select.value = "";
+        }
+      });
+    }
+  });
+}
+
+// --- Chronology Challenge ---
+function initChronologyGame() {
+  populateChronologyEvents();
+  const container = document.getElementById('chronology-game-play-area');
+  if (!container) return;
+
+  const topicSelect = document.getElementById('chrono-game-topic-select');
+  const topicId = topicSelect ? topicSelect.value : 'topic_1';
+  
+  const pool = CHRONOLOGY_EVENTS[topicId] || [];
+  if (pool.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state" style="text-align: center; padding: 40px 20px;">
+        <i class="fa-solid fa-hourglass-empty" style="font-size: 2.5rem; color: var(--text-muted); margin-bottom: 12px;"></i>
+        <h3 style="color: var(--text-main); margin-bottom: 8px;">No Chronological Events Found</h3>
+        <p style="color: var(--text-muted); font-size: 0.88rem;">Try selecting a different topic unit from the dropdown above.</p>
+      </div>
+    `;
+    return;
+  }
+
+  // Randomly select 5 unique events
+  const selected = [...pool].sort(() => 0.5 - Math.random()).slice(0, 5);
+
+  // Sort them chronologically to get the correct sequence
+  chronoState.selectedEvents = [...selected].sort((a, b) => a.year - b.year);
+  
+  // Shuffle events for option cards
+  chronoState.shuffledEvents = [...selected].sort(() => 0.5 - Math.random());
+  chronoState.placedEvents = [null, null, null, null, null];
+  chronoState.hasChecked = false;
+
+  renderChronologyGameUI();
+}
+
+function renderChronologyGameUI() {
+  const container = document.getElementById('chronology-game-play-area');
+  if (!container) return;
+
+  // Generate Slots HTML
+  let slotsHtml = '';
+  chronoState.placedEvents.forEach((placedEvent, idx) => {
+    if (idx > 0) {
+      slotsHtml += `
+        <div class="mindmap-arrow" id="chrono-arrow-${idx}" style="opacity: 0.25; display: flex; align-items: center; justify-content: center;">
+          <i class="fa-solid fa-arrow-right horizontal-arrow" style="color: var(--primary); font-size: 1.1rem;"></i>
+          <i class="fa-solid fa-arrow-down vertical-arrow" style="color: var(--primary); font-size: 1.1rem; margin: 4px 0;"></i>
+        </div>
+      `;
+    }
+    
+    if (placedEvent) {
+      slotsHtml += `
+        <div class="chrono-slot filled" id="chrono-slot-${idx}" data-index="${idx}">
+          <span class="chrono-slot-label">Step ${idx + 1}</span>
+          <div class="chrono-card-content">
+            <strong>${placedEvent.answer}</strong>
+            <p>${placedEvent.question}</p>
+          </div>
+        </div>
+      `;
+    } else {
+      slotsHtml += `
+        <div class="chrono-slot" id="chrono-slot-${idx}" data-index="${idx}">
+          <span class="chrono-slot-label">Step ${idx + 1}</span>
+          <div class="chrono-slot-placeholder-text">Empty Slot</div>
+        </div>
+      `;
+    }
+  });
+
+  // Generate Shuffled Option Cards HTML
+  let optionsHtml = chronoState.shuffledEvents.map((q) => {
+    const isPlaced = chronoState.placedEvents.some(p => p && p.id === q.id);
+    const cleanId = `chrono-opt-${q.id}`;
+    return `
+      <div class="chrono-option-card ${isPlaced ? 'placed' : ''}" id="${cleanId}" data-qid="${q.id}">
+        <strong style="color: var(--primary); font-size: 0.88rem; display: block; margin-bottom: 2px; line-height: 1.25;">${q.answer}</strong>
+        <p style="font-size: 0.72rem; line-height: 1.35; color: var(--text-muted); margin: 0; font-style: italic;">Clue: ${q.question}</p>
+      </div>
+    `;
+  }).join('');
+
+  const isAllFilled = chronoState.placedEvents.every(p => p !== null);
+
+  container.innerHTML = `
+    <div class="causal-connector-container" style="background: var(--bg-card); padding: 24px; border: 1px solid var(--border-glass); border-radius: var(--border-radius-md); box-shadow: var(--shadow-md);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3 style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 700; color: var(--text-main); margin: 0; display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-hourglass-half" style="color: var(--primary);"></i> Chronology Challenge
+        </h3>
+        <span style="font-weight: 700; font-size: 0.95rem; color: var(--success);" id="chrono-score-display">Score: ${chronoState.score}</span>
+      </div>
+      <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; margin: 0 0 20px 0;">
+        Chronological sequence is vital. Tap option cards below to place them in the timeline. Tapping a placed event removes it back to the options. Arrange all 5 in the correct chronological sequence (earliest to latest) and verify!
+      </p>
+
+      <!-- Chronology slots panel (Top viewport) -->
+      <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Chronology Timeline</div>
+      <div class="chrono-slots-container">
+        ${slotsHtml}
+      </div>
+
+      <!-- Success panel placed right underneath the timeline slots -->
+      <div class="causal-success-panel" id="chrono-success-panel" style="display: none; text-align: center; margin-top: 16px; padding: 20px; background: rgba(16, 185, 129, 0.05); border: 1px solid var(--success); border-radius: var(--border-radius-md);">
+        <h4 style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 700; color: var(--success); margin: 0 0 8px 0; display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <i class="fa-solid fa-medal"></i> Chronology Mastered!
+        </h4>
+        <p style="font-size: 0.9rem; line-height: 1.5; color: var(--text-main); margin-bottom: 16px;">
+          Outstanding work! You successfully ordered all 5 milestones in their correct chronological sequence.
+        </p>
+        <div id="chrono-narrative-container" style="margin-bottom: 20px;"></div>
+        <button class="btn-primary" id="btn-chrono-play-again" style="padding: 10px 20px; font-weight: 600; font-size: 0.9rem; border-radius: 4px; cursor: pointer;">
+          <i class="fa-solid fa-rotate-right"></i> Play Again (New Events)
+        </button>
+      </div>
+
+      <div id="chrono-play-controls-area">
+        <!-- Shuffled event cards shelf (Bottom viewport) -->
+        <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Timeline Event Options</div>
+        <div class="chrono-options-container">
+          ${optionsHtml}
+        </div>
+
+        <!-- Clue Feedback box -->
+        <div id="chrono-feedback-message" style="display: none; font-size: 0.82rem; line-height: 1.45; padding: 10px 14px; border-radius: var(--border-radius-sm); margin-top: 16px; font-weight: 600; text-align: center;"></div>
+
+        <!-- Action buttons -->
+        <div style="display: flex; gap: 12px; margin-top: 24px; justify-content: center; align-items: center; flex-wrap: wrap;">
+          <button class="btn-primary" id="btn-chrono-check" ${isAllFilled ? '' : 'disabled'} style="padding: 10px 20px; font-weight: 600; font-size: 0.9rem; border-radius: 4px; cursor: ${isAllFilled ? 'pointer' : 'not-allowed'}; opacity: ${isAllFilled ? '1' : '0.5'}; display: ${chronoState.hasChecked ? 'none' : 'inline-flex'}; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-clipboard-check"></i> Verify Sequence
+          </button>
+          <button class="btn-secondary" id="btn-chrono-reset" style="padding: 10px 20px; font-weight: 600; font-size: 0.9rem; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-arrow-rotate-left"></i> Clear All
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  bindChronologyEvents();
+}
+
+function bindChronologyEvents() {
+  const container = document.getElementById('game-chronology-container');
+  if (!container) return;
+
+  // Shelf cards
+  container.querySelectorAll('.chrono-option-card').forEach(card => {
+    card.addEventListener('click', () => {
+      if (chronoState.hasChecked) return;
+      
+      const qid = card.getAttribute('data-qid');
+      const eventObj = chronoState.shuffledEvents.find(e => e.id === qid);
+      if (!eventObj) return;
+
+      // Find first empty slot
+      const emptyIdx = chronoState.placedEvents.indexOf(null);
+      if (emptyIdx > -1) {
+        AudioEngine.play('click');
+        chronoState.placedEvents[emptyIdx] = eventObj;
+        renderChronologyGameUI();
+      }
+    });
+  });
+
+  // Placed slots
+  container.querySelectorAll('.chrono-slot.filled').forEach(slot => {
+    slot.addEventListener('click', () => {
+      const idx = parseInt(slot.getAttribute('data-index'));
+      
+      AudioEngine.play('click');
+      chronoState.placedEvents[idx] = null;
+      chronoState.hasChecked = false; // Reset checked status
+      renderChronologyGameUI();
+    });
+  });
+
+  // Check button
+  const checkBtn = document.getElementById('btn-chrono-check');
+  if (checkBtn) {
+    checkBtn.addEventListener('click', () => {
+      verifyChronologySequence();
+    });
+  }
+
+  // Reset button
+  const resetBtn = document.getElementById('btn-chrono-reset');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      AudioEngine.play('click');
+      chronoState.placedEvents = [null, null, null, null, null];
+      chronoState.hasChecked = false;
+      renderChronologyGameUI();
+    });
+  }
+
+  // Success panel Play Again button
+  const playAgainBtn = document.getElementById('btn-chrono-play-again');
+  if (playAgainBtn) {
+    playAgainBtn.addEventListener('click', () => {
+      AudioEngine.play('click');
+      initChronologyGame();
+    });
+  }
+}
+
+function generateChronoNarrativeParagraph(events) {
+  const parts = events.map((e, idx) => {
+    const qText = e.question.trim();
+    const ansText = e.answer.trim();
+    
+    if (idx === 0) {
+      return `In <strong>${e.year}</strong>, the <strong>${ansText}</strong> occurred (${qText})`;
+    } else if (idx === 1) {
+      return `this was followed in <strong>${e.year}</strong> by the <strong>${ansText}</strong> (${qText})`;
+    } else if (idx === 2) {
+      return `subsequently, in <strong>${e.year}</strong>, the <strong>${ansText}</strong> took place (${qText})`;
+    } else if (idx === 3) {
+      return `next, in <strong>${e.year}</strong>, the <strong>${ansText}</strong> happened (${qText})`;
+    } else {
+      return `and finally, in <strong>${e.year}</strong>, this story culminated in the <strong>${ansText}</strong> (${qText})`;
+    }
+  });
+
+  let narrative = parts.join("; ");
+  narrative = narrative.charAt(0).toUpperCase() + narrative.slice(1);
+  if (!narrative.endsWith('.')) {
+    narrative += '.';
+  }
+
+  return `
+    <div style="text-align: left; background: rgba(16, 185, 129, 0.05); border-left: 4px solid var(--success); padding: 14px 18px; border-radius: var(--border-radius-sm); margin-top: 16px;">
+      <strong style="color: var(--success); display: block; margin-bottom: 6px; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">
+        <i class="fa-solid fa-book-open"></i> Historical Narrative:
+      </strong>
+      <p style="font-size: 0.88rem; line-height: 1.6; color: var(--text-main); margin: 0; font-style: italic;">
+        ${narrative}
+      </p>
+    </div>
+`;
+}
+
+function getChronologyClue() {
+  const incorrectIndices = [];
+  chronoState.placedEvents.forEach((event, idx) => {
+    const expectedEvent = chronoState.selectedEvents[idx];
+    if (!event || event.id !== expectedEvent.id) {
+      incorrectIndices.push(idx);
+    }
+  });
+
+  if (incorrectIndices.length === 0) return "";
+
+  const firstWrongIdx = incorrectIndices[0];
+  const expectedEvent = chronoState.selectedEvents[firstWrongIdx];
+  return `Consider the timing of **${expectedEvent.answer}**. It belongs in the sequence at **Step ${firstWrongIdx + 1}**! Check your order and try again.`;
+}
+
+function verifyChronologySequence() {
+  const container = document.getElementById('chronology-game-play-area');
+  if (!container) return;
+
+  chronoState.hasChecked = true;
+  let allCorrect = true;
+
+  // Check sequence correctness
+  chronoState.placedEvents.forEach((event, idx) => {
+    const expectedEvent = chronoState.selectedEvents[idx];
+    const slot = document.getElementById(`chrono-slot-${idx}`);
+    if (!slot) return;
+
+    if (event && event.id === expectedEvent.id) {
+      slot.classList.remove('incorrect');
+      slot.classList.add('correct');
+    } else {
+      slot.classList.remove('correct');
+      slot.classList.add('incorrect');
+      allCorrect = false;
+    }
+  });
+
+  if (allCorrect) {
+    AudioEngine.play('cheer');
+    if (typeof Confetti !== 'undefined' && typeof Confetti.spawn === 'function') {
+      Confetti.spawn(100);
+    }
+    
+    chronoState.score += 20;
+    const scoreDisplay = document.getElementById('chrono-score-display');
+    if (scoreDisplay) scoreDisplay.textContent = `Score: ${chronoState.score}`;
+
+    // Reveal years in slots
+    chronoState.placedEvents.forEach((event, idx) => {
+      const slot = document.getElementById(`chrono-slot-${idx}`);
+      if (slot) {
+        const content = slot.querySelector('.chrono-card-content');
+        if (content) {
+          content.innerHTML = `
+            <div class="chrono-slot-year-badge">${event.year}</div>
+            <strong>${event.answer}</strong>
+            <p>${event.question}</p>
+          `;
+        }
+      }
+    });
+
+    const successPanel = document.getElementById('chrono-success-panel');
+    if (successPanel) {
+      successPanel.style.display = 'block';
+    }
+
+    const narrativeContainer = document.getElementById('chrono-narrative-container');
+    if (narrativeContainer) {
+      narrativeContainer.innerHTML = generateChronoNarrativeParagraph(chronoState.placedEvents);
+    }
+
+    const feedbackMsg = document.getElementById('chrono-feedback-message');
+    if (feedbackMsg) {
+      feedbackMsg.style.display = 'none';
+    }
+    
+    const checkBtn = document.getElementById('btn-chrono-check');
+    if (checkBtn) checkBtn.style.display = 'none';
+
+    const playControls = document.getElementById('chrono-play-controls-area');
+    if (playControls) playControls.style.display = 'none';
+  } else {
+    AudioEngine.play('fail');
+    chronoState.score = Math.max(0, chronoState.score - 5);
+    const scoreDisplay = document.getElementById('chrono-score-display');
+    if (scoreDisplay) scoreDisplay.textContent = `Score: ${chronoState.score}`;
+
+    const feedbackMsg = document.getElementById('chrono-feedback-message');
+    if (feedbackMsg) {
+      feedbackMsg.style.display = 'block';
+      feedbackMsg.style.background = 'rgba(239, 68, 68, 0.1)';
+      feedbackMsg.style.color = 'var(--accent)';
+      feedbackMsg.style.borderLeft = '3px solid var(--accent)';
+      feedbackMsg.innerHTML = `<i class="fa-solid fa-lightbulb"></i> ${getChronologyClue()}`;
+    }
+  }
+}
+
+// Highscore & Leaderboard Helpers for Mastery Match and Concept Connector
+function getHighScores(unitId) {
+  const key = `mastery_highscores_${unitId}`;
+  let scores = localStorage.getItem(key);
+  if (!scores) {
+    scores = [
+      { name: "Alex", yearGroup: "Year 9", score: 45, date: "2026-05-28" },
+      { name: "Sarah", yearGroup: "Year 10", score: 40, date: "2026-05-29" },
+      { name: "James", yearGroup: "Year 8", score: 35, date: "2026-05-27" },
+      { name: "Emily", yearGroup: "Year 11", score: 25, date: "2026-05-29" },
+      { name: "Thomas", yearGroup: "Year 7", score: 15, date: "2026-05-26" }
+    ];
+    localStorage.setItem(key, JSON.stringify(scores));
+  } else {
+    scores = JSON.parse(scores);
+  }
+  return scores.sort((a, b) => b.score - a.score).slice(0, 5);
+}
+
+function saveHighScoreLocal(unitId, name, yearGroup, score) {
+  const scores = getHighScores(unitId);
+  const dateStr = new Date().toISOString().split('T')[0];
+  scores.push({ name: name || "Anonymous", yearGroup: yearGroup || "", score: score, date: dateStr });
+  scores.sort((a, b) => b.score - a.score);
+  localStorage.setItem(`mastery_highscores_${unitId}`, JSON.stringify(scores.slice(0, 5)));
+}
+
+function renderMasteryLeaderboard(unitId) {
+  const container = document.getElementById('mastery-leaderboard-container');
+  if (!container) return;
+
+  const localScores = getHighScores(unitId);
+  renderTable(localScores);
+
+  if (GOOGLE_SHEET_WEBAPP_URL) {
+    fetch(`${GOOGLE_SHEET_WEBAPP_URL}?type=mastery&unitId=${unitId}`)
+      .then(res => res.json())
+      .then(scores => {
+        if (Array.isArray(scores)) {
+          renderTable(scores);
+        }
+      })
+      .catch(err => console.error("Error loading remote mastery leaderboard:", err));
+  }
+
+  function renderTable(scoresList) {
+    let rowsHtml = scoresList.map((s, idx) => {
+      let medal = '';
+      if (idx === 0) medal = '🥇 ';
+      else if (idx === 1) medal = '🥈 ';
+      else if (idx === 2) medal = '🥉 ';
+      
+      const yrText = s.yearGroup ? ` <span style="font-size: 0.72rem; color: var(--text-muted);">(${s.yearGroup})</span>` : '';
+      return `
+        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.82rem;">
+          <td style="padding: 8px 4px; font-weight: bold; color: var(--primary);">${medal}${idx + 1}</td>
+          <td style="padding: 8px 4px; color: var(--text-main);">${s.name}${yrText}</td>
+          <td style="padding: 8px 4px; font-weight: 700; color: var(--success); text-align: right;">${s.score} pts</td>
+          <td style="padding: 8px 4px; color: var(--text-muted); text-align: right; font-size: 0.72rem;">${s.date}</td>
+        </tr>
+      `;
+    }).join('');
+
+    container.innerHTML = `
+      <div style="margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--border-glass);">
+        <h4 style="font-family: var(--font-heading); font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin: 0 0 12px 0; display: flex; align-items: center; gap: 6px;">
+          <i class="fa-solid fa-ranking-star" style="color: var(--accent);"></i> Top High Scores (Unit Leaderboard)
+        </h4>
+        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+          <thead>
+            <tr style="border-bottom: 1px solid var(--border-glass); color: var(--text-muted); font-size: 0.72rem; text-transform: uppercase;">
+              <th style="padding: 4px; font-weight: 600;">Rank</th>
+              <th style="padding: 4px; font-weight: 600;">Student</th>
+              <th style="padding: 4px; font-weight: 600; text-align: right;">Score</th>
+              <th style="padding: 4px; font-weight: 600; text-align: right;">Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rowsHtml}
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+}
+
+function renderResultsLeaderboard(unitId) {
+  const container = document.getElementById('mastery-results-leaderboard');
+  if (!container) return;
+  
+  const localScores = getHighScores(unitId);
+  renderResults(localScores);
+
+  if (GOOGLE_SHEET_WEBAPP_URL) {
+    fetch(`${GOOGLE_SHEET_WEBAPP_URL}?type=mastery&unitId=${unitId}`)
+      .then(res => res.json())
+      .then(scores => {
+        if (Array.isArray(scores)) {
+          renderResults(scores);
+        }
+      })
+      .catch(err => console.error("Error loading remote mastery results leaderboard:", err));
+  }
+
+  function renderResults(scoresList) {
+    let rowsHtml = scoresList.map((s, idx) => {
+      let medal = '';
+      if (idx === 0) medal = '🥇 ';
+      else if (idx === 1) medal = '🥈 ';
+      else if (idx === 2) medal = '🥉 ';
+      const yrText = s.yearGroup ? ` <span style="font-size: 0.72rem; color: var(--text-muted);">(${s.yearGroup})</span>` : '';
+      return `
+        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.03);">
+          <span style="color: var(--primary); font-weight: bold;">${medal}${idx + 1}. ${s.name}${yrText}</span>
+          <span style="color: var(--success); font-weight: 700;">${s.score} pts</span>
+        </div>
+      `;
+    }).join('');
+    container.innerHTML = `
+      <h4 style="font-family: var(--font-heading); font-size: 0.88rem; margin: 12px 0 8px; color: var(--text-main); text-align: left;">
+        <i class="fa-solid fa-ranking-star" style="color: var(--accent);"></i> Leaderboard Rankings:
+      </h4>
+      <div style="text-align: left; background: rgba(0,0,0,0.1); padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border-glass);">
+        ${rowsHtml}
+      </div>
+    `;
+  }
+}
+
+function getMindMapHighScores(subtopicId) {
+  const key = `mindmap_highscores_${subtopicId}`;
+  let scores = localStorage.getItem(key);
+  if (!scores) {
+    scores = [
+      { name: "Alex", yearGroup: "Year 9", score: 45, date: "2026-05-28" },
+      { name: "Sarah", yearGroup: "Year 10", score: 40, date: "2026-05-29" },
+      { name: "James", yearGroup: "Year 8", score: 35, date: "2026-05-27" },
+      { name: "Emily", yearGroup: "Year 11", score: 25, date: "2026-05-29" },
+      { name: "Thomas", yearGroup: "Year 7", score: 15, date: "2026-05-26" }
+    ];
+    localStorage.setItem(key, JSON.stringify(scores));
+  } else {
+    scores = JSON.parse(scores);
+  }
+  return scores.sort((a, b) => b.score - a.score).slice(0, 5);
+}
+
+function saveMindMapHighScoreLocal(subtopicId, name, yearGroup, score) {
+  const scores = getMindMapHighScores(subtopicId);
+  const dateStr = new Date().toISOString().split('T')[0];
+  scores.push({ name: name || "Anonymous", yearGroup: yearGroup || "", score: score, date: dateStr });
+  scores.sort((a, b) => b.score - a.score);
+  localStorage.setItem(`mindmap_highscores_${subtopicId}`, JSON.stringify(scores.slice(0, 5)));
+}
+
+function renderMindMapLeaderboard(subtopicId) {
+  const container = document.getElementById('mindmap-leaderboard-container');
+  if (!container) return;
+
+  const localScores = getMindMapHighScores(subtopicId);
+  renderTable(localScores);
+
+  if (GOOGLE_SHEET_WEBAPP_URL) {
+    fetch(`${GOOGLE_SHEET_WEBAPP_URL}?type=mindmap&subtopicId=${subtopicId}`)
+      .then(res => res.json())
+      .then(scores => {
+        if (Array.isArray(scores)) {
+          renderTable(scores);
+        }
+      })
+      .catch(err => console.error("Error loading remote mindmap leaderboard:", err));
+  }
+
+  function renderTable(scoresList) {
+    let rowsHtml = scoresList.map((s, idx) => {
+      let medal = '';
+      if (idx === 0) medal = '🥇 ';
+      else if (idx === 1) medal = '🥈 ';
+      else if (idx === 2) medal = '🥉 ';
+      
+      const yrText = s.yearGroup ? ` <span style="font-size: 0.72rem; color: var(--text-muted);">(${s.yearGroup})</span>` : '';
+      return `
+        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.82rem;">
+          <td style="padding: 8px 4px; font-weight: bold; color: var(--primary);">${medal}${idx + 1}</td>
+          <td style="padding: 8px 4px; color: var(--text-main);">${s.name}${yrText}</td>
+          <td style="padding: 8px 4px; font-weight: 700; color: var(--success); text-align: right;">${s.score} pts</td>
+          <td style="padding: 8px 4px; color: var(--text-muted); text-align: right; font-size: 0.72rem;">${s.date}</td>
+        </tr>
+      `;
+    }).join('');
+
+    container.innerHTML = `
+      <div style="margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--border-glass);">
+        <h4 style="font-family: var(--font-heading); font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin: 0 0 12px 0; display: flex; align-items: center; gap: 6px;">
+          <i class="fa-solid fa-ranking-star" style="color: var(--accent);"></i> Top High Scores (Topic Leaderboard)
+        </h4>
+        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+          <thead>
+            <tr style="border-bottom: 1px solid var(--border-glass); color: var(--text-muted); font-size: 0.72rem; text-transform: uppercase;">
+              <th style="padding: 4px; font-weight: 600;">Rank</th>
+              <th style="padding: 4px; font-weight: 600;">Student</th>
+              <th style="padding: 4px; font-weight: 600; text-align: right;">Score</th>
+              <th style="padding: 4px; font-weight: 600; text-align: right;">Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rowsHtml}
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+}
+
+function renderMindMapResultsLeaderboard(subtopicId) {
+  const container = document.getElementById('mindmap-results-leaderboard');
+  if (!container) return;
+  
+  const localScores = getMindMapHighScores(subtopicId);
+  renderResults(localScores);
+
+  if (GOOGLE_SHEET_WEBAPP_URL) {
+    fetch(`${GOOGLE_SHEET_WEBAPP_URL}?type=mindmap&subtopicId=${subtopicId}`)
+      .then(res => res.json())
+      .then(scores => {
+        if (Array.isArray(scores)) {
+          renderResults(scores);
+        }
+      })
+      .catch(err => console.error("Error loading remote mindmap results leaderboard:", err));
+  }
+
+  function renderResults(scoresList) {
+    let rowsHtml = scoresList.map((s, idx) => {
+      let medal = '';
+      if (idx === 0) medal = '🥇 ';
+      else if (idx === 1) medal = '🥈 ';
+      else if (idx === 2) medal = '🥉 ';
+      const yrText = s.yearGroup ? ` <span style="font-size: 0.72rem; color: var(--text-muted);">(${s.yearGroup})</span>` : '';
+      return `
+        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.03);">
+          <span style="color: var(--primary); font-weight: bold;">${medal}${idx + 1}. ${s.name}${yrText}</span>
+          <span style="color: var(--success); font-weight: 700;">${s.score} pts</span>
+        </div>
+      `;
+    }).join('');
+    container.innerHTML = `
+      <h4 style="font-family: var(--font-heading); font-size: 0.88rem; margin: 12px 0 8px; color: var(--text-main); text-align: left;">
+        <i class="fa-solid fa-ranking-star" style="color: var(--accent);"></i> Leaderboard Rankings:
+      </h4>
+      <div style="text-align: left; background: rgba(0,0,0,0.1); padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border-glass);">
+        ${rowsHtml}
+      </div>
+    `;
+  }
+}
+
+// --- Mastery Match ---
+function initMasteryMatchGame() {
+  const container = document.getElementById('mastery-game-play-area');
+  if (!container) return;
+
+  let optionsHtml = '';
+  Object.keys(MASTERY_DATA).forEach(unitId => {
+    optionsHtml += `<option value="${unitId}">${MASTERY_DATA[unitId].title}</option>`;
+  });
+
+  container.innerHTML = `
+    <div class="causal-connector-container" style="background: var(--bg-card); padding: 24px; border: 1px solid var(--border-glass); border-radius: var(--border-radius-md); box-shadow: var(--shadow-md);">
+      <h3 style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 700; color: var(--text-main); margin-top: 0; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+        <i class="fa-solid fa-trophy" style="color: var(--primary);"></i> Mastery Match
+      </h3>
+      <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; margin: 0 0 20px 0;">
+        Match specification-level terms to their definitions. Correct pairings trigger a quick "Defend" bonus question!
+      </p>
+
+      <div style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px;">
+        <div class="form-group" style="display: flex; flex-direction: column; gap: 6px;">
+          <label style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase; color: var(--text-muted);">Select Topic Unit</label>
+          <select class="select-input" id="mastery-setup-unit" style="width: 100%; padding: 12px 16px; background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border-glass); border-radius: var(--border-radius-sm); color: var(--text-main); font-size: 0.95rem; outline: none; cursor: pointer;">
+            ${optionsHtml}
+          </select>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 10px; padding: 10px 0;">
+          <input type="checkbox" id="mastery-setup-speedrun" checked style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary);">
+          <label for="mastery-setup-speedrun" style="font-size: 0.88rem; font-weight: 500; cursor: pointer; color: var(--text-main);">
+            Enable Speed Run Mode (60-second Timer)
+          </label>
+        </div>
+      </div>
+
+      <button class="btn-primary" id="btn-mastery-start" style="width: 100%; padding: 12px; font-weight: 700; font-size: 1rem; border-radius: var(--border-radius-sm); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+        <i class="fa-solid fa-play"></i> Start Matching
+      </button>
+
+      <!-- Leaderboard Container -->
+      <div id="mastery-leaderboard-container"></div>
+    </div>
+  `;
+
+  const unitSelect = document.getElementById('mastery-setup-unit');
+  if (unitSelect) {
+    renderMasteryLeaderboard(unitSelect.value);
+    unitSelect.addEventListener('change', () => {
+      renderMasteryLeaderboard(unitSelect.value);
+    });
+  }
+
+  document.getElementById('btn-mastery-start').addEventListener('click', () => {
+    AudioEngine.play('click');
+    const unitId = document.getElementById('mastery-setup-unit').value;
+    const isSpeedRun = document.getElementById('mastery-setup-speedrun').checked;
+    startMasteryMatch(unitId, isSpeedRun);
+  });
+}
+
+function startMasteryMatch(unitId, isSpeedRun) {
+  const container = document.getElementById('mastery-game-play-area');
+  if (!container) return;
+
+  const data = MASTERY_DATA[unitId];
+  if (!data) return;
+
+  if (masteryState.timerInterval) clearInterval(masteryState.timerInterval);
+
+  masteryState.unitId = unitId;
+  masteryState.score = 0;
+  masteryState.isSpeedRun = isSpeedRun;
+  masteryState.timerVal = 60;
+  masteryState.matchedCount = 0;
+  masteryState.selectedTermCard = null;
+  masteryState.selectedDefCard = null;
+
+  const missed = getMissedTerms();
+  const allItems = [...data.items];
+  allItems.sort((a, b) => {
+    const aMissed = missed.includes(a.term) ? 1 : 0;
+    const bMissed = missed.includes(b.term) ? 1 : 0;
+    return bMissed - aMissed;
+  });
+
+  const roundItems = allItems.slice(0, 5);
+  masteryState.items = roundItems;
+
+  const shuffledTerms = [...roundItems].sort(() => Math.random() - 0.5);
+  const shuffledDefs = [...roundItems].sort(() => Math.random() - 0.5);
+
+  let timerHtml = '';
+  if (isSpeedRun) {
+    timerHtml = `
+      <div style="margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">
+          <span>Time Remaining</span>
+          <span id="mastery-timer-text">60s</span>
+        </div>
+        <div style="height: 6px; background: rgba(255, 255, 255, 0.05); border-radius: 3px; overflow: hidden;">
+          <div id="mastery-timer-fill" style="height: 100%; width: 100%; background: var(--gradient-main); transition: width 1s linear;"></div>
+        </div>
+      </div>
+    `;
+  }
+
+  container.innerHTML = `
+    <div class="causal-connector-container" style="background: var(--bg-card); padding: 24px; border: 1px solid var(--border-glass); border-radius: var(--border-radius-md); box-shadow: var(--shadow-md);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <span style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: var(--primary); letter-spacing: 0.5px;">Mastery Match: ${data.title}</span>
+        <span style="font-weight: 700; font-size: 0.95rem; color: var(--success);" id="mastery-score-display">Score: 0</span>
+      </div>
+
+      ${timerHtml}
+
+      <div class="mastery-match-grid">
+        <!-- Terms Column -->
+        <div class="mastery-column">
+          <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Terms</div>
+          ${shuffledTerms.map(item => `
+            <div class="mastery-match-card" data-type="term" data-term="${item.term.replace(/"/g, '&quot;')}" id="mastery-term-${item.term.replace(/\s+/g, '-').replace(/[^\w-]/g, '')}">
+              ${item.term}
+            </div>
+          `).join('')}
+        </div>
+
+        <!-- Definitions Column -->
+        <div class="mastery-column">
+          <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Definitions</div>
+          ${shuffledDefs.map(item => `
+            <div class="mastery-match-card" data-type="def" data-def="${item.definition.replace(/"/g, '&quot;')}" id="mastery-def-${item.term.replace(/\s+/g, '-').replace(/[^\w-]/g, '')}">
+              ${item.definition}
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+    
+    <div id="mastery-defend-overlay" class="defend-overlay" style="display: none;"></div>
+  `;
+
+  container.querySelectorAll('.mastery-match-card').forEach(card => {
+    card.addEventListener('click', () => {
+      handleMasteryCardClick(card);
+    });
+  });
+
+  if (isSpeedRun) {
+    masteryState.timerInterval = setInterval(() => {
+      masteryState.timerVal--;
+      const text = document.getElementById('mastery-timer-text');
+      const fill = document.getElementById('mastery-timer-fill');
+      if (text) text.textContent = `${masteryState.timerVal}s`;
+      if (fill) fill.style.width = `${(masteryState.timerVal / 60) * 100}%`;
+
+      if (masteryState.timerVal <= 0) {
+        clearInterval(masteryState.timerInterval);
+        endMasteryGame(false);
+      }
+    }, 1000);
+  }
+}
+
+function handleMasteryCardClick(card) {
+  if (card.classList.contains('matched')) return;
+
+  AudioEngine.play('click');
+  const type = card.getAttribute('data-type');
+
+  if (type === 'term') {
+    if (masteryState.selectedTermCard) {
+      masteryState.selectedTermCard.classList.remove('selected');
+    }
+    
+    if (masteryState.selectedTermCard === card) {
+      masteryState.selectedTermCard = null;
+    } else {
+      masteryState.selectedTermCard = card;
+      card.classList.add('selected');
+    }
+  } else {
+    if (masteryState.selectedDefCard) {
+      masteryState.selectedDefCard.classList.remove('selected');
+    }
+
+    if (masteryState.selectedDefCard === card) {
+      masteryState.selectedDefCard = null;
+    } else {
+      masteryState.selectedDefCard = card;
+      card.classList.add('selected');
+    }
+  }
+
+  if (masteryState.selectedTermCard && masteryState.selectedDefCard) {
+    const selectedTerm = masteryState.selectedTermCard.getAttribute('data-term');
+    const selectedDef = masteryState.selectedDefCard.getAttribute('data-def');
+
+    const matchedItem = masteryState.items.find(item => item.term === selectedTerm);
+
+    if (matchedItem && matchedItem.definition === selectedDef) {
+      const termCard = masteryState.selectedTermCard;
+      const defCard = masteryState.selectedDefCard;
+      
+      termCard.classList.remove('selected');
+      defCard.classList.remove('selected');
+      
+      termCard.classList.add('matched');
+      defCard.classList.add('matched');
+
+      masteryState.selectedTermCard = null;
+      masteryState.selectedDefCard = null;
+
+      triggerDefendTwist(matchedItem, termCard, defCard);
+    } else {
+      AudioEngine.play('fail');
+      
+      recordMissedTerm(selectedTerm);
+      if (matchedItem) {
+        recordMissedTerm(matchedItem.term);
+      }
+
+      const termCard = masteryState.selectedTermCard;
+      const defCard = masteryState.selectedDefCard;
+
+      termCard.classList.remove('selected');
+      defCard.classList.remove('selected');
+      
+      [termCard, defCard].forEach(c => {
+        c.style.transform = 'translateX(-6px)';
+        setTimeout(() => c.style.transform = 'translateX(6px)', 60);
+        setTimeout(() => c.style.transform = 'translateX(-4px)', 120);
+        setTimeout(() => c.style.transform = 'translateX(4px)', 180);
+        setTimeout(() => c.style.transform = 'translateX(0)', 240);
+      });
+
+      masteryState.selectedTermCard = null;
+      masteryState.selectedDefCard = null;
+    }
+  }
+}
+
+function triggerDefendTwist(item, termCard, defCard) {
+  const overlay = document.getElementById('mastery-defend-overlay');
+  if (!overlay) return;
+
+  const shuffledOptions = [...item.defendOptions].sort(() => Math.random() - 0.5);
+
+  overlay.innerHTML = `
+    <div class="defend-content">
+      <div class="defend-header">
+        <i class="fa-solid fa-shield-halved"></i> DEFEND YOUR MATCH!
+      </div>
+      <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">
+        Match confirmed: <strong>${item.term}</strong>
+      </div>
+      <div class="defend-question">${item.defendQuestion}</div>
+      <div class="defend-options-list">
+        ${shuffledOptions.map(opt => `
+          <button class="defend-option-btn" data-value="${opt.replace(/"/g, '&quot;')}">${opt}</button>
+        `).join('')}
+      </div>
+    </div>
+  `;
+
+  overlay.style.display = 'flex';
+
+  overlay.querySelectorAll('.defend-option-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const selectedVal = btn.getAttribute('data-value');
+      const correctVal = item.defendAnswer;
+
+      overlay.querySelectorAll('.defend-option-btn').forEach(b => b.disabled = true);
+
+      if (selectedVal === correctVal) {
+        AudioEngine.play('success');
+        btn.classList.add('correct');
+        masteryState.score += 10;
+        document.getElementById('mastery-score-display').textContent = `Score: ${masteryState.score}`;
+        
+        resolveMissedTerm(item.term);
+
+        setTimeout(() => {
+          overlay.style.display = 'none';
+          checkMasteryRoundStatus();
+        }, 1000);
+      } else {
+        AudioEngine.play('fail');
+        btn.classList.add('incorrect');
+        
+        overlay.querySelectorAll('.defend-option-btn').forEach(b => {
+          if (b.getAttribute('data-value') === correctVal) {
+            b.classList.add('correct');
+          }
+        });
+
+        masteryState.score = Math.max(0, masteryState.score - 5);
+        document.getElementById('mastery-score-display').textContent = `Score: ${masteryState.score}`;
+        recordMissedTerm(item.term);
+
+        setTimeout(() => {
+          overlay.style.display = 'none';
+          checkMasteryRoundStatus();
+        }, 1800);
+      }
+    });
+  });
+}
+
+function checkMasteryRoundStatus() {
+  masteryState.matchedCount++;
+  if (masteryState.matchedCount === 5) {
+    if (masteryState.timerInterval) clearInterval(masteryState.timerInterval);
+    endMasteryGame(true);
+  }
+}
+
+function endMasteryGame(success) {
+  const container = document.getElementById('mastery-game-play-area');
+  if (!container) return;
+
+  if (success) {
+    AudioEngine.play('cheer');
+    Confetti.spawn(100);
+  } else {
+    AudioEngine.play('fail');
+  }
+
+  let grade = "Novice";
+  let gradeColor = "var(--text-muted)";
+  if (masteryState.score >= 40) {
+    grade = "Historical Master";
+    gradeColor = "var(--success)";
+  } else if (masteryState.score >= 25) {
+    grade = "Scholar";
+    gradeColor = "var(--primary)";
+  }
+
+  container.innerHTML = `
+    <div class="causal-connector-container" style="background: var(--bg-card); padding: 32px; border: 1px solid var(--border-glass); border-radius: var(--border-radius-md); box-shadow: var(--shadow-md); text-align: center;">
+      <div class="results-grade-circle" style="width: 80px; height: 80px; font-size: 2.2rem; margin: 0 auto 20px; background: ${success ? 'var(--success-glow)' : 'var(--accent-glow)'}; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 2px solid ${success ? 'var(--success)' : 'var(--accent)'};">
+        <i class="${success ? 'fa-solid fa-trophy' : 'fa-solid fa-hourglass-end'}" style="color: ${success ? 'var(--success)' : 'var(--accent)'};"></i>
+      </div>
+
+      <h3 style="font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">
+        ${success ? 'Mastery Match Completed!' : 'Speed Run Timed Out!'}
+      </h3>
+      <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; margin: 0 0 24px 0;">
+        ${success ? 'Excellent job! You successfully matched all specification terms and defended your pairings.' : 'Time ran out before you could match and defend all active key terms.'}
+      </p>
+
+      <div style="display: grid; grid-template-columns: 1fr; gap: 16px; margin: 0 auto 24px; max-width: 180px;">
+        <div style="background: rgba(0,0,0,0.15); padding: 12px; border: 1px solid var(--border-glass); border-radius: var(--border-radius-sm);">
+          <span style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 4px;">Rank</span>
+          <span style="font-family: var(--font-heading); font-size: 1.1rem; font-weight: 800; color: ${gradeColor}; line-height: 1.5;">${grade}</span>
+        </div>
+      </div>
+
+      <div id="mastery-highscore-input-box" style="margin-bottom: 24px; padding: 16px; background: rgba(0,0,0,0.15); border: 1px solid var(--border-glass); border-radius: var(--border-radius-sm); max-width: 380px; margin-left: auto; margin-right: auto; text-align: center;">
+        <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 12px;">Save your score to the topic leaderboard!</label>
+        <div style="display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap;">
+          <input type="text" id="mastery-highscore-initials" placeholder="AAA" maxlength="3" style="padding: 8px; font-size: 0.85rem; border: 1px solid var(--border-glass); border-radius: 4px; background: rgba(0,0,0,0.3); color: var(--text-main); width: 68px; text-align: center; text-transform: uppercase; outline: none;" required>
+          
+          <select id="mastery-highscore-year" style="padding: 8px; font-size: 0.85rem; border: 1px solid var(--border-glass); border-radius: 4px; background: rgba(0,0,0,0.3); color: var(--text-main); outline: none; cursor: pointer;" required>
+            <option value="" disabled selected>Year</option>
+            <option value="Year 7">Year 7</option>
+            <option value="Year 8">Year 8</option>
+            <option value="Year 9">Year 9</option>
+            <option value="Year 10">Year 10</option>
+            <option value="Year 11">Year 11</option>
+          </select>
+          
+          <button class="btn-primary" id="btn-submit-highscore" style="padding: 8px 16px; font-size: 0.85rem; border-radius: 4px;">Submit</button>
+        </div>
+      </div>
+      
+      <div id="mastery-results-leaderboard" style="max-width: 360px; margin: 0 auto 24px;"></div>
+
+      <div style="display: flex; gap: 12px; justify-content: center;">
+        <button class="btn-secondary" id="btn-mastery-return" style="padding: 10px 20px; font-weight: 600; font-size: 0.9rem; border-radius: 4px; cursor: pointer;">
+          <i class="fa-solid fa-rotate-left"></i> Setup Screen
+        </button>
+        <button class="btn-primary" id="btn-mastery-play-again" style="padding: 10px 20px; font-weight: 600; font-size: 0.9rem; border-radius: 4px; cursor: pointer;">
+          <i class="fa-solid fa-rotate-right"></i> Play Again (Same Topic)
+        </button>
+      </div>
+    </div>
+  `;
+
+  renderResultsLeaderboard(masteryState.unitId);
+
+  const submitBtn = document.getElementById('btn-submit-highscore');
+  if (submitBtn) {
+    submitBtn.addEventListener('click', () => {
+      const initialsInput = document.getElementById('mastery-highscore-initials');
+      const yearInput = document.getElementById('mastery-highscore-year');
+      
+      let initials = initialsInput ? initialsInput.value.trim().toUpperCase() : "";
+      let yearGroup = yearInput ? yearInput.value : "";
+      
+      if (initials.length !== 3 || !/^[A-Z]{3}$/.test(initials)) {
+        alert("Please enter exactly 3 letters for your initials (e.g. ABC).");
+        return;
+      }
+      if (!yearGroup) {
+        alert("Please select your Year Group.");
+        return;
+      }
+      
+      const name = initials;
+      saveHighScoreLocal(masteryState.unitId, name, yearGroup, masteryState.score);
+      AudioEngine.play('success');
+      
+      if (GOOGLE_SHEET_WEBAPP_URL) {
+        const payload = {
+          type: "mastery",
+          unitId: masteryState.unitId,
+          name: name,
+          yearGroup: yearGroup,
+          score: masteryState.score,
+          date: new Date().toISOString().split('T')[0]
+        };
+        
+        fetch(GOOGLE_SHEET_WEBAPP_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        }).catch(err => console.error("Error saving remote mastery score:", err));
+      }
+      
+      const inputBox = document.getElementById('mastery-highscore-input-box');
+      if (inputBox) inputBox.style.display = 'none';
+      
+      renderResultsLeaderboard(masteryState.unitId);
+      renderMasteryLeaderboard(masteryState.unitId);
+    });
+  }
+
+  document.getElementById('btn-mastery-return').addEventListener('click', () => {
+    AudioEngine.play('click');
+    initMasteryMatchGame();
+  });
+
+  document.getElementById('btn-mastery-play-again').addEventListener('click', () => {
+    AudioEngine.play('click');
+    startMasteryMatch(masteryState.unitId, masteryState.isSpeedRun);
+  });
+}
+
+// --- Concept Connector ---
+function initMindMapGame() {
+  const container = document.getElementById('mindmap-game-play-area');
+  if (!container) return;
+
+  let optionsHtml = '';
+  Object.keys(MINDMAP_DATA).forEach(subtopicId => {
+    const match = subtopicId.match(/subtopic_(\d)_(\d)/);
+    let friendlyName = MINDMAP_DATA[subtopicId].title;
+    if (friendlyName.length > 55) {
+      friendlyName = friendlyName.slice(0, 52) + "...";
+    }
+    if (match) {
+      friendlyName = `Topic ${match[1]}.${match[2]}: ${friendlyName}`;
+    }
+    optionsHtml += `<option value="${subtopicId}">${friendlyName}</option>`;
+  });
+
+  container.innerHTML = `
+    <div class="causal-connector-container" style="background: var(--bg-card); padding: 24px; border: 1px solid var(--border-glass); border-radius: var(--border-radius-md); box-shadow: var(--shadow-md);">
+      <h3 style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 700; color: var(--text-main); margin-top: 0; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+        <i class="fa-solid fa-network-wired" style="color: var(--primary);"></i> Concept Connector
+      </h3>
+      <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; margin: 0 0 20px 0;">
+        Reassemble the historical cause-and-effect flowcharts in chronological sequence. Tap options from the bottom card shelf to assign them into place!
+      </p>
+
+      <div style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px;">
+        <div class="form-group" style="display: flex; flex-direction: column; gap: 6px;">
+          <label style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase; color: var(--text-muted);">Select Flowchart Topic</label>
+          <select class="select-input" id="mindmap-setup-topic" style="width: 100%; padding: 12px 16px; background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border-glass); border-radius: var(--border-radius-sm); color: var(--text-main); font-size: 0.95rem; outline: none; cursor: pointer;">
+            ${optionsHtml}
+          </select>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 10px; padding: 10px 0;">
+          <input type="checkbox" id="mindmap-setup-speedrun" checked style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary);">
+          <label for="mindmap-setup-speedrun" style="font-size: 0.88rem; font-weight: 500; cursor: pointer; color: var(--text-main);">
+            Enable Speed Run Mode (60-second Timer)
+          </label>
+        </div>
+      </div>
+
+      <button class="btn-primary" id="btn-mindmap-start" style="width: 100%; padding: 12px; font-weight: 700; font-size: 1rem; border-radius: var(--border-radius-sm); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+        <i class="fa-solid fa-play"></i> Start Linking
+      </button>
+
+      <!-- Leaderboard Container -->
+      <div id="mindmap-leaderboard-container"></div>
+    </div>
+  `;
+
+  const topicSelect = document.getElementById('mindmap-setup-topic');
+  if (topicSelect) {
+    renderMindMapLeaderboard(topicSelect.value);
+    topicSelect.addEventListener('change', () => {
+      renderMindMapLeaderboard(topicSelect.value);
+    });
+  }
+
+  document.getElementById('btn-mindmap-start').addEventListener('click', () => {
+    AudioEngine.play('click');
+    const subtopicId = document.getElementById('mindmap-setup-topic').value;
+    const isSpeedRun = document.getElementById('mindmap-setup-speedrun').checked;
+    startMindMapGame(subtopicId, isSpeedRun);
+  });
+}
+
+function startMindMapGame(subtopicId, isSpeedRun) {
+  const container = document.getElementById('mindmap-game-play-area');
+  if (!container) return;
+
+  const data = MINDMAP_DATA[subtopicId];
+  if (!data) return;
+
+  if (mindmapState.timerInterval) clearInterval(mindmapState.timerInterval);
+
+  mindmapState.subtopicId = subtopicId;
+  mindmapState.score = 0;
+  mindmapState.isSpeedRun = isSpeedRun;
+  mindmapState.timerVal = 60;
+  mindmapState.placedCount = 0;
+  mindmapState.nodes = [...data.nodes];
+  
+  mindmapState.shuffledNodes = [...data.nodes].sort(() => Math.random() - 0.5);
+
+  let timerHtml = '';
+  if (isSpeedRun) {
+    timerHtml = `
+      <div style="margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">
+          <span>Time Remaining</span>
+          <span id="mindmap-timer-text">60s</span>
+        </div>
+        <div style="height: 6px; background: rgba(255, 255, 255, 0.05); border-radius: 3px; overflow: hidden;">
+          <div id="mindmap-timer-fill" style="height: 100%; width: 100%; background: var(--gradient-main); transition: width 1s linear;"></div>
+        </div>
+      </div>
+    `;
+  }
+
+  let slotsHtml = '';
+  mindmapState.nodes.forEach((nodeText, idx) => {
+    if (idx > 0) {
+      slotsHtml += `
+        <div class="mindmap-arrow" id="mindmap-arrow-${idx}" style="opacity: 0.15; transition: opacity 0.3s ease;">
+          <i class="fa-solid fa-arrow-right horizontal-arrow"></i>
+          <i class="fa-solid fa-arrow-down vertical-arrow"></i>
+        </div>
+      `;
+    }
+    slotsHtml += `
+      <div class="mindmap-slot ${idx === 0 ? 'active-target' : ''}" id="mindmap-slot-${idx}" data-index="${idx}">
+        <span style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">Step ${idx + 1}</span>
+      </div>
+    `;
+  });
+
+  let optionsHtml = mindmapState.shuffledNodes.map((nodeText, idx) => {
+    const safeId = `mindmap-opt-${idx}`;
+    return `
+      <div class="mindmap-option-card" id="${safeId}" data-text="${nodeText.replace(/"/g, '&quot;')}">
+        ${nodeText}
+      </div>
+    `;
+  }).join('');
+
+  container.innerHTML = `
+    <div class="causal-connector-container" style="background: var(--bg-card); padding: 24px; border: 1px solid var(--border-glass); border-radius: var(--border-radius-md); box-shadow: var(--shadow-md);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <span style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: var(--primary); letter-spacing: 0.5px;">Concept Connector: ${data.title}</span>
+        <span style="font-weight: 700; font-size: 0.95rem; color: var(--success);" id="mindmap-score-display">Score: 0</span>
+      </div>
+
+      ${timerHtml}
+
+      <!-- Flowchart slots panel (Top viewport) -->
+      <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Flowchart Chain</div>
+      <div class="mindmap-slots-container">
+        ${slotsHtml}
+      </div>
+
+      <!-- Shuffled option cards shelf (Bottom viewport, lower third for thumb ergonomics) -->
+      <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Card Options Shelf (Tap correct event in sequence)</div>
+      <div class="mindmap-options-container">
+        ${optionsHtml}
+      </div>
+    </div>
+  `;
+
+  if (isSpeedRun) {
+    mindmapState.timerInterval = setInterval(() => {
+      mindmapState.timerVal--;
+      const text = document.getElementById('mindmap-timer-text');
+      const fill = document.getElementById('mindmap-timer-fill');
+      if (text) text.textContent = `${mindmapState.timerVal}s`;
+      if (fill) fill.style.width = `${(mindmapState.timerVal / 60) * 100}%`;
+
+      if (mindmapState.timerVal <= 0) {
+        clearInterval(mindmapState.timerInterval);
+        endMindMapGame(false);
+      }
+    }, 1000);
+  }
+
+  container.querySelectorAll('.mindmap-option-card').forEach(card => {
+    card.addEventListener('click', () => {
+      handleMindMapCardClick(card);
+    });
+  });
+}
+
+function handleMindMapCardClick(card) {
+  if (card.classList.contains('correct-placed') || card.classList.contains('incorrect')) return;
+
+  const text = card.getAttribute('data-text');
+  
+  const nextExpectedIndex = mindmapState.placedCount;
+  const expectedText = mindmapState.nodes[nextExpectedIndex];
+
+  if (text === expectedText) {
+    AudioEngine.play('success');
+    
+    mindmapState.score += 10;
+    const scoreDisplay = document.getElementById('mindmap-score-display');
+    if (scoreDisplay) scoreDisplay.textContent = `Score: ${mindmapState.score}`;
+
+    card.classList.add('correct-placed');
+
+    const slot = document.getElementById(`mindmap-slot-${nextExpectedIndex}`);
+    if (slot) {
+      slot.classList.remove('active-target');
+      slot.classList.add('filled');
+      slot.innerHTML = `
+        <div style="font-family: var(--font-heading); font-weight: 700; color: var(--primary); margin-bottom: 4px; font-size: 0.72rem;">STEP ${nextExpectedIndex + 1}</div>
+        <div style="font-size: 0.82rem; line-height: 1.3;">${text}</div>
+      `;
+    }
+
+    if (nextExpectedIndex > 0) {
+      const arrow = document.getElementById(`mindmap-arrow-${nextExpectedIndex}`);
+      if (arrow) arrow.style.opacity = '1';
+    }
+
+    mindmapState.placedCount++;
+
+    if (mindmapState.placedCount < mindmapState.nodes.length) {
+      const nextSlot = document.getElementById(`mindmap-slot-${mindmapState.placedCount}`);
+      if (nextSlot) nextSlot.classList.add('active-target');
+    } else {
+      if (mindmapState.timerInterval) clearInterval(mindmapState.timerInterval);
+      setTimeout(() => endMindMapGame(true), 600);
+    }
+  } else {
+    AudioEngine.play('fail');
+    
+    mindmapState.score = Math.max(0, mindmapState.score - 5);
+    const scoreDisplay = document.getElementById('mindmap-score-display');
+    if (scoreDisplay) scoreDisplay.textContent = `Score: ${mindmapState.score}`;
+
+    card.classList.add('incorrect');
+    setTimeout(() => {
+      card.classList.remove('incorrect');
+    }, 450);
+  }
+}
+
+function endMindMapGame(success) {
+  const container = document.getElementById('mindmap-game-play-area');
+  if (!container) return;
+
+  if (success) {
+    AudioEngine.play('cheer');
+    Confetti.spawn(100);
+  } else {
+    AudioEngine.play('fail');
+  }
+
+  let grade = "Novice";
+  let gradeColor = "var(--text-muted)";
+  if (mindmapState.score >= 40) {
+    grade = "Historical Master";
+    gradeColor = "var(--success)";
+  } else if (mindmapState.score >= 25) {
+    grade = "Scholar";
+    gradeColor = "var(--primary)";
+  }
+
+  container.innerHTML = `
+    <div class="causal-connector-container" style="background: var(--bg-card); padding: 32px; border: 1px solid var(--border-glass); border-radius: var(--border-radius-md); box-shadow: var(--shadow-md); text-align: center;">
+      <div class="results-grade-circle" style="width: 80px; height: 80px; font-size: 2.2rem; margin: 0 auto 20px; background: ${success ? 'var(--success-glow)' : 'var(--accent-glow)'}; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 2px solid ${success ? 'var(--success)' : 'var(--accent)'};">
+        <i class="${success ? 'fa-solid fa-trophy' : 'fa-solid fa-hourglass-end'}" style="color: ${success ? 'var(--success)' : 'var(--accent)'};"></i>
+      </div>
+
+      <h3 style="font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">
+        ${success ? 'Flowchart Sequenced Successfully!' : 'Speed Run Timed Out!'}
+      </h3>
+      <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; margin: 0 0 24px 0;">
+        ${success ? 'Outstanding! You correctly connected the cause-and-effect mind map nodes in historical order.' : 'Time ran out before you could sequence the flowchart. Keep reviewing your key topics!'}
+      </p>
+
+      <div style="display: grid; grid-template-columns: 1fr; gap: 16px; margin: 0 auto 24px; max-width: 180px;">
+        <div style="background: rgba(0,0,0,0.15); padding: 12px; border: 1px solid var(--border-glass); border-radius: var(--border-radius-sm);">
+          <span style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 4px;">Rank</span>
+          <span style="font-family: var(--font-heading); font-size: 1.1rem; font-weight: 800; color: ${gradeColor}; line-height: 1.5;">${grade}</span>
+        </div>
+      </div>
+
+
+      <!-- High Score Input Box -->
+      <div id="mindmap-highscore-input-box" style="margin-bottom: 24px; padding: 16px; background: rgba(0,0,0,0.15); border: 1px solid var(--border-glass); border-radius: var(--border-radius-sm); max-width: 380px; margin-left: auto; margin-right: auto; text-align: center;">
+        <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 12px;">Save your score to the topic leaderboard!</label>
+        <div style="display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap;">
+          <input type="text" id="mindmap-highscore-initials" placeholder="AAA" maxlength="3" style="padding: 8px; font-size: 0.85rem; border: 1px solid var(--border-glass); border-radius: 4px; background: rgba(0,0,0,0.3); color: var(--text-main); width: 68px; text-align: center; text-transform: uppercase; outline: none;" required>
+          
+          <select id="mindmap-highscore-year" style="padding: 8px; font-size: 0.85rem; border: 1px solid var(--border-glass); border-radius: 4px; background: rgba(0,0,0,0.3); color: var(--text-main); outline: none; cursor: pointer;" required>
+            <option value="" disabled selected>Year</option>
+            <option value="Year 7">Year 7</option>
+            <option value="Year 8">Year 8</option>
+            <option value="Year 9">Year 9</option>
+            <option value="Year 10">Year 10</option>
+            <option value="Year 11">Year 11</option>
+          </select>
+          
+          <button class="btn-primary" id="btn-submit-mindmap-highscore" style="padding: 8px 16px; font-size: 0.85rem; border-radius: 4px;">Submit</button>
+        </div>
+      </div>
+      
+      <!-- Results Leaderboard Rankings -->
+      <div id="mindmap-results-leaderboard" style="max-width: 360px; margin: 0 auto 24px;"></div>
+
+      <div style="display: flex; gap: 12px; justify-content: center;">
+        <button class="btn-secondary" id="btn-mindmap-return" style="padding: 10px 20px; font-weight: 600; font-size: 0.9rem; border-radius: 4px; cursor: pointer;">
+          <i class="fa-solid fa-rotate-left"></i> Setup Screen
+        </button>
+        <button class="btn-primary" id="btn-mindmap-play-again" style="padding: 10px 20px; font-weight: 600; font-size: 0.9rem; border-radius: 4px; cursor: pointer;">
+          <i class="fa-solid fa-rotate-right"></i> Play Again (Same Topic)
+        </button>
+      </div>
+    </div>
+  `;
+
+  renderMindMapResultsLeaderboard(mindmapState.subtopicId);
+
+  const submitBtn = document.getElementById('btn-submit-mindmap-highscore');
+  if (submitBtn) {
+    submitBtn.addEventListener('click', () => {
+      const initialsInput = document.getElementById('mindmap-highscore-initials');
+      const yearInput = document.getElementById('mindmap-highscore-year');
+      
+      let initials = initialsInput ? initialsInput.value.trim().toUpperCase() : "";
+      let yearGroup = yearInput ? yearInput.value : "";
+      
+      if (initials.length !== 3 || !/^[A-Z]{3}$/.test(initials)) {
+        alert("Please enter exactly 3 letters for your initials (e.g. ABC).");
+        return;
+      }
+      if (!yearGroup) {
+        alert("Please select your Year Group.");
+        return;
+      }
+      
+      const name = initials;
+      saveMindMapHighScoreLocal(mindmapState.subtopicId, name, yearGroup, mindmapState.score);
+      AudioEngine.play('success');
+      
+      if (GOOGLE_SHEET_WEBAPP_URL) {
+        const payload = {
+          type: "mindmap",
+          subtopicId: mindmapState.subtopicId,
+          name: name,
+          yearGroup: yearGroup,
+          score: mindmapState.score,
+          date: new Date().toISOString().split('T')[0]
+        };
+        
+        fetch(GOOGLE_SHEET_WEBAPP_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        }).catch(err => console.error("Error saving remote mindmap score:", err));
+      }
+      
+      const inputBox = document.getElementById('mindmap-highscore-input-box');
+      if (inputBox) inputBox.style.display = 'none';
+      
+      renderMindMapResultsLeaderboard(mindmapState.subtopicId);
+    });
+  }
+
+  document.getElementById('btn-mindmap-return').addEventListener('click', () => {
+    AudioEngine.play('click');
+    initMindMapGame();
+  });
+
+  document.getElementById('btn-mindmap-play-again').addEventListener('click', () => {
+    AudioEngine.play('click');
+    startMindMapGame(mindmapState.subtopicId, mindmapState.isSpeedRun);
+  });
+}
+
+// --- Decision Simulator ---
+function initDecisionsGame() {
+  const container = document.getElementById('decisions-game-play-area');
+  if (!container) return;
+
+  const hotlineGames = DECISIONS_DATA.filter(g => g.series === "Diplomatic Hotline");
+
+  const makeCard = (g) => `
+    <div class="decision-card" id="dec-card-${g.id}">
+      <div class="decision-card-header">
+        <span class="decision-card-topic">${g.topic}</span>
+        <i class="${g.icon}" style="font-size: 1.1rem; color: var(--primary);"></i>
+      </div>
+      <h4 class="decision-card-title">${g.title}</h4>
+      <div class="decision-card-role"><strong>Role:</strong> ${g.role}</div>
+      <p style="font-size: 0.8rem; line-height: 1.4; color: var(--text-muted); margin: 6px 0 0 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">
+        ${g.crisis}
+      </p>
+    </div>
+  `;
+
+  container.innerHTML = `
+    <div class="causal-connector-container" style="background: var(--bg-card); padding: 24px; border: 1px solid var(--border-glass); border-radius: var(--border-radius-md); box-shadow: var(--shadow-md); margin-bottom: 24px;">
+      <h3 style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 700; color: var(--text-main); margin-top: 0; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+        <i class="fa-solid fa-phone-volume" style="color: var(--primary);"></i> Decision Simulator
+      </h3>
+      <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; margin: 0 0 20px 0;">
+        Put yourself in the shoes of historical figures. Face critical crises and decide which path to take!
+      </p>
+      
+      <h4 style="font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700; color: var(--accent); margin: 20px 0 10px 0;">
+        📞 The 'Diplomatic Hotline' Series
+      </h4>
+      <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0 0 12px 0;">Oval Office and Cabinet decisions during major Middle East turning points.</p>
+      <div class="decisions-grid">
+        ${hotlineGames.map(makeCard).join('')}
+      </div>
+    </div>
+  `;
+
+  DECISIONS_DATA.forEach(g => {
+    const card = document.getElementById(`dec-card-${g.id}`);
+    if (card) {
+      card.addEventListener('click', () => {
+        AudioEngine.play('click');
+        playDecisionsScenario(g.id);
+      });
+    }
+  });
+}
+
+function playDecisionsScenario(gameId) {
+  const container = document.getElementById('decisions-game-play-area');
+  if (!container) return;
+
+  const g = DECISIONS_DATA.find(x => x.id === gameId);
+  if (!g) return;
+
+  container.innerHTML = `
+    <div class="decision-play-pane">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-glass); padding-bottom: 12px;">
+        <span style="font-size: 0.72rem; text-transform: uppercase; font-weight: 700; color: var(--primary); letter-spacing: 0.5px;">Phase 1: Initial Response</span>
+        <button class="btn-secondary" id="btn-dec-back" style="padding: 6px 12px; font-size: 0.75rem; border-radius: 4px;">
+          <i class="fa-solid fa-arrow-left"></i> Scenario Menu
+        </button>
+      </div>
+
+      <h2 style="font-family: var(--font-heading); font-size: 1.4rem; font-weight: 800; color: var(--text-main); margin: 10px 0 0 0;">
+        ${g.title}
+      </h2>
+      
+      <div class="decision-role-banner">
+        <strong>Active Role:</strong> ${g.role}
+      </div>
+
+      <div class="decision-crisis-box">
+        <h4 style="font-family: var(--font-heading); font-size: 1rem; font-weight: 700; color: var(--accent); margin-top: 0; margin-bottom: 8px;">
+          🚨 THE CRISIS:
+        </h4>
+        ${g.crisis}
+      </div>
+
+      <div style="margin-top: 10px;">
+        <h4 style="font-family: var(--font-heading); font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin-bottom: 12px;">
+          Select Your Response:
+        </h4>
+        <div class="decision-options-container">
+          <button class="btn-decision" id="btn-dec-choice-a">
+            <span class="btn-decision-label">Choice A</span>
+            <span>${g.phase1.choiceA.text}</span>
+          </button>
+          <button class="btn-decision" id="btn-dec-choice-b">
+            <span class="btn-decision-label">Choice B</span>
+            <span>${g.phase1.choiceB.text}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('btn-dec-back').addEventListener('click', () => {
+    AudioEngine.play('click');
+    initDecisionsGame();
+  });
+
+  document.getElementById('btn-dec-choice-a').addEventListener('click', () => {
+    AudioEngine.play('click');
+    playDecisionsPhase2(gameId, 'A');
+  });
+
+  document.getElementById('btn-dec-choice-b').addEventListener('click', () => {
+    AudioEngine.play('click');
+    playDecisionsPhase2(gameId, 'B');
+  });
+}
+
+function playDecisionsPhase2(gameId, choiceLetter) {
+  const container = document.getElementById('decisions-game-play-area');
+  if (!container) return;
+
+  const g = DECISIONS_DATA.find(x => x.id === gameId);
+  if (!g) return;
+
+  const selectedChoice = choiceLetter === 'A' ? g.phase1.choiceA : g.phase1.choiceB;
+
+  container.innerHTML = `
+    <div class="decision-play-pane">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-glass); padding-bottom: 12px;">
+        <span style="font-size: 0.72rem; text-transform: uppercase; font-weight: 700; color: var(--primary); letter-spacing: 0.5px;">Phase 2: The Fallout</span>
+        <button class="btn-secondary" id="btn-dec-back" style="padding: 6px 12px; font-size: 0.75rem; border-radius: 4px;">
+          <i class="fa-solid fa-arrow-left"></i> Scenario Menu
+        </button>
+      </div>
+
+      <h2 style="font-family: var(--font-heading); font-size: 1.4rem; font-weight: 800; color: var(--text-main); margin: 10px 0 0 0;">
+        ${g.title}
+      </h2>
+      
+      <div class="decision-role-banner">
+        <strong>Active Role:</strong> ${g.role}
+      </div>
+
+      <div style="background: rgba(0,0,0,0.12); border: 1px solid var(--border-glass); padding: 12px; border-radius: var(--border-radius-sm); font-size: 0.88rem; color: var(--text-muted); line-height: 1.45;">
+        <strong>Your Choice:</strong> ${selectedChoice.text}
+      </div>
+
+      <div class="decision-crisis-box" style="border-left-color: var(--secondary);">
+        <h4 style="font-family: var(--font-heading); font-size: 1rem; font-weight: 700; color: var(--secondary); margin-top: 0; margin-bottom: 8px;">
+          🌪️ THE FALLOUT:
+        </h4>
+        ${selectedChoice.fallout}
+      </div>
+
+      <div style="margin-top: 10px;">
+        <h4 style="font-family: var(--font-heading); font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin-bottom: 12px;">
+          Select Your Next Step:
+        </h4>
+        <div class="decision-options-container">
+          <button class="btn-decision" id="btn-dec-subchoice-1">
+            <span class="btn-decision-label">Choice ${choiceLetter}1</span>
+            <span>${selectedChoice.choice1.text}</span>
+          </button>
+          <button class="btn-decision" id="btn-dec-subchoice-2">
+            <span class="btn-decision-label">Choice ${choiceLetter}2</span>
+            <span>${selectedChoice.choice2.text}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('btn-dec-back').addEventListener('click', () => {
+    AudioEngine.play('click');
+    initDecisionsGame();
+  });
+
+  document.getElementById('btn-dec-subchoice-1').addEventListener('click', () => {
+    playDecisionsPhase3(gameId, choiceLetter, '1');
+  });
+
+  document.getElementById('btn-dec-subchoice-2').addEventListener('click', () => {
+    playDecisionsPhase3(gameId, choiceLetter, '2');
+  });
+}
+
+function playDecisionsPhase3(gameId, choiceLetter, subChoice) {
+  const container = document.getElementById('decisions-game-play-area');
+  if (!container) return;
+
+  const g = DECISIONS_DATA.find(x => x.id === gameId);
+  if (!g) return;
+
+  const selectedChoice = choiceLetter === 'A' ? g.phase1.choiceA : g.phase1.choiceB;
+  const finalChoice = subChoice === '1' ? selectedChoice.choice1 : selectedChoice.choice2;
+
+  if (finalChoice.isHistorical) {
+    AudioEngine.play('success');
+    Confetti.spawn(60);
+  } else {
+    AudioEngine.play('fail');
+  }
+
+  const bgCol = finalChoice.isHistorical ? 'rgba(16, 185, 129, 0.05)' : 'rgba(244, 63, 94, 0.05)';
+  const borderCol = finalChoice.isHistorical ? 'rgba(16, 185, 129, 0.3)' : 'rgba(244, 63, 94, 0.3)';
+  const pillCol = finalChoice.isHistorical ? 'var(--success)' : 'var(--accent)';
+  const pillText = finalChoice.isHistorical ? '✅ ACTUAL HISTORY' : '❌ ALTERNATE HISTORY';
+
+  container.innerHTML = `
+    <div class="decision-play-pane" style="background: ${bgCol}; border-color: ${borderCol};">
+      <div style="border-bottom: 1px solid var(--border-glass); padding-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+        <span class="decision-outcome-pill" style="background: ${pillCol}; color: #fff; margin: 0; font-weight: 800; font-size: 0.75rem; letter-spacing: 0.5px; border-radius: 4px; padding: 4px 8px;">
+          ${pillText}
+        </span>
+        <span style="font-size: 0.8rem; color: var(--text-muted); font-style: italic;">Role: ${g.role}</span>
+      </div>
+
+      <h2 style="font-family: var(--font-heading); font-size: 1.4rem; font-weight: 800; color: var(--text-main); margin-top: 10px; margin-bottom: 6px;">
+        ${g.title}
+      </h2>
+
+      <div style="background: rgba(0,0,0,0.12); border: 1px solid var(--border-glass); padding: 14px; border-radius: var(--border-radius-sm); font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; display: flex; flex-direction: column; gap: 8px;">
+        <div><strong>Phase 1 Decision:</strong> ${selectedChoice.text}</div>
+        <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px;"><strong>Phase 2 Response:</strong> ${finalChoice.text}</div>
+      </div>
+
+      <div class="decision-consequence-card" style="border: 1px solid ${borderCol}; background: rgba(0,0,0,0.18); margin: 0; padding: 20px;">
+        <h4 style="font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700; color: ${finalChoice.isHistorical ? 'var(--success)' : 'var(--accent)'}; margin-top: 0; margin-bottom: 8px;">
+          <i class="${finalChoice.isHistorical ? 'fa-solid fa-circle-check' : 'fa-solid fa-code-fork'}"></i> The Final Verdict:
+        </h4>
+        <p style="font-size: 0.98rem; line-height: 1.6; color: var(--text-main); margin: 0;">
+          ${finalChoice.verdict}
+        </p>
+      </div>
+
+      <div style="display: flex; gap: 12px; justify-content: center; border-top: 1px solid var(--border-glass); padding-top: 18px;">
+        <button class="btn-secondary" id="btn-dec-menu" style="padding: 10px 20px; font-weight: 600; font-size: 0.9rem; border-radius: 4px; cursor: pointer;">
+          <i class="fa-solid fa-rotate-left"></i> Scenario Menu
+        </button>
+        <button class="btn-primary" id="btn-dec-retry" style="padding: 10px 20px; font-weight: 600; font-size: 0.9rem; border-radius: 4px; cursor: pointer;">
+          <i class="fa-solid fa-rotate-right"></i> Try Alternative Path
+        </button>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('btn-dec-menu').addEventListener('click', () => {
+    AudioEngine.play('click');
+    initDecisionsGame();
+  });
+
+  document.getElementById('btn-dec-retry').addEventListener('click', () => {
+    AudioEngine.play('click');
+    playDecisionsScenario(gameId);
+  });
+}
+
+// --- Dynamic Games Hub Tab Switcher View ---
+function renderGamesView() {
+  const causalSelect = document.getElementById('causal-game-topic-select');
+  if (!causalSelect) return;
+
+  // 1. Setup Causal Game subtopics list if not already populated
+  if (causalSelect.children.length <= 1) {
+    let optionsHtml = '<option value="" disabled selected>-- Select a Topic --</option>';
+    QUIZ_DATA.forEach(topic => {
+      topic.subtopics.forEach(sub => {
+        if (LESSONS_DATA[sub.id] && LESSONS_DATA[sub.id].causalLinks) {
+          const numCode = sub.title.match(/Topic\s(\d\.\d)/);
+          const name = numCode ? `Topic ${numCode[1]}: ${sub.title.replace(/^Topic \d\.\d:\s*/, "")}` : sub.title;
+          optionsHtml += `<option value="${sub.id}">${name}</option>`;
+        }
+      });
+    });
+    causalSelect.innerHTML = optionsHtml;
+
+    causalSelect.addEventListener('change', (e) => {
+      AudioEngine.play('click');
+      playCausalGame(e.target.value);
+    });
+  }
+
+  // 1b. Bind Chronology Game topic select if not already populated
+  const chronoSelect = document.getElementById('chrono-game-topic-select');
+  if (chronoSelect && chronoSelect.children.length <= 1) {
+    let optionsHtml = '<option value="" disabled selected>-- Select a Topic --</option>';
+    QUIZ_DATA.forEach(topic => {
+      const cleanTitle = topic.title.replace(/^Key Topic \d:\s*/, "");
+      optionsHtml += `<optgroup label="Key Topic ${topic.id.replace('topic_', '')}: ${cleanTitle}">`;
+      optionsHtml += `<option value="${topic.id}">Full Key Topic ${topic.id.replace('topic_', '')}</option>`;
+      
+      topic.subtopics.forEach(sub => {
+        const cleanSubTitle = sub.title.replace(/^Topic \d\.\d:\s*/, "");
+        optionsHtml += `<option value="${sub.id}">${cleanSubTitle}</option>`;
+      });
+      optionsHtml += `</optgroup>`;
+    });
+    chronoSelect.innerHTML = optionsHtml;
+    const firstOption = chronoSelect.querySelector('option[value^="topic_"]');
+    if (firstOption) {
+      firstOption.selected = true;
+    }
+
+    chronoSelect.addEventListener('change', () => {
+      AudioEngine.play('click');
+      initChronologyGame();
+    });
+  }
+
+  // 2. Setup game tab switching
+  const tabs = {
+    causal: document.getElementById('btn-tab-game-causal'),
+    chronology: document.getElementById('btn-tab-game-chronology'),
+    mastery: document.getElementById('btn-tab-game-mastery'),
+    mindmap: document.getElementById('btn-tab-game-mindmap'),
+    decisions: document.getElementById('btn-tab-game-decisions'),
+    crisis: document.getElementById('btn-tab-game-crisis'),
+    tug: document.getElementById('btn-tab-game-tug'),
+    jsw: document.getElementById('btn-tab-game-jsw')
+  };
+
+  const panes = {
+    causal: document.getElementById('game-causal-container'),
+    chronology: document.getElementById('game-chronology-container'),
+    mastery: document.getElementById('game-mastery-container'),
+    mindmap: document.getElementById('game-mindmap-container'),
+    decisions: document.getElementById('game-decisions-container'),
+    crisis: document.getElementById('game-crisis-container'),
+    tug: document.getElementById('game-tug-container'),
+    jsw: document.getElementById('game-jsw-container')
+  };
+
+  const cleanUpGames = () => {
+    stopJswLoop();
+    if (state.tugGameSession && state.tugGameSession.timeoutId) {
+      clearTimeout(state.tugGameSession.timeoutId);
+      state.tugGameSession.timeoutId = null;
+    }
+    if (masteryState.timerInterval) {
+      clearInterval(masteryState.timerInterval);
+      masteryState.timerInterval = null;
+    }
+    if (mindmapState.timerInterval) {
+      clearInterval(mindmapState.timerInterval);
+      mindmapState.timerInterval = null;
+    }
+  };
+
+  const showTab = (tabName) => {
+    cleanUpGames();
+
+    Object.keys(tabs).forEach(name => {
+      const t = tabs[name];
+      if (!t) return;
+      if (name === tabName) {
+        t.classList.add('active');
+        t.style.borderColor = 'var(--primary)';
+        t.style.color = 'var(--primary)';
+        t.style.background = 'rgba(59, 130, 246, 0.1)';
+      } else {
+        t.classList.remove('active');
+        t.style.borderColor = 'var(--border-glass)';
+        t.style.color = 'var(--text-muted)';
+        t.style.background = 'rgba(255, 255, 255, 0.03)';
+      }
+    });
+
+    Object.keys(panes).forEach(name => {
+      const p = panes[name];
+      if (p) {
+        p.style.display = name === tabName ? 'block' : 'none';
+      }
+    });
+
+    if (tabName === 'causal') {
+      const val = causalSelect.value;
+      if (val) playCausalGame(val);
+    } else if (tabName === 'chronology') {
+      initChronologyGame();
+    } else if (tabName === 'mastery') {
+      initMasteryMatchGame();
+    } else if (tabName === 'mindmap') {
+      initMindMapGame();
+    } else if (tabName === 'decisions') {
+      initDecisionsGame();
+    } else if (tabName === 'crisis') {
+      initCrisisGame();
+    } else if (tabName === 'tug') {
+      initTugGame();
+    } else if (tabName === 'jsw') {
+      initJswGame();
+    }
+  };
+
+  Object.keys(tabs).forEach(name => {
+    const t = tabs[name];
+    if (t) {
+      t.addEventListener('click', (e) => {
+        e.preventDefault();
+        AudioEngine.play('click');
+        showTab(name);
+      });
+    }
+  });
+
+  const activeTab = Object.keys(tabs).find(name => tabs[name] && tabs[name].classList.contains('active'));
+  showTab(activeTab || 'causal');
+}
+
+// Spaced Repetition / Highscore Helpers for Exam/Recall Challenge
+function getExamHighScores(scope) {
+  const key = `exam_highscores_${scope}`;
+  let scores = localStorage.getItem(key);
+  if (!scores) return [];
+  try {
+    return JSON.parse(scores);
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveExamHighScoreLocal(scope, name, yearGroup, score) {
+  const scores = getExamHighScores(scope);
+  scores.push({
+    name: name,
+    yearGroup: yearGroup,
+    score: score,
+    date: new Date().toISOString().split('T')[0]
+  });
+  scores.sort((a, b) => b.score - a.score || a.name.localeCompare(b.name));
+  localStorage.setItem(`exam_highscores_${scope}`, JSON.stringify(scores.slice(0, 5)));
+}
+
+function renderExamResultsLeaderboard(scope) {
+  const container = document.getElementById('exam-results-leaderboard');
+  if (!container) return;
+
+  const localScores = getExamHighScores(scope);
+  renderResults(localScores);
+
+  if (GOOGLE_SHEET_WEBAPP_URL) {
+    fetch(`${GOOGLE_SHEET_WEBAPP_URL}?type=exam&subtopicId=${scope}`)
+      .then(res => res.json())
+      .then(scores => {
+        if (Array.isArray(scores)) {
+          renderResults(scores);
+        }
+      })
+      .catch(err => console.error("Error loading remote exam results leaderboard:", err));
+  }
+
+  function renderResults(scoresList) {
+    let rowsHtml = scoresList.map((s, idx) => {
+      let medal = '';
+      if (idx === 0) medal = '🥇 ';
+      else if (idx === 1) medal = '🥈 ';
+      else if (idx === 2) medal = '🥉 ';
+      const yrText = s.yearGroup ? ` <span style="font-size: 0.72rem; color: var(--text-muted);">(${s.yearGroup})</span>` : '';
+      return `
+        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.03);">
+          <span style="color: var(--primary); font-weight: bold;">${medal}${idx + 1}. ${s.name}${yrText}</span>
+          <span style="color: var(--success); font-weight: 700;">${s.score} pts</span>
+        </div>
+      `;
+    }).join('');
+    container.innerHTML = `
+      <h4 style="font-family: var(--font-heading); font-size: 0.88rem; margin: 12px 0 8px; color: var(--text-main); text-align: left;">
+        <i class="fa-solid fa-ranking-star" style="color: var(--accent);"></i> Leaderboard Rankings:
+      </h4>
+      <div style="text-align: left; background: rgba(0,0,0,0.1); padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border-glass);">
+        ${rowsHtml || '<div style="font-size: 0.8rem; color: var(--text-muted); text-align: center; padding: 4px 0;">No scores submitted yet. Be the first!</div>'}
+      </div>
+    `;
+  }
+}
+
+function initExamLeaderboard(scope, pct) {
+  const points = Math.round(pct * 10);
+  
+  // Show input form
+  const inputBox = document.getElementById('exam-highscore-input-box');
+  if (inputBox) {
+    inputBox.style.display = 'block';
+  }
+
+  // Clear previous inputs
+  const initialsInput = document.getElementById('exam-highscore-initials');
+  const yearInput = document.getElementById('exam-highscore-year');
+  if (initialsInput) {
+    initialsInput.value = '';
+  }
+  if (yearInput) {
+    yearInput.selectedIndex = 0;
+  }
+
+  // Render leaderboard on results immediately
+  renderExamResultsLeaderboard(scope);
+
+  const submitBtn = document.getElementById('btn-submit-exam-highscore');
+  if (submitBtn) {
+    const newSubmitBtn = submitBtn.cloneNode(true);
+    submitBtn.parentNode.replaceChild(newSubmitBtn, submitBtn);
+
+    newSubmitBtn.addEventListener('click', () => {
+      const initials = (initialsInput.value || '').trim().toUpperCase();
+      const yearGroup = yearInput.value;
+
+      if (!/^[A-Z]{3}$/.test(initials)) {
+        alert("Please enter exactly 3 uppercase letters for your initials.");
+        return;
+      }
+      if (!yearGroup) {
+        alert("Please select your Year Group.");
+        return;
+      }
+
+      saveExamHighScoreLocal(scope, initials, yearGroup, points);
+      AudioEngine.play('success');
+
+      if (GOOGLE_SHEET_WEBAPP_URL) {
+        const payload = {
+          type: "exam",
+          subtopicId: scope,
+          name: initials,
+          yearGroup: yearGroup,
+          score: points,
+          date: new Date().toISOString().split('T')[0]
+        };
+
+        fetch(GOOGLE_SHEET_WEBAPP_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        }).catch(err => console.error("Error saving remote exam score:", err));
+      }
+
+      if (inputBox) inputBox.style.display = 'none';
+      renderExamResultsLeaderboard(scope);
+    });
+  }
+}
+
+export {
+  renderSidebarNav,
+  updateBookmarksUI,
+  updateGlobalStats,
+  renderDashboard,
+  highlightCausalConnectives,
+  renderFireflyView,
+  renderExamSkillsView,
+  renderClassicView,
+  startFlashcardSession,
+  renderFlashcard,
+  handleFlashcardGrade,
+  showFlashcardCompletion,
+  restoreFlashcardSkeleton,
+  flipFlashcard,
+  renderTimelineView,
+  evaluateStudentAnswer,
+  renderBookmarksView,
+  openVideoModal,
+  closeVideoModal,
+  renderGamesView,
+  initChronologyGame,
+  initMasteryMatchGame,
+  initMindMapGame,
+  initDecisionsGame,
+  initExamLeaderboard
+};

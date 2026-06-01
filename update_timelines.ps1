@@ -1,7 +1,7 @@
 # PowerShell script to update the timeline in app.js and generate_embed.ps1
 
-$appJsPath = "C:\Users\fives\.gemini\antigravity\scratch\firefly_recall_quizzes\app.js"
-$genEmbedPath = "C:\Users\fives\.gemini\antigravity\scratch\firefly_recall_quizzes\generate_embed.ps1"
+$appJsPath = "$PSScriptRoot\app.js"
+$genEmbedPath = "$PSScriptRoot\generate_embed.ps1"
 
 # 1. Update app.js
 $appJsContent = [System.IO.File]::ReadAllText($appJsPath, [System.Text.Encoding]::UTF8)

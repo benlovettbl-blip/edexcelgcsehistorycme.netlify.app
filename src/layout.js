@@ -1,7 +1,29 @@
+import { state } from './state.js';
+import { AudioEngine } from './audio.js';
+import { switchView, switchSubtopicMode } from './navigation.js';
+import { 
+  flipFlashcard, 
+  handleFlashcardGrade, 
+  renderTimelineView, 
+  renderClassicView, 
+  evaluateStudentAnswer, 
+  renderSidebarNav, 
+  updateGlobalStats,
+  setActiveClassicFilter
+} from './views.js';
+import { startExam, nextExamQuestion, displayExamQuestion, finishExam } from './exam.js';
+import { saveProgress } from './storage.js';
+import { startPastPaper, generateMockExam } from './past_papers.js';
+import { CONSEQUENCE_SKILLS_DATA, NARRATIVE_SKILLS_DATA, EXAM_SKILLS_DATA } from '../questions.js';
+
 // --- Sidebar Overlay Drawer (Mobile UI) ---
 function toggleMobileSidebar() {
-  document.getElementById('sidebar').classList.toggle('active');
-  document.getElementById('sidebar-overlay').classList.toggle('active');
+  if (window.innerWidth <= 768) {
+    document.getElementById('sidebar').classList.toggle('active');
+    document.getElementById('sidebar-overlay').classList.toggle('active');
+  } else {
+    document.querySelector('.app-container').classList.toggle('collapsed-sidebar');
+  }
 }
 
 function closeMobileSidebar() {
@@ -66,6 +88,44 @@ function bindEvents() {
   document.getElementById('menu-toggle').addEventListener('click', toggleMobileSidebar);
   document.getElementById('sidebar-overlay').addEventListener('click', closeMobileSidebar);
 
+  // Fullscreen Toggle
+  const fullscreenBtn = document.getElementById('fullscreen-btn');
+  if (fullscreenBtn) {
+    fullscreenBtn.addEventListener('click', () => {
+      AudioEngine.play('click');
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch((err) => {
+          console.error(`Error attempting to enable fullscreen: ${err.message}`);
+        });
+      } else {
+        document.exitFullscreen();
+      }
+    });
+  }
+
+  // Handle Fullscreen state change icon toggle
+  document.addEventListener('fullscreenchange', () => {
+    const btn = document.getElementById('fullscreen-btn');
+    const container = document.querySelector('.app-container');
+    if (document.fullscreenElement) {
+      if (btn) {
+        btn.innerHTML = `<i class="fa-solid fa-compress"></i>`;
+        btn.setAttribute('title', 'Exit Fullscreen');
+      }
+      if (container) {
+        container.classList.add('fullscreen-active');
+      }
+    } else {
+      if (btn) {
+        btn.innerHTML = `<i class="fa-solid fa-expand"></i>`;
+        btn.setAttribute('title', 'Toggle Fullscreen');
+      }
+      if (container) {
+        container.classList.remove('fullscreen-active');
+      }
+    }
+  });
+
   // Subtopic View mode tabs (Accordions vs Flashcards)
   document.querySelectorAll('#subtopic-mode-switcher .mode-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -80,7 +140,7 @@ function bindEvents() {
       AudioEngine.play('click');
       document.querySelectorAll('.filter-btn-group .filter-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      activeClassicFilter = btn.getAttribute('data-filter');
+      setActiveClassicFilter(btn.getAttribute('data-filter'));
       renderClassicView();
     });
   });
@@ -107,6 +167,32 @@ function bindEvents() {
     AudioEngine.play('click');
     renderTimelineView();
   });
+
+  // Timeline Search Input Event Listener
+  const searchInput = document.getElementById('timeline-search-input');
+  if (searchInput) {
+    searchInput.addEventListener('input', () => {
+      renderTimelineView();
+    });
+  }
+
+  // Timeline People Filter Event Listeners
+  const filterAllBtn = document.getElementById('btn-timeline-filter-all');
+  const filterPeopleBtn = document.getElementById('btn-timeline-filter-people');
+  if (filterAllBtn && filterPeopleBtn) {
+    filterAllBtn.addEventListener('click', () => {
+      AudioEngine.play('click');
+      filterAllBtn.classList.add('active');
+      filterPeopleBtn.classList.remove('active');
+      renderTimelineView();
+    });
+    filterPeopleBtn.addEventListener('click', () => {
+      AudioEngine.play('click');
+      filterPeopleBtn.classList.add('active');
+      filterAllBtn.classList.remove('active');
+      renderTimelineView();
+    });
+  }
 
 
   // Quiz generator controls
@@ -143,10 +229,13 @@ function bindEvents() {
     }
   });
 
-  document.getElementById('btn-exam-submit').addEventListener('click', submitExamAnswer);
+  // Quiz Generator Next Question
+  document.getElementById('btn-exam-next').addEventListener('click', () => {
+    AudioEngine.play('click');
+    nextExamQuestion();
+  });
   
-  document.getElementById('btn-exam-grade-wrong').addEventListener('click', () => gradeExamQuestion(false));
-  document.getElementById('btn-exam-grade-right').addEventListener('click', () => gradeExamQuestion(true));
+  // Self-Grading buttons removed (dead code)
   
   document.getElementById('btn-exam-quit').addEventListener('click', () => {
     AudioEngine.play('click');
@@ -245,6 +334,7 @@ function bindEvents() {
     document.getElementById('consequence-user-answer').value = '';
     document.getElementById('consequence-clue-box').style.display = 'none';
     document.getElementById('consequence-answer-box').style.display = 'none';
+    document.getElementById('draft-feedback-consequence').style.display = 'none';
 
     for (let i = 1; i <= 4; i++) {
       const chk = document.getElementById(`chk-consequence-rubric-${i}`);
@@ -321,6 +411,8 @@ function bindEvents() {
       statusMsg.innerHTML = '<span style="color: var(--success);"><i class="fa-solid fa-circle-check"></i> Correct! Opener Verified. Step 2 Unlocked.</span>';
       document.getElementById('consequence-input-area').style.display = 'flex';
       document.getElementById('consequence-user-answer').focus();
+      document.getElementById('draft-feedback-consequence').style.display = 'block';
+      updateRealTimeFeedback('consequence', '', CONSEQUENCE_SKILLS_DATA[topicId], topicId);
     } else {
       AudioEngine.play('fail');
       mcqRow.classList.add('incorrect-sequence');
@@ -383,6 +475,7 @@ function bindEvents() {
     document.getElementById('consequence-user-answer').value = '';
     document.getElementById('consequence-clue-box').style.display = 'none';
     document.getElementById('consequence-answer-box').style.display = 'none';
+    document.getElementById('draft-feedback-consequence').style.display = 'none';
     const feedbackContainer = document.getElementById('consequence-heuristic-feedback');
     if (feedbackContainer) {
       feedbackContainer.innerHTML = '';
@@ -391,6 +484,13 @@ function bindEvents() {
     for (let i = 1; i <= 4; i++) {
       const chk = document.getElementById(`chk-consequence-rubric-${i}`);
       if (chk) chk.checked = false;
+    }
+  });
+
+  document.getElementById('consequence-user-answer').addEventListener('input', (e) => {
+    const topicId = consequenceSelect.value;
+    if (topicId && CONSEQUENCE_SKILLS_DATA[topicId]) {
+      updateRealTimeFeedback('consequence', e.target.value, CONSEQUENCE_SKILLS_DATA[topicId], topicId);
     }
   });
 
@@ -434,6 +534,7 @@ function bindEvents() {
     document.getElementById('sequence-status-msg').innerHTML = "Select all three events to verify chronology.";
     document.getElementById('narrative-user-answer').value = '';
     document.querySelectorAll('.process-word').forEach(chip => chip.classList.remove('used'));
+    document.getElementById('draft-feedback-narrative').style.display = 'none';
     for (let i = 1; i <= 4; i++) {
       const chk = document.getElementById(`chk-narrative-rubric-${i}`);
       if (chk) chk.checked = false;
@@ -472,6 +573,8 @@ function bindEvents() {
       r3.classList.add('correct-sequence');
       statusMsg.innerHTML = '<span style="color: var(--success);"><i class="fa-solid fa-circle-check"></i> Chronology Verified! Step 2 Unlocked.</span>';
       document.getElementById('narrative-input-area').style.display = 'flex';
+      document.getElementById('draft-feedback-narrative').style.display = 'block';
+      updateRealTimeFeedback('narrative', '', data, topicId);
     } else {
       AudioEngine.play('fail');
       r1.classList.add('incorrect-sequence');
@@ -503,6 +606,10 @@ function bindEvents() {
           chip.classList.remove('used');
         }
       }
+    }
+    const topicId = narrativeSelect.value;
+    if (topicId && NARRATIVE_SKILLS_DATA[topicId]) {
+      updateRealTimeFeedback('narrative', e.target.value, NARRATIVE_SKILLS_DATA[topicId], topicId);
     }
   });
 
@@ -634,6 +741,7 @@ function bindEvents() {
     document.getElementById('narrative-user-answer').value = '';
     document.getElementById('narrative-answer-box').style.display = 'none';
     document.querySelectorAll('.process-word').forEach(chip => chip.classList.remove('used'));
+    document.getElementById('draft-feedback-narrative').style.display = 'none';
     
     const feedbackContainer = document.getElementById('narrative-heuristic-feedback');
     if (feedbackContainer) {
@@ -668,6 +776,7 @@ function bindEvents() {
     document.getElementById('importance-user-answer').value = '';
     document.getElementById('importance-clue-box').style.display = 'none';
     document.getElementById('importance-answer-box').style.display = 'none';
+    document.getElementById('draft-feedback-importance').style.display = 'none';
 
     for (let i = 1; i <= 4; i++) {
       const chk = document.getElementById(`chk-importance-rubric-${i}`);
@@ -679,6 +788,8 @@ function bindEvents() {
 
     document.getElementById('importance-input-area').style.display = 'flex';
     document.getElementById('importance-user-answer').focus();
+    document.getElementById('draft-feedback-importance').style.display = 'block';
+    updateRealTimeFeedback('importance', '', data, topicId);
   });
 
   document.getElementById('btn-importance-clue').addEventListener('click', () => {
@@ -735,6 +846,7 @@ function bindEvents() {
     document.getElementById('importance-user-answer').value = '';
     document.getElementById('importance-clue-box').style.display = 'none';
     document.getElementById('importance-answer-box').style.display = 'none';
+    document.getElementById('draft-feedback-importance').style.display = 'none';
     const feedbackContainer = document.getElementById('importance-heuristic-feedback');
     if (feedbackContainer) {
       feedbackContainer.innerHTML = '';
@@ -757,38 +869,22 @@ function bindEvents() {
     switchView('past-papers');
   });
 
-  // Crisis Hotline Game Controls
-  document.getElementById('shortcut-crisis-game').addEventListener('click', () => {
-    AudioEngine.play('click');
-    switchView('crisis-game');
-  });
+  // Revision Games Hub Controls
+  const navGames = document.getElementById('nav-games');
+  if (navGames) {
+    navGames.addEventListener('click', () => {
+      AudioEngine.play('click');
+      switchView('games');
+    });
+  }
 
-  document.getElementById('nav-crisis-game').addEventListener('click', () => {
-    AudioEngine.play('click');
-    switchView('crisis-game');
-  });
-
-  // Timeline Intercept Game Controls
-  document.getElementById('shortcut-tug-game').addEventListener('click', () => {
-    AudioEngine.play('click');
-    switchView('tug-game');
-  });
-
-  document.getElementById('nav-tug-game').addEventListener('click', () => {
-    AudioEngine.play('click');
-    switchView('tug-game');
-  });
-
-  // Jet Set Willy Game Controls
-  document.getElementById('shortcut-jsw-game').addEventListener('click', () => {
-    AudioEngine.play('click');
-    switchView('jsw-game');
-  });
-
-  document.getElementById('nav-jsw-game').addEventListener('click', () => {
-    AudioEngine.play('click');
-    switchView('jsw-game');
-  });
+  const shortcutGames = document.getElementById('shortcut-games');
+  if (shortcutGames) {
+    shortcutGames.addEventListener('click', () => {
+      AudioEngine.play('click');
+      switchView('games');
+    });
+  }
 
   document.getElementById('btn-start-past-paper').addEventListener('click', () => {
     const val = document.getElementById('past-paper-select').value;
@@ -801,5 +897,187 @@ function bindEvents() {
     AudioEngine.play('click');
     generateMockExam();
   });
+
+  document.getElementById('importance-user-answer').addEventListener('input', (e) => {
+    const topicId = importanceSelect.value;
+    if (topicId && EXAM_SKILLS_DATA[topicId]) {
+      updateRealTimeFeedback('importance', e.target.value, EXAM_SKILLS_DATA[topicId], topicId);
+    }
+  });
 }
+
+// --- Real-time Fact / Connective Verification Checklist for Essay Writing ---
+
+function extractKeywordsFromAnswer(htmlAnswer) {
+  if (!htmlAnswer) return [];
+  // Strip HTML tags
+  const cleanText = htmlAnswer.replace(/<[^>]*>/g, ' ');
+  
+  const candidates = [];
+  // Match capitalized sequences (Proper nouns)
+  const propReg = /\b[A-Z][a-zA-Z]*(?:\s+[A-Z][a-zA-Z]*)*\b/g;
+  let match;
+  while ((match = propReg.exec(cleanText)) !== null) {
+    const term = match[0].trim();
+    if (term.length > 2 && !candidates.includes(term)) {
+      candidates.push(term);
+    }
+  }
+  
+  // Match numbers (especially years or quantities)
+  const numReg = /\b\d{2,4}\b/g;
+  while ((match = numReg.exec(cleanText)) !== null) {
+    const term = match[0].trim();
+    if (!candidates.includes(term)) {
+      candidates.push(term);
+    }
+  }
+
+  // Common stopwords or noisy words to filter out
+  const stopWords = ['One', 'This', 'The', 'Following', 'Point', 'It', 'By', 'In', 'Explain', 'Both', 'To', 'Arab', 'Jewish', 'Israel', 'Israeli', 'Egypt', 'Egyptian', 'Palestine', 'Palestinian', 'Jordan', 'Syria', 'Syrian', 'British', 'Britain'];
+  
+  const filtered = candidates.filter(term => {
+    return !stopWords.includes(term);
+  });
+  
+  return filtered.slice(0, 5);
+}
+
+function getKeywordsForQuestion(type, questionId, questionObj) {
+  if (!questionObj) return [];
+  if (questionObj.keywords && Array.isArray(questionObj.keywords)) {
+    return questionObj.keywords;
+  }
+  
+  const predefined = {
+    consequence: {
+      "1.1a": ["Irgun", "91 deaths", "UN", "1947", "Mandate"],
+      "1.1b": ["Resolution 181", "civil war", "partition plan", "invading Arab armies"],
+      "1.2a": ["IDF", "Haganah", "Irgun", "Lehi", "coordinated defence"],
+      "1.2b": ["Law of Return", "immigration", "refugees", "demographic shift"],
+      "1.3a": ["Gaza", "Nasser", "Soviet arms", "Czechoslovak arms deal"],
+      "1.3b": ["UNEF", "Sinai Peninsula", "Straits of Tiran", "Fedayeen raids"],
+      "2.1a": ["Cairo Conference", "PLO", "Arab leaders", "national aspirations"],
+      "2.1b": ["water diversion", "Fatah raids", "demilitarised zones", "Syria"],
+      "2.2a": ["UN Resolution 242", "territories", "peace for land", "diplomatic deadlock"],
+      "2.2b": ["refugee crisis", "Six Day War", "Gaza Strip", "West Bank"],
+      "2.3a": ["October War", "Suez Canal", "air defense", "surprise attack"],
+      "2.3b": ["oil weapon", "embargo", "OPEC", "inflation"],
+      "3.1a": ["Sadat visit", "Jerusalem", "Knesset speech", "psychological barrier"],
+      "3.1b": ["Camp David Accords", "peace treaty", "Sinai", "recognition of Israel"],
+      "3.2a": ["invasion of Lebanon", "Operation Peace for Galilee", "Ariel Sharon", "Sabra and Shatila"],
+      "3.2b": ["First Intifada", "stone-throwing", "civil disobedience", "Iron Fist policy"],
+      "3.3a": ["Oslo Accords", "Yasser Arafat", "Yitzhak Rabin", "PNA", "mutual recognition"],
+      "3.3b": ["assassination of Rabin", "nationalist extremist", "peace rally", "interim agreements"]
+    },
+    importance: {
+      "1.1a": ["King David Hotel", "British morale", "91 deaths", "UN hand-over", "1947"],
+      "1.1b": ["UN Resolution 181", "Jewish state", "partition plan", "civil war", "legitimacy"],
+      "1.2a": ["IDF", "co-ordinated defence", "conscription", "invading Arab armies"],
+      "1.3a": ["Suez Crisis", "Fedayeen bases", "UNEF", "Straits of Tiran", "Eilat"],
+      "2.1a": ["Straits of Tiran", "blockade", "Eilat", "Iranian oil", "pre-emptive strike"],
+      "2.2a": ["occupied territories", "buffer zones", "peace for land", "Resolution 242"],
+      "2.3a": ["Yom Kippur War", "Suez Canal", "Kissinger shuttle diplomacy", "Sadat visit"],
+      "3.1a": ["Sadat Knesset speech", "Menachem Begin", "psychological barrier", "Camp David"],
+      "3.2a": ["Hebron", "Oslo Accords", "Likud opposition", "settler violence"],
+      "3.3a": ["Oslo Accords", "Yasser Arafat", "Yitzhak Rabin", "PNA", "mutual recognition"],
+      "3.3b": ["peace treaty with Jordan", "King Hussein", "Rabin", "normalized relations"]
+    }
+  };
+  
+  if (predefined[type] && predefined[type][questionId]) {
+    return predefined[type][questionId];
+  }
+  
+  return extractKeywordsFromAnswer(questionObj.answer || "");
+}
+
+function updateRealTimeFeedback(type, value, questionObj, questionId) {
+  const feedbackCard = document.getElementById(`draft-feedback-${type}`);
+  if (!feedbackCard) return;
+
+  feedbackCard.style.display = 'flex';
+
+  const text = (value || "").toLowerCase();
+  
+  // 1. Causal Connectives checklist
+  const connectives = ["as a result", "consequently", "this led to", "therefore"];
+  const matchedConnectives = [];
+  
+  const connectiveTagsContainer = document.getElementById(`connective-tags-${type}`);
+  if (connectiveTagsContainer) {
+    connectiveTagsContainer.innerHTML = "";
+    connectives.forEach(conn => {
+      const isMatched = text.includes(conn.toLowerCase());
+      if (isMatched) matchedConnectives.push(conn);
+      
+      const tag = document.createElement("span");
+      tag.className = `feedback-tag ${isMatched ? "matched" : ""}`;
+      tag.innerHTML = isMatched ? `<i class="fa-solid fa-check"></i> ${conn}` : conn;
+      connectiveTagsContainer.appendChild(tag);
+    });
+  }
+  
+  // 2. Key Terms checklist
+  const keywords = getKeywordsForQuestion(type, questionId, questionObj);
+  const matchedKeywords = [];
+  
+  const keywordTagsContainer = document.getElementById(`keyword-tags-${type}`);
+  const keywordRow = document.getElementById(`keyword-feedback-row-${type}`);
+  
+  if (keywords && keywords.length > 0) {
+    if (keywordRow) keywordRow.style.display = "block";
+    if (keywordTagsContainer) {
+      keywordTagsContainer.innerHTML = "";
+      keywords.forEach(kw => {
+        const isMatched = text.includes(kw.toLowerCase());
+        if (isMatched) matchedKeywords.push(kw);
+        
+        const tag = document.createElement("span");
+        tag.className = `feedback-tag ${isMatched ? "matched" : ""}`;
+        tag.innerHTML = isMatched ? `<i class="fa-solid fa-check"></i> ${kw}` : kw;
+        keywordTagsContainer.appendChild(tag);
+      });
+    }
+  } else {
+    if (keywordRow) keywordRow.style.display = "none";
+  }
+  
+  // 3. Compute Progress & Badge Status
+  const totalItems = connectives.length + keywords.length;
+  const matchedItems = matchedConnectives.length + matchedKeywords.length;
+  const pct = totalItems > 0 ? Math.round((matchedItems / totalItems) * 100) : 0;
+  
+  const fillEl = document.getElementById(`feedback-fill-${type}`);
+  if (fillEl) {
+    fillEl.style.width = `${pct}%`;
+  }
+  
+  const badgeEl = document.getElementById(`feedback-badge-${type}`);
+  if (badgeEl) {
+    badgeEl.className = "feedback-badge";
+    if (pct === 100) {
+      badgeEl.classList.add("status-outstanding");
+      badgeEl.textContent = "Structure: Outstanding";
+    } else if (pct >= 70) {
+      badgeEl.classList.add("status-strong");
+      badgeEl.textContent = "Structure: Strong";
+    } else if (pct >= 30) {
+      badgeEl.classList.add("status-developing");
+      badgeEl.textContent = "Structure: Developing";
+    } else {
+      badgeEl.textContent = "Structure: Drafting";
+    }
+  }
+}
+
+export {
+  toggleMobileSidebar,
+  closeMobileSidebar,
+  updateSoundBtnUI,
+  bindEvents,
+  extractKeywordsFromAnswer,
+  getKeywordsForQuestion,
+  updateRealTimeFeedback
+};
 

@@ -1,5 +1,6 @@
-// --- Web Audio API Synth Engine ---
-const AudioEngine = {
+import { state } from './state.js';
+
+export const AudioEngine = {
   ctx: null,
   init() {
     if (!this.ctx) {
@@ -99,4 +100,3 @@ const AudioEngine = {
     }
   }
 };
-

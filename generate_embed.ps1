@@ -1,5 +1,5 @@
 # Paths
-$workspaceDir = "C:\Users\fives\.gemini\antigravity\scratch\firefly_recall_quizzes"
+$workspaceDir = $PSScriptRoot
 $indexFile = Join-Path $workspaceDir "index.html"
 $cssFile = Join-Path $workspaceDir "style.css"
 $questionsFile = Join-Path $workspaceDir "questions.js"

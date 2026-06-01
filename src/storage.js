@@ -1,6 +1,11 @@
-// --- Storage & Data Prep ---
-function initData() {
-  // Flatten hierarchical quiz data into single array for utility operations
+import { state } from './state.js';
+import { QUIZ_DATA } from '../questions.js';
+import { updateSoundBtnUI } from './layout.js';
+import { updateGlobalStats, updateBookmarksUI } from './views.js';
+import { AudioEngine } from './audio.js';
+import { Confetti } from './confetti.js';
+
+export function initData() {
   state.allQuestions = [];
   QUIZ_DATA.forEach(topic => {
     topic.subtopics.forEach(subtopic => {
@@ -27,7 +32,6 @@ function initData() {
     });
   });
 
-  // Load progress and user settings from LocalStorage
   try {
     const storedMastery = localStorage.getItem('edexcel_mastery') || localStorage.getItem('firefly_mastery');
     const storedBookmarks = localStorage.getItem('edexcel_bookmarks') || localStorage.getItem('firefly_bookmarks');
@@ -46,13 +50,13 @@ function initData() {
     console.error("LocalStorage load error:", e);
   }
   
-  // Set theme attributes on HTML root
   document.documentElement.setAttribute('data-theme', state.theme);
-  document.getElementById('theme-selector').value = state.theme;
+  const themeSelector = document.getElementById('theme-selector');
+  if (themeSelector) themeSelector.value = state.theme;
   updateSoundBtnUI();
 }
 
-function saveProgress() {
+export function saveProgress() {
   try {
     localStorage.setItem('edexcel_mastery', JSON.stringify(state.mastery));
     localStorage.setItem('edexcel_bookmarks', JSON.stringify(state.bookmarks));
@@ -64,8 +68,7 @@ function saveProgress() {
   updateGlobalStats();
 }
 
-// Helper to set question mastery and check for sub-topic 100% completion celebration
-function setMastered(questionId, isMastered) {
+export function setMastered(questionId, isMastered) {
   const previousStatus = !!state.mastery[questionId];
   if (previousStatus === isMastered) return;
   
@@ -73,14 +76,12 @@ function setMastered(questionId, isMastered) {
   saveProgress();
 
   if (isMastered) {
-    // Check if the subtopic this question belongs to is now 100% completed
     const question = state.allQuestions.find(q => q.id === questionId);
     if (question) {
       const subtopicQuestions = state.allQuestions.filter(q => q.subtopicId === question.subtopicId);
       const masteredInSubtopic = subtopicQuestions.filter(q => state.mastery[q.id]);
       
       if (masteredInSubtopic.length === subtopicQuestions.length) {
-        // Trigger congratulations!
         AudioEngine.play('cheer');
         Confetti.spawn(100);
       }
@@ -88,7 +89,7 @@ function setMastered(questionId, isMastered) {
   }
 }
 
-function toggleBookmark(questionId) {
+export function toggleBookmark(questionId) {
   const idx = state.bookmarks.indexOf(questionId);
   if (idx > -1) {
     state.bookmarks.splice(idx, 1);
@@ -99,4 +100,3 @@ function toggleBookmark(questionId) {
   updateBookmarksUI();
   AudioEngine.play('click');
 }
-

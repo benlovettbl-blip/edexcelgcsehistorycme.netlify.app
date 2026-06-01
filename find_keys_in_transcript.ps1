@@ -1,5 +1,5 @@
 $transcriptPath = "C:\Users\fives\.gemini\antigravity\brain\1844f957-6c6e-45bc-a32f-52f6a520a16c\.system_generated\logs\transcript.jsonl"
-$outputPath = "C:\Users\fives\.gemini\antigravity\scratch\firefly_recall_quizzes\keys_in_transcript.txt"
+$outputPath = "$PSScriptRoot\keys_in_transcript.txt"
 
 $keys = @(
     "1.1a", "1.1b", "1.2a", "1.2b", "1.3a", "1.3b",

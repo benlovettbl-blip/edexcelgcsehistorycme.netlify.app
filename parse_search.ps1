@@ -1,5 +1,5 @@
-$resultsPath = "C:\Users\fives\.\.gemini\antigravity\scratch\firefly_recall_quizzes\search_results.txt"
-$outputPath = "C:\Users\fives\.\.gemini\antigravity\scratch\firefly_recall_quizzes\parsed_consequences.txt"
+$resultsPath = "$PSScriptRoot\search_results.txt"
+$outputPath = "$PSScriptRoot\parsed_consequences.txt"
 
 $content = Get-Content -Raw -Path $resultsPath
 # Split by lines
