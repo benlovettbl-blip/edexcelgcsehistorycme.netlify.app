@@ -12579,13 +12579,6 @@
       const viewTitle = document.getElementById("current-view-title");
       if (viewTitle) viewTitle.textContent = "Going Beyond: Modern Realities";
       state.selectedSubtopicId = null;
-    } else if (viewName === "going-beyond") {
-      const goingBeyondNav = document.getElementById("nav-going-beyond");
-      if (goingBeyondNav) goingBeyondNav.classList.add("active");
-      if (headerModeSwitcher) headerModeSwitcher.style.display = "none";
-      const viewTitle = document.getElementById("current-view-title");
-      if (viewTitle) viewTitle.textContent = "Going Beyond: Modern Realities";
-      state.selectedSubtopicId = null;
       renderGoingBeyond();
     } else if (viewName === "subtopic" && subtopicId) {
       state.selectedSubtopicId = subtopicId;

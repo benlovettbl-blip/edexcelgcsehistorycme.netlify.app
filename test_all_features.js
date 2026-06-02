@@ -160,8 +160,7 @@ try {
     { navId: 'nav-past-papers', viewId: 'view-past-papers', name: 'Past Papers' },
     { navId: 'nav-games', viewId: 'view-games', name: 'Games Hub' },
     { navId: 'nav-bookmarks', viewId: 'view-bookmarks', name: 'Bookmarks' },
-    { navId: 'nav-going-beyond', viewId: 'view-going-beyond', name: 'Going Beyond' },
-    { navId: 'nav-firefly', viewId: 'view-firefly', name: 'Firefly Export' }
+    { navId: 'nav-going-beyond', viewId: 'view-going-beyond', name: 'Going Beyond' }
   ];
 
   views.forEach(v => {
