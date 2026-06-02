@@ -6263,6 +6263,7 @@ details > summary::marker {
 }
 
 .taboo-subtitle {
+  font-family: var(--font-body);
   font-size: 0.85rem;
   color: var(--text-muted);
   margin: 0;
@@ -6278,6 +6279,7 @@ details > summary::marker {
 }
 
 .taboo-setup-label {
+  font-family: var(--font-body);
   font-size: 0.8rem;
   font-weight: 700;
   color: var(--text-muted);
@@ -6291,6 +6293,7 @@ details > summary::marker {
   border: 1px solid var(--border-glass);
   border-radius: var(--border-radius-sm);
   color: var(--text-main);
+  font-family: var(--font-body);
   font-size: 0.95rem;
   box-sizing: border-box;
   outline: none;
@@ -6308,6 +6311,7 @@ details > summary::marker {
   border: 1px solid var(--border-glass);
   border-radius: var(--border-radius-sm);
   color: var(--text-muted);
+  font-family: var(--font-heading);
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -6423,6 +6427,7 @@ details > summary::marker {
 }
 
 .taboo-target-label {
+  font-family: var(--font-body);
   font-size: 0.75rem;
   font-weight: 800;
   letter-spacing: 1px;
@@ -6444,6 +6449,7 @@ details > summary::marker {
 }
 
 .taboo-forbidden-label {
+  font-family: var(--font-body);
   font-size: 0.75rem;
   font-weight: 800;
   letter-spacing: 1.5px;
@@ -6462,9 +6468,10 @@ details > summary::marker {
 }
 
 .taboo-word-item {
-  background: rgba(244, 63, 94, 0.08);
-  border: 1px solid rgba(244, 63, 94, 0.25);
+  background: var(--accent-glow);
+  border: 1px solid var(--border-glass);
   color: var(--accent);
+  font-family: var(--font-body);
   font-weight: 700;
   font-size: 0.95rem;
   padding: 6px 14px;
@@ -6474,17 +6481,12 @@ details > summary::marker {
   gap: 6px;
 }
 
-[data-theme="desert"] .taboo-word-item {
-  background: rgba(180, 83, 9, 0.08);
-  border-color: rgba(180, 83, 9, 0.25);
-  color: var(--accent);
-}
-
 .taboo-hint-box {
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid var(--border-glass);
   padding: 10px 12px;
   border-radius: var(--border-radius-sm);
+  font-family: var(--font-body);
   font-size: 0.82rem;
   line-height: 1.4;
   color: var(--text-muted);
@@ -6558,6 +6560,7 @@ details > summary::marker {
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid var(--border-glass);
   border-radius: var(--border-radius-sm);
+  font-family: var(--font-body);
   font-weight: 600;
   font-size: 0.95rem;
 }
@@ -6566,6 +6569,30 @@ details > summary::marker {
   border-color: var(--primary);
   background: var(--primary-glow);
   color: var(--primary);
+}
+
+/* Desert Theme Contrast Overrides for Taboo */
+[data-theme="desert"] .taboo-setup-input {
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--text-main);
+}
+
+[data-theme="desert"] .taboo-team-count-btn {
+  background: rgba(0, 0, 0, 0.02);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="desert"] .taboo-act-btn.skip {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="desert"] .taboo-hint-box {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+[data-theme="desert"] .taboo-score-row {
+  background: rgba(0, 0, 0, 0.02);
 }
 
 
