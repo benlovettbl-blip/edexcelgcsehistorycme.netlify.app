@@ -709,6 +709,9 @@
             <button class="tab-btn" id="btn-tab-game-jsw" style="flex: 1; min-width: 140px; padding: 10px 6px; font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 6px; border-radius: var(--border-radius-sm); border: 1px solid var(--border-glass); background: rgba(255,255,255,0.03); color: var(--text-muted); cursor: pointer; transition: all 0.2s;">
               <i class="fa-solid fa-gamepad"></i> JSW: The War Room
             </button>
+            <button class="tab-btn" id="btn-tab-game-taboo" style="flex: 1; min-width: 140px; padding: 10px 6px; font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 6px; border-radius: var(--border-radius-sm); border: 1px solid var(--border-glass); background: rgba(255,255,255,0.03); color: var(--text-muted); cursor: pointer; transition: all 0.2s;">
+              <i class="fa-solid fa-ban"></i> Taboo Revision
+            </button>
           </div>
 
           <!-- Container for Causal Link Builder Game -->
@@ -870,6 +873,15 @@
 
               <div id="jsw-review" class="jsw-review-pane">
                 <strong>INTELLIGENCE FEED:</strong> Collect the 4 floating white spec dispatch cubes to decrypt critical Paper 2 data files. Avoid moving hazards and structural dead zones.
+              </div>
+            </div>
+          </div>
+
+          <!-- Container for Taboo Revision Game -->
+          <div id="game-taboo-container" class="game-view-pane" style="display: none;">
+            <div class="taboo-game-container">
+              <div id="taboo-game-panel">
+                <!-- Dynamically populated by initTabooGame in games.js -->
               </div>
             </div>
           </div>

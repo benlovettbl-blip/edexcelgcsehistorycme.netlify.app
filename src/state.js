@@ -86,5 +86,20 @@ export const state = {
       { x: 200, y: 104, width: 16, height: 16, vx: 2, rangeMin: 200, rangeMax: 380, color: "#ff00ff", label: "☢" },
       { x: 150, y: 174, width: 12, height: 16, vx: 1.5, rangeMin: 120, rangeMax: 240, color: "#00ffff", label: "☎" }
     ]
+  },
+  
+  // Taboo Revision Game State
+  tabooGameSession: {
+    teams: [
+      { name: 'Team A', score: 0 },
+      { name: 'Team B', score: 0 }
+    ],
+    currentTeamIndex: 0,
+    currentCardIndex: 0,
+    deck: [],
+    timerLimit: 60,
+    timerRemaining: 60,
+    timerInterval: null,
+    isPlaying: false
   }
 };

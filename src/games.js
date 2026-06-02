@@ -841,3 +841,518 @@ export const practiceState = {
   currentExampleIndex: 0,
   clickedErrors: new Set()
 };
+
+// --- Taboo Revision Game Data & Logic ---
+
+export const TABOO_CARDS = [
+  {
+    id: 'taboo_1',
+    topic: 'Key Topic 1: The Birth of the State of Israel (1945–63)',
+    target: 'KING DAVID HOTEL',
+    taboo: ['Bomb', 'Irgun', 'Jerusalem', '91', 'Headquarters'],
+    hint: 'Focus on July 1946, Menachem Begin, milk churns, and the shift in British morale.'
+  },
+  {
+    id: 'taboo_2',
+    topic: 'Key Topic 1: The Birth of the State of Israel (1945–63)',
+    target: 'UN RESOLUTION 181',
+    taboo: ['Partition', '1947', 'Divide', 'State', 'Rejected'],
+    hint: "Focus on the international organisation involved, the percentages of land given, the status of Jerusalem, and the Arab League's reaction."
+  },
+  {
+    id: 'taboo_3',
+    topic: 'Key Topic 1: The Birth of the State of Israel (1945–63)',
+    target: 'THE LAW OF RETURN',
+    taboo: ['1950', 'Immigrate', 'Citizen', 'Jew / Jewish', 'Population'],
+    hint: 'Focus on the Israeli government policy passed shortly after the 1948 war to build up its demographic strength and workforce.'
+  },
+  {
+    id: 'taboo_4',
+    topic: 'Key Topic 1: The Birth of the State of Israel (1945–63)',
+    target: 'THE SUEZ CRISIS',
+    taboo: ['Canal', 'Nasser', '1956', 'Britain / France', 'Nationalise'],
+    hint: 'Focus on the withdrawal of funding for the Aswan High Dam, the secret Protocol of Sèvres, and the introduction of UNEF.'
+  },
+  {
+    id: 'taboo_5',
+    topic: 'Key Topic 1: The Birth of the State of Israel (1945–63)',
+    target: 'FEDAYEEN',
+    taboo: ['Guerrilla', 'Raids', 'Border', 'Egypt / Jordan', 'Terrorist'],
+    hint: 'Use the Arabic translation "those who sacrifice themselves", refer to the 1950s infiltrations into Israel, and the IDF reprisal attacks.'
+  },
+  {
+    id: 'taboo_6',
+    topic: 'Key Topic 2: The Escalating Conflict (1964–73)',
+    target: 'FATAH',
+    taboo: ['Arafat', 'PLO', 'Syria', 'Samu', 'Group'],
+    hint: 'Focus on the specific militant faction founded in 1959 that launched over 100 strikes between 1965 and 1967, leading to massive border tensions.'
+  },
+  {
+    id: 'taboo_7',
+    topic: 'Key Topic 2: The Escalating Conflict (1964–73)',
+    target: 'THE SIX DAY WAR',
+    taboo: ['1967', 'Pre-emptive', 'Air-strike', 'Territory / Land', 'Egypt / Syria / Jordan'],
+    hint: "Focus on the consequences of Soviet misinformation, the closure of the Straits of Tiran, and the rapid expansion of Israel's borders by 350%."
+  },
+  {
+    id: 'taboo_8',
+    topic: 'Key Topic 2: The Escalating Conflict (1964–73)',
+    target: 'UN RESOLUTION 242',
+    taboo: ['Land for Peace', 'Withdraw', 'Recognise', 'Refugee', 'Khartoum'],
+    hint: 'Focus on the diplomatic formula proposed after the 1967 conflict that the Arab states initially answered with the "Three Nos".'
+  },
+  {
+    id: 'taboo_9',
+    topic: 'Key Topic 2: The Escalating Conflict (1964–73)',
+    target: 'BLACK SEPTEMBER',
+    taboo: ['Munich', 'Olympics', '1972', 'Athletes', 'Jordan / Expelled'],
+    hint: 'Focus on the extremist splinter faction formed after 1970, the hostage situation in Germany, and Israel\'s "Operation Wrath of God" retaliation.'
+  },
+  {
+    id: 'taboo_10',
+    topic: 'Key Topic 2: The Escalating Conflict (1964–73)',
+    target: 'THE YOM KIPPUR WAR',
+    taboo: ['1973', 'Surprise', 'Holy', 'Bar Lev', 'Sadat'],
+    hint: 'Focus on the 6th of October, the use of Soviet SAM-3 missiles, the shattering of Israeli invincibility, and the resignation of Golda Meir.'
+  },
+  {
+    id: 'taboo_11',
+    topic: 'Key Topic 2: The Escalating Conflict (1964–73)',
+    target: 'THE OIL WEAPON',
+    taboo: ['OPEC', 'Embargo', 'Price', 'USA', 'Shortages'],
+    hint: 'Focus on the economic tactic used by Saudi Arabia and others in 1973 to punish Western nations, causing a global recession.'
+  },
+  {
+    id: 'taboo_12',
+    topic: 'Key Topic 3: Attempts at a Solution (1974–95)',
+    target: 'SHUTTLE DIPLOMACY',
+    taboo: ['Kissinger', 'Travel / Fly', 'USA', 'Negotiate', 'Face-to-face'],
+    hint: 'Focus on the method used between 1974 and 1975 to separate forces and reopen a vital Egyptian waterway without direct contact between enemies.'
+  },
+  {
+    id: 'taboo_13',
+    topic: 'Key Topic 3: Attempts at a Solution (1974–95)',
+    target: 'CAMP DAVID ACCORDS',
+    taboo: ['Carter', 'Sadat', 'Begin', '1978', 'Treaty'],
+    hint: 'Focus on the 13-day secret summit in the American presidential retreat that laid the groundwork for the return of the Sinai Peninsula.'
+  },
+  {
+    id: 'taboo_14',
+    topic: 'Key Topic 3: Attempts at a Solution (1974–95)',
+    target: 'SABRA AND SHATILA',
+    taboo: ['Massacre', 'Refugee', 'Phalange / Christian', 'Lebanon / Beirut', 'Sharon'],
+    hint: 'Focus on the tragic events of September 1982 following the assassination of Bashir Gemayel, which severely damaged Israel\'s international reputation.'
+  },
+  {
+    id: 'taboo_15',
+    topic: 'Key Topic 3: Attempts at a Solution (1974–95)',
+    target: 'THE FIRST INTIFADA',
+    taboo: ['Uprising', 'Stones', 'Iron Fist', '1987', 'Gaza / West Bank'],
+    hint: 'Focus on the Arabic word for "shaking off", the grassroots rebellion sparked by a traffic accident, and the resulting global sympathy for Palestinians.'
+  },
+  {
+    id: 'taboo_16',
+    topic: 'Key Topic 3: Attempts at a Solution (1974–95)',
+    target: 'THE OSLO ACCORDS',
+    taboo: ['1993', 'Rabin', 'Arafat', 'Handshake', 'PNA / Authority'],
+    hint: 'Focus on the secret talks held in Norway, the letters of mutual recognition, and the famous ceremony on the White House lawn with Bill Clinton.'
+  }
+];
+
+export function initTabooGame() {
+  const session = state.tabooGameSession;
+  if (session.timerInterval) {
+    clearInterval(session.timerInterval);
+    session.timerInterval = null;
+  }
+  session.isPlaying = false;
+
+  const panel = document.getElementById('taboo-game-panel');
+  if (!panel) return;
+
+  panel.innerHTML = `
+    <div class="taboo-setup-card">
+      <div class="taboo-title-section">
+        <h2 class="taboo-main-title">REVISION TABOO: GEOPOLITICAL CODEX</h2>
+        <p class="taboo-subtitle">AO1 ACTIVE VOCABULARY ACCELERATOR</p>
+      </div>
+
+      <div class="taboo-hint-box" style="font-size:0.85rem; border-color:var(--primary);">
+        <strong>How to Play:</strong> Describe the <strong>Target Word</strong> to your team without saying any of the <strong>5 Taboo Words</strong>. No soundalikes, abbreviations, or spelling hints allowed!
+      </div>
+
+      <div class="taboo-setup-row">
+        <span class="taboo-setup-label">Number of Teams</span>
+        <div style="display: flex; gap: 8px;">
+          <button class="taboo-team-count-btn active" data-count="2">2 Teams</button>
+          <button class="taboo-team-count-btn" data-count="3">3 Teams</button>
+          <button class="taboo-team-count-btn" data-count="4">4 Teams</button>
+        </div>
+      </div>
+
+      <div class="taboo-setup-row">
+        <span class="taboo-setup-label">Configure Team Names</span>
+        <div id="taboo-team-inputs" class="taboo-teams-names-grid">
+          <div>
+            <label style="font-size:0.75rem; color:var(--text-muted);">Team 1 Name</label>
+            <input type="text" class="taboo-setup-input" id="taboo-team-0-input" value="Red Tigers">
+          </div>
+          <div>
+            <label style="font-size:0.75rem; color:var(--text-muted);">Team 2 Name</label>
+            <input type="text" class="taboo-setup-input" id="taboo-team-1-input" value="Blue Eagles">
+          </div>
+        </div>
+      </div>
+
+      <div class="taboo-setup-row">
+        <span class="taboo-setup-label">Turn Duration Limit</span>
+        <select class="taboo-setup-input" id="taboo-timer-select" style="background-color:#0f172a; cursor:pointer;">
+          <option value="45">45 Seconds</option>
+          <option value="60" selected>60 Seconds (Standard)</option>
+          <option value="90">90 Seconds</option>
+          <option value="120">120 Seconds</option>
+        </select>
+      </div>
+
+      <button class="taboo-btn-primary" id="btn-taboo-initialize" style="margin-top: 8px;">
+        INITIALIZE COGNITIVE VECTORS
+      </button>
+    </div>
+  `;
+
+  const countBtns = panel.querySelectorAll('.taboo-team-count-btn');
+  countBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      AudioEngine.play('click');
+      countBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      
+      const count = parseInt(btn.getAttribute('data-count'));
+      renderTeamInputs(count);
+    });
+  });
+
+  document.getElementById('btn-taboo-initialize').addEventListener('click', startTabooGameSetup);
+}
+
+function renderTeamInputs(count) {
+  const container = document.getElementById('taboo-team-inputs');
+  if (!container) return;
+
+  let html = '';
+  const defaultNames = ['Red Tigers', 'Blue Eagles', 'Green Panthers', 'Yellow Hornets'];
+  for (let i = 0; i < count; i++) {
+    html += `
+      <div>
+        <label style="font-size:0.75rem; color:var(--text-muted);">Team ${i + 1} Name</label>
+        <input type="text" class="taboo-setup-input" id="taboo-team-${i}-input" value="${defaultNames[i]}">
+      </div>
+    `;
+  }
+  container.innerHTML = html;
+}
+
+function startTabooGameSetup() {
+  AudioEngine.play('click');
+  const countBtn = document.querySelector('.taboo-team-count-btn.active');
+  const count = countBtn ? parseInt(countBtn.getAttribute('data-count')) : 2;
+  
+  const teams = [];
+  for (let i = 0; i < count; i++) {
+    const input = document.getElementById(`taboo-team-${i}-input`);
+    const name = input && input.value.trim() ? input.value.trim() : `Team ${i + 1}`;
+    teams.push({ name: name, score: 0 });
+  }
+
+  const timerSelect = document.getElementById('taboo-timer-select');
+  const timerLimit = timerSelect ? parseInt(timerSelect.value) : 60;
+
+  const session = state.tabooGameSession;
+  session.teams = teams;
+  session.currentTeamIndex = 0;
+  session.currentCardIndex = 0;
+  session.timerLimit = timerLimit;
+  session.timerRemaining = timerLimit;
+  session.isPlaying = false;
+  
+  session.deck = [...TABOO_CARDS].sort(() => Math.random() - 0.5);
+
+  showTabooTransition();
+}
+
+function showTabooTransition() {
+  const session = state.tabooGameSession;
+  const currentTeam = session.teams[session.currentTeamIndex];
+
+  const panel = document.getElementById('taboo-game-panel');
+  if (!panel) return;
+
+  if (session.timerInterval) {
+    clearInterval(session.timerInterval);
+    session.timerInterval = null;
+  }
+
+  panel.innerHTML = `
+    <div class="taboo-transition-card">
+      <div class="taboo-title-section">
+        <h2 class="taboo-main-title">NEXT VECTOR ASSIGNED</h2>
+        <p class="taboo-subtitle">TRANSITION PROTOCOL</p>
+      </div>
+
+      <div style="margin: 16px 0;">
+        <div style="font-size:0.9rem; color:var(--text-muted); text-transform:uppercase; font-weight:700; letter-spacing:0.5px;">Active Team</div>
+        <div class="taboo-turn-badge">${currentTeam.name}</div>
+        <p style="color:var(--text-muted); font-size:0.88rem; max-width:440px; margin: 12px auto; line-height:1.5;">
+          <strong>Attention Describer:</strong> Hand the device to the player describing the target word. Press the button below when ready to begin your ${session.timerLimit}-second turn.
+        </p>
+      </div>
+
+      <div class="taboo-scoreboard-grid">
+        <div style="font-size:0.75rem; text-transform:uppercase; font-weight:800; color:var(--text-muted); letter-spacing:1px; margin-bottom:4px;">Current Scoreboard</div>
+        ${session.teams.map((t, idx) => `
+          <div class="taboo-score-row ${idx === session.currentTeamIndex ? 'active' : ''}">
+            <span>${t.name}</span>
+            <span>${t.score} pts</span>
+          </div>
+        `).join('')}
+      </div>
+
+      <button class="taboo-btn-primary" id="btn-taboo-start-turn" style="margin-top: 12px;">
+        ENGAGE DECIPHER KEY
+      </button>
+    </div>
+  `;
+
+  document.getElementById('btn-taboo-start-turn').addEventListener('click', startTabooTurn);
+}
+
+function startTabooTurn() {
+  AudioEngine.play('click');
+  const session = state.tabooGameSession;
+  session.isPlaying = true;
+  session.timerRemaining = session.timerLimit;
+
+  renderTabooActiveScreen();
+
+  session.timerInterval = setInterval(() => {
+    session.timerRemaining--;
+    const timerEl = document.getElementById('taboo-timer-count');
+    if (timerEl) {
+      timerEl.innerText = `${session.timerRemaining}s`;
+      if (session.timerRemaining <= 10) {
+        timerEl.parentElement.classList.add('warning');
+      }
+    }
+
+    if (session.timerRemaining <= 0) {
+      clearInterval(session.timerInterval);
+      session.timerInterval = null;
+      AudioEngine.play('fail');
+      showTabooTimeExpired();
+    }
+  }, 1000);
+}
+
+function renderTabooActiveScreen() {
+  const panel = document.getElementById('taboo-game-panel');
+  if (!panel) return;
+
+  const session = state.tabooGameSession;
+  const currentTeam = session.teams[session.currentTeamIndex];
+  
+  if (session.currentCardIndex >= session.deck.length) {
+    session.deck = [...TABOO_CARDS].sort(() => Math.random() - 0.5);
+    session.currentCardIndex = 0;
+  }
+
+  const card = session.deck[session.currentCardIndex];
+
+  panel.innerHTML = `
+    <div class="taboo-active-card">
+      <div class="taboo-header-bar">
+        <div class="taboo-active-team">
+          <i class="fa-solid fa-users"></i> ${currentTeam.name} (${currentTeam.score} pts)
+        </div>
+        <div class="taboo-timer">
+          <i class="fa-regular fa-clock"></i> <span id="taboo-timer-count">${session.timerRemaining}s</span>
+        </div>
+      </div>
+
+      <div class="taboo-card-display">
+        <div class="taboo-target-label">Target Variable</div>
+        <h2 class="taboo-target-word">${card.target}</h2>
+        
+        <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase; font-weight:700; margin-top: 4px;">
+          ${card.topic}
+        </div>
+
+        <div class="taboo-forbidden-label" style="margin-top: 8px;">Taboo Variables (DO NOT SAY)</div>
+        <ul class="taboo-words-list">
+          ${card.taboo.map(word => `
+            <li class="taboo-word-item">
+              <i class="fa-solid fa-ban" style="font-size:0.75rem;"></i> ${word}
+            </li>
+          `).join('')}
+        </ul>
+      </div>
+
+      <div class="taboo-hint-box">
+        <strong>AO1 Hints:</strong> ${card.hint}
+      </div>
+
+      <div class="taboo-actions-grid">
+        <button class="taboo-act-btn correct" id="btn-taboo-correct">
+          <i class="fa-solid fa-circle-check"></i> CORRECT (+1)
+        </button>
+        <button class="taboo-act-btn violation" id="btn-taboo-violation">
+          <i class="fa-solid fa-triangle-exclamation"></i> TABOO (-1)
+        </button>
+        <button class="taboo-act-btn skip" id="btn-taboo-skip">
+          SKIP
+        </button>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('btn-taboo-correct').addEventListener('click', () => handleTabooAction('correct'));
+  document.getElementById('btn-taboo-violation').addEventListener('click', () => handleTabooAction('violation'));
+  document.getElementById('btn-taboo-skip').addEventListener('click', () => handleTabooAction('skip'));
+}
+
+function handleTabooAction(action) {
+  const session = state.tabooGameSession;
+  const currentTeam = session.teams[session.currentTeamIndex];
+
+  if (action === 'correct') {
+    AudioEngine.play('success');
+    currentTeam.score++;
+  } else if (action === 'violation') {
+    AudioEngine.play('fail');
+    currentTeam.score = Math.max(0, currentTeam.score - 1);
+  } else {
+    AudioEngine.play('click');
+  }
+
+  session.currentCardIndex++;
+  renderTabooActiveScreen();
+}
+
+function showTabooTimeExpired() {
+  const session = state.tabooGameSession;
+  const currentTeam = session.teams[session.currentTeamIndex];
+
+  const panel = document.getElementById('taboo-game-panel');
+  if (!panel) return;
+
+  panel.innerHTML = `
+    <div class="taboo-transition-card">
+      <div class="taboo-title-section">
+        <h2 class="taboo-main-title" style="color:var(--accent);">TURN COMPLETED</h2>
+        <p class="taboo-subtitle">DURATION LIMIT REACHED</p>
+      </div>
+
+      <div style="margin: 16px 0;">
+        <p style="font-size:1.1rem; color:var(--text-main); font-weight:600;">
+          ${currentTeam.name} completed their decryption round!
+        </p>
+        <div style="font-size:1.4rem; color:var(--success); font-weight:800; font-family:var(--font-heading); margin-top:8px;">
+          Score: ${currentTeam.score} pts
+        </div>
+      </div>
+
+      <div class="taboo-scoreboard-grid">
+        <div style="font-size:0.75rem; text-transform:uppercase; font-weight:800; color:var(--text-muted); letter-spacing:1px; margin-bottom:4px;">Cumulative Scores</div>
+        ${session.teams.map(t => `
+          <div class="taboo-score-row">
+            <span>${t.name}</span>
+            <span>${t.score} pts</span>
+          </div>
+        `).join('')}
+      </div>
+
+      <div style="display:flex; gap:12px; margin-top:12px;">
+        <button class="taboo-btn-secondary" id="btn-taboo-end-game">
+          END GAME (Final Score)
+        </button>
+        <button class="taboo-btn-primary" id="btn-taboo-next-turn">
+          CONTINUE TO NEXT TEAM
+        </button>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('btn-taboo-next-turn').addEventListener('click', advanceTabooTurn);
+  document.getElementById('btn-taboo-end-game').addEventListener('click', endTabooGame);
+}
+
+function advanceTabooTurn() {
+  const session = state.tabooGameSession;
+  session.currentTeamIndex = (session.currentTeamIndex + 1) % session.teams.length;
+  showTabooTransition();
+}
+
+function endTabooGame() {
+  const session = state.tabooGameSession;
+  if (session.timerInterval) {
+    clearInterval(session.timerInterval);
+    session.timerInterval = null;
+  }
+
+  const panel = document.getElementById('taboo-game-panel');
+  if (!panel) return;
+
+  let maxScore = -1;
+  let winners = [];
+  session.teams.forEach(t => {
+    if (t.score > maxScore) {
+      maxScore = t.score;
+      winners = [t];
+    } else if (t.score === maxScore) {
+      winners.push(t);
+    }
+  });
+
+  const isTie = winners.length > 1;
+  const winnerText = isTie 
+    ? `TIE GAME: ${winners.map(w => w.name).join(' & ')}!`
+    : `${winners[0].name} Wins!`;
+
+  AudioEngine.play('cheer');
+  Confetti.spawn();
+
+  panel.innerHTML = `
+    <div class="taboo-victory-card">
+      <div class="taboo-title-section">
+        <h2 class="taboo-main-title" style="color:var(--primary);">COGNITIVE SIMULATION ENDED</h2>
+        <p class="taboo-subtitle">FINAL DECRYPTION LOGS</p>
+      </div>
+
+      <div style="margin: 16px 0;">
+        <div style="font-size:0.85rem; color:var(--text-muted); text-transform:uppercase; font-weight:700; letter-spacing:1px;">Geopolitical Victor</div>
+        <div class="taboo-turn-badge" style="font-size:2.2rem; color:var(--success); text-shadow:0 0 15px rgba(16, 185, 129, 0.25);">
+          ${winnerText}
+        </div>
+      </div>
+
+      <div class="taboo-scoreboard-grid">
+        <div style="font-size:0.75rem; text-transform:uppercase; font-weight:800; color:var(--text-muted); letter-spacing:1px; margin-bottom:4px;">Final Standings</div>
+        ${session.teams.map(t => `
+          <div class="taboo-score-row">
+            <span>${t.name}</span>
+            <span>${t.score} pts</span>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="history-link-box" style="margin-top:12px; font-size:0.85rem; line-height:1.5; border-color:var(--primary); background:rgba(168, 85, 247, 0.03);">
+        <strong>AO1 Examiner Note:</strong> Revision Taboo successfully locks out superficial descriptions (like saying "Bombing" for <em>King David Hotel</em>, or "Partition" for <em>Resolution 181</em>). Remember that for full AO1 marks in your Edexcel exams, you must supply these exact secondary details, dates, and figures!
+      </div>
+
+      <button class="taboo-btn-primary" id="btn-taboo-restart" style="margin-top: 12px;">
+        RESET SIMULATOR
+      </button>
+    </div>
+  `;
+
+  document.getElementById('btn-taboo-restart').addEventListener('click', initTabooGame);
+}
