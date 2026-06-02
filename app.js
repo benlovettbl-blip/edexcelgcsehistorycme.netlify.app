@@ -2067,6 +2067,10 @@
     // 'dashboard' | 'classic' | 'flashcards' | 'exam' | 'timeline' | 'bookmarks'
     selectedSubtopicId: null,
     // Active sub-topic ID (e.g. 'subtopic_1_1')
+    selectedKeyTopicId: null,
+    // Active Key Topic ID (e.g. 'topic_1')
+    highlightGoingBeyondId: null,
+    // Active Going Beyond Card to scroll and glow (e.g. 'gb-jerusalem')
     currentMode: "lessons",
     // 'lessons' | 'classic' | 'flashcards' (sub-topic study modes)
     mastery: {},
@@ -4856,6 +4860,280 @@
     }
   ];
 
+  // src/key_topics_data.js
+  var KEY_TOPICS_OVERVIEWS = {
+    "topic_1": {
+      "title": "Key Topic 1: The birth of the state of Israel, 1945\u201363",
+      "overview": "Key Topic 1 covers the dramatic collapse of the British Mandate and the violent origins of the State of Israel. Bankrupt after the Second World War and facing a violent Jewish insurgency\u2014including the devastating 1946 bombing of the King David Hotel\u2014Britain handed Palestine to the UN. The 1947 UN Partition Plan (Resolution 181) recommended dividing the land, which was accepted by Zionists but rejected by the Arab League, triggering immediate civil war. Following the British exit on 14 May 1948 and David Ben-Gurion's declaration of Israeli statehood, five Arab nations invaded. Israel secured a victory due to Czech arms imports during ceasefires and the creation of a unified force (IDF), expanding its boundaries beyond the UN lines. The aftermath was defined by the Nakba\u2014displacing 700,000 Palestinians into UNRWA camps\u2014and escalating border tensions, culminating in the 1956 Suez Crisis, where Nasser nationalised the canal, provoking a collusive invasion by Britain, France, and Israel.",
+      "timeline": [
+        {
+          "id": "t1_event_1",
+          "year": "1946",
+          "title": "King David Hotel Bombing",
+          "bullets": [
+            "On July 22, 1946, the Zionist militant group Irgun blew up the southern wing of the King David Hotel in Jerusalem, which housed the British military and administrative headquarters.",
+            "The blast killed 91 people, triggering massive public outrage in Britain and severely weakening their resolve to remain in Palestine.",
+            "As a direct result of the escalating insurgency, Britain decided to hand the Mandate problem to the United Nations in early 1947."
+          ],
+          "quote": "We targeted the British administrative headquarters to make it clear that the occupier cannot reside in peace... the tragedy was a result of their refusal to evacuate.",
+          "author": "Menachem Begin, Commander of the Irgun, 1946",
+          "figures": ["Menachem Begin", "Clement Attlee"]
+        },
+        {
+          "id": "t1_event_2",
+          "year": "1947",
+          "title": "UN Resolution 181",
+          "bullets": [
+            "In November 1947, the UN passed Resolution 181, recommending the partition of Palestine into separate Jewish and Arab states, with Jerusalem under international control.",
+            "Zionist leaders accepted the plan as it offered legal international recognition for a Jewish state, despite Jerusalem being excluded.",
+            "Arab leaders rejected it, arguing that allocating 55% of the land to a Jewish minority (33% of the population) was a violation of self-determination, sparking immediate civil violence."
+          ],
+          "quote": "Palestine will be partitioned into two states. Jerusalem will be a corpus separatum administered by the United Nations. We call upon all inhabitants to maintain peace.",
+          "author": "UN General Assembly Resolution 181, November 29, 1947",
+          "figures": ["David Ben-Gurion", "Haj Amin al-Husseini"]
+        },
+        {
+          "id": "t1_event_3",
+          "year": "1948\u201349",
+          "title": "First Arab-Israeli War & Nakba",
+          "bullets": [
+            "On 14 May 1948, the British Mandate ended and David Ben-Gurion declared the State of Israel. The next day, Egypt, Jordan, Syria, Lebanon, and Iraq invaded.",
+            "Israel survived the invasion by consolidating militias into the Israeli Defence Forces (IDF), implementing mandatory conscription, and importing Czech weapons during ceasefires.",
+            "The war ended in 1949 with armistice agreements (the Green Line). Israel captured 79% of Palestine, while Jordan occupied the West Bank and Egypt took Gaza."
+          ],
+          "quote": "We declare the establishment of a Jewish state in Eretz-Israel, to be known as the State of Israel... open for Jewish immigration and the Ingathering of the Exiles.",
+          "author": "David Ben-Gurion, Declaration of Independence, 14 May 1948",
+          "figures": ["David Ben-Gurion", "Count Folke Bernadotte", "King Abdullah I"]
+        },
+        {
+          "id": "t1_event_4",
+          "year": "1956",
+          "title": "The Suez Crisis",
+          "bullets": [
+            "In July 1956, Egyptian President Nasser nationalised the Suez Canal to fund the Aswan High Dam after Western loans were withdrawn.",
+            "Britain, France, and Israel secretly signed the Protocol of S\xE8vres to invade Egypt, destroy Fedayeen bases, and retake control of the canal.",
+            "Superpower intervention by the US and USSR forced a humiliating withdrawal of European forces, cementing Nasser as a Pan-Arab hero and placing UN peacekeepers (UNEF) in Sinai."
+          ],
+          "quote": "The Suez Canal belongs to Egypt, dug by Egyptian hands... We will run it ourselves and use the revenue to build the Aswan Dam.",
+          "author": "President Gamal Abdel Nasser, Alexandria Speech, July 26, 1956",
+          "figures": ["Gamal Abdel Nasser", "Dwight D. Eisenhower", "Anthony Eden"]
+        }
+      ],
+      "sliders": [
+        {
+          "id": "factor_intl",
+          "label": "International Frameworks & Diplomacy",
+          "icon": "fa-globe",
+          "tips": [
+            "Low Weight: UN Resolution 181 and armistice agreements were ignored or violated in the face of raw military conflict.",
+            "Moderate Weight: The UN Partition Plan provided the crucial legal legitimacy Israel needed to declare independence internationally.",
+            "High Weight: Superpower diplomatic intervention and UN ceasefires in 1948 and 1956 were the ultimate arbiters that halted fighting and set permanent borders."
+          ]
+        },
+        {
+          "id": "factor_military",
+          "label": "Military Strategy & Coordination",
+          "icon": "fa-shield-halved",
+          "tips": [
+            "Low Weight: Armies fought but outcomes were determined by broader political alliances and economic resources.",
+            "Moderate Weight: The creation of the IDF and Czech arms imports during the June 1948 ceasefire turned a defensive struggle into a victorious offensive.",
+            "High Weight: Israeli military organization and mandatory conscription created a highly disciplined, unified force that consistently outmaneuvered divided Arab armies."
+          ]
+        },
+        {
+          "id": "factor_nationalism",
+          "label": "Nationalist Insurgency & Resolve",
+          "icon": "fa-users",
+          "tips": [
+            "Low Weight: Guerrilla raids and insurgent bombings generated chaos but did not achieve permanent territorial control.",
+            "Moderate Weight: The Irgun's insurgency shattered British political will, forcing them to abandon the Mandate and hand it to the UN.",
+            "High Weight: Deep-seated ideological convictions\u2014Zionist resolve for a safe haven and rising Arab/Palestinian resistance\u2014fueled the persistent cycles of conflict."
+          ]
+        }
+      ]
+    },
+    "topic_2": {
+      "title": "Key Topic 2: The escalating conflict, 1964\u201373",
+      "overview": "Key Topic 2 explores the rapid escalation of regional and international tensions that culminated in the two major wars of 1967 and 1973. In 1964, the Cairo Conference unified Arab states against Israel, leading to water diversion disputes and the creation of the PLO. Border clashes with Syria, Fatah sabotage raids, and the Samu raid in 1966 raised tensions. After false Soviet intelligence in May 1967, Nasser mobilized forces, closed the Straits of Tiran, and ordered the exit of UNEF peacekeepers. Israel launched a pre-emptive strike (Operation Focus) on 5 June 1967, destroying the Egyptian air force on the ground. In just six days, Israel captured the West Bank, East Jerusalem, Gaza, Sinai, and the Golan Heights. The occupation fueled Palestinian nationalism (led by Yasser Arafat's Fatah) and radical hijackings. Seeking to reclaim occupied lands, Egypt and Syria launched a surprise attack on Yom Kippur in 1973. The war altered the balance of power, proved Arab military capabilities, and triggered the global oil crisis.",
+      "timeline": [
+        {
+          "id": "t2_event_1",
+          "year": "1964",
+          "title": "Cairo Conference & PLO Creation",
+          "bullets": [
+            "In January 1964, Arab League leaders met in Cairo, approving the diversion of Jordan River headwaters to restrict Israel's water access.",
+            "The summit was highly significant because it established the Palestine Liberation Organisation (PLO) to coordinate Palestinian resistance.",
+            "Israel viewed the water diversion as an existential threat and launched repeated airstrikes, initiating active border warfare."
+          ],
+          "quote": "The Arab states will coordinate their plans to divert the Jordan headwaters... and support the establishment of the PLO to lead the struggle for liberation.",
+          "author": "Arab League Summit Declaration, Cairo, January 1964",
+          "figures": ["Gamal Abdel Nasser", "Ahmad Shukeiri"]
+        },
+        {
+          "id": "t2_event_2",
+          "year": "1967",
+          "title": "The Six-Day War",
+          "bullets": [
+            "On 5 June 1967, following the blockade of the Straits of Tiran, Israel launched a preemptive strike, destroying the Egyptian air force on the ground.",
+            "In six days of fighting, the IDF defeated Egypt, Jordan, and Syria, capturing the Sinai Peninsula, Gaza Strip, West Bank, East Jerusalem, and Golan Heights.",
+            "The war completely redrew the map of the Middle East and placed over one million Palestinians under direct Israeli military occupation."
+          ],
+          "quote": "The air force has destroyed the enemy's air power. We have captured the Old City of Jerusalem. The soldiers of Israel have secured our borders.",
+          "author": "Defense Minister Moshe Dayan, Jerusalem Radio, June 7, 1967",
+          "figures": ["Moshe Dayan", "Yitzhak Rabin", "Gamal Abdel Nasser", "King Hussein"]
+        },
+        {
+          "id": "t2_event_3",
+          "year": "1970",
+          "title": "Black September",
+          "bullets": [
+            "In September 1970, the radical PFLP hijacked four international airliners and blew three up on camera at Dawson's Field in Jordan.",
+            "Jordan's King Hussein, fearing the PLO was building a 'state within a state', launched a brutal military assault to expel Palestinian militants.",
+            "Known as Black September, the conflict led to thousands of Palestinian deaths and forced the PLO leadership to relocate to Lebanon."
+          ],
+          "quote": "We will not allow our nation to be used as a base for lawless anarchy... We must restore the authority of the Jordanian crown.",
+          "author": "King Hussein of Jordan, Military Address, September 1970",
+          "figures": ["King Hussein", "Yasser Arafat", "George Habash"]
+        },
+        {
+          "id": "t2_event_4",
+          "year": "1973",
+          "title": "The Yom Kippur War",
+          "bullets": [
+            "On 6 October 1973, Egypt and Syria launched a coordinated surprise attack on the Jewish holy day of Yom Kippur, breaching the Bar Lev Line.",
+            "Although Israel counter-attacked and crossed the Suez Canal after a massive US arms airlift, the early Arab victories shattered the myth of IDF invincibility.",
+            "Arab oil producers deployed the 'oil weapon', cutting production and embargoing the West, which caused a global economic crisis and forced diplomatic talks."
+          ],
+          "quote": "We have crossed the canal and raised our flag. The myth of Israeli security has been shattered forever by the courage of our soldiers.",
+          "author": "President Anwar Sadat, Address to the People, October 16, 1973",
+          "figures": ["Anwar Sadat", "Golda Meir", "Henry Kissinger"]
+        }
+      ],
+      "sliders": [
+        {
+          "id": "factor_surprise",
+          "label": "Tactical Surprise & Doctrine",
+          "icon": "fa-gauge-high",
+          "tips": [
+            "Low Weight: Surprise provided temporary gains but long-term economic and human resources dictated the wars' ends.",
+            "Moderate Weight: Israel's brilliant pre-emptive strike in 1967 secured instant air supremacy, making land victory inevitable.",
+            "High Weight: The Egyptian military's successful crossing of the Suez Canal in 1973 proved that modern planning could break Israel's defense doctrines."
+          ]
+        },
+        {
+          "id": "factor_superpower",
+          "label": "Superpower Support & Airlifts",
+          "icon": "fa-jet-fighter",
+          "tips": [
+            "Low Weight: Superpowers provided equipment but local combatants fought and determined the battle outcomes.",
+            "Moderate Weight: Soviet intelligence and diplomatic vetoes enabled early Arab coordination and protected them from total collapse.",
+            "High Weight: The massive US military airlift (Operation Nickel Grass) and Henry Kissinger's shuttle diplomacy were essential to saving Israel from defeat."
+          ]
+        },
+        {
+          "id": "factor_nationalism_2",
+          "label": "Palestinian Direct Action",
+          "icon": "fa-bullhorn",
+          "tips": [
+            "Low Weight: Hijackings and guerrilla raids generated news headlines but did not alter the core state-to-state military balance.",
+            "Moderate Weight: Cross-border Fatah raids from Syria and Jordan acted as the primary friction points that triggered the 1967 escalation.",
+            "High Weight: The rise of independent Palestinian militancy forced Jordan and Lebanon into military conflicts, reshaping regional alliances."
+          ]
+        }
+      ]
+    },
+    "topic_3": {
+      "title": "Key Topic 3: Attempts at a solution, 1974\u201395",
+      "overview": "Key Topic 3 traces the transition from active interstate warfare to diplomatic peace summits, alongside the rise of localized Palestinian popular resistance. Following the 1973 war, Egyptian President Anwar Sadat pursued a historic peace, leading to the 1978 Camp David Accords, where Egypt recognized Israel in exchange for the return of the Sinai Peninsula. However, this peace isolated Egypt and did not resolve the Palestinian question. In 1982, Israel invaded Lebanon to destroy the PLO bases, leading to a long, messy occupation and the Sabra and Shatila massacres. In December 1987, decades of frustration erupted in the First Intifada\u2014a massive Palestinian uprising in the West Bank and Gaza defined by stone-throwing, strikes, and boycotts. The international pressure from the Intifada forced the 1993 Oslo Accords, where Israel and the PLO officially recognized each other and agreed to a framework for Palestinian self-rule. Despite early optimism and the 1994 Jordan-Israel treaty, the peace process stalled after Rabin's assassination.",
+      "timeline": [
+        {
+          "id": "t3_event_1",
+          "year": "1978",
+          "title": "The Camp David Accords",
+          "bullets": [
+            "In September 1978, President Jimmy Carter hosted Anwar Sadat and Menachem Begin at Camp David, securing a historic peace treaty.",
+            "Egypt officially recognized the State of Israel, becoming the first Arab nation to do so, in exchange for the return of the Sinai Peninsula.",
+            "While securing Israel's southern border, the accords outraged the Arab world, leading to Egypt's expulsion from the Arab League and Sadat's assassination in 1981."
+          ],
+          "quote": "We have signed an accord for peace in the Middle East... proving that through negotiation, decades of hostility can be ended.",
+          "author": "President Jimmy Carter, White House Press Briefing, September 17, 1978",
+          "figures": ["Anwar Sadat", "Menachem Begin", "Jimmy Carter"]
+        },
+        {
+          "id": "t3_event_2",
+          "year": "1982",
+          "title": "Invasion of Lebanon",
+          "bullets": [
+            "In June 1982, Israel launched a massive invasion of Lebanon to destroy PLO bases launching attacks on northern Israel.",
+            "The IDF besieged West Beirut, forcing Yasser Arafat and the PLO leadership to evacuate and relocate their headquarters to Tunis.",
+            "During the occupation, Israeli-allied Christian Phalangist militias massacred hundreds of Palestinian civilians in the Sabra and Shatila camps, sparking massive domestic and global outrage."
+          ],
+          "quote": "We came to Lebanon to secure peace for Galilee... to remove the PLO terrorists from our borders once and for all.",
+          "author": "Prime Minister Menachem Begin, Knesset Address, June 1982",
+          "figures": ["Menachem Begin", "Ariel Sharon", "Yasser Arafat"]
+        },
+        {
+          "id": "t3_event_3",
+          "year": "1987\u201393",
+          "title": "The First Intifada",
+          "bullets": [
+            "In December 1987, a truck accident in Gaza sparked a spontaneous, massive Palestinian uprising (Intifada) across the West Bank and Gaza.",
+            "Managed by the Unified National Leadership, the uprising combined civil disobedience, strikes, and stone-throwing youths against heavily armed IDF forces.",
+            "The conflict placed Palestinian civilian suffering on global television, damaging Israel's international reputation and proving that military control was unsustainable."
+          ],
+          "quote": "This is an uprising of our youth against the occupation. We demand self-determination, our national rights, and an end to military rule.",
+          "author": "PLO Underground Communiqu\xE9 No. 1, January 1988",
+          "figures": ["Yasser Arafat", "Yitzhak Rabin"]
+        },
+        {
+          "id": "t3_event_4",
+          "year": "1993",
+          "title": "The Oslo Accords",
+          "bullets": [
+            "In September 1993, secret negotiations in Norway led to the signing of the Oslo Accords (Declaration of Principles) on the White House lawn.",
+            "Israel and the PLO officially recognized each other, and agreed to establish the Palestinian Authority (PA) to oversee phased self-rule in Gaza and parts of the West Bank.",
+            "Despite early optimism, the accords left major issues (borders, refugees, Jerusalem) unresolved, and the process stalled after Yitzhak Rabin was assassinated in 1995."
+          ],
+          "quote": "The signing of the Declaration of Principles marks a new era... We say to you, the Palestinians, we are destined to live together on the same soil.",
+          "author": "Prime Minister Yitzhak Rabin, White House Speech, September 13, 1993",
+          "figures": ["Yitzhak Rabin", "Yasser Arafat", "Bill Clinton"]
+        }
+      ],
+      "sliders": [
+        {
+          "id": "factor_diplomacy",
+          "label": "Bilateral Diplomacy",
+          "icon": "fa-handshake",
+          "tips": [
+            "Low Weight: Agreements were fragile pieces of paper that failed to stop terrorism or settlement expansion.",
+            "Moderate Weight: The Camp David Accords successfully neutralized Egypt as a military threat, permanently ending large-scale state-to-state wars.",
+            "High Weight: The Oslo Accords established the Palestinian Authority, creating the legal and administrative framework that defines the modern West Bank and Gaza."
+          ]
+        },
+        {
+          "id": "factor_civilian",
+          "label": "Grassroots Popular Uprising",
+          "icon": "fa-users-viewfinder",
+          "tips": [
+            "Low Weight: Throwing stones and economic boycotts could not defeat the military power of the IDF.",
+            "Moderate Weight: The First Intifada shattered the status quo, forcing the US and Israel to recognize that the occupation was politically unsustainable.",
+            "High Weight: Grassroots civilian resistance shifted the conflict from an interstate dispute to a fight for self-determination, forcing leaders to negotiate at Oslo."
+          ]
+        },
+        {
+          "id": "factor_security",
+          "label": "Military Containment",
+          "icon": "fa-shield-halved",
+          "tips": [
+            "Low Weight: Military actions in Lebanon and the occupied territories only created more radicalism and failed to resolve the core political issues.",
+            "Moderate Weight: The 1982 invasion of Lebanon succeeded in expelling the PLO from Israel's northern border but led to the rise of Hezbollah.",
+            "High Weight: Israel's military counter-insurgency operations and iron-fist policies were critical in containing threats and protecting its civilian population."
+          ]
+        }
+      ]
+    }
+  };
+
   // src/views.js
   function renderSidebarNav() {
     const container = document.getElementById("topics-nav-list");
@@ -4863,12 +5141,43 @@
     import_questions.QUIZ_DATA.forEach((topic) => {
       const section = document.createElement("div");
       section.style.marginBottom = "6px";
-      const title = document.createElement("span");
-      title.className = "nav-section-title";
-      title.style.fontSize = "0.7rem";
-      title.style.color = "var(--text-muted)";
-      title.textContent = topic.title.split(":")[0];
-      section.appendChild(title);
+      const header = document.createElement("div");
+      header.className = "nav-section-header";
+      header.setAttribute("data-topic-id", topic.id);
+      header.style.padding = "8px 10px";
+      header.style.margin = "4px 0";
+      header.style.display = "flex";
+      header.style.flexDirection = "column";
+      header.style.gap = "2px";
+      header.style.cursor = "pointer";
+      header.style.borderRadius = "var(--border-radius-md)";
+      header.style.transition = "all var(--transition-fast)";
+      if (state.selectedKeyTopicId === topic.id) {
+        header.classList.add("active");
+      }
+      const numSpan = document.createElement("span");
+      numSpan.className = "nav-section-num";
+      numSpan.style.fontFamily = "var(--font-heading)";
+      numSpan.style.fontSize = "0.62rem";
+      numSpan.style.fontWeight = "700";
+      numSpan.style.textTransform = "uppercase";
+      numSpan.style.color = "var(--primary)";
+      numSpan.style.letterSpacing = "0.5px";
+      numSpan.textContent = topic.title.split(":")[0] || "Key Topic";
+      const descSpan = document.createElement("span");
+      descSpan.className = "nav-section-desc";
+      descSpan.style.fontSize = "0.72rem";
+      descSpan.style.fontWeight = "600";
+      descSpan.style.color = "var(--text-muted)";
+      descSpan.style.lineHeight = "1.3";
+      descSpan.textContent = topic.title.split(":").slice(1).join(":").trim() || "";
+      header.appendChild(numSpan);
+      header.appendChild(descSpan);
+      header.addEventListener("click", () => {
+        AudioEngine.play("click");
+        switchView("key-topic", topic.id);
+      });
+      section.appendChild(header);
       topic.subtopics.forEach((sub) => {
         const a = document.createElement("a");
         a.className = "nav-item";
@@ -8104,6 +8413,7 @@
       filteredData.forEach((d) => {
         const card = document.createElement("div");
         card.className = "gb-card";
+        card.id = `gb-card-${d.id}`;
         card.style.background = "var(--bg-card)";
         card.style.border = "1px solid var(--border-glass)";
         card.style.borderRadius = "var(--border-radius-md)";
@@ -8328,6 +8638,449 @@
     container.appendChild(cardsWrapper);
     drawFilterButtons();
     drawAspectCards();
+    if (state.highlightGoingBeyondId) {
+      const targetId = state.highlightGoingBeyondId;
+      state.highlightGoingBeyondId = null;
+      activeFilter = "all";
+      drawFilterButtons();
+      drawAspectCards();
+      setTimeout(() => {
+        const targetCard = document.getElementById(`gb-card-${targetId}`);
+        if (targetCard) {
+          targetCard.scrollIntoView({ behavior: "smooth", block: "center" });
+          targetCard.classList.add("highlighted-pulse");
+          setTimeout(() => {
+            targetCard.classList.remove("highlighted-pulse");
+          }, 3e3);
+        }
+      }, 100);
+    }
+  }
+  function formatSubtopicIdToKT(subtopicId) {
+    if (!subtopicId) return "";
+    const match = subtopicId.match(/subtopic_(\d+)_(\d+)/);
+    return match ? `KT ${match[1]}.${match[2]}` : "";
+  }
+  function renderKeyTopicOverview(topicId) {
+    const data = KEY_TOPICS_OVERVIEWS[topicId];
+    if (!data) return;
+    const container = document.getElementById("key-topic-content-container");
+    if (!container) return;
+    const quizTopic = import_questions.QUIZ_DATA.find((t) => t.id === topicId);
+    const subtopics = quizTopic ? quizTopic.subtopics : [];
+    let totalQs = 0;
+    let totalMastered = 0;
+    subtopics.forEach((sub) => {
+      const subQs = state.allQuestions.filter((q) => q.subtopicId === sub.id);
+      totalQs += subQs.length;
+      totalMastered += subQs.filter((q) => state.mastery[q.id]).length;
+    });
+    const overallPct = totalQs > 0 ? Math.round(totalMastered / totalQs * 100) : 0;
+    let subtopicsHtml = "";
+    subtopics.forEach((sub) => {
+      const subQs = state.allQuestions.filter((q) => q.subtopicId === sub.id);
+      const subMastered = subQs.filter((q) => state.mastery[q.id]).length;
+      const pct = subQs.length > 0 ? Math.round(subMastered / subQs.length * 100) : 0;
+      const cleanTitle = sub.title.replace(/^Topic \d\.\d:\s*/, "");
+      const subNum = sub.title.match(/Topic\s(\d\.\d)/)?.[1] || "";
+      subtopicsHtml += `
+      <div class="key-topic-subtopic-card" style="background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: var(--border-radius-md); padding: 16px; display: flex; flex-direction: column; justify-content: space-between; gap: 12px; transition: all var(--transition-normal); cursor: pointer;" onclick="window.switchView('subtopic', '${sub.id}')">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-family: var(--font-heading); font-size: 0.75rem; font-weight: 700; color: var(--primary); letter-spacing: 0.5px;">LESSON ${subNum}</span>
+            <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">${pct}% Mastered</span>
+          </div>
+          <h3 style="font-size: 0.95rem; font-weight: 600; margin: 0; line-height: 1.3; color: var(--text-main); text-align: left;">${cleanTitle}</h3>
+        </div>
+        <div style="display: flex; align-items: center; gap: 4px; font-size: 0.8rem; font-weight: 600; color: var(--primary); align-self: flex-end;">
+          Study Lesson <i class="fa-solid fa-arrow-right"></i>
+        </div>
+      </div>
+    `;
+    });
+    if (data.timeline) {
+      let openModal = function(idx) {
+        const event = data.timeline[idx];
+        if (!event) return;
+        AudioEngine.play("click");
+        document.getElementById("timeline-modal-year").textContent = event.year;
+        document.getElementById("timeline-modal-title").textContent = event.title;
+        document.getElementById("timeline-modal-quote").textContent = event.quote;
+        document.getElementById("timeline-modal-author").textContent = event.author;
+        document.getElementById("timeline-modal-figures").textContent = event.figures.join(", ");
+        const bulletsUl = document.getElementById("timeline-modal-bullets");
+        bulletsUl.innerHTML = "";
+        event.bullets.forEach((b) => {
+          const li = document.createElement("li");
+          li.textContent = b;
+          bulletsUl.appendChild(li);
+        });
+        overlay.style.display = "flex";
+        setTimeout(() => {
+          overlay.style.opacity = "1";
+          modalContent.style.transform = "scale(1)";
+        }, 20);
+      }, closeModal = function() {
+        overlay.style.opacity = "0";
+        modalContent.style.transform = "scale(0.9)";
+        setTimeout(() => {
+          overlay.style.display = "none";
+        }, 300);
+      }, getFilteredPool = function() {
+        return state.allQuestions.filter((q) => activeSubtopicIds.includes(q.subtopicId));
+      }, selectNewRandomCard = function() {
+        const pool = getFilteredPool();
+        if (pool.length === 0) {
+          currentQuestion = null;
+          return;
+        }
+        let nextQ = currentQuestion;
+        let attempts = 0;
+        while ((nextQ === currentQuestion || !nextQ) && attempts < 10 && pool.length > 1) {
+          nextQ = pool[Math.floor(Math.random() * pool.length)];
+          attempts++;
+        }
+        if (pool.length === 1 || attempts >= 10) {
+          nextQ = pool[Math.floor(Math.random() * pool.length)];
+        }
+        currentQuestion = nextQ;
+        reinforcing = false;
+        reinforceMcq = null;
+      }, renderToggles = function() {
+        const togglesContainer = document.getElementById("overview-subtopic-toggles");
+        if (!togglesContainer) return;
+        togglesContainer.innerHTML = "";
+        subtopics.forEach((sub) => {
+          const subNum = sub.title.match(/Topic\s(\d\.\d)/)?.[1] || sub.title;
+          const isActive = activeSubtopicIds.includes(sub.id);
+          const btn = document.createElement("button");
+          btn.className = `btn-subtopic-toggle ${isActive ? "active" : ""}`;
+          btn.textContent = `Lesson ${subNum}`;
+          btn.title = sub.title.replace(/^Topic \d\.\d:\s*/, "");
+          btn.style.padding = "6px 12px";
+          btn.style.fontSize = "0.8rem";
+          btn.style.borderRadius = "20px";
+          btn.style.fontWeight = "600";
+          btn.style.cursor = "pointer";
+          btn.style.transition = "all var(--transition-fast)";
+          btn.style.border = isActive ? "1px solid var(--primary)" : "1px solid var(--border-glass)";
+          btn.style.background = isActive ? "var(--primary)" : "rgba(255, 255, 255, 0.03)";
+          btn.style.color = isActive ? "#fff" : "var(--text-muted)";
+          btn.addEventListener("click", () => {
+            AudioEngine.play("click");
+            if (isActive) {
+              if (activeSubtopicIds.length > 1) {
+                activeSubtopicIds = activeSubtopicIds.filter((id) => id !== sub.id);
+              } else {
+                btn.style.animation = "shake 0.4s ease-in-out";
+                setTimeout(() => btn.style.animation = "", 400);
+                return;
+              }
+            } else {
+              activeSubtopicIds.push(sub.id);
+            }
+            renderToggles();
+            selectNewRandomCard();
+            renderCard();
+          });
+          togglesContainer.appendChild(btn);
+        });
+      }, renderCard = function() {
+        const stageContainer = document.getElementById("overview-flashcard-stage-container");
+        if (!stageContainer) return;
+        if (!currentQuestion) {
+          stageContainer.innerHTML = `
+          <div style="background: rgba(255,255,255,0.01); border: 1px dashed var(--border-glass); border-radius: var(--border-radius-md); padding: 40px; text-align: center; color: var(--text-muted); font-size: 0.9rem;">
+            <i class="fa-solid fa-face-frown" style="font-size: 2rem; color: var(--primary); margin-bottom: 12px; display: block;"></i>
+            No flashcards available. Please enable at least one subtopic lesson.
+          </div>
+        `;
+          return;
+        }
+        const q = currentQuestion;
+        const isBookmarked = state.bookmarks.includes(q.id);
+        const ktLabel = formatSubtopicIdToKT(q.subtopicId);
+        stageContainer.innerHTML = `
+        <div class="overview-flashcard-stage" style="perspective: 1000px; position: relative; width: 100%; height: 260px; margin-bottom: 16px;">
+          <div class="flashcard-card" id="overview-flashcard-card" style="cursor: pointer; position: absolute; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); border-radius: var(--border-radius-lg); box-shadow: var(--shadow-lg);">
+            <!-- Front Face -->
+            <div class="flashcard-face flashcard-front" style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: var(--border-radius-lg); border: 1px solid var(--border-glass); padding: 20px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; background-color: var(--bg-card); background-image: radial-gradient(circle at 10% 20%, rgba(168, 85, 247, 0.05) 0%, transparent 40%);">
+              <div class="card-top" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <span class="badge ${q.type === "standard" ? "badge-standard" : "badge-depth"}">${q.type === "standard" ? "Standard" : "Top Tier Trivia"}</span>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-size: 0.82rem; font-weight: 700; color: var(--primary);">${ktLabel}</span>
+                  <span class="bookmark-icon-container ${isBookmarked ? "bookmarked" : ""}" data-qid="${q.id}" style="cursor: pointer;"><i class="${isBookmarked ? "fa-solid" : "fa-regular"} fa-star" style="color: var(--primary);"></i></span>
+                </div>
+              </div>
+              <div class="card-body" style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 10px 0;">
+                <h3 class="card-question" style="font-size: 0.95rem; font-weight: 600; line-height: 1.4; text-align: center; margin: 0; color: var(--text-main); max-width: 90%;">${q.question}</h3>
+              </div>
+              <div class="card-bottom" style="text-align: center; font-size: 0.72rem; color: var(--text-muted); font-weight: 500;"><i class="fa-solid fa-rotate"></i> Click card to flip and reveal answer</div>
+            </div>
+            <!-- Back Face -->
+            <div class="flashcard-face flashcard-back" style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: var(--border-radius-lg); border: 1px solid var(--border-active); padding: 20px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; background-color: var(--bg-card-hover); background-image: radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.05) 0%, transparent 40%); transform: rotateY(180deg);">
+              <div class="card-top" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <span class="badge ${q.type === "standard" ? "badge-standard" : "badge-depth"}">${q.type === "standard" ? "Standard" : "Top Tier Trivia"}</span>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-size: 0.82rem; font-weight: 700; color: var(--primary);">${ktLabel}</span>
+                  <span class="bookmark-icon-container ${isBookmarked ? "bookmarked" : ""}" data-qid="${q.id}" style="cursor: pointer;"><i class="${isBookmarked ? "fa-solid" : "fa-regular"} fa-star" style="color: var(--primary);"></i></span>
+                </div>
+              </div>
+              
+              <div id="overview-flashcard-back-standard-body" style="display: flex; flex-direction: column; flex: 1; padding: 10px 0; overflow-y: auto; text-align: center; justify-content: center; gap: 4px;">
+                <span class="card-answer-label" style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); font-weight: 700; margin-bottom: 2px;">Correct Answer</span>
+                <h2 class="card-answer-text" style="font-size: 1.15rem; font-weight: 700; color: var(--text-main); margin: 0 0 6px 0; line-height: 1.2;">${q.answer}</h2>
+                <p class="card-explanation-text" style="font-size: 0.78rem; line-height: 1.45; color: var(--text-muted); margin: 0; max-height: 160px; overflow-y: auto;">${q.explanation}</p>
+              </div>
+              
+              <div class="card-bottom" style="text-align: center; font-size: 0.72rem; color: var(--text-muted); font-weight: 500;"><i class="fa-solid fa-rotate"></i> Click card to flip back</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="overview-flashcard-controls" style="display: flex; justify-content: center; gap: 12px; margin-top: 12px; height: 38px; align-items: center;">
+          <button class="btn-secondary" id="overview-btn-flashcard-reveal" style="padding: 8px 16px; font-size: 0.82rem; border-radius: 4px; font-weight: 600; cursor: pointer; transition: all var(--transition-fast); display: flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-rotate"></i> Flip Card
+          </button>
+          <div id="overview-flashcard-self-grade-actions" style="display: none; width: 100%; gap: 12px; justify-content: center;">
+            <button class="btn-incorrect" id="overview-btn-flashcard-incorrect" style="padding: 8px 14px; font-size: 0.8rem; border-radius: 4px; font-weight: 600; cursor: pointer; transition: all var(--transition-fast); display: flex; align-items: center; gap: 6px; border: 1px solid var(--danger); background: rgba(239, 68, 68, 0.05); color: var(--danger);">
+              <i class="fa-solid fa-xmark"></i> Study Again
+            </button>
+            <button class="btn-correct" id="overview-btn-flashcard-correct" style="padding: 8px 14px; font-size: 0.8rem; border-radius: 4px; font-weight: 600; cursor: pointer; transition: all var(--transition-fast); display: flex; align-items: center; gap: 6px; border: 1px solid var(--success); background: rgba(16, 185, 129, 0.05); color: var(--success);">
+              <i class="fa-solid fa-check"></i> Got It!
+            </button>
+          </div>
+        </div>
+      `;
+        const cardEl = document.getElementById("overview-flashcard-card");
+        const revealBtn = document.getElementById("overview-btn-flashcard-reveal");
+        const gradeActions = document.getElementById("overview-flashcard-self-grade-actions");
+        cardEl.addEventListener("click", (e) => {
+          if (e.target.closest("button") || e.target.closest(".bookmark-icon-container")) {
+            return;
+          }
+          cardEl.classList.toggle("flipped");
+          AudioEngine.play("flip");
+          updateControlsVisibility();
+        });
+        revealBtn.addEventListener("click", () => {
+          cardEl.classList.add("flipped");
+          AudioEngine.play("flip");
+          updateControlsVisibility();
+        });
+        function updateControlsVisibility() {
+          const isFlipped = cardEl.classList.contains("flipped");
+          if (isFlipped) {
+            revealBtn.style.display = "none";
+            gradeActions.style.display = "flex";
+          } else {
+            revealBtn.style.display = "flex";
+            gradeActions.style.display = "none";
+          }
+        }
+        updateControlsVisibility();
+        document.getElementById("overview-btn-flashcard-incorrect").addEventListener("click", () => {
+          AudioEngine.play("fail");
+          setMastered(q.id, false);
+          cardEl.className = "flashcard-card flipped swipe-left";
+          setTimeout(() => {
+            selectNewRandomCard();
+            renderCard();
+          }, 300);
+        });
+        document.getElementById("overview-btn-flashcard-correct").addEventListener("click", () => {
+          AudioEngine.play("success");
+          setMastered(q.id, true);
+          cardEl.className = "flashcard-card flipped swipe-right";
+          setTimeout(() => {
+            selectNewRandomCard();
+            renderCard();
+          }, 300);
+        });
+        const bkmkBtns = stageContainer.querySelectorAll(".bookmark-icon-container");
+        bkmkBtns.forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const qid = btn.getAttribute("data-qid");
+            toggleBookmark(qid);
+            const isNowBookmarked = state.bookmarks.includes(qid);
+            bkmkBtns.forEach((b) => {
+              b.className = `bookmark-icon-container ${isNowBookmarked ? "bookmarked" : ""}`;
+              b.querySelector("i").className = isNowBookmarked ? "fa-solid fa-star" : "fa-regular fa-star";
+            });
+          });
+        });
+      };
+      let timelineNodesHtml = "";
+      data.timeline.forEach((event, idx) => {
+        timelineNodesHtml += `
+        <div class="timeline-node-item" data-event-index="${idx}" style="position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; cursor: pointer;">
+          <div class="timeline-node-circle" style="width: 20px; height: 20px; border-radius: 50%; background: var(--bg-card); border: 3px solid var(--primary); box-shadow: var(--shadow-sm); transition: all var(--transition-fast); display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 0.5rem;">
+            <i class="fa-solid fa-circle" style="opacity: 0; transition: opacity var(--transition-fast);"></i>
+          </div>
+          <div class="timeline-node-label" style="margin-top: 8px; text-align: center; display: flex; flex-direction: column; align-items: center;">
+            <span class="timeline-node-year" style="font-family: var(--font-heading); font-size: 0.85rem; font-weight: 700; color: var(--primary);">${event.year}</span>
+            <span class="timeline-node-title" style="font-size: 0.72rem; color: var(--text-muted); max-width: 110px; line-height: 1.2; font-weight: 600;">${event.title}</span>
+          </div>
+        </div>
+      `;
+      });
+      let slidersHtml = "";
+      data.sliders.forEach((slider) => {
+        slidersHtml += `
+        <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--border-glass); border-radius: var(--border-radius-sm); padding: 14px; display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
+              <i class="fa-solid ${slider.icon}" style="color: var(--primary); font-size: 0.9rem;"></i> ${slider.label}
+            </span>
+            <span id="slider-badge-${slider.id}" style="font-family: var(--font-heading); font-size: 0.85rem; font-weight: 700; color: var(--primary);">50%</span>
+          </div>
+          <input type="range" class="key-topic-slider" id="input-slider-${slider.id}" min="0" max="100" value="50" style="width: 100%; cursor: pointer;">
+          <div id="slider-tip-${slider.id}" style="font-size: 0.78rem; line-height: 1.4; color: var(--text-muted); min-height: 38px; border-top: 1px dashed var(--border-glass); padding-top: 6px; margin-top: 4px; text-align: left;">
+            <!-- Injected by dynamic logic -->
+          </div>
+        </div>
+      `;
+      });
+      container.innerHTML = `
+      <!-- Top Progress Banner -->
+      <div style="background: var(--gradient-hero); padding: 24px; border-radius: var(--border-radius-md); border: 1px solid var(--border-glass); margin-bottom: 24px; box-shadow: var(--shadow-md); position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 12px;">
+        <h2 style="font-family: var(--font-heading); font-size: 1.4rem; font-weight: 700; color: var(--text-main); margin: 0; line-height: 1.3; text-align: left;">
+          ${data.title}
+        </h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+          <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted);">Key Topic Progress: ${overallPct}% Complete</span>
+          <div style="background: rgba(255,255,255,0.05); border-radius: 12px; height: 10px; width: 150px; overflow: hidden;">
+            <div style="background: var(--gradient-main); height: 100%; width: ${overallPct}%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Historical Context Overview (Full Width) -->
+      <div style="background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: var(--border-radius-md); padding: 20px; box-shadow: var(--shadow-sm); margin-bottom: 24px;">
+        <h3 style="font-family: var(--font-heading); font-size: 1.1rem; font-weight: 600; color: var(--text-main); margin: 0 0 12px 0; display: flex; align-items: center; gap: 8px; text-align: left;">
+          <i class="fa-solid fa-book-open"></i> Historical Context Overview
+        </h3>
+        <p style="font-size: 0.92rem; line-height: 1.6; color: var(--text-muted); margin: 0; text-align: justify;">
+          ${data.overview}
+        </p>
+      </div>
+
+      <!-- Component A: Responsive timeline (Full Width) -->
+      <div style="background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: var(--border-radius-md); padding: 24px 30px; box-shadow: var(--shadow-sm); position: relative; margin-bottom: 24px;">
+        <h3 style="font-family: var(--font-heading); font-size: 1.1rem; font-weight: 600; color: var(--text-main); margin: 0 0 20px 0; display: flex; align-items: center; gap: 8px; text-align: left;">
+          <i class="fa-solid fa-timeline"></i> Mental Map Timeline, ${data.title.split(", ").pop()}
+        </h3>
+        <div class="key-topic-timeline" style="position: relative; margin: 30px 0;">
+          ${timelineNodesHtml}
+        </div>
+        <div style="text-align: center; font-size: 0.72rem; color: var(--text-muted); margin-top: 12px; border-top: 1px dashed var(--border-glass); padding-top: 8px;">
+          <i class="fa-solid fa-circle-info"></i> Click or tap any year to reveal historical details & sources.
+        </div>
+      </div>
+
+      <!-- Lower Content Columns -->
+      <div class="key-topic-columns" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; align-items: start;">
+        <!-- Left Column: Key Topic Lessons -->
+        <div style="display: flex; flex-direction: column; gap: 24px;">
+          <div>
+            <h3 style="font-family: var(--font-heading); font-size: 1.1rem; font-weight: 600; color: var(--text-main); margin: 0 0 16px 0; display: flex; align-items: center; gap: 8px; text-align: left;">
+              <i class="fa-solid fa-graduation-cap"></i> Key Topic Lessons
+            </h3>
+            <div style="display: grid; grid-template-columns: 1fr; gap: 16px;">
+              ${subtopicsHtml}
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Revision Flashcards & Sliders -->
+        <div style="display: flex; flex-direction: column; gap: 24px;">
+          <!-- Component B: Dynamic Flashcard Revision Widget -->
+          <div style="background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: var(--border-radius-md); padding: 20px; box-shadow: var(--shadow-sm);">
+            <h3 style="font-family: var(--font-heading); font-size: 1.1rem; font-weight: 600; color: var(--text-main); margin: 0 0 12px 0; display: flex; align-items: center; gap: 8px; text-align: left;">
+              <i class="fa-solid fa-layer-group"></i> Key Topic Revision Flashcards
+            </h3>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0 0 16px 0; line-height: 1.4; text-align: left;">
+              Toggle subtopics to customize your study pool, click the card to flip, and test your mastery:
+            </p>
+            <div id="overview-subtopic-toggles" style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;"></div>
+            <div id="overview-flashcard-stage-container"></div>
+          </div>
+
+          <!-- Component C: Weighing Sliders -->
+          <div style="background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: var(--border-radius-md); padding: 20px; box-shadow: var(--shadow-sm);">
+            <h3 style="font-family: var(--font-heading); font-size: 1.1rem; font-weight: 600; color: var(--text-main); margin: 0 0 12px 0; display: flex; align-items: center; gap: 8px; text-align: left;">
+              <i class="fa-solid fa-sliders"></i> Analytical Weighting: What Drove Progress?
+            </h3>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0 0 16px 0; line-height: 1.4; text-align: left;">
+              Adjust the sliders below to weigh the relative influence of these historical factors. Drag any slider to review its context tip:
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+              ${slidersHtml}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Timeline Modal Overlay (glassmorphism details card) -->
+      <div id="timeline-modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.65); backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease;">
+        <div id="timeline-modal-content" style="background: var(--bg-card); border: 1px solid var(--border-active); border-radius: var(--border-radius-md); padding: 24px; max-width: 500px; width: 90%; box-shadow: var(--shadow-lg); position: relative; transform: scale(0.9); transition: transform 0.3s ease; display: flex; flex-direction: column; gap: 16px;">
+          <button id="btn-timeline-modal-close" style="position: absolute; top: 12px; right: 12px; background: none; border: none; font-size: 1.2rem; color: var(--text-muted); cursor: pointer; transition: color var(--transition-fast);"><i class="fa-solid fa-xmark"></i></button>
+          <div>
+            <span id="timeline-modal-year" style="font-family: var(--font-heading); font-size: 0.85rem; font-weight: 700; color: var(--primary); letter-spacing: 0.5px; text-transform: uppercase;">1954</span>
+            <h3 id="timeline-modal-title" style="margin: 4px 0 0 0; font-size: 1.2rem; font-weight: 600; color: var(--text-main); line-height: 1.3; text-align: left;">Event Title</h3>
+          </div>
+          <ul id="timeline-modal-bullets" style="padding-left: 20px; font-size: 0.85rem; line-height: 1.5; color: var(--text-normal); margin: 0; display: flex; flex-direction: column; gap: 8px; text-align: left;"></ul>
+          <div style="background: rgba(230, 92, 0, 0.05); border-left: 3px solid var(--primary); padding: 12px; border-radius: 0 var(--border-radius-sm) var(--border-radius-sm) 0; font-size: 0.82rem; line-height: 1.4; color: var(--text-muted); font-style: italic; text-align: left;">
+            "<span id="timeline-modal-quote"></span>"
+            <div id="timeline-modal-author" style="text-align: right; font-size: 0.72rem; font-weight: 600; margin-top: 6px; font-style: normal; color: var(--text-normal);"></div>
+          </div>
+          <div style="font-size: 0.8rem; color: var(--text-muted); border-top: 1px dashed var(--border-glass); padding-top: 10px; text-align: left;">
+            <strong>Key Figures:</strong> <span id="timeline-modal-figures" style="color: var(--text-normal); font-weight: 600;"></span>
+          </div>
+        </div>
+      </div>
+    `;
+      const overlay = document.getElementById("timeline-modal-overlay");
+      const modalContent = document.getElementById("timeline-modal-content");
+      const closeBtn = document.getElementById("btn-timeline-modal-close");
+      const nodes = container.querySelectorAll(".timeline-node-item");
+      nodes.forEach((n) => {
+        n.addEventListener("click", () => {
+          const idx = parseInt(n.getAttribute("data-event-index"));
+          openModal(idx);
+        });
+      });
+      closeBtn.addEventListener("click", closeModal);
+      overlay.addEventListener("click", (e) => {
+        if (e.target === overlay) closeModal();
+      });
+      let activeSubtopicIds = subtopics.map((sub) => sub.id);
+      let currentQuestion = null;
+      let reinforcing = false;
+      let reinforceMcq = null;
+      selectNewRandomCard();
+      renderToggles();
+      renderCard();
+      data.sliders.forEach((slider) => {
+        const input = document.getElementById(`input-slider-${slider.id}`);
+        const badge = document.getElementById(`slider-badge-${slider.id}`);
+        const updateFn = (value) => {
+          badge.textContent = `${value}%`;
+          let tipIdx = 0;
+          if (value > 33 && value <= 66) tipIdx = 1;
+          else if (value > 66) tipIdx = 2;
+          const tipContainer = document.getElementById(`slider-tip-${slider.id}`);
+          if (tipContainer) {
+            tipContainer.innerHTML = `<strong>Analysis (${value}%):</strong> ${slider.tips[tipIdx]}`;
+          }
+        };
+        updateFn(50);
+        input.addEventListener("input", (e) => {
+          updateFn(e.target.value);
+        });
+      });
+    }
   }
 
   // src/games.js
@@ -11337,6 +12090,55 @@
     </div>
   `;
   }
+  function renderGoingBeyondConnectionCard(subtopicId) {
+    const mappings = {
+      "subtopic_1_1": ["gb-jerusalem"],
+      "subtopic_1_2": ["gb-refugees"],
+      "subtopic_1_3": ["gb-chokepoints"],
+      "subtopic_2_1": ["gb-water"],
+      "subtopic_2_2": ["gb-settlements", "gb-asymmetric"],
+      "subtopic_3_1": ["gb-gulf-realignment"],
+      "subtopic_3_2": ["gb-iran-hegemony", "gb-urban-warfare"],
+      "subtopic_3_3": ["gb-cyberwar"]
+    };
+    const ids = mappings[subtopicId];
+    if (!ids || ids.length === 0) return "";
+    const topics = GOING_BEYOND_DATA.filter((t) => ids.includes(t.id));
+    if (topics.length === 0) return "";
+    let cardsHtml = topics.map((t) => {
+      return `
+      <div class="gb-connect-link-card" data-gb-id="${t.id}" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); border-radius: var(--border-radius-sm); padding: 16px; display: flex; align-items: center; justify-content: space-between; gap: 16px; cursor: pointer; transition: all var(--transition-normal); margin-top: 12px; box-shadow: var(--shadow-sm);" onmouseover="this.style.background='rgba(255,255,255,0.05)'; this.style.borderColor='var(--border-glass-hover)';" onmouseout="this.style.background='rgba(255,255,255,0.02)'; this.style.borderColor='var(--border-glass)';">
+        <div style="display: flex; align-items: center; gap: 14px; min-width: 0; flex: 1;">
+          <div style="width: 36px; height: 36px; border-radius: var(--border-radius-sm); background: var(--primary-glow); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0;">
+            <i class="fa-solid ${t.icon}"></i>
+          </div>
+          <div style="min-width: 0; flex: 1;">
+            <h5 style="margin: 0; font-size: 0.9rem; font-weight: 700; color: var(--text-main); text-align: left;">${t.title}</h5>
+            <p style="margin: 2px 0 0 0; font-size: 0.76rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left; line-height: 1.3;">
+              <strong>2026 Legacy:</strong> ${t.modernResonance}
+            </p>
+          </div>
+        </div>
+        <div style="font-size: 0.78rem; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 4px; flex-shrink: 0;">
+          Explore Modern Link <i class="fa-solid fa-compass"></i>
+        </div>
+      </div>
+    `;
+    }).join("");
+    return `
+    <div class="gb-connection-wrapper-card" style="max-width: 800px; margin: 0 auto 24px auto; background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: var(--border-radius-md); padding: 20px; box-shadow: var(--shadow-sm);">
+      <h4 style="display: flex; align-items: center; gap: 8px; margin: 0 0 8px 0; font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700; color: var(--text-main);">
+        <i class="fa-solid fa-compass" style="color: var(--primary);"></i> Going Beyond: Modern Geopolitical Connections
+      </h4>
+      <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; text-align: left;">
+        Connect this historical GCSE topic to its modern-day legacy and realities in the Middle East in 2026:
+      </p>
+      <div style="display: flex; flex-direction: column; gap: 4px;">
+        ${cardsHtml}
+      </div>
+    </div>
+  `;
+  }
   function renderMasteryView(subtopicId) {
     const container = document.getElementById("mastery-content-container");
     if (!container) return;
@@ -11837,6 +12639,9 @@
     <!-- Specification Checklist Card -->
     ${renderSpecChecklistCard(subtopicId, SPEC_CHECKLIST_DATA[subtopicId])}
 
+    <!-- Going Beyond Connection Card -->
+    ${renderGoingBeyondConnectionCard(subtopicId)}
+
     <!-- Interactive Legend and Switch -->
     <div class="mastery-controls" style="max-width: 800px; margin: 0 auto 20px auto;">
       <div class="legend-box">
@@ -11952,6 +12757,15 @@
             btn.classList.add("active");
           }
         }
+      });
+    });
+    const gbConnectCards = container.querySelectorAll(".gb-connect-link-card");
+    gbConnectCards.forEach((card) => {
+      card.addEventListener("click", () => {
+        const gbId = card.getAttribute("data-gb-id");
+        AudioEngine.play("click");
+        state.highlightGoingBeyondId = gbId;
+        switchView("going-beyond");
       });
     });
     const checklistItems = container.querySelectorAll(".spec-checklist-item");
@@ -12582,6 +13396,7 @@
       renderGoingBeyond();
     } else if (viewName === "subtopic" && subtopicId) {
       state.selectedSubtopicId = subtopicId;
+      state.selectedKeyTopicId = null;
       if (headerModeSwitcher) headerModeSwitcher.style.display = "flex";
       const subNavBtn = document.getElementById(`nav-subtopic-${subtopicId}`);
       if (subNavBtn) subNavBtn.classList.add("active");
@@ -12594,7 +13409,33 @@
         inquiryEl.textContent = INQUIRY_QUESTIONS[subtopicId];
         inquiryEl.style.display = "block";
       }
+      document.querySelectorAll(".nav-section-header").forEach((hdr) => hdr.classList.remove("active"));
       switchSubtopicMode(state.currentMode);
+    } else if (viewName === "key-topic" && subtopicId) {
+      state.selectedSubtopicId = null;
+      state.selectedKeyTopicId = subtopicId;
+      if (headerModeSwitcher) headerModeSwitcher.style.display = "none";
+      document.querySelectorAll(".nav-section-header").forEach((hdr) => {
+        if (hdr.getAttribute("data-topic-id") === subtopicId) {
+          hdr.classList.add("active");
+        } else {
+          hdr.classList.remove("active");
+        }
+      });
+      const viewTitle = document.getElementById("current-view-title");
+      if (viewTitle) {
+        const titles = {
+          "topic_1": "Key Topic 1 Overview",
+          "topic_2": "Key Topic 2 Overview",
+          "topic_3": "Key Topic 3 Overview"
+        };
+        viewTitle.textContent = titles[subtopicId] || "Key Topic Overview";
+      }
+      renderKeyTopicOverview(subtopicId);
+    }
+    if (viewName !== "key-topic" && viewName !== "subtopic") {
+      document.querySelectorAll(".nav-section-header").forEach((hdr) => hdr.classList.remove("active"));
+      state.selectedKeyTopicId = null;
     }
     const viewIdMap = {
       "dashboard": "view-dashboard",
@@ -12607,7 +13448,8 @@
       "exam-skills": "view-exam-skills",
       "past-papers": "view-past-papers",
       "games": "view-games",
-      "going-beyond": "view-going-beyond"
+      "going-beyond": "view-going-beyond",
+      "key-topic": "view-key-topic"
     };
     const targetViewId = viewName === "subtopic" ? viewIdMap[state.currentMode] : viewIdMap[viewName];
     document.querySelectorAll(".content-view").forEach((view) => {

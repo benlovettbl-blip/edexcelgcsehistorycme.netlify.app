@@ -13,6 +13,7 @@ import { LESSON_EXTENSIONS } from './lesson_extensions.js';
 import { SPEC_CHECKLIST_DATA } from './spec_checklist_data.js';
 import { SCHOLARLY_EXTENSIONS } from './scholarly_extensions.js';
 import { CONTEMPORARY_SOURCES } from './contemporary_sources.js';
+import { GOING_BEYOND_DATA } from './going_beyond_data.js';
 
 export function renderPracticeRoomContent() {
   const example = PRACTICE_ROOM_DATA[practiceState.currentExampleIndex];
@@ -140,6 +141,60 @@ export function renderSpecChecklistCard(subtopicId, checklist) {
       </p>
       <div class="spec-checklist-items">
         ${itemsHtml}
+      </div>
+    </div>
+  `;
+}
+
+function renderGoingBeyondConnectionCard(subtopicId) {
+  const mappings = {
+    'subtopic_1_1': ['gb-jerusalem'],
+    'subtopic_1_2': ['gb-refugees'],
+    'subtopic_1_3': ['gb-chokepoints'],
+    'subtopic_2_1': ['gb-water'],
+    'subtopic_2_2': ['gb-settlements', 'gb-asymmetric'],
+    'subtopic_3_1': ['gb-gulf-realignment'],
+    'subtopic_3_2': ['gb-iran-hegemony', 'gb-urban-warfare'],
+    'subtopic_3_3': ['gb-cyberwar']
+  };
+  
+  const ids = mappings[subtopicId];
+  if (!ids || ids.length === 0) return '';
+  
+  const topics = GOING_BEYOND_DATA.filter(t => ids.includes(t.id));
+  if (topics.length === 0) return '';
+  
+  let cardsHtml = topics.map(t => {
+    return `
+      <div class="gb-connect-link-card" data-gb-id="${t.id}" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); border-radius: var(--border-radius-sm); padding: 16px; display: flex; align-items: center; justify-content: space-between; gap: 16px; cursor: pointer; transition: all var(--transition-normal); margin-top: 12px; box-shadow: var(--shadow-sm);" onmouseover="this.style.background='rgba(255,255,255,0.05)'; this.style.borderColor='var(--border-glass-hover)';" onmouseout="this.style.background='rgba(255,255,255,0.02)'; this.style.borderColor='var(--border-glass)';">
+        <div style="display: flex; align-items: center; gap: 14px; min-width: 0; flex: 1;">
+          <div style="width: 36px; height: 36px; border-radius: var(--border-radius-sm); background: var(--primary-glow); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0;">
+            <i class="fa-solid ${t.icon}"></i>
+          </div>
+          <div style="min-width: 0; flex: 1;">
+            <h5 style="margin: 0; font-size: 0.9rem; font-weight: 700; color: var(--text-main); text-align: left;">${t.title}</h5>
+            <p style="margin: 2px 0 0 0; font-size: 0.76rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left; line-height: 1.3;">
+              <strong>2026 Legacy:</strong> ${t.modernResonance}
+            </p>
+          </div>
+        </div>
+        <div style="font-size: 0.78rem; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 4px; flex-shrink: 0;">
+          Explore Modern Link <i class="fa-solid fa-compass"></i>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <div class="gb-connection-wrapper-card" style="max-width: 800px; margin: 0 auto 24px auto; background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: var(--border-radius-md); padding: 20px; box-shadow: var(--shadow-sm);">
+      <h4 style="display: flex; align-items: center; gap: 8px; margin: 0 0 8px 0; font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700; color: var(--text-main);">
+        <i class="fa-solid fa-compass" style="color: var(--primary);"></i> Going Beyond: Modern Geopolitical Connections
+      </h4>
+      <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; text-align: left;">
+        Connect this historical GCSE topic to its modern-day legacy and realities in the Middle East in 2026:
+      </p>
+      <div style="display: flex; flex-direction: column; gap: 4px;">
+        ${cardsHtml}
       </div>
     </div>
   `;
@@ -681,6 +736,9 @@ export function renderMasteryView(subtopicId) {
     <!-- Specification Checklist Card -->
     ${renderSpecChecklistCard(subtopicId, SPEC_CHECKLIST_DATA[subtopicId])}
 
+    <!-- Going Beyond Connection Card -->
+    ${renderGoingBeyondConnectionCard(subtopicId)}
+
     <!-- Interactive Legend and Switch -->
     <div class="mastery-controls" style="max-width: 800px; margin: 0 auto 20px auto;">
       <div class="legend-box">
@@ -810,6 +868,17 @@ export function renderMasteryView(subtopicId) {
           btn.classList.add('active');
         }
       }
+    });
+  });
+
+  // Bind Going Beyond Connection Click Events
+  const gbConnectCards = container.querySelectorAll('.gb-connect-link-card');
+  gbConnectCards.forEach(card => {
+    card.addEventListener('click', () => {
+      const gbId = card.getAttribute('data-gb-id');
+      AudioEngine.play('click');
+      state.highlightGoingBeyondId = gbId;
+      switchView('going-beyond');
     });
   });
 
