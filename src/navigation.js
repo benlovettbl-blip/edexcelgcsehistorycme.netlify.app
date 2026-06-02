@@ -8,7 +8,8 @@ import {
   renderFireflyView,
   renderClassicView,
   startFlashcardSession,
-  renderGamesView
+  renderGamesView,
+  renderGoingBeyond
 } from './views.js';
 import { showExamSetup } from './exam.js';
 import { renderPastPapersView } from './past_papers.js';
@@ -109,6 +110,14 @@ export function switchView(viewName, subtopicId = null) {
     if (viewTitle) viewTitle.textContent = "Revision Games Hub";
     state.selectedSubtopicId = null;
     renderGamesView();
+  } else if (viewName === 'going-beyond') {
+    const goingBeyondNav = document.getElementById('nav-going-beyond');
+    if (goingBeyondNav) goingBeyondNav.classList.add('active');
+    if (headerModeSwitcher) headerModeSwitcher.style.display = 'none';
+    const viewTitle = document.getElementById('current-view-title');
+    if (viewTitle) viewTitle.textContent = "Going Beyond: Modern Realities";
+    state.selectedSubtopicId = null;
+    renderGoingBeyond();
   } else if (viewName === 'firefly') {
     const fireflyNav = document.getElementById('nav-firefly');
     if (fireflyNav) fireflyNav.classList.add('active');
@@ -151,7 +160,8 @@ export function switchView(viewName, subtopicId = null) {
     'firefly': 'view-firefly',
     'exam-skills': 'view-exam-skills',
     'past-papers': 'view-past-papers',
-    'games': 'view-games'
+    'games': 'view-games',
+    'going-beyond': 'view-going-beyond'
   };
 
   const targetViewId = viewName === 'subtopic' ? viewIdMap[state.currentMode] : viewIdMap[viewName];

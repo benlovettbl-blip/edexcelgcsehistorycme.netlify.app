@@ -911,11 +911,23 @@ export function renderMasteryView(subtopicId) {
     const map2DataUrl = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(map2Svg)));
 
     const handleImgError = () => {
-      const src = mapImg.src;
-      if (src.includes('un_partition_plan_1947') || src.includes('Partition_Plan') || src.includes('1947')) {
-        mapImg.src = map1DataUrl;
-      } else if (src.includes('1949_armistice_map') || src.includes('Armistice_Agreements') || src.includes('1949')) {
-        mapImg.src = map2DataUrl;
+      const src = mapImg.src || '';
+      const isPartition = src.includes('un_partition_plan_1947') || src.includes('Partition_Plan') || src.includes('1947');
+      const isArmistice = src.includes('1949_armistice_map') || src.includes('Armistice_Agreements') || src.includes('1949');
+      
+      const localPath = isPartition ? 'assets/sources/un_partition_plan_1947.png' : (isArmistice ? 'assets/sources/1949_armistice_map.png' : '');
+      const fallbackUrl = getFallbackUrl(localPath);
+      
+      if (fallbackUrl && src !== fallbackUrl) {
+        mapImg.referrerPolicy = 'no-referrer';
+        mapImg.src = fallbackUrl;
+      } else {
+        // Fallback to inline SVG if fallback URL fails or isn't defined
+        if (isPartition) {
+          mapImg.src = map1DataUrl;
+        } else if (isArmistice) {
+          mapImg.src = map2DataUrl;
+        }
       }
     };
 
@@ -929,24 +941,20 @@ export function renderMasteryView(subtopicId) {
       AudioEngine.play('click');
       btnPartition.classList.add('active');
       btnBorders.classList.remove('active');
-      mapImg.src = "assets/sources/un_partition_plan_1947.png";
-      setTimeout(() => {
-        if (mapImg.naturalWidth === 0) {
-          mapImg.src = map1DataUrl;
-        }
-      }, 60);
+      mapImg.src = "assets/sources/un_partition_plan_1947.png?v=3";
+      if (mapImg.complete && mapImg.naturalWidth === 0) {
+        handleImgError();
+      }
     });
 
     btnBorders.addEventListener('click', () => {
       AudioEngine.play('click');
       btnBorders.classList.add('active');
       btnPartition.classList.remove('active');
-      mapImg.src = "assets/sources/1949_armistice_map.png";
-      setTimeout(() => {
-        if (mapImg.naturalWidth === 0) {
-          mapImg.src = map2DataUrl;
-        }
-      }, 60);
+      mapImg.src = "assets/sources/1949_armistice_map.png?v=3";
+      if (mapImg.complete && mapImg.naturalWidth === 0) {
+        handleImgError();
+      }
     });
   }
 

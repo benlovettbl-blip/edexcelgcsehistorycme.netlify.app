@@ -11,7 +11,7 @@ import {
   updateGlobalStats,
   setActiveClassicFilter
 } from './views.js';
-import { startExam, nextExamQuestion, displayExamQuestion, finishExam } from './exam.js';
+import { showExamSetup, startExam, nextExamQuestion, displayExamQuestion, finishExam } from './exam.js';
 import { saveProgress } from './storage.js';
 import { startPastPaper, generateMockExam } from './past_papers.js';
 import { CONSEQUENCE_SKILLS_DATA, NARRATIVE_SKILLS_DATA, EXAM_SKILLS_DATA } from '../questions.js';
@@ -66,6 +66,11 @@ function bindEvents() {
   document.getElementById('nav-firefly').addEventListener('click', () => {
     AudioEngine.play('click');
     switchView('firefly');
+  });
+
+  document.getElementById('nav-going-beyond').addEventListener('click', () => {
+    AudioEngine.play('click');
+    switchView('going-beyond');
   });
 
   // Dashboard Shortcuts

@@ -10,6 +10,7 @@ import { DECISIONS_DATA } from './decisions_data.js';
 import { MINDMAP_DATA } from './mindmap_data.js';
 import { stopJswLoop, initCrisisGame, initTugGame, initJswGame, initTabooGame } from './games.js';
 import { getFallbackUrl } from './image_fallback.js';
+import { GOING_BEYOND_DATA } from './going_beyond_data.js';
 
 // --- Dynamic Renders ---
 
@@ -3805,6 +3806,337 @@ function initExamLeaderboard(scope, pct) {
   }
 }
 
+function renderGoingBeyond() {
+  const container = document.getElementById('going-beyond-container');
+  if (!container) return;
+  
+  container.innerHTML = '';
+  
+  const filterGroup = document.createElement('div');
+  filterGroup.className = 'gb-filters';
+  filterGroup.style.display = 'flex';
+  filterGroup.style.gap = '12px';
+  filterGroup.style.marginBottom = '24px';
+  filterGroup.style.flexWrap = 'wrap';
+  
+  const categories = [
+    { name: 'All Topics', filter: 'all', count: GOING_BEYOND_DATA.length },
+    { name: 'Syllabus Extrapolations', filter: 'Syllabus Extrapolations', count: GOING_BEYOND_DATA.filter(d => d.category === 'Syllabus Extrapolations').length },
+    { name: 'Structural Realities (2026)', filter: 'Structural Realities', count: GOING_BEYOND_DATA.filter(d => d.category === 'Structural Realities').length }
+  ];
+  
+  let activeFilter = 'all';
+  
+  function drawFilterButtons() {
+    filterGroup.innerHTML = '';
+    categories.forEach(cat => {
+      const btn = document.createElement('button');
+      btn.className = `filter-btn ${activeFilter === cat.filter ? 'active' : ''}`;
+      btn.innerHTML = `${cat.name} <span class="badge badge-year" style="margin-left: 6px; background: rgba(0,0,0,0.15);">${cat.count}</span>`;
+      btn.style.padding = '8px 16px';
+      btn.style.borderRadius = '24px';
+      btn.style.border = '1px solid var(--border-glass)';
+      btn.style.background = activeFilter === cat.filter ? 'var(--primary)' : 'var(--bg-card)';
+      btn.style.color = activeFilter === cat.filter ? 'var(--text-inverse)' : 'var(--text-main)';
+      btn.style.fontWeight = '600';
+      btn.style.fontSize = '0.85rem';
+      btn.style.cursor = 'pointer';
+      btn.style.transition = 'all var(--transition-fast)';
+      
+      btn.addEventListener('click', () => {
+        AudioEngine.play('click');
+        activeFilter = cat.filter;
+        drawFilterButtons();
+        drawAspectCards();
+      });
+      filterGroup.appendChild(btn);
+    });
+  }
+  
+  const cardsWrapper = document.createElement('div');
+  cardsWrapper.className = 'gb-cards-wrapper';
+  cardsWrapper.style.display = 'flex';
+  cardsWrapper.style.flexDirection = 'column';
+  cardsWrapper.style.gap = '24px';
+  
+  const cardSubTabs = {};
+  GOING_BEYOND_DATA.forEach(d => {
+    cardSubTabs[d.id] = 'syllabus-modern';
+  });
+  
+  function drawAspectCards() {
+    cardsWrapper.innerHTML = '';
+    
+    const filteredData = activeFilter === 'all' 
+      ? GOING_BEYOND_DATA 
+      : GOING_BEYOND_DATA.filter(d => d.category === activeFilter);
+      
+    filteredData.forEach(d => {
+      const card = document.createElement('div');
+      card.className = 'gb-card';
+      card.style.background = 'var(--bg-card)';
+      card.style.border = '1px solid var(--border-glass)';
+      card.style.borderRadius = 'var(--border-radius-md)';
+      card.style.padding = '24px';
+      card.style.boxShadow = 'var(--shadow-sm)';
+      card.style.transition = 'all var(--transition-normal)';
+      card.style.display = 'flex';
+      card.style.flexDirection = 'column';
+      card.style.gap = '16px';
+      
+      card.addEventListener('mouseenter', () => {
+        card.style.borderColor = 'var(--border-active)';
+        card.style.transform = 'translateY(-2px)';
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.borderColor = 'var(--border-glass)';
+        card.style.transform = 'none';
+      });
+      
+      const header = document.createElement('div');
+      header.className = 'gb-card-header';
+      header.style.display = 'flex';
+      header.style.justifyContent = 'space-between';
+      header.style.alignItems = 'center';
+      header.style.flexWrap = 'wrap';
+      header.style.gap = '12px';
+      header.style.borderBottom = '1px solid var(--border-glass)';
+      header.style.paddingBottom = '16px';
+      
+      const titleWrapper = document.createElement('div');
+      titleWrapper.style.display = 'flex';
+      titleWrapper.style.alignItems = 'center';
+      titleWrapper.style.gap = '12px';
+      
+      const iconBox = document.createElement('div');
+      iconBox.className = 'gb-icon-box';
+      iconBox.innerHTML = `<i class="fa-solid ${d.icon}"></i>`;
+      iconBox.style.width = '40px';
+      iconBox.style.height = '40px';
+      iconBox.style.borderRadius = 'var(--border-radius-sm)';
+      iconBox.style.background = 'var(--primary-glow)';
+      iconBox.style.color = 'var(--primary)';
+      iconBox.style.display = 'flex';
+      iconBox.style.alignItems = 'center';
+      iconBox.style.justifyContent = 'center';
+      iconBox.style.fontSize = '1.2rem';
+      
+      const titleText = document.createElement('div');
+      titleText.innerHTML = `
+        <h3 style="margin: 0; font-family: var(--font-heading); font-size: 1.15rem; font-weight: 700; color: var(--text-main);">${d.title}</h3>
+        <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">${d.category}</span>
+      `;
+      
+      titleWrapper.appendChild(iconBox);
+      titleWrapper.appendChild(titleText);
+      
+      const subTabGroup = document.createElement('div');
+      subTabGroup.className = 'gb-subtab-group';
+      subTabGroup.style.display = 'flex';
+      subTabGroup.style.background = 'rgba(0,0,0,0.15)';
+      subTabGroup.style.padding = '4px';
+      subTabGroup.style.borderRadius = '20px';
+      subTabGroup.style.gap = '2px';
+      
+      const subTabs = [
+        { id: 'syllabus-modern', name: 'Analysis', icon: 'fa-chart-simple' },
+        { id: 'archive', name: 'The Archive', icon: 'fa-book-open' },
+        { id: 'debate', name: 'Roundtable', icon: 'fa-users-rectangle' }
+      ];
+      
+      const currentActiveSubTab = cardSubTabs[d.id];
+      
+      subTabs.forEach(st => {
+        const tabBtn = document.createElement('button');
+        tabBtn.className = `gb-subtab-btn ${currentActiveSubTab === st.id ? 'active' : ''}`;
+        tabBtn.innerHTML = `<i class="fa-solid ${st.icon}" style="font-size: 0.75rem; margin-right: 6px;"></i><span class="desktop-only" style="font-size: 0.75rem;">${st.name}</span>`;
+        tabBtn.style.padding = '6px 12px';
+        tabBtn.style.border = 'none';
+        tabBtn.style.borderRadius = '16px';
+        tabBtn.style.cursor = 'pointer';
+        tabBtn.style.fontWeight = '600';
+        tabBtn.style.background = currentActiveSubTab === st.id ? 'var(--gradient-main)' : 'transparent';
+        tabBtn.style.color = currentActiveSubTab === st.id ? 'var(--text-inverse)' : 'var(--text-muted)';
+        tabBtn.style.transition = 'all var(--transition-fast)';
+        tabBtn.style.display = 'flex';
+        tabBtn.style.alignItems = 'center';
+        
+        tabBtn.addEventListener('click', () => {
+          AudioEngine.play('click');
+          cardSubTabs[d.id] = st.id;
+          drawCardContentPane();
+          subTabGroup.querySelectorAll('button').forEach((btn, idx) => {
+            const matches = subTabs[idx].id === st.id;
+            btn.style.background = matches ? 'var(--gradient-main)' : 'transparent';
+            btn.style.color = matches ? 'var(--text-inverse)' : 'var(--text-muted)';
+          });
+        });
+        subTabGroup.appendChild(tabBtn);
+      });
+      
+      header.appendChild(titleWrapper);
+      header.appendChild(subTabGroup);
+      card.appendChild(header);
+      
+      const contentPane = document.createElement('div');
+      contentPane.className = 'gb-card-content-pane';
+      card.appendChild(contentPane);
+      
+      function drawCardContentPane() {
+        contentPane.innerHTML = '';
+        const activeTab = cardSubTabs[d.id];
+        
+        if (activeTab === 'syllabus-modern') {
+          const grid = document.createElement('div');
+          grid.style.display = 'grid';
+          grid.style.gridTemplateColumns = 'repeat(auto-fit, minmax(280px, 1fr))';
+          grid.style.gap = '20px';
+          grid.style.marginTop = '8px';
+          
+          const historyCol = document.createElement('div');
+          historyCol.style.display = 'flex';
+          historyCol.style.flexDirection = 'column';
+          historyCol.style.gap = '10px';
+          historyCol.style.background = 'rgba(255,255,255,0.02)';
+          historyCol.style.padding = '16px';
+          historyCol.style.borderRadius = 'var(--border-radius-sm)';
+          historyCol.style.border = '1px dashed var(--border-glass)';
+          
+          historyCol.innerHTML = `
+            <div style="font-size: 0.72rem; color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">
+              <i class="fa-solid fa-clock-rotate-left"></i> Historical Bedrock (GCSE Context)
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; margin: 0;">${d.syllabusLink}</p>
+            <p style="font-size: 0.85rem; color: var(--text-main); line-height: 1.6; margin: 4px 0 0 0;">${d.deepDive.split('.')[0]}. ${d.deepDive.split('.')[1] || ''}.</p>
+          `;
+          
+          const modernCol = document.createElement('div');
+          modernCol.style.display = 'flex';
+          modernCol.style.flexDirection = 'column';
+          modernCol.style.gap = '10px';
+          modernCol.style.background = 'var(--accent-glow)';
+          modernCol.style.padding = '16px';
+          modernCol.style.borderRadius = 'var(--border-radius-sm)';
+          modernCol.style.border = '1px solid rgba(244, 63, 94, 0.15)';
+          
+          modernCol.innerHTML = `
+            <div style="font-size: 0.72rem; color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">
+              <i class="fa-solid fa-globe"></i> Modern Geopolitical Reality (2026)
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-main); line-height: 1.6; margin: 0; font-weight: 500;">${d.modernResonance}</p>
+            <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.6; margin: 4px 0 0 0;">${d.deepDive.split('.').slice(2).join('.')}</p>
+          `;
+          
+          grid.appendChild(historyCol);
+          grid.appendChild(modernCol);
+          contentPane.appendChild(grid);
+          
+        } else if (activeTab === 'archive') {
+          const sourceContainer = document.createElement('div');
+          sourceContainer.style.marginTop = '8px';
+          sourceContainer.style.display = 'flex';
+          sourceContainer.style.flexDirection = 'column';
+          sourceContainer.style.gap = '12px';
+          
+          const label = document.createElement('div');
+          label.innerHTML = `<span style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--secondary); letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-file-invoice"></i> Primary Document Archive</span>`;
+          
+          const sourceBox = document.createElement('div');
+          sourceBox.className = 'gb-source-box';
+          sourceBox.style.padding = '18px';
+          sourceBox.style.background = 'rgba(0, 0, 0, 0.2)';
+          sourceBox.style.borderLeft = '4px solid var(--secondary)';
+          sourceBox.style.borderRadius = '4px';
+          sourceBox.style.fontStyle = 'italic';
+          sourceBox.style.lineHeight = '1.6';
+          sourceBox.style.color = 'var(--text-main)';
+          sourceBox.style.fontSize = '0.9rem';
+          sourceBox.innerHTML = `"${d.primarySource.text}"`;
+          
+          const meta = document.createElement('div');
+          meta.style.fontSize = '0.75rem';
+          meta.style.color = 'var(--text-muted)';
+          meta.style.display = 'flex';
+          meta.style.justifyContent = 'space-between';
+          meta.style.flexWrap = 'wrap';
+          meta.style.gap = '8px';
+          meta.style.marginTop = '4px';
+          meta.innerHTML = `
+            <span><strong>Source:</strong> ${d.primarySource.title}</span>
+            <span><strong>Date:</strong> ${d.primarySource.citation}</span>
+          `;
+          
+          sourceContainer.appendChild(label);
+          sourceContainer.appendChild(sourceBox);
+          sourceContainer.appendChild(meta);
+          contentPane.appendChild(sourceContainer);
+          
+        } else if (activeTab === 'debate') {
+          const roundtable = document.createElement('div');
+          roundtable.style.marginTop = '8px';
+          roundtable.style.display = 'flex';
+          roundtable.style.flexDirection = 'column';
+          roundtable.style.gap = '16px';
+          
+          const label = document.createElement('div');
+          label.innerHTML = `<span style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--primary); letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-comments"></i> Historiographical Roundtable</span>`;
+          roundtable.appendChild(label);
+          
+          const dialogGrid = document.createElement('div');
+          dialogGrid.style.display = 'grid';
+          dialogGrid.style.gridTemplateColumns = 'repeat(auto-fit, minmax(280px, 1fr))';
+          dialogGrid.style.gap = '16px';
+          
+          d.historianDebate.forEach((hist, hIdx) => {
+            const speechCard = document.createElement('div');
+            speechCard.style.padding = '16px';
+            speechCard.style.background = 'rgba(255,255,255,0.015)';
+            speechCard.style.border = '1px solid var(--border-glass)';
+            speechCard.style.borderRadius = 'var(--border-radius-sm)';
+            speechCard.style.display = 'flex';
+            speechCard.style.flexDirection = 'column';
+            speechCard.style.gap = '10px';
+            
+            const initials = hist.historian.split(' ').map(n => n.replace('.', ''))
+              .filter(n => n.length > 0).map(n => n[0]).join('').substring(0, 2);
+              
+            const avatarBg = hIdx === 0 ? 'var(--primary-glow)' : 'var(--secondary-glow)';
+            const avatarColor = hIdx === 0 ? 'var(--primary)' : 'var(--secondary)';
+            
+            speechCard.innerHTML = `
+              <div style="display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border-glass); padding-bottom: 8px;">
+                <div style="width: 32px; height: 32px; border-radius: 50%; background: ${avatarBg}; color: ${avatarColor}; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700;">
+                  ${initials}
+                </div>
+                <div>
+                  <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-main);">${hist.historian}</div>
+                  <div style="font-size: 0.7rem; color: var(--text-muted); font-style: italic;">${hist.work} (${hist.perspective})</div>
+                </div>
+              </div>
+              <blockquote style="margin: 0; font-size: 0.82rem; line-height: 1.6; color: var(--text-muted); font-style: italic; overflow-wrap: break-word;">
+                "${hist.quote}"
+              </blockquote>
+            `;
+            dialogGrid.appendChild(speechCard);
+          });
+          
+          roundtable.appendChild(dialogGrid);
+          contentPane.appendChild(roundtable);
+        }
+      }
+      
+      drawCardContentPane();
+      cardsWrapper.appendChild(card);
+    });
+  }
+  
+  container.appendChild(filterGroup);
+  container.appendChild(cardsWrapper);
+  
+  drawFilterButtons();
+  drawAspectCards();
+}
+
 export {
   renderSidebarNav,
   updateBookmarksUI,
@@ -3830,5 +4162,6 @@ export {
   initMasteryMatchGame,
   initMindMapGame,
   initDecisionsGame,
-  initExamLeaderboard
+  initExamLeaderboard,
+  renderGoingBeyond
 };

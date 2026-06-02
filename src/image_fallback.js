@@ -25,7 +25,7 @@ export const WIKIMEDIA_MAPPING = {
   "assets/sources/portraits/hosni_mubarak.jpg": "https://upload.wikimedia.org/wikipedia/commons/3/30/Hosni_Mubarak_illustration.png",
   "assets/sources/portraits/levi_eshkol.jpg": "https://upload.wikimedia.org/wikipedia/commons/4/4a/Portrait_of_prime_minister_Levy_Eshkol._August_1963._D699-070.jpg",
   "assets/sources/straits_of_tiran.jpg": "https://upload.wikimedia.org/wikipedia/commons/c/cc/Tiran_R01.jpg",
-  "assets/sources/un_partition_plan_1947.png": "https://upload.wikimedia.org/wikipedia/commons/b/bd/UN_Palestine_Partition_Versions_1947.jpg",
+  "assets/sources/un_partition_plan_1947.png": "https://upload.wikimedia.org/wikipedia/commons/b/be/Mandate_for_Palestine_-_AD_1947.png",
   "assets/sources/six_day_war_map_1967.png": "https://upload.wikimedia.org/wikipedia/commons/9/97/Six_Day_War_Territories.svg",
   "assets/sources/suez_crisis_map.png": "https://upload.wikimedia.org/wikipedia/commons/e/ec/Sinai_1956_campaign_map.png",
   "assets/sources/six_day_war_fronts.png": "https://upload.wikimedia.org/wikipedia/commons/c/c5/Six_Day_War_Territories.svg",
@@ -40,7 +40,7 @@ export const WIKIMEDIA_MAPPING = {
   "assets/sources/sadat_carter_begin_1978.jpg": "https://upload.wikimedia.org/wikipedia/commons/b/b0/Sadat_and_Begin_clean3.jpg",
   "assets/sources/portraits/hafez_al_assad.jpg": "https://upload.wikimedia.org/wikipedia/commons/9/95/Portrait_of_Hafez_al-Assad_in_1990s.jpg",
   "assets/sources/portraits/david_ben_gurion.jpg": "https://upload.wikimedia.org/wikipedia/commons/a/a9/David_Ben-Gurion_in_1952.jpg",
-  "assets/sources/1949_armistice_map.png": "https://upload.wikimedia.org/wikipedia/commons/5/59/Members_of_Israeli_Delegation_to_Armistice_talks_in_Rhodes%2C_January_1949.jpg",
+  "assets/sources/1949_armistice_map.png": "https://upload.wikimedia.org/wikipedia/commons/9/9b/Armistice_of_1949_-_AD_1949.png",
   "assets/sources/nasser_nationalizing_suez_1956.jpg": "https://upload.wikimedia.org/wikipedia/commons/2/23/Al-Ahram_Newspaper_Publish_Suez_Canal_Nationalization.jpg",
   "assets/sources/portraits/george_h_w_bush.jpg": "https://upload.wikimedia.org/wikipedia/commons/a/ac/George_and_Barbara_Bush_with_their_first_born_child_George_W._Bush%2C_while_Bush_was_a_student_at_Yale.jpg",
 };
@@ -52,6 +52,7 @@ export const WIKIMEDIA_MAPPING = {
  */
 export function getFallbackUrl(localPath) {
   if (!localPath) return null;
-  const normPath = localPath.replace(/\\/g, '/');
+  // Normalize backslashes and strip query parameters (like ?v=3)
+  const normPath = localPath.replace(/\\/g, '/').split('?')[0];
   return WIKIMEDIA_MAPPING[normPath] || null;
 }

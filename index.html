@@ -98,6 +98,12 @@
             </span>
             <span class="nav-item-progress" id="bookmarks-count-badge">0</span>
           </a>
+          <a class="nav-item" id="nav-going-beyond" title="Going Beyond">
+            <span class="nav-item-content">
+              <i class="fa-solid fa-compass"></i>
+              <span class="nav-text">Going Beyond</span>
+            </span>
+          </a>
           <a class="nav-item" id="nav-firefly" title="Firefly HTML Export">
             <span class="nav-item-content">
               <i class="fa-solid fa-code"></i>
@@ -1673,6 +1679,22 @@
           <div style="position: relative;">
             <textarea id="firefly-code-textarea" readonly style="width: 100%; height: 350px; background: rgba(0, 0, 0, 0.25); color: var(--text-main); border: 1px solid var(--border-glass); border-radius: var(--border-radius-sm); padding: 16px; font-family: monospace; font-size: 0.8rem; resize: vertical; line-height: 1.5; outline: none;"></textarea>
           </div>
+        </div>
+      </section>
+
+      <!-- 10. GOING BEYOND VIEW -->
+      <section class="content-view" id="view-going-beyond">
+        <div class="going-beyond-header-card" style="background: var(--gradient-hero); padding: 24px; border-radius: var(--border-radius-md); border: 1px solid var(--border-glass); margin-bottom: 24px; box-shadow: var(--shadow-md);">
+          <h2 style="font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; color: var(--text-main);">
+            <i class="fa-solid fa-compass" style="color: var(--primary);"></i> Going Beyond: Modern Geopolitical Realities
+          </h2>
+          <p style="font-size: 0.9rem; line-height: 1.6; color: var(--text-muted); margin: 0;">
+            Connect your GCSE Paper 2 history curriculum to the contemporary realities shaping the Middle East today in 2026. Explore key structural friction points, engage with primary sources, and examine how modern-day historians construct competing narratives.
+          </p>
+        </div>
+
+        <div id="going-beyond-container" class="going-beyond-container">
+          <!-- Dynamically populated by renderGoingBeyond() -->
         </div>
       </section>
 

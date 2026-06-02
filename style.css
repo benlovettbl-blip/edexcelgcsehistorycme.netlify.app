@@ -6583,4 +6583,63 @@ details > summary::marker {
   background: rgba(0, 0, 0, 0.02);
 }
 
+/* --- Going Beyond Tab Styles --- */
+.going-beyond-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  animation: fadeIn var(--transition-normal);
+}
+
+.gb-filters .filter-btn {
+  box-shadow: var(--shadow-sm);
+}
+
+.gb-filters .filter-btn:hover {
+  border-color: var(--border-active) !important;
+  transform: translateY(-1px);
+}
+
+.gb-card {
+  transition: all var(--transition-normal);
+}
+
+.gb-subtab-btn.active {
+  box-shadow: var(--shadow-primary);
+}
+
+.gb-subtab-btn:not(.active):hover {
+  color: var(--text-main) !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+[data-theme="desert"] .gb-subtab-btn:not(.active):hover {
+  background: rgba(0, 0, 0, 0.03) !important;
+}
+
+.gb-source-box {
+  font-family: 'Kalam', 'Caveat', cursive, sans-serif;
+  letter-spacing: 0.2px;
+}
+
+/* Animations and responsiveness */
+@media (max-width: 768px) {
+  .gb-card-header {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 16px !important;
+  }
+  
+  .gb-subtab-group {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .gb-subtab-btn {
+    flex: 1;
+    justify-content: center;
+  }
+}
+
+
 
