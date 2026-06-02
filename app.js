@@ -4577,7 +4577,7 @@
     {
       id: "gb-jerusalem",
       title: "The Sovereignty of Jerusalem",
-      category: "Syllabus Extrapolations",
+      category: "Syllabus Links",
       icon: "fa-monument",
       syllabusLink: "Bridges UN Resolution 181 (1947), the divided city in the 1948 War, and Israel's capture of East Jerusalem in the 1967 Six-Day War.",
       primarySource: {
@@ -4605,7 +4605,7 @@
     {
       id: "gb-refugees",
       title: "Palestinian Refugees & the 'Right of Return'",
-      category: "Syllabus Extrapolations",
+      category: "Syllabus Links",
       icon: "fa-users",
       syllabusLink: "Bridges the 1948 Nakba (displacing 700,000+ Arabs), the 1967 displacements, and the establishment of UNRWA in 1949.",
       primarySource: {
@@ -4633,7 +4633,7 @@
     {
       id: "gb-water",
       title: "Resource Geopolitics & Water Security",
-      category: "Syllabus Extrapolations",
+      category: "Syllabus Links",
       icon: "fa-droplet",
       syllabusLink: "Bridges the Jordan River headwater diversion disputes of 1964-67, and the military capture of the West Bank aquifers and Golan Heights in 1967.",
       primarySource: {
@@ -4661,7 +4661,7 @@
     {
       id: "gb-settlements",
       title: "West Bank Settlement Expansion",
-      category: "Syllabus Extrapolations",
+      category: "Syllabus Links",
       icon: "fa-tree-city",
       syllabusLink: "Bridges the aftermath of the 1967 war, the Allon Plan (1967), and the rise of right-wing political dominance in Israel following 1977.",
       primarySource: {
@@ -4689,7 +4689,7 @@
     {
       id: "gb-asymmetric",
       title: "Asymmetric Warfare & Non-State Actors",
-      category: "Syllabus Extrapolations",
+      category: "Syllabus Links",
       icon: "fa-shield-halved",
       syllabusLink: "Bridges the 1982 Invasion of Lebanon (targeting the PLO), the First Intifada (1987), and the rise of Hamas during the Oslo Accords era.",
       primarySource: {
@@ -4979,22 +4979,6 @@
       });
       container.appendChild(card);
     });
-  }
-  async function renderFireflyView() {
-    const textarea = document.getElementById("firefly-code-textarea");
-    if (!textarea) return;
-    textarea.value = "Loading compiled Firefly HTML Export...";
-    try {
-      const res = await fetch("firefly_embed.html");
-      if (res.ok) {
-        const code = await res.text();
-        textarea.value = code;
-      } else {
-        throw new Error();
-      }
-    } catch (e) {
-      textarea.value = '<!-- Standalone Firefly Export -->\n<!-- The fully-featured offline SPA is compiled directly to firefly_embed.html in your project folder. -->\n<!-- If you are running on a local web server, the compiled code will load here automatically. -->\n<!-- Please locate "firefly_embed.html" on your disk to copy the full HTML code. -->';
-    }
   }
   function renderExamSkillsView() {
     const consSelect = document.getElementById("consequence-topic-select");
@@ -8077,7 +8061,7 @@
     filterGroup.style.flexWrap = "wrap";
     const categories = [
       { name: "All Topics", filter: "all", count: GOING_BEYOND_DATA.length },
-      { name: "Syllabus Extrapolations", filter: "Syllabus Extrapolations", count: GOING_BEYOND_DATA.filter((d) => d.category === "Syllabus Extrapolations").length },
+      { name: "Syllabus Links", filter: "Syllabus Links", count: GOING_BEYOND_DATA.filter((d) => d.category === "Syllabus Links").length },
       { name: "Structural Realities (2026)", filter: "Structural Realities", count: GOING_BEYOND_DATA.filter((d) => d.category === "Structural Realities").length }
     ];
     let activeFilter = "all";
@@ -8233,7 +8217,7 @@
             historyCol.style.border = "1px dashed var(--border-glass)";
             historyCol.innerHTML = `
             <div style="font-size: 0.72rem; color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">
-              <i class="fa-solid fa-clock-rotate-left"></i> Historical Bedrock (GCSE Context)
+              <i class="fa-solid fa-clock-rotate-left"></i> Historical Bedrock
             </div>
             <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; margin: 0;">${d.syllabusLink}</p>
             <p style="font-size: 0.85rem; color: var(--text-main); line-height: 1.6; margin: 4px 0 0 0;">${d.deepDive.split(".")[0]}. ${d.deepDive.split(".")[1] || ""}.</p>
@@ -12595,15 +12579,14 @@
       const viewTitle = document.getElementById("current-view-title");
       if (viewTitle) viewTitle.textContent = "Going Beyond: Modern Realities";
       state.selectedSubtopicId = null;
-      renderGoingBeyond();
-    } else if (viewName === "firefly") {
-      const fireflyNav = document.getElementById("nav-firefly");
-      if (fireflyNav) fireflyNav.classList.add("active");
+    } else if (viewName === "going-beyond") {
+      const goingBeyondNav = document.getElementById("nav-going-beyond");
+      if (goingBeyondNav) goingBeyondNav.classList.add("active");
       if (headerModeSwitcher) headerModeSwitcher.style.display = "none";
       const viewTitle = document.getElementById("current-view-title");
-      if (viewTitle) viewTitle.textContent = "Firefly HTML Export";
+      if (viewTitle) viewTitle.textContent = "Going Beyond: Modern Realities";
       state.selectedSubtopicId = null;
-      renderFireflyView();
+      renderGoingBeyond();
     } else if (viewName === "subtopic" && subtopicId) {
       state.selectedSubtopicId = subtopicId;
       if (headerModeSwitcher) headerModeSwitcher.style.display = "flex";
@@ -12628,7 +12611,6 @@
       "classic": "view-classic",
       "flashcards": "view-flashcards",
       "lessons": "view-mastery",
-      "firefly": "view-firefly",
       "exam-skills": "view-exam-skills",
       "past-papers": "view-past-papers",
       "games": "view-games",
@@ -12686,12 +12668,17 @@
     document.getElementById("sidebar-overlay").classList.remove("active");
   }
   function updateSoundBtnUI() {
-    const btn = document.getElementById("sound-toggle-btn");
-    if (state.soundEnabled) {
-      btn.innerHTML = `<i class="fa-solid fa-volume-high"></i> Sound Effects: On`;
-    } else {
-      btn.innerHTML = `<i class="fa-solid fa-volume-xmark"></i> Sound Effects: Off`;
-    }
+    const ids = ["sound-toggle-btn", "sidebar-sound-toggle-btn"];
+    ids.forEach((id) => {
+      const btn = document.getElementById(id);
+      if (btn) {
+        if (state.soundEnabled) {
+          btn.innerHTML = `<i class="fa-solid fa-volume-high"></i> Sound: On`;
+        } else {
+          btn.innerHTML = `<i class="fa-solid fa-volume-xmark"></i> Sound: Off`;
+        }
+      }
+    });
   }
   function bindEvents() {
     document.getElementById("nav-dashboard").addEventListener("click", () => {
@@ -12709,10 +12696,6 @@
     document.getElementById("nav-exam-sim").addEventListener("click", () => {
       AudioEngine.play("click");
       switchView("exam");
-    });
-    document.getElementById("nav-firefly").addEventListener("click", () => {
-      AudioEngine.play("click");
-      switchView("firefly");
     });
     document.getElementById("nav-going-beyond").addEventListener("click", () => {
       AudioEngine.play("click");
@@ -12862,48 +12845,57 @@
       showExamSetup();
       switchView("dashboard");
     });
-    document.getElementById("sound-toggle-btn").addEventListener("click", () => {
-      state.soundEnabled = !state.soundEnabled;
-      localStorage.setItem("edexcel_sound", JSON.stringify(state.soundEnabled));
-      updateSoundBtnUI();
-      AudioEngine.play("click");
-    });
-    document.getElementById("theme-selector").addEventListener("change", (e) => {
-      const nextTheme = e.target.value;
-      state.theme = nextTheme;
-      localStorage.setItem("edexcel_theme", nextTheme);
-      document.documentElement.setAttribute("data-theme", nextTheme);
-      AudioEngine.play("click");
-    });
-    document.getElementById("reset-progress-btn").addEventListener("click", () => {
-      if (confirm("WARNING: This will completely erase all your mastery stats. Bookmarks will be kept. Proceed?")) {
-        state.mastery = {};
-        saveProgress();
-        renderSidebarNav();
-        updateGlobalStats();
-        if (state.currentView === "dashboard") {
-          renderDashboard();
-        } else if (state.currentView === "classic") {
-          renderClassicView();
-        }
-        AudioEngine.play("fail");
+    const bindSoundBtn = (id) => {
+      const btn = document.getElementById(id);
+      if (btn) {
+        btn.addEventListener("click", () => {
+          state.soundEnabled = !state.soundEnabled;
+          localStorage.setItem("edexcel_sound", JSON.stringify(state.soundEnabled));
+          updateSoundBtnUI();
+          AudioEngine.play("click");
+        });
       }
-    });
-    document.getElementById("btn-copy-firefly-code").addEventListener("click", () => {
-      const textarea = document.getElementById("firefly-code-textarea");
-      textarea.select();
-      try {
-        document.execCommand("copy");
-        const btn = document.getElementById("btn-copy-firefly-code");
-        btn.innerHTML = `<i class="fa-solid fa-check"></i> Copied!`;
-        AudioEngine.play("success");
-        setTimeout(() => {
-          btn.innerHTML = `<i class="fa-solid fa-copy"></i> Copy to Clipboard`;
-        }, 2e3);
-      } catch (err) {
-        alert("Failed to copy code. Please select all text and copy manually.");
+    };
+    bindSoundBtn("sound-toggle-btn");
+    bindSoundBtn("sidebar-sound-toggle-btn");
+    const bindThemeSelector = (id) => {
+      const select = document.getElementById(id);
+      if (select) {
+        select.addEventListener("change", (e) => {
+          const nextTheme = e.target.value;
+          state.theme = nextTheme;
+          localStorage.setItem("edexcel_theme", nextTheme);
+          document.documentElement.setAttribute("data-theme", nextTheme);
+          const otherId = id === "theme-selector" ? "sidebar-theme-selector" : "theme-selector";
+          const otherSelect = document.getElementById(otherId);
+          if (otherSelect) otherSelect.value = nextTheme;
+          AudioEngine.play("click");
+        });
       }
-    });
+    };
+    bindThemeSelector("theme-selector");
+    bindThemeSelector("sidebar-theme-selector");
+    const bindResetBtn = (id) => {
+      const btn = document.getElementById(id);
+      if (btn) {
+        btn.addEventListener("click", () => {
+          if (confirm("WARNING: This will completely erase all your mastery stats. Bookmarks will be kept. Proceed?")) {
+            state.mastery = {};
+            saveProgress();
+            renderSidebarNav();
+            updateGlobalStats();
+            if (state.currentView === "dashboard") {
+              renderDashboard();
+            } else if (state.currentView === "classic") {
+              renderClassicView();
+            }
+            AudioEngine.play("fail");
+          }
+        });
+      }
+    };
+    bindResetBtn("reset-progress-btn");
+    bindResetBtn("sidebar-reset-progress-btn");
     document.getElementById("nav-exam-skills").addEventListener("click", () => {
       AudioEngine.play("click");
       switchView("exam-skills");

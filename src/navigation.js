@@ -5,7 +5,6 @@ import {
   renderBookmarksView, 
   renderTimelineView, 
   renderExamSkillsView, 
-  renderFireflyView,
   renderClassicView,
   startFlashcardSession,
   renderGamesView,
@@ -117,15 +116,14 @@ export function switchView(viewName, subtopicId = null) {
     const viewTitle = document.getElementById('current-view-title');
     if (viewTitle) viewTitle.textContent = "Going Beyond: Modern Realities";
     state.selectedSubtopicId = null;
-    renderGoingBeyond();
-  } else if (viewName === 'firefly') {
-    const fireflyNav = document.getElementById('nav-firefly');
-    if (fireflyNav) fireflyNav.classList.add('active');
+  } else if (viewName === 'going-beyond') {
+    const goingBeyondNav = document.getElementById('nav-going-beyond');
+    if (goingBeyondNav) goingBeyondNav.classList.add('active');
     if (headerModeSwitcher) headerModeSwitcher.style.display = 'none';
     const viewTitle = document.getElementById('current-view-title');
-    if (viewTitle) viewTitle.textContent = "Firefly HTML Export";
+    if (viewTitle) viewTitle.textContent = "Going Beyond: Modern Realities";
     state.selectedSubtopicId = null;
-    renderFireflyView();
+    renderGoingBeyond();
   } else if (viewName === 'subtopic' && subtopicId) {
     state.selectedSubtopicId = subtopicId;
     if (headerModeSwitcher) headerModeSwitcher.style.display = 'flex';
@@ -157,7 +155,6 @@ export function switchView(viewName, subtopicId = null) {
     'classic': 'view-classic',
     'flashcards': 'view-flashcards',
     'lessons': 'view-mastery',
-    'firefly': 'view-firefly',
     'exam-skills': 'view-exam-skills',
     'past-papers': 'view-past-papers',
     'games': 'view-games',

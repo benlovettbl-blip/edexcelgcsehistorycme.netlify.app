@@ -2,7 +2,7 @@ export const GOING_BEYOND_DATA = [
   {
     id: "gb-jerusalem",
     title: "The Sovereignty of Jerusalem",
-    category: "Syllabus Extrapolations",
+    category: "Syllabus Links",
     icon: "fa-monument",
     syllabusLink: "Bridges UN Resolution 181 (1947), the divided city in the 1948 War, and Israel's capture of East Jerusalem in the 1967 Six-Day War.",
     primarySource: {
@@ -30,7 +30,7 @@ export const GOING_BEYOND_DATA = [
   {
     id: "gb-refugees",
     title: "Palestinian Refugees & the 'Right of Return'",
-    category: "Syllabus Extrapolations",
+    category: "Syllabus Links",
     icon: "fa-users",
     syllabusLink: "Bridges the 1948 Nakba (displacing 700,000+ Arabs), the 1967 displacements, and the establishment of UNRWA in 1949.",
     primarySource: {
@@ -58,7 +58,7 @@ export const GOING_BEYOND_DATA = [
   {
     id: "gb-water",
     title: "Resource Geopolitics & Water Security",
-    category: "Syllabus Extrapolations",
+    category: "Syllabus Links",
     icon: "fa-droplet",
     syllabusLink: "Bridges the Jordan River headwater diversion disputes of 1964-67, and the military capture of the West Bank aquifers and Golan Heights in 1967.",
     primarySource: {
@@ -86,7 +86,7 @@ export const GOING_BEYOND_DATA = [
   {
     id: "gb-settlements",
     title: "West Bank Settlement Expansion",
-    category: "Syllabus Extrapolations",
+    category: "Syllabus Links",
     icon: "fa-tree-city",
     syllabusLink: "Bridges the aftermath of the 1967 war, the Allon Plan (1967), and the rise of right-wing political dominance in Israel following 1977.",
     primarySource: {
@@ -114,7 +114,7 @@ export const GOING_BEYOND_DATA = [
   {
     id: "gb-asymmetric",
     title: "Asymmetric Warfare & Non-State Actors",
-    category: "Syllabus Extrapolations",
+    category: "Syllabus Links",
     icon: "fa-shield-halved",
     syllabusLink: "Bridges the 1982 Invasion of Lebanon (targeting the PLO), the First Intifada (1987), and the rise of Hamas during the Oslo Accords era.",
     primarySource: {

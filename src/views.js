@@ -183,23 +183,7 @@ function highlightCausalConnectives(text) {
   return text.replace(/\b(As\s+a\s+result|Consequently|This\s+led\s+to|led\s+directly\s+to|leading\s+directly\s+to|One\s+consequence\s+was|Because)\b/gi, '<strong>$1</strong>');
 }
 
-async function renderFireflyView() {
-  const textarea = document.getElementById('firefly-code-textarea');
-  if (!textarea) return;
-  textarea.value = 'Loading compiled Firefly HTML Export...';
-  
-  try {
-    const res = await fetch('firefly_embed.html');
-    if (res.ok) {
-      const code = await res.text();
-      textarea.value = code;
-    } else {
-      throw new Error();
-    }
-  } catch (e) {
-    textarea.value = '<!-- Standalone Firefly Export -->\n<!-- The fully-featured offline SPA is compiled directly to firefly_embed.html in your project folder. -->\n<!-- If you are running on a local web server, the compiled code will load here automatically. -->\n<!-- Please locate "firefly_embed.html" on your disk to copy the full HTML code. -->';
-  }
-}
+
 
 // 8. Exam Skills Practice View (SPA Integration)
 // 8. Exam Skills Practice View (SPA Integration)
@@ -3821,7 +3805,7 @@ function renderGoingBeyond() {
   
   const categories = [
     { name: 'All Topics', filter: 'all', count: GOING_BEYOND_DATA.length },
-    { name: 'Syllabus Extrapolations', filter: 'Syllabus Extrapolations', count: GOING_BEYOND_DATA.filter(d => d.category === 'Syllabus Extrapolations').length },
+    { name: 'Syllabus Links', filter: 'Syllabus Links', count: GOING_BEYOND_DATA.filter(d => d.category === 'Syllabus Links').length },
     { name: 'Structural Realities (2026)', filter: 'Structural Realities', count: GOING_BEYOND_DATA.filter(d => d.category === 'Structural Realities').length }
   ];
   
@@ -4004,7 +3988,7 @@ function renderGoingBeyond() {
           
           historyCol.innerHTML = `
             <div style="font-size: 0.72rem; color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">
-              <i class="fa-solid fa-clock-rotate-left"></i> Historical Bedrock (GCSE Context)
+              <i class="fa-solid fa-clock-rotate-left"></i> Historical Bedrock
             </div>
             <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; margin: 0;">${d.syllabusLink}</p>
             <p style="font-size: 0.85rem; color: var(--text-main); line-height: 1.6; margin: 4px 0 0 0;">${d.deepDive.split('.')[0]}. ${d.deepDive.split('.')[1] || ''}.</p>
@@ -4143,7 +4127,6 @@ export {
   updateGlobalStats,
   renderDashboard,
   highlightCausalConnectives,
-  renderFireflyView,
   renderExamSkillsView,
   renderClassicView,
   startFlashcardSession,

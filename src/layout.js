@@ -32,12 +32,17 @@ function closeMobileSidebar() {
 }
 
 function updateSoundBtnUI() {
-  const btn = document.getElementById('sound-toggle-btn');
-  if (state.soundEnabled) {
-    btn.innerHTML = `<i class="fa-solid fa-volume-high"></i> Sound Effects: On`;
-  } else {
-    btn.innerHTML = `<i class="fa-solid fa-volume-xmark"></i> Sound Effects: Off`;
-  }
+  const ids = ['sound-toggle-btn', 'sidebar-sound-toggle-btn'];
+  ids.forEach(id => {
+    const btn = document.getElementById(id);
+    if (btn) {
+      if (state.soundEnabled) {
+        btn.innerHTML = `<i class="fa-solid fa-volume-high"></i> Sound: On`;
+      } else {
+        btn.innerHTML = `<i class="fa-solid fa-volume-xmark"></i> Sound: Off`;
+      }
+    }
+  });
 }
 
 // --- Bind Event Listeners ---
@@ -61,11 +66,6 @@ function bindEvents() {
   document.getElementById('nav-exam-sim').addEventListener('click', () => {
     AudioEngine.play('click');
     switchView('exam');
-  });
-  
-  document.getElementById('nav-firefly').addEventListener('click', () => {
-    AudioEngine.play('click');
-    switchView('firefly');
   });
 
   document.getElementById('nav-going-beyond').addEventListener('click', () => {
@@ -255,52 +255,65 @@ function bindEvents() {
     switchView('dashboard');
   });
 
-  // Bottom Settings Utilities
-  document.getElementById('sound-toggle-btn').addEventListener('click', () => {
-    state.soundEnabled = !state.soundEnabled;
-    localStorage.setItem('edexcel_sound', JSON.stringify(state.soundEnabled));
-    updateSoundBtnUI();
-    AudioEngine.play('click');
-  });
-
-  document.getElementById('theme-selector').addEventListener('change', (e) => {
-    const nextTheme = e.target.value;
-    state.theme = nextTheme;
-    localStorage.setItem('edexcel_theme', nextTheme);
-    document.documentElement.setAttribute('data-theme', nextTheme);
-    AudioEngine.play('click');
-  });
-
-  document.getElementById('reset-progress-btn').addEventListener('click', () => {
-    if (confirm("WARNING: This will completely erase all your mastery stats. Bookmarks will be kept. Proceed?")) {
-      state.mastery = {};
-      saveProgress();
-      renderSidebarNav();
-      updateGlobalStats();
-      if (state.currentView === 'dashboard') {
-        renderDashboard();
-      } else if (state.currentView === 'classic') {
-        renderClassicView();
-      }
-      AudioEngine.play('fail');
+  // Settings Utilities (Sync between Header and Sidebar copies)
+  const bindSoundBtn = (id) => {
+    const btn = document.getElementById(id);
+    if (btn) {
+      btn.addEventListener('click', () => {
+        state.soundEnabled = !state.soundEnabled;
+        localStorage.setItem('edexcel_sound', JSON.stringify(state.soundEnabled));
+        updateSoundBtnUI();
+        AudioEngine.play('click');
+      });
     }
-  });
+  };
+  bindSoundBtn('sound-toggle-btn');
+  bindSoundBtn('sidebar-sound-toggle-btn');
 
-  document.getElementById('btn-copy-firefly-code').addEventListener('click', () => {
-    const textarea = document.getElementById('firefly-code-textarea');
-    textarea.select();
-    try {
-      document.execCommand('copy');
-      const btn = document.getElementById('btn-copy-firefly-code');
-      btn.innerHTML = `<i class="fa-solid fa-check"></i> Copied!`;
-      AudioEngine.play('success');
-      setTimeout(() => {
-        btn.innerHTML = `<i class="fa-solid fa-copy"></i> Copy to Clipboard`;
-      }, 2000);
-    } catch (err) {
-      alert("Failed to copy code. Please select all text and copy manually.");
+  const bindThemeSelector = (id) => {
+    const select = document.getElementById(id);
+    if (select) {
+      select.addEventListener('change', (e) => {
+        const nextTheme = e.target.value;
+        state.theme = nextTheme;
+        localStorage.setItem('edexcel_theme', nextTheme);
+        document.documentElement.setAttribute('data-theme', nextTheme);
+        
+        // Sync selectors
+        const otherId = id === 'theme-selector' ? 'sidebar-theme-selector' : 'theme-selector';
+        const otherSelect = document.getElementById(otherId);
+        if (otherSelect) otherSelect.value = nextTheme;
+        
+        AudioEngine.play('click');
+      });
     }
-  });
+  };
+  bindThemeSelector('theme-selector');
+  bindThemeSelector('sidebar-theme-selector');
+
+  const bindResetBtn = (id) => {
+    const btn = document.getElementById(id);
+    if (btn) {
+      btn.addEventListener('click', () => {
+        if (confirm("WARNING: This will completely erase all your mastery stats. Bookmarks will be kept. Proceed?")) {
+          state.mastery = {};
+          saveProgress();
+          renderSidebarNav();
+          updateGlobalStats();
+          if (state.currentView === 'dashboard') {
+            renderDashboard();
+          } else if (state.currentView === 'classic') {
+            renderClassicView();
+          }
+          AudioEngine.play('fail');
+        }
+      });
+    }
+  };
+  bindResetBtn('reset-progress-btn');
+  bindResetBtn('sidebar-reset-progress-btn');
+
+
 
   // Exam Practice Nav Click
   document.getElementById('nav-exam-skills').addEventListener('click', () => {

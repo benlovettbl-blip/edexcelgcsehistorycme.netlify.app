@@ -375,6 +375,82 @@ body {
   gap: 16px;
 }
 
+/* Top Right Header Controls styling */
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-controls .sound-toggle-btn,
+.header-controls .reset-btn {
+  width: auto !important;
+  font-size: 0.72rem !important;
+  padding: 4px 10px !important;
+  height: 30px !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  background: rgba(0, 0, 0, 0.25) !important;
+}
+
+.theme-dropdown-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--border-radius-sm);
+  height: 30px;
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+
+.theme-dropdown-container i {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.theme-dropdown-container .select-input {
+  background: transparent !important;
+  border: none !important;
+  color: var(--text-main) !important;
+  font-size: 0.72rem !important;
+  padding: 0 4px !important;
+  outline: none !important;
+  cursor: pointer !important;
+  height: 100% !important;
+  font-family: var(--font-body) !important;
+  font-weight: 600 !important;
+  width: auto !important;
+  max-width: 90px !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+}
+
+.theme-dropdown-container .select-input option {
+  background-color: var(--bg-app);
+  color: var(--text-main);
+}
+
+/* Desktop vs Mobile Toggle for Header Controls */
+@media (min-width: 992px) {
+  .header-controls {
+    display: flex !important;
+  }
+  .sidebar-footer {
+    display: none !important;
+  }
+}
+
+@media (max-width: 991px) {
+  .header-controls {
+    display: none !important;
+  }
+  .sidebar-footer {
+    display: flex !important;
+  }
+}
+
 
 /* Study Mode Tabs in Header */
 .mode-switcher {
