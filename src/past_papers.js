@@ -417,7 +417,7 @@ export function renderPastQuestionMarkup(qId, questionText, clue, modelAnswer, m
       </div>
 
       <div class="past-model-answer" id="past-answer-box-${qId}" style="display: none;">
-        <div class="past-model-answer-title"><i class="fa-solid fa-star"></i> Level 3/4 Model Answer</div>
+        <div class="past-model-answer-title"><i class="fa-solid fa-star"></i> Level 7-9 Model Answer</div>
         <div class="past-model-answer-content">${modelAnswer}</div>
       </div>
 
