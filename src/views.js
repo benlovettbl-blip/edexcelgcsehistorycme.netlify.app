@@ -3882,8 +3882,10 @@ function renderGoingBeyond() {
   cardsWrapper.style.gap = '24px';
   
   const cardSubTabs = {};
+  const cardExpanded = {};
   GOING_BEYOND_DATA.forEach(d => {
     cardSubTabs[d.id] = 'syllabus-modern';
+    cardExpanded[d.id] = false;
   });
   
   function drawAspectCards() {
@@ -3923,8 +3925,9 @@ function renderGoingBeyond() {
       header.style.alignItems = 'center';
       header.style.flexWrap = 'wrap';
       header.style.gap = '12px';
-      header.style.borderBottom = '1px solid var(--border-glass)';
-      header.style.paddingBottom = '16px';
+      header.style.cursor = 'pointer';
+      header.style.userSelect = 'none';
+      header.style.transition = 'padding var(--transition-normal)';
       
       const titleWrapper = document.createElement('div');
       titleWrapper.style.display = 'flex';
@@ -3950,8 +3953,15 @@ function renderGoingBeyond() {
         <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">${d.category}</span>
       `;
       
+      const chevron = document.createElement('i');
+      chevron.className = 'fa-solid fa-chevron-down';
+      chevron.style.fontSize = '0.9rem';
+      chevron.style.color = 'var(--text-muted)';
+      chevron.style.transition = 'transform var(--transition-normal)';
+      
       titleWrapper.appendChild(iconBox);
       titleWrapper.appendChild(titleText);
+      titleWrapper.appendChild(chevron);
       
       const subTabGroup = document.createElement('div');
       subTabGroup.className = 'gb-subtab-group';
@@ -3984,7 +3994,8 @@ function renderGoingBeyond() {
         tabBtn.style.display = 'flex';
         tabBtn.style.alignItems = 'center';
         
-        tabBtn.addEventListener('click', () => {
+        tabBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
           AudioEngine.play('click');
           cardSubTabs[d.id] = st.id;
           drawCardContentPane();
@@ -4004,6 +4015,23 @@ function renderGoingBeyond() {
       const contentPane = document.createElement('div');
       contentPane.className = 'gb-card-content-pane';
       card.appendChild(contentPane);
+      
+      function updateCardVisuals() {
+        const isExpanded = cardExpanded[d.id];
+        chevron.style.transform = isExpanded ? 'rotate(180deg)' : 'none';
+        subTabGroup.style.display = isExpanded ? 'flex' : 'none';
+        contentPane.style.display = isExpanded ? 'block' : 'none';
+        header.style.borderBottom = isExpanded ? '1px solid var(--border-glass)' : 'none';
+        header.style.paddingBottom = isExpanded ? '16px' : '0';
+        card.style.padding = isExpanded ? '24px' : '16px 24px';
+      }
+      
+      header.addEventListener('click', (e) => {
+        if (e.target.closest('.gb-subtab-group')) return;
+        AudioEngine.play('click');
+        cardExpanded[d.id] = !cardExpanded[d.id];
+        updateCardVisuals();
+      });
       
       function drawCardContentPane() {
         contentPane.innerHTML = '';
@@ -4149,6 +4177,7 @@ function renderGoingBeyond() {
       }
       
       drawCardContentPane();
+      updateCardVisuals();
       cardsWrapper.appendChild(card);
     });
   }
@@ -4161,6 +4190,7 @@ function renderGoingBeyond() {
 
   if (state.highlightGoingBeyondId) {
     const targetId = state.highlightGoingBeyondId;
+    cardExpanded[targetId] = true;
     state.highlightGoingBeyondId = null;
     
     activeFilter = 'all';
