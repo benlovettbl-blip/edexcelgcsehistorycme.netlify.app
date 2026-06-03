@@ -9,7 +9,8 @@ import {
   evaluateStudentAnswer, 
   renderSidebarNav, 
   updateGlobalStats,
-  setActiveClassicFilter
+  setActiveClassicFilter,
+  highlightCausalConnectives
 } from './views.js';
 import { showExamSetup, startExam, nextExamQuestion, displayExamQuestion, finishExam } from './exam.js';
 import { saveProgress } from './storage.js';
@@ -457,8 +458,8 @@ function bindEvents() {
 
     document.getElementById('narrative-question-text').textContent = data.question;
     document.getElementById('narrative-question-card').style.display = 'block';
-    document.getElementById('narrative-sorter-area').style.display = 'block';
-    document.getElementById('narrative-input-area').style.display = 'none';
+    document.getElementById('narrative-sorter-area').style.display = 'none';
+    document.getElementById('narrative-input-area').style.display = 'flex';
     document.getElementById('narrative-answer-box').style.display = 'none';
 
     const kwFeedbackContainer = document.getElementById('narrative-keyword-feedback');
@@ -467,7 +468,7 @@ function bindEvents() {
       kwFeedbackContainer.style.display = 'none';
     }
 
-    // Populate dropdowns with out-of-order events
+    // Populate dropdowns silently to preserve state/structure
     const optionsHtml = `
       <option value="" disabled selected>-- Choose Event --</option>
       ${data.events.map((evt, idx) => `<option value="${idx}">${evt}</option>`).join('')}
@@ -481,12 +482,14 @@ function bindEvents() {
     document.getElementById('seq-row-3').className = 'sequence-item-container';
     document.getElementById('sequence-status-msg').innerHTML = "Select all three events to verify chronology.";
     document.getElementById('narrative-user-answer').value = '';
+    document.getElementById('narrative-user-answer').focus();
     document.querySelectorAll('.process-word').forEach(chip => chip.classList.remove('used'));
-    document.getElementById('draft-feedback-narrative').style.display = 'none';
+    document.getElementById('draft-feedback-narrative').style.display = 'block';
     for (let i = 1; i <= 4; i++) {
       const chk = document.getElementById(`chk-narrative-rubric-${i}`);
       if (chk) chk.checked = false;
     }
+    updateRealTimeFeedback('narrative', '', data, topicId);
   });
 
   document.getElementById('btn-narrative-verify').addEventListener('click', () => {

@@ -22,18 +22,17 @@ $cssContent = [System.IO.File]::ReadAllText($cssFile, [System.Text.Encoding]::UT
 $questionsContent = [System.IO.File]::ReadAllText($questionsFile, [System.Text.Encoding]::UTF8)
 $appContent = [System.IO.File]::ReadAllText($appFile, [System.Text.Encoding]::UTF8)
 
-Write-Output "Performing replacements..."
 # Replace style.css reference
 $stylePattern = '(?i)<link\s+[^>]*href=["'']style\.css["''][^>]*>'
-$indexContent = $indexContent -replace $stylePattern, "<style>`r`n$cssContent`r`n</style>"
+$indexContent = [regex]::Replace($indexContent, $stylePattern, { param($m) "<style>`r`n$cssContent`r`n</style>" })
 
 # Replace questions.js reference
 $questionsPattern = '(?i)<script\s+[^>]*src=["'']questions\.js["''][^>]*>\s*<\/script>'
-$indexContent = $indexContent -replace $questionsPattern, "<script>`r`n$questionsContent`r`n</script>"
+$indexContent = [regex]::Replace($indexContent, $questionsPattern, { param($m) "<script>`r`n$questionsContent`r`n</script>" })
 
 # Replace app.js reference
 $appPattern = '(?i)<script\s+[^>]*src=["'']app\.js["''][^>]*>\s*<\/script>'
-$indexContent = $indexContent -replace $appPattern, "<script>`r`n$appContent`r`n</script>"
+$indexContent = [regex]::Replace($indexContent, $appPattern, { param($m) "<script>`r`n$appContent`r`n</script>" })
 
 # Write output file
 [System.IO.File]::WriteAllText($embedFile, $indexContent, [System.Text.Encoding]::UTF8)
