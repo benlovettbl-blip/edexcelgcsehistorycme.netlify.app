@@ -1807,32 +1807,33 @@ const PAST_PAPERS_DATA = [
   },
   {
     id: "mock_paper_1",
-    title: "Mock Exam Paper 1 (Early Peace & Build-up)",
+    title: "Mock Exam Paper 1 (The Build-up & Peace Process Focus)",
     year: "Mock",
+    highProbability: true,
     q1: {
       type: "consequence_split_4",
       question: "Section A: Consequence sub-questions",
       subQuestions: [
         {
           id: "mock_paper_1_q1_a",
-          title: "Q1(a): Explain one consequence of the formation of the PLO at the Cairo Conference (1964). (4 marks)",
-          clue: "Think about the creation of the Palestine Liberation Army (PLA) and how it brought the Palestinian national struggle under a unified body, but also how it was initially dominated by Arab states like Egypt, prompting later resistance from independent guerrilla groups like Fatah.",
-          model: "One consequence was the unification of the Palestinian nationalist struggle under a single representative body. The Cairo Conference created the PLO and its military wing, the Palestine Liberation Army (PLA), which meant Palestinians had a formal political and military organisation to campaign for the liberation of Palestine. However, because it was heavily controlled by Arab states like Egypt's President Nasser, it provoked frustration among younger, more radical Palestinians who wanted direct guerrilla action, leading to the rise of independent groups like Fatah."
+          title: "Q1(a): Explain one consequence of US aid to Israel following the 1948–49 war. (4 marks)",
+          clue: "Think about the solidification of Israel's military dominance (the IDF) and how this deterred immediate conventional invasions by Arab states, though it also deepened Arab hostility.",
+          model: "One consequence was the solidification of Israel's long-term military dominance in the region. The financial and military assistance from the United States enabled Israel to build a highly modern, professional army (the IDF) and absorb hundreds of thousands of immigrants. This military superiority deterred immediate large-scale conventional invasions by Arab states, though it also deepened Arab hostility as they viewed Israel as a US imperialist outpost."
         },
         {
           id: "mock_paper_1_q1_b",
-          title: "Q1(b): Explain one consequence of the Camp David Accords (1978). (4 marks)",
-          clue: "Think about the signing of the first peace treaty between Israel and an Arab nation (Egypt) in 1979, resulting in the return of the Sinai Peninsula, but also how it caused Egypt to be isolated and expelled from the Arab League for ignoring Palestinian statehood.",
-          model: "One consequence was the signing of the historic 1979 Egypt-Israel Peace Treaty, which resulted in the normalisation of diplomatic relations and Israel's phased withdrawal from the Sinai Peninsula. However, this bilateral agreement angered other Arab states because it failed to secure Palestinian self-determination. Consequently, Egypt was expelled from the Arab League, and President Sadat was widely condemned as a traitor in the Arab world, which ultimately led to his assassination in 1981 by Islamist extremists."
+          title: "Q1(b): Explain one consequence of the Cairo Conference (1964). (4 marks)",
+          clue: "Think about how it led directly to the creation of the Palestinian Liberation Organisation (PLO) to represent Palestinian aspirations.",
+          model: "One consequence was the creation of the Palestinian Liberation Organisation (PLO). Arab leaders met in Cairo to coordinate opposition to Israel, which led directly to the establishment of the PLO to represent Palestinian national aspirations and launch guerrilla actions against Israel under a unified body."
         }
       ]
     },
     q2: {
       type: "narrative",
-      question: "Write a narrative account analysing the key events of 1945–48 which led to the creation of Israel. (8 marks)",
-      stimulus: ["The bombing of the King David Hotel (1946)", "UN Resolution 181 (1947)"],
-      clue: "Start with the Jewish insurgency against British rule after WWII. Explain how the bombing of the King David Hotel in 1946 shattered British morale. Link this to Britain's decision to hand the Mandate to the UN, leading to UN Resolution 181 (the Partition Plan). Describe how this triggered an immediate civil war, culminating in the British withdrawal and David Ben-Gurion declaring the State of Israel in May 1948.",
-      model: "Following the end of the Second World War, Jewish paramilitary groups like the Irgun launched an insurgency against British rule to force the creation of a Jewish state. <span class='highlight-link'>This campaign intensified</span> in July 1946 with the bombing of the King David Hotel, the British administrative and military headquarters in Jerusalem, which killed 91 people. <span class='highlight-link'>Faced with mounting casualties and economic strain</span>, this devastating attack shattered British morale and <span class='highlight-word'>forced</span> the British government to hand the Palestine problem over to the newly formed United Nations in 1947. <span class='highlight-link'>In response</span>, the UN passed Resolution 181 in November 1947, recommending the partition of Palestine into separate Jewish and Arab states. <span class='highlight-link'>Although the Zionist leadership accepted the plan</span>, the Arab Higher Committee and neighbouring Arab states completely rejected it, which immediately <span class='highlight-word'>provoked</span> a violent civil war. <span class='highlight-link'>As the British forces completed their withdrawal</span> in May 1948, the Jewish leadership under David Ben-Gurion seized the power vacuum to declare the official creation of the State of Israel, which instantly <span class='highlight-word'>resulted in</span> an invasion by five neighbouring Arab armies the following day."
+      question: "Write a narrative account analysing escalating tension between Israel, Syria and Jordan in the years 1964–67. (8 marks)",
+      stimulus: ["Syria's support for Fatah", "Samu (1966)"],
+      clue: "Start with the backing of Fatah from Syria. Explain how Samu (1966) humiliated Jordan and caused riots. Conclude with Jordan signing the mutual defence pact with Egypt in May 1967.",
+      model: "In 1964, the Cairo Conference led to Syrian water diversion plans, and Syria began providing active backing to Fatah, enabling them to launch cross-border raids into Israel. <span class='highlight-link'>These guerrilla attacks provoked</span> harsh Israeli military responses. In November 1966, following a landmine explosion that killed Israeli soldiers, Israel launched a massive reprisal raid on the West Bank village of Samu in Jordan, which was harboring Fatah sympathizers. <span class='highlight-link'>The destruction of Samu resulted in</span> severe humiliation for Jordan's King Hussein and outraged West Bank Palestinians, who rioted against the monarchy. <span class='highlight-link'>To restore his credibility and prepare for war</span>, King Hussein was <span class='highlight-word'>forced</span> to sign a mutual defense pact with Egypt's President Nasser in May 1967. <span class='highlight-link'>This alliance, combined with escalating Syrian-Israeli border clashes</span>, consolidated Arab forces and directly led to the outbreak of the Six Day War in June 1967."
     },
     q3: {
       type: "importance_choice",
@@ -1840,53 +1841,54 @@ const PAST_PAPERS_DATA = [
       choices: [
         {
           id: "mock_paper_1_q3_a",
-          title: "The importance of the Israeli attacks on Gaza (1955) and Sinai (1956) for increased tension in the Middle East.",
+          title: "The importance of Israeli attacks on Gaza in 1955 and Sinai in 1956 for increased tension.",
           clue: "Explain how the Gaza raid in February 1955 humiliated President Nasser and convinced him that Egypt's military was too weak, leading to the Czech Arms Deal. Also explain how the subsequent joint attack on Sinai in 1956 confirmed Arab fears of Western-Israeli collusion and escalated the Cold War.",
           model: "<strong>Point 1:</strong> The Gaza raid in February 1955 was important because it shattered any chance of peace between Egypt and Israel and humiliated President Nasser. The attack killed 38 Egyptian soldiers and proved that Egypt's military was too weak to defend against Israel. This humiliation <span class='highlight-word'>forced</span> Nasser to seek modern weaponry, leading him to sign the Czech Arms Deal in September 1955, which brought Soviet weapons into the region and dramatically escalated regional tensions.<br><br><strong>Point 2:</strong> The Israeli attack on Sinai in October 1956 as part of the Suez Crisis was also important because it confirmed Arab suspicions that Israel was an imperialist tool of Western powers (colluding with Britain and France). Although Israel withdrew under US pressure, the conflict intensified Arab hostility toward Israel and cemented Nasser's role as a Pan-Arab hero, cementing a state of permanent cold war and drawing the Soviet Union deeper into the region as Egypt's protector."
         },
         {
           id: "mock_paper_1_q3_b",
-          title: "The importance of the PFLP airplane hijacks (1970) for international attitudes towards the Palestine issue.",
-          clue: "Detail how the dramatic hijackings at Dawson's Field brought global attention to the unresolved Palestinian refugee problem. Then explain how the violence and destruction of civilian aircraft shocked Western nations, associating the Palestinian cause with global terrorism.",
-          model: "<strong>Point 1:</strong> The PFLP hijacks in September 1970 (specifically the Dawson's Field hijackings) were important because they forced the international community to recognize the Palestinian issue. Prior to this, the world viewed the conflict primarily as an Arab-Israeli state dispute and Palestinians merely as refugees. By hijacking international airliners, the PFLP successfully captured global media attention, forcing Western public opinion to acknowledge the existence and demands of the Palestinian national movement.<br><br><strong>Point 2:</strong> However, the hijacks were also important because they turned international attitudes highly negative, linking the Palestinian cause with international terrorism. The sight of Western civilian airliners being blown up on television shocked the public. Consequently, Western governments hardened their security policies, and the PLO was increasingly viewed as a lawless terrorist network, which alienated potential diplomatic allies in Europe and North America."
+          title: "The importance of Black September and the Munich Olympics for international attitudes towards the Palestine issue.",
+          clue: "Explain how the Munich Olympics hostage crisis in 1972 forced the Palestinian issue onto the global stage, but also how it associated the Palestinian cause with global terrorism.",
+          model: "<strong>Point 1:</strong> Black September and the Munich Olympic hostage crisis in 1972 were important because they forced the Palestinian issue onto the global stage. By taking Israeli athletes hostage on live television watched by 900 million viewers, the Black September group succeeded in drawing massive international attention to the unresolved Palestinian refugee crisis.<br><br><strong>Point 2:</strong> However, they were also highly important because they deteriorated international attitudes by associating the Palestinian struggle with terrorism. The murder of the 11 hostages shocked the world, prompting Western governments to increase security cooperation and view the PLO as a terrorist organization, which severely damaged its diplomatic credibility."
         },
         {
           id: "mock_paper_1_q3_c",
-          title: "The importance of the First Palestinian Intifada (1987–93) for attempts to find a solution in the Middle East.",
-          clue: "Explain how the grassroots nature of the uprising forced Israel to realize that military force alone could not end the occupation. Then explain how it pressured both Israel and Yasser Arafat to make historic compromises, leading directly to the secret Oslo negotiations.",
-          model: "<strong>Point 1:</strong> The First Intifada was important because it shattered the status quo and forced the Israeli government to accept that the occupation of the West Bank and Gaza was unsustainable. The sight of stones being thrown at tanks attracted global sympathy for Palestinians and damaged Israel's international reputation. This realization <span class='highlight-word'>forced</span> Prime Minister Yitzhak Rabin and Israeli leaders to accept that a political, rather than purely military, solution was necessary to end the unrest.<br><br><strong>Point 2:</strong> It was also important because it pressured the PLO leadership in Tunis to make diplomatic concessions. The rise of local grassroots leaders and Islamist groups like Hamas threatened the PLO's influence. To maintain leadership, Arafat renounced terrorism in 1988 and declared readiness to negotiate, which directly <span class='highlight-word'>enabled</span> the secret negotiations that culminated in the 1993 Oslo Accords."
+          title: "The importance of US President Carter and Camp David (1978) for diplomatic negotiations.",
+          clue: "Explain how Carter's personal mediation broke a decades-long deadlock, leading to the 1979 Egypt-Israel Peace Treaty and establishing the 'Land for Peace' formula as a blueprint.",
+          model: "<strong>Point 1:</strong> President Carter's personal mediation at Camp David in 1978 was important because it succeeded in breaking a decades-long diplomatic deadlock. By inviting Sadat and Begin to a secluded retreat, Carter used intense personal diplomacy to broker the first peace agreement between Israel and an Arab country (Egypt).<br><br><strong>Point 2:</strong> It was also important because it created the 'Camp David Accords' framework, which returned the Sinai Peninsula to Egypt in exchange for diplomatic recognition and security guarantees. This established the 'Land for Peace' formula as the successful blueprint for all future bilateral negotiations in the region."
         }
       ]
     }
   },
   {
     id: "mock_paper_2",
-    title: "Mock Exam Paper 2 (Suez & Turning Points)",
+    title: "Mock Exam Paper 2 (Stagnation & Diplomatic Breakthrough Focus)",
     year: "Mock",
+    highProbability: true,
     q1: {
       type: "consequence_split_4",
       question: "Section A: Consequence sub-questions",
       subQuestions: [
         {
           id: "mock_paper_2_q1_a",
-          title: "Q1(a): Explain one consequence of the use of the ‘oil weapon’ (1973–74). (4 marks)",
-          clue: "Think about how the OPEC embargo on Western supporters of Israel caused energy shortages and inflation (stagflation) in the West, which forced the US to undertake diplomatic mediation (shuttle diplomacy) to resolve the Middle East conflict.",
-          model: "One consequence was a major economic crisis in the West, as the OPEC oil embargo caused fuel prices to quadruple, leading to severe energy shortages, inflation, and rationing in the USA and Europe. This economic pain <span class='highlight-word'>forced</span> Western nations to re-evaluate their uncritical support for Israel and prompted US Secretary of State Henry Kissinger to initiate his 'shuttle diplomacy' to broker disengagement agreements between Israel, Egypt, and Syria to secure a stable oil supply."
+          title: "Q1(a): Explain one consequence of the formation of the UAR in 1958. (4 marks)",
+          clue: "Think about how the merger of Egypt and Syria under Nasser's leadership alarmed Israel and pro-Western monarchies like Jordan and Iraq.",
+          model: "One consequence was increased insecurity for pro-Western Arab monarchies and Israel. The union of Egypt and Syria under Nasser's leadership alarmed Jordan and Iraq, who responded by forming their own short-lived 'Arab Federation'. Additionally, when a nationalist coup overthrew the Iraqi monarchy in July 1958, King Hussein of Jordan felt <span class='highlight-word'>forced</span> to request British troops to secure his throne."
         },
         {
           id: "mock_paper_2_q1_b",
-          title: "Q1(b): Explain one consequence of the expulsion of the PLO from Jordan in 1970. (4 marks)",
-          clue: "Think about how the PLO relocation to southern Lebanon created a new base ('Fatahland') for launching cross-border attacks into northern Israel, which ultimately led to the 1982 Israeli invasion.",
-          model: "One consequence was the relocation of the PLO's leadership and military base to Lebanon. After their defeat in the Black September conflict of 1970, Yasser Arafat and thousands of guerrilla fighters moved into southern Lebanon. Consequently, they established a 'state within a state' (known as Fatahland) from which they launched rocket attacks and cross-border raids into northern Israel, directly destabilising Lebanon and leading to Israel's 1982 invasion."
+          title: "Q1(b): Explain one consequence of the expulsion of the PLO from Jordan (1970). (4 marks)",
+          clue: "Think about how the PLO relocation to southern Lebanon created a new base ('Fatahland') for launching cross-border attacks into northern Israel.",
+          model: "One consequence was the relocation of the PLO's leadership and armed fighters to southern Lebanon. Consequently, they established a 'state within a state' ('Fatahland') from which they launched rocket attacks and cross-border raids into northern Israel, which severely destabilised Lebanon and led to the 1982 Israeli invasion."
         }
       ]
     },
     q2: {
       type: "narrative",
-      question: "Write a narrative account analysing the key events of 1955–56 that led to the Suez Crisis. (8 marks)",
-      stimulus: ["The Czech Arms Deal (1955)", "Nasser’s nationalisation of the Suez Canal (1956)"],
-      clue: "Start with the border tensions and the February 1955 Gaza raid, which humiliated Egypt. Explain how this led to the Czech Arms Deal in 1955 to buy Soviet weapons. Link this to the US withdrawing funding for the Aswan Dam in July 1956. Describe how Nasser retaliated by nationalising the Suez Canal, which angered Britain and France and led to the secret Protocol of Sèvres collusion with Israel.",
-      model: "In early 1955, relations between Egypt and Israel deteriorated due to cross-border Fedayeen raids and a devastating Israeli reprisal in Gaza. <span class='highlight-link'>In response to this vulnerability</span>, Egyptian President Nasser signed the Czech Arms Deal in September 1955, importing modern Soviet weapons. <span class='highlight-link'>This deal alarmed the West</span>, who feared the spread of Soviet influence in the Middle East. <span class='highlight-link'>Consequently</span>, in July 1956, the USA and Britain withdrew their financial support for Nasser's flagship project, the Aswan High Dam. <span class='highlight-link'>Furious at this Western pressure</span>, Nasser retaliated just days later by nationalising the Suez Canal, declaring that its toll revenues would fund the dam instead. <span class='highlight-link'>This action directly threatened</span> British and French commercial interests and prestige. <span class='highlight-link'>As a result</span>, Britain and France secretly colluded with Israel at the Protocol of Sèvres in October 1956, planning a joint military action. This agreement <span class='highlight-word'>provoked</span> Israel to invade the Sinai Peninsula, creating the pretext for Anglo-French troops to land at Port Said, which triggered the Suez Crisis."
+      question: "Write a narrative account analysing diplomatic negotiations between Israel and Egypt in the years 1973–79. (8 marks)",
+      stimulus: ["'shuttle diplomacy'", "Sadat's visit to Israel (1977)"],
+      clue: "Start with the aftermath of the Yom Kippur War. Detail Kissinger's shuttle diplomacy and disengagement agreements. Conclude with Sadat's visit, Camp David (1978), and the 1979 treaty.",
+      model: "In the aftermath of the 1973 Yom Kippur War, both Egypt and Israel recognized that military force alone could not guarantee security. <span class='highlight-link'>This deadlock forced</span> the USA to intervene, with Secretary of State Henry Kissinger conducting 'shuttle diplomacy' between Tel Aviv and Cairo. <span class='highlight-link'>Kissinger's mediation resulted in</span> the Sinai I and Sinai II disengagement agreements, separating the armies and reopening the Suez Canal in 1975. <span class='highlight-link'>Despite these steps</span>, formal peace negotiations remained stalled. To break the stalemate, Egyptian President Anwar Sadat made his historic visit to Jerusalem in November 1977, addressing the Knesset. <span class='highlight-link'>Sadat's visit broke the diplomatic taboo</span> and proved to the Israeli public that Egypt sincerely desired peace. <span class='highlight-link'>This breakthrough enabled</span> US President Jimmy Carter to invite both sides to Camp David in 1978, which ultimately led to the signing of the historic Egypt-Israel Peace Treaty in March 1979."
     },
     q3: {
       type: "importance_choice",
@@ -1894,53 +1896,54 @@ const PAST_PAPERS_DATA = [
       choices: [
         {
           id: "mock_paper_2_q3_a",
-          title: "The importance of the Law of Return (1950) for the consolidation of the state of Israel.",
-          clue: "Detail how the law allowed hundreds of thousands of Jews from postwar Europe and Arab countries to settle in Israel, rapidly growing the population. Explain how this demographic growth provided essential manpower for both the economy and the reserves of the IDF.",
-          model: "<strong>Point 1:</strong> The Law of Return was important because it triggered a massive demographic expansion that was critical for the survival of the new state. By granting every Jew in the world the legal right to immigrate and receive immediate citizenship, it brought in over 680,000 immigrants in its first three years alone, including Holocaust survivors and Jewish refugees expelled from Arab nations, doubling the state's population and establishing a clear Jewish majority.<br><br><strong>Point 2:</strong> It was also important because this population growth consolidated Israel's economic and military strength. The new citizens provided the vital manpower needed to build infrastructure, establish new agricultural settlements, and build a strong workforce. Furthermore, it expanded the conscription pool for the newly formed Israeli Defence Forces (IDF), ensuring Israel had enough active soldiers and reservists to defend its long, vulnerable borders against future Arab invasions."
+          title: "The importance of the refugee status of Palestinian Arabs for the aftermath of the 1948–49 war.",
+          clue: "Explain how the permanent displacement of 700,000 Palestinians created an enduring humanitarian crisis in neighboring states and catalyzed the rise of independent guerrilla resistance.",
+          model: "<strong>Point 1:</strong> The refugee status of over 700,000 Palestinians was important because it created a permanent humanitarian and political crisis in neighboring Arab states. Fleeing into Gaza, the West Bank, Jordan, and Lebanon, they were housed in squalid, temporary camps under UNRWA care, serving as a constant source of regional instability and anti-Israel sentiment.<br><br><strong>Point 2:</strong> It was also important because it hardened Palestinian national identity and opposition to Israel. Denied the right of return by Israel and left stateless, the refugees formed the core of the Palestinian resistance movement, leading directly to the creation of independent guerrilla groups like Fatah to fight for liberation."
         },
         {
           id: "mock_paper_2_q3_b",
-          title: "The importance of the Yom Kippur War (1973) for US involvement in the Middle East.",
-          clue: "Explain how the threat of a Soviet intervention to save the Egyptian Third Army forced the US to intercede, and how the war convinced the US that a diplomatic resolution was needed to protect oil supplies, leading to Henry Kissinger's shuttle diplomacy.",
-          model: "<strong>Point 1:</strong> The Yom Kippur War was important because it brought the United States to a high state of military alert to counter Soviet influence, deepening superpower involvement. When the Soviet Union threatened to deploy troops to save the surrounded Egyptian Third Army, the US raised its nuclear alert level (DEFCON 3). This dangerous escalation <span class='highlight-word'>forced</span> the US to actively coordinate a ceasefire under UN Resolution 338, establishing Washington as a central mediator in the conflict.<br><br><strong>Point 2:</strong> It was also important because the OPEC oil embargo convinced the US that regional instability posed a direct threat to its economy. To secure oil supplies and push the Soviet Union out of the region, US Secretary of State Henry Kissinger launched 'shuttle diplomacy' to negotiate disengagement treaties. This diplomatic effort successfully pulled Egypt out of the Soviet sphere and into the American orbit, laying the groundwork for the US-led Camp David peace process."
+          title: "The importance of Syria's support for Fatah for escalating tension between Israel, Syria and Jordan.",
+          clue: "Explain how Syrian backing enabled Fatah raids that provoked IDF reprisal actions, and how this ultimately dragged Jordan into the defense pact with Egypt.",
+          model: "<strong>Point 1:</strong> Syria's active backing of Fatah from 1964 was important because it enabled Palestinians to launch guerrilla raids directly into Israel from Syrian and Jordanian territory. This violated Israel's borders and led to a cycle of violent reprisal raids by the IDF, escalating military tensions.<br><br><strong>Point 2:</strong> It was also important because it dragged Jordan into the conflict. Because Fatah fighters used the West Bank (controlled by Jordan) as a base, Israel launched the devastating Samu raid in 1966. This humiliation <span class='highlight-word'>forced</span> King Hussein of Jordan to sign a defense pact with Egypt, consolidating the Arab alliance that fought Israel in 1967."
         },
         {
           id: "mock_paper_2_q3_c",
-          title: "The importance of the Israeli invasion of Lebanon (1982) for international attitudes towards Israel.",
-          clue: "Explain how the heavy bombardment of Beirut and the subsequent Sabra and Shatila massacres (which the Kahan Commission found Ariel Sharon indirectly responsible for) damaged Israel's reputation and led to widespread international condemnation.",
-          model: "<strong>Point 1:</strong> The 1982 invasion was important because the heavy civilian casualties in Beirut severely damaged Israel's international reputation. Broadcasts of Israeli jets bombarding residential areas in West Beirut alienated public opinion in Western nations, including the USA. This marked a turning point where Israel was increasingly viewed not as a vulnerable nation defending itself, but as an aggressive military occupier, leading to criticism from close allies.<br><br><strong>Point 2:</strong> It was also important because the Sabra and Shatila massacres in September 1982 provoked global outrage. While Lebanese Christian militias carried out the killings of hundreds of Palestinian refugees, the IDF had secured the area. The subsequent Kahan Commission investigation in Israel found Defence Minister Ariel Sharon indirectly responsible, forcing his resignation. This confirmed international criticisms of Israel's conduct, leading to a rise in global sympathy for the Palestinian cause."
+          title: "The importance of the First Palestinian Intifada (1987-93) for the Palestinian issue.",
+          clue: "Explain how the grassroots civil uprising damaged Israel's reputation and pressured both Israel and the PLO to negotiate the Oslo Accords.",
+          model: "<strong>Point 1:</strong> The First Intifada (1987-93) was highly important because it shifted the focus of the Palestinian struggle back to the occupied territories. The grassroots, civil uprising of stone-throwing youth against armed IDF soldiers captured global media attention, turning international public opinion against the Israeli occupation.<br><br><strong>Point 2:</strong> It was also important because it forced both Israel and the PLO to compromise. The rise of local leaders and Hamas threatened Yasser Arafat's authority, while Prime Yitzhak Rabin realized that military force could not end the uprising. This mutual pressure directly <span class='highlight-word'>enabled</span> the secret negotiations that led to the 1993 Oslo Accords."
         }
       ]
     }
   },
   {
     id: "mock_paper_3",
-    title: "Mock Exam Paper 3 (Six Day War & Border Tensions)",
+    title: "Mock Exam Paper 3 (The Wars & Superpower Influence Focus)",
     year: "Mock",
+    highProbability: true,
     q1: {
       type: "consequence_split_4",
       question: "Section A: Consequence sub-questions",
       subQuestions: [
         {
           id: "mock_paper_3_q1_a",
-          title: "Q1(a): Explain one consequence of the Sabra and Shatila massacres (1982). (4 marks)",
-          clue: "Think about how the massacres by Christian Phalangist militias led to massive domestic protests in Israel (e.g. Peace Now) and the establishment of the Kahan Commission, which forced Defence Minister Ariel Sharon to resign.",
-          model: "One consequence was a political crisis in Israel and the resignation of Defence Minister Ariel Sharon. The massacre of hundreds of Palestinian refugees by Lebanese Christian militias under IDF supervision provoked massive protests in Tel Aviv. The government-appointed Kahan Commission found Sharon indirectly responsible for failing to anticipate the violence, which <span class='highlight-word'>forced</span> him to resign, severely damaging the political credibility of Begin's government."
+          title: "Q1(a): Explain one consequence of Israel's raid on Samu. (4 marks)",
+          clue: "Think about the severe destabilization of Jordan and King Hussein signing a defense pact with Egypt in May 1967.",
+          model: "One consequence was the severe destabilisation of Jordan and its military alignment with Egypt. The raid, which destroyed dozens of houses and killed Jordanian soldiers, provoked massive riots among West Bank Palestinians. To restore his credibility, King Hussein was <span class='highlight-word'>forced</span> to sign a mutual defence pact with Egypt in May 1967, drawing Jordan into the Six Day War."
         },
         {
           id: "mock_paper_3_q1_b",
-          title: "Q1(b): Explain one consequence of the Israeli raid on Samu (1966). (4 marks)",
-          clue: "Think about how the large-scale military reprisal in the West Bank humiliated King Hussein of Jordan and enraged the Palestinian population, driving Jordan to sign a mutual defense pact with Egypt in May 1967.",
-          model: "One consequence was the severe destabilisation of Jordan and its realignment with Egypt. The raid, which destroyed dozens of houses and killed Jordanian soldiers, provoked massive riots among West Bank Palestinians who accused King Hussein of failing to protect them. To restore his domestic credibility and defend against Israel, Hussein was <span class='highlight-word'>forced</span> to sign a mutual defence pact with Egypt's President Nasser in May 1967, paving the way for the Six Day War."
+          title: "Q1(b): Explain one consequence of US involvement in the Gulf War (1991). (4 marks)",
+          clue: "Think about Yasser Arafat supporting Saddam Hussein, which led to expulsion of Palestinians and financial bankruptcy of the PLO.",
+          model: "One consequence was the diplomatic isolation and near-bankruptcy of the PLO. Because Yasser Arafat supported Saddam Hussein's invasion of Kuwait, wealthy Gulf states cut subsidies and expelled 300,000 Palestinian workers from Kuwait. This loss of backing weakened the PLO, which <span class='highlight-word'>forced</span> Arafat to accept the US-led peace negotiations that led to the Oslo Accords."
         }
       ]
     },
     q2: {
       type: "narrative",
-      question: "Write a narrative account analysing the key events of 1964–67 that led to the outbreak of the Six Day War. (8 marks)",
-      stimulus: ["Syrian support for Fatah", "Soviet misinformation to Egypt (May 1967)"],
-      clue: "Start with the formation of the PLO (1964) and Fatah launching raids from Syria. Explain how Syrian border clashes (e.g. April 1967 air battle) raised tensions. Link this to Soviet intelligence falsely informing Egypt that Israel was massing troops on the Syrian border. Describe Nasser's responses: massing troops in Sinai, expelling UN peacekeepers, and closing the Straits of Tiran. Conclude with Israel launching its pre-emptive air strike on June 5, 1967.",
-      model: "In 1964, the PLO was founded, and Syria began providing active financial and military support to the Fatah guerrilla group, enabling them to launch cross-border raids into Israel. <span class='highlight-link'>These raids provoked</span> heavy Israeli military retaliation, culminating in an April 1967 air battle where Israeli jets shot down six Syrian fighter planes. <span class='highlight-link'>To prevent an Israeli invasion of Syria</span>, the Soviet Union sent false intelligence to Egypt in May 1967 claiming that Israel was massing ten brigades on the Syrian border. <span class='highlight-link'>Believing this misinformation</span>, President Nasser felt <span class='highlight-word'>forced</span> to act to protect his ally. He moved Egyptian troops into the Sinai Peninsula, expelled the UN Emergency Force (UNEF) peacekeepers, and closed the Straits of Tiran to Israeli shipping. <span class='highlight-link'>This blockade of the Gulf of Aqaba</span> was viewed by Israel as a direct declaration of war. <span class='highlight-link'>With diplomatic solutions failing</span>, Israel launched a pre-emptive air strike on June 5, 1967, destroying the Egyptian air force on the ground and initiating the Six Day War."
+      question: "Write a narrative account analysing key events of the Yom Kippur War (1973) and its aftermath. (8 marks)",
+      stimulus: ["occupied territories", "the USA and the USSR"],
+      clue: "Start with the surprise joint Egyptian-Syrian attack in October 1973. Detail US resupply efforts and Soviet support, leading to superpower tension. Conclude with UN Resolution 338, the OPEC oil embargo, and Kissinger's shuttle diplomacy.",
+      model: "In October 1973, Egypt and Syria launched a surprise joint attack on Israel to reclaim the Sinai and Golan Heights occupied since 1967. <span class='highlight-link'>The initial Arab breakthrough provoked</span> a critical military situation for Israel, prompting massive arms airlifts by the USA to resupply Israel, while the USSR airlifted supplies to Arab forces. <span class='highlight-link'>With US military aid</span>, Israel launched a counter-offensive, crossing the Suez Canal and trapping the Egyptian Third Army. <span class='highlight-link'>This escalation brought</span> the USA and USSR to the brink of direct conflict, as the Soviets threatened unilateral intervention, prompting the US to raise its nuclear alert level. <span class='highlight-link'>To avoid war</span>, the superpowers negotiated UN Resolution 338 to enforce a ceasefire. <span class='highlight-link'>The aftermath of the war resulted in</span> OPEC quadrupling oil prices to punish the West, which <span class='highlight-word'>forced</span> US Secretary of State Henry Kissinger to begin 'shuttle diplomacy' to stabilize the region."
     },
     q3: {
       type: "importance_choice",
@@ -1948,53 +1951,54 @@ const PAST_PAPERS_DATA = [
       choices: [
         {
           id: "mock_paper_3_q3_a",
-          title: "The importance of the Arab-Israeli War (1948–49) for the Palestinian Arabs.",
-          clue: "Explain how the war resulted in the Nakba—the flight and expulsion of 700,000 Palestinians who became stateless refugees. Also explain how the division of Palestine (Israel taking 78%, Jordan annexing the West Bank, Egypt occupying Gaza) prevented the creation of a Palestinian state.",
-          model: "<strong>Point 1:</strong> The war was important because it caused the Nakba ('Catastrophe'), resulting in the permanent displacement of over 700,000 Palestinian Arabs. Fleeing the fighting or expelled by Jewish forces, these Palestinians became stateless refugees, scattered in squalid camps in the Gaza Strip, West Bank, Jordan, Syria, and Lebanon. Denied the right of return by Israel, they were left dependent on UN relief (UNRWA), cementing a refugee crisis that remains unresolved.<br><br><strong>Point 2:</strong> It was also important because the territorial outcome of the war prevented the creation of a Palestinian state. Instead of the partition plan's Arab state, Israel captured 78% of the land. The remaining fragments were absorbed by neighbouring Arab nations: Jordan annexed the West Bank and East Jerusalem, while Egypt occupied the Gaza Strip. Consequently, the Palestinian people were left under foreign administration, without a unified homeland or self-determination."
+          title: "The importance of Nasser and Egypt's leadership of the Arab world for increased tension, 1955-63.",
+          clue: "Explain how Pan-Arab nationalism united public opinion against Israel and how alignment with the USSR escalated the Cold War proxy conflict in the region.",
+          model: "<strong>Point 1:</strong> Nasser's promotion of Pan-Arabism was important because it challenged Western influence and united Arab public opinion against Israel. His nationalisation of the Suez Canal in 1956 and survival of the subsequent invasion made him a Pan-Arab hero, escalating regional military alignment.<br><br><strong>Point 2:</strong> It was also important because it brought the Cold War directly into the Middle East. By signing the Czech Arms Deal in 1955 and accepting Soviet aid for the Aswan Dam, Nasser aligned Egypt with the USSR, which alarmed Israel and the US, turning regional conflicts into dangerous superpower proxy struggles."
         },
         {
           id: "mock_paper_3_q3_b",
-          title: "The importance of the occupied territories for Arab-Israeli relations after the Six Day War (1967).",
-          clue: "Detail how Israel capturing the Sinai, West Bank, Gaza, and Golan Heights altered the diplomatic dynamic, prompting the 'Three Nos' at Khartoum. Then explain how it led to UN Resolution 242 and the 'Land for Peace' formula.",
-          model: "<strong>Point 1:</strong> The occupied territories were important because they hardened Arab diplomatic resistance, leading to a long-term diplomatic deadlock. By seizing the Sinai Peninsula, Golan Heights, West Bank, and Gaza Strip, Israel humiliated the Arab states. In response, the Arab League summit in Khartoum issued the 'Three Nos' (no peace, no negotiation, no recognition of Israel), demonstrating that the occupation initially blocked any possibility of normalising relations.<br><br><strong>Point 2:</strong> It was also important because the territories created the basis for all future negotiations through the 'Land for Peace' formula. UN Resolution 242 was passed in November 1967, calling for Israeli withdrawal from territories occupied in the war in exchange for peace and recognition. This formula became the central framework for future treaties, such as the 1979 peace treaty with Egypt (which returned the Sinai) and the 1993 Oslo Accords."
+          title: "The importance of the actions of the USSR, Nasser and the USA in the period leading to war for the outbreak of the Six Day War (1967).",
+          clue: "Explain how Soviet false intelligence triggered Nasser to mobilize and blockade the Straits of Tiran, and how the failure of US diplomacy prompted a pre-emptive Israeli air strike.",
+          model: "<strong>Point 1:</strong> The actions of the USSR in May 1967 were important because they triggered the crisis by falsely informing Egypt that Israel was massing troops on the Syrian border, which prompted Nasser to mobilize 100,000 troops, expel UN peacekeepers, and blockade the Straits of Tiran.<br><br><strong>Point 2:</strong> The actions of Nasser and the USA were also important because they made war inevitable. Nasser's blockade of the Straits of Tiran was seen by Israel as a declaration of war, while the failure of the USA to resolve the blockade diplomatically gave Israel the confidence to launch a pre-emptive air strike on June 5, 1967."
         },
         {
           id: "mock_paper_3_q3_c",
-          title: "The importance of the end of the Cold War for attempts to find a solution in the Middle East.",
-          clue: "Explain how the collapse of the Soviet Union cut off funding and weapons for Syria and the PLO, forcing them to compromise. Also explain how it left the US as the sole superpower, allowing it to pressure both Israel and Arab states to attend the Madrid Peace Conference in 1991.",
-          model: "<strong>Point 1:</strong> The end of the Cold War was important because the collapse of the Soviet Union in 1991 severely weakened the PLO and Syria. For decades, the USSR had provided them with military hardware, financial aid, and diplomatic backing at the UN. Without this superpower support, Yasser Arafat and the PLO were politically isolated and financially bankrupt, which <span class='highlight-word'>forced</span> them to moderate their demands and seek a negotiated settlement with Israel.<br><br><strong>Point 2:</strong> It was also important because it left the United States as the sole global superpower, allowing Washington to exert unprecedented diplomatic pressure. The US could pressure both Israel (by threatening to withhold loan guarantees) and Arab states to sit down together. This direct influence <span class='highlight-word'>enabled</span> the landmark Madrid Peace Conference in October 1991, which brought Israeli and Arab delegations face-to-face for the first time, starting the peace process that led to the Oslo Accords."
+          title: "The importance of Arafat, Rabin and the Oslo Accords (1993) for attempts at a solution.",
+          clue: "Explain how the mutual recognition ended decades of rejectionism, and how the creation of the PNA established a framework for Palestinian self-government.",
+          model: "<strong>Point 1:</strong> The Oslo Accords signed by Arafat and Rabin in 1993 were important because they achieved historic mutual recognition. The PLO recognized Israel's right to exist in peace, and Israel recognized the PLO as the legitimate representative of the Palestinian people, ending decades of total rejectionism.<br><br><strong>Point 2:</strong> They were also important because they created the framework for Palestinian self-government. The Accords established the Palestinian National Authority (PNA) to administer civil and security affairs in Gaza and Jericho, moving the peace process from a theoretical dispute to practical self-rule."
         }
       ]
     }
   },
   {
     id: "mock_paper_4",
-    title: "Mock Exam Paper 4 (The Oslo Focus)",
+    title: "Mock Exam Paper 4 (Israel's Creation & Later Conflicts Focus)",
     year: "Mock",
+    highProbability: true,
     q1: {
       type: "consequence_split_4",
       question: "Section A: Consequence sub-questions",
       subQuestions: [
         {
           id: "mock_paper_4_q1_a",
-          title: "Q1(a): Explain one consequence of the formation of the United Arab Republic (UAR) in 1958. (4 marks)",
-          clue: "Think about how the merger of Egypt and Syria under Nasser's leadership alarmed Israel and pro-Western monarchies like Iraq and Jordan, leading Jordan and Iraq to form their own short-lived federation and driving Jordan to seek US/British support.",
-          model: "One consequence was increased insecurity for pro-Western Arab regimes and Israel, as they feared the spread of radical Pan-Arabism and Soviet influence. In response to this threat, Jordan and Iraq quickly formed their own short-lived 'Arab Federation' in February 1958 to counter Nasser's influence. Furthermore, when a bloody nationalist coup overthrew the Iraqi monarchy in July 1958, King Hussein of Jordan felt <span class='highlight-word'>forced</span> to request British troops to secure his throne."
+          title: "Q1(a): Explain one consequence of Kissinger, 'shuttle diplomacy'. (4 marks)",
+          clue: "Think about how Kissinger brokered disengagement agreements that separated hostile forces and built trust that paved the way for Camp David.",
+          model: "One consequence was the separation of hostile Israeli, Egyptian, and Syrian armies following the Yom Kippur War. Kissinger's flights between capitals successfully brokered the Sinai I, Sinai II, and Golan disengagement agreements, which reopened the Suez Canal in 1975 and built the bilateral trust that laid the groundwork for the Camp David Accords."
         },
         {
           id: "mock_paper_4_q1_b",
-          title: "Q1(b): Explain one consequence of the Gulf War (1991) for the PLO. (4 marks)",
-          clue: "Think about how Yasser Arafat's public support for Saddam Hussein's invasion of Kuwait alienated wealthy Gulf Arab backers, causing them to expel over 300,000 Palestinians and cut off funding, which bankrupt the PLO and forced Arafat to accept the Oslo peace talks.",
-          model: "One consequence was the near-total financial bankruptcy and diplomatic isolation of the PLO. Because Yasser Arafat supported Saddam Hussein's invasion of Kuwait, wealthy Gulf Arab states cut off their vital financial subsidies and expelled over 300,000 Palestinian workers from Kuwait. This sudden loss of funding and political support severely weakened Arafat, which <span class='highlight-word'>forced</span> him to make major diplomatic compromises and participate in the US-led peace negotiations that led to the 1993 Oslo Accords."
+          title: "Q1(b): Explain one consequence of the end of the Cold War. (4 marks)",
+          clue: "Think about the collapse of the Soviet Union cutting off backing for the PLO, which forced Arafat to compromise and enter negotiations.",
+          model: "One consequence was the diplomatic isolation and loss of superpower backing for the PLO and Syria. Without Soviet military and financial aid, Yasser Arafat was <span class='highlight-word'>forced</span> to moderate his stance and participate in the US-led peace negotiations, leading to the Madrid Conference in 1991 and the Oslo Accords in 1993."
         }
       ]
     },
     q2: {
       type: "narrative",
-      question: "Write a narrative account analysing the key developments in the negotiations between Israel and the Palestinians in the years 1993–95. (8 marks)",
-      stimulus: ["Yasser Arafat", "Oslo II (1995)"],
-      clue: "Start with the secret back-channel talks in Oslo in early 1993. Explain how these talks built trust between the PLO and Yitzhak Rabin's government, leading to Oslo I and the famous handshake in September 1993. Describe the creation of the PNA and its takeover of Gaza and Jericho in 1994. Link this to the signing of Oslo II in September 1995, which divided the West Bank into Areas A, B, and C, and explain how this progress was halted by the assassination of Rabin in November 1995.",
-      model: "In early 1993, official peace talks were deadlocked, prompting Israeli academics and PLO officials to open secret, back-channel negotiations in Oslo, Norway. <span class='highlight-link'>These meetings built mutual trust</span>, which <span class='highlight-word'>enabled</span> the signing of the Oslo I Accord in September 1993, marked by the historic handshake between Yasser Arafat and Yitzhak Rabin on the White House lawn. <span class='highlight-link'>Under Oslo I</span>, the PLO recognized Israel's right to exist, while Israel recognized the PLO as the representative of the Palestinian people. <span class='highlight-link'>This agreement led to the creation</span> of the Palestinian National Authority (PNA) in 1994 to provide limited self-rule in Gaza and Jericho. <span class='highlight-link'>Following this transition</span>, negotiations continued and culminated in the signing of the Oslo II Accord in September 1995. This agreement <span class='highlight-word'>resulted in</span> dividing the West Bank into Areas A (full Palestinian control), B (Palestinian civil and Israeli security control), and C (full Israeli control). <span class='highlight-link'>However, this progress provoked</span> a fierce backlash from extremists on both sides, culminating in the assassination of Yitzhak Rabin by a Jewish extremist in November 1995, which stalled further developments."
+      question: "Write a narrative account analysing key events leading to the end of the British Mandate, partition and the creation of Israel. (8 marks)",
+      stimulus: ["bombing of the King David Hotel (1946)", "UN Resolution 181"],
+      clue: "Start with the post-WWII Zionist insurgency. Detail the King David Hotel bombing. Describe UN Resolution 181, the outbreak of civil war, and Ben-Gurion declaring the state of Israel in May 1948.",
+      model: "Following WWII, Jewish paramilitary groups launched an insurgency against British rule to force the creation of a Jewish state. <span class='highlight-link'>This campaign culminated</span> in July 1946 with the bombing of the King David Hotel, which killed 91 people and shattered British political resolve. <span class='highlight-link'>Faced with mounting casualties</span>, the British government decided to hand the Palestine Mandate to the United Nations in 1947. <span class='highlight-link'>This resulted in</span> the UN passing Resolution 181 in November 1947, recommending the partition of Palestine into separate Jewish and Arab states. <span class='highlight-link'>Although accepted by Zionist leaders</span>, the plan was rejected by the Arab states, which immediately <span class='highlight-word'>provoked</span> a violent civil war. <span class='highlight-link'>As the British forces completed their withdrawal</span> in May 1948, David Ben-Gurion declared the official creation of the State of Israel, which instantly <span class='highlight-word'>triggered</span> an invasion by five neighbouring Arab armies the following day."
     },
     q3: {
       type: "importance_choice",
@@ -2002,21 +2006,21 @@ const PAST_PAPERS_DATA = [
       choices: [
         {
           id: "mock_paper_4_q3_a",
-          title: "The importance of the Suez Crisis (1956) for Israel's security.",
-          clue: "Explain how the crisis secured Israel's southern border by placing UN peacekeepers (UNEF) in Sinai, which stopped Fedayeen raids and opened the Straits of Tiran to Israeli shipping. But also note how it increased long-term Arab hostility by portraying Israel as a Western puppet.",
-          model: "<strong>Point 1:</strong> The Suez Crisis was important because it secured Israel's immediate southern border and shipping access. As part of the peace settlement, UN peacekeepers (UNEF) were stationed in the Sinai Peninsula and at Sharm el-Sheikh. This UNEF presence stopped the cross-border Fedayeen raids from Gaza that had plagued Israel since 1949 and ensured the Straits of Tiran remained open, <span class='highlight-word'>enabling</span> Israeli trade through the port of Eilat.<br><br><strong>Point 2:</strong> However, it was also important because it damaged Israel's long-term security by deepening Arab hostility. By colluding with Britain and France, Israel was seen by the Arab world as an aggressive Western puppet. This unified Arab opinion against Israel and encouraged Nasser to build up Egypt's military strength (via Soviet aid) for a future conflict, leading directly to the escalating tensions that caused the 1967 Six Day War."
+          title: "The importance of the creation of the Israeli Defence Forces and the Law of Return for the aftermath of the 1948–49 war.",
+          clue: "Explain how the IDF consolidated militias under a single command to secure the borders, and how the Law of Return doubled the population for economic and military defense.",
+          model: "<strong>Point 1:</strong> The creation of the IDF in 1948 was important because it consolidated separate Jewish militias (like Haganah and Irgun) under a single national command. This prevented internal political divisions and professionalized the army, ensuring Israel's military survival during the war.<br><br><strong>Point 2:</strong> The Law of Return (1950) was important because it sparked massive demographic expansion by giving any Jew in the world the right to gain Israeli citizenship. This influx of immigrants provided the essential manpower needed to rebuild the economy and populate border areas to defend the state."
         },
         {
           id: "mock_paper_4_q3_b",
-          title: "The importance of UN Resolution 242 (1967) for relations between Israel and the Arab world after the Six Day War.",
-          clue: "Explain the 'Land for Peace' formula, and how the ambiguous phrasing failed to secure peace, leading the Arab League to respond with the 'Three Nos' at Khartoum.",
-          model: "<strong>Point 1:</strong> Resolution 242 was important because it established the 'Land for Peace' formula, which became the legal basis for all future peace negotiations. It called for the withdrawal of Israeli forces from occupied territories in exchange for the termination of belligerency and recognition of every state's sovereignty. This framework eventually <span class='highlight-word'>enabled</span> the 1979 Egypt-Israel Peace Treaty and the 1993 Oslo Accords, proving that territorial compromise could lead to diplomatic relations.<br><br><strong>Point 2:</strong> However, it was also important because its deliberate ambiguity prolonged hostility. The English version called for withdrawal from 'territories' rather than 'the territories', allowing Israel to argue it did not need to withdraw from all captured land. Consequently, the Arab League rejected negotiations at Khartoum and issued the 'Three Nos' (no peace, no negotiation, no recognition), cementing a diplomatic deadlock that lasted for years."
+          title: "The importance of the continued dispute over the Suez Canal for the aftermath of the 1967 war.",
+          clue: "Explain how control of the canal triggered the War of Attrition, and how the canal's closing pressured Egypt to launch the 1973 war.",
+          model: "<strong>Point 1:</strong> The continued dispute over the Suez Canal was important because it led directly to the War of Attrition (1967-70). Because Egypt refused to accept Israeli control of the east bank of the canal, Nasser launched constant artillery bombardments and raids, escalating military tensions and superpower involvement.<br><br><strong>Point 2:</strong> It was also important because it devastated the canal's surrounding infrastructure and closed the shipping lanes for eight years. This economic loss pressured Egypt to seek a military breakthrough to force negotiations, which ultimately led to Sadat launching the Yom Kippur War in 1973."
         },
         {
           id: "mock_paper_4_q3_c",
-          title: "The importance of Arafat renouncing terrorism (1988) for attempts to find a solution in the Middle East.",
-          clue: "Detail how his historic speech at the UN in Geneva finally met the preconditions set by the USA, which enabled America to open official diplomatic channels with the PLO for the first time.",
-          model: "<strong>Point 1:</strong> Arafat's renunciation of terrorism was important because it shifted the PLO's official policy from armed struggle to diplomacy. By publicly renouncing all forms of terrorism, recognizing Israel's right to exist, and accepting UN Resolutions 242 and 338, Arafat positioned the PLO as a legitimate negotiating partner, isolating extremists who wanted to destroy Israel.<br><br><strong>Point 2:</strong> It was also important because it met the conditions required by the United States to open direct diplomatic talks. Following Arafat's speech in December 1988, the US immediately opened an official dialogue with the PLO. This diplomatic breakthrough brought the Palestinians into the international peace arena, paving the way for the Madrid Conference in 1991 and the secret Oslo Accords in 1993."
+          title: "The importance of Arafat's speech to the UN (1974) for the Palestinian issue.",
+          clue: "Explain how the speech gained the PLO global legitimacy and observer status, but also how Arafat's commitment to armed struggle delayed direct negotiations with the West.",
+          model: "<strong>Point 1:</strong> Arafat's 'olive branch and freedom fighter' speech to the UN General Assembly in 1974 was important because it gained the PLO immense international legitimacy. Following the speech, the UN recognized the PLO as the sole representative of the Palestinian people and granted it observer status, elevating it to the global stage.<br><br><strong>Point 2:</strong> However, it was also important because it highlighted the PLO's refusal to compromise on armed struggle. Arafat's warning that the olive branch would fall if the UN ignored Palestinian rights confirmed Israeli and US suspicions that the PLO remained committed to violence, delaying direct negotiations with the West."
         }
       ]
     }

@@ -222,6 +222,21 @@ export function renderExamSheet() {
   const completedCount = questionsList.filter(id => session.completedQuestions.includes(id)).length;
   const pct = questionsList.length > 0 ? Math.round((completedCount / questionsList.length) * 100) : 0;
 
+  let highProbBanner = '';
+  if (paper.highProbability) {
+    highProbBanner = `
+      <div class="high-probability-banner" style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.08) 0%, rgba(249, 115, 22, 0.08) 100%); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: var(--border-radius-sm); padding: 14px 18px; margin-bottom: 20px; display: flex; align-items: center; gap: 14px; box-sizing: border-box; text-align: left;">
+        <div style="width: 38px; height: 38px; border-radius: 50%; background: rgba(239, 68, 68, 0.15); display: flex; align-items: center; justify-content: center; color: #ef4444; font-size: 1.25rem; flex-shrink: 0;">
+          <i class="fa-solid fa-fire"></i>
+        </div>
+        <div>
+          <strong style="color: #ef4444; font-size: 0.95rem; display: block; margin-bottom: 3px;">2026 High Probability Mock Exam</strong>
+          <span style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.45; display: block;">This paper contains questions highly predicted to appear in upcoming exams. Prioritise mastering these model answers!</span>
+        </div>
+      </div>
+    `;
+  }
+
   let html = `
     <div class="exam-sheet">
       <div class="exam-sheet-header">
@@ -231,6 +246,7 @@ export function renderExamSheet() {
           <span><i class="fa-solid fa-check-double"></i> Complete: ${completedCount}/${questionsList.length} (${pct}%)</span>
         </div>
       </div>
+      ${highProbBanner}
   `;
 
   if (paper.q1) {

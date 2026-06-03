@@ -557,10 +557,15 @@ export function renderMasteryView(subtopicId) {
   // Generate Question Vault HTML
   let vaultItemsHtml = '';
   data.questionVault.forEach((q, index) => {
+    const highProbBadge = q.isHighProbability ? `
+      <span class="high-prob-badge" style="background: linear-gradient(135deg, #ef4444 0%, #f97316 100%); color: white; font-size: 0.72rem; font-weight: bold; padding: 2px 8px; border-radius: 12px; margin-left: 8px; display: inline-flex; align-items: center; gap: 3px; border: 1px solid rgba(255,255,255,0.15); box-sizing: border-box;">
+        <i class="fa-solid fa-fire"></i> HIGH PROBABILITY
+      </span>
+    ` : '';
     vaultItemsHtml += `
       <div class="vault-item">
-        <button class="vault-question-btn" data-vault-idx="${index}">
-          <span>${q.question}</span>
+        <button class="vault-question-btn" data-vault-idx="${index}" style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+          <span style="display: inline-flex; align-items: center; flex-wrap: wrap; text-align: left;">${q.question}${highProbBadge}</span>
           <i class="fa-solid fa-chevron-down"></i>
         </button>
         <div class="vault-answer-panel">
