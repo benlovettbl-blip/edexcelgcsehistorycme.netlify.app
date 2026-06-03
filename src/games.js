@@ -298,7 +298,11 @@ export function nextTugEvent() {
     state.tugGameSession.timeoutId = null;
   }
 
-  if (state.currentView !== 'tug-game') {
+  if (state.currentView !== 'games') {
+    return;
+  }
+  const pane = document.getElementById('game-tug-container');
+  if (!pane || pane.style.display === 'none') {
     return;
   }
 
@@ -404,7 +408,9 @@ export function endTugGame(isWin) {
 
 export const jswKeys = {};
 window.addEventListener("keydown", e => {
-  if (state.currentView === 'jsw-game') {
+  const pane = document.getElementById('game-jsw-container');
+  const isJswActive = state.currentView === 'games' && pane && pane.style.display !== 'none';
+  if (isJswActive) {
     const keysToPrevent = ["Space", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "KeyW", "KeyA", "KeyS", "KeyD"];
     if (keysToPrevent.includes(e.code)) {
       e.preventDefault();
@@ -496,7 +502,9 @@ export function startJswLoop() {
 
 export function jswGameLoop() {
   const session = state.jswGameSession;
-  if (!session.loopActive || state.currentView !== 'jsw-game') {
+  const pane = document.getElementById('game-jsw-container');
+  const isJswActive = state.currentView === 'games' && pane && pane.style.display !== 'none';
+  if (!session.loopActive || !isJswActive) {
     session.loopActive = false;
     return;
   }
