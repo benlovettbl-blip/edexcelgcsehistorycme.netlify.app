@@ -14034,8 +14034,8 @@
       const data = import_questions5.NARRATIVE_SKILLS_DATA[topicId];
       document.getElementById("narrative-question-text").textContent = data.question;
       document.getElementById("narrative-question-card").style.display = "block";
-      document.getElementById("narrative-sorter-area").style.display = "none";
-      document.getElementById("narrative-input-area").style.display = "flex";
+      document.getElementById("narrative-sorter-area").style.display = "block";
+      document.getElementById("narrative-input-area").style.display = "none";
       document.getElementById("narrative-answer-box").style.display = "none";
       const kwFeedbackContainer = document.getElementById("narrative-keyword-feedback");
       if (kwFeedbackContainer) {
@@ -14054,14 +14054,12 @@
       document.getElementById("seq-row-3").className = "sequence-item-container";
       document.getElementById("sequence-status-msg").innerHTML = "Select all three events to verify chronology.";
       document.getElementById("narrative-user-answer").value = "";
-      document.getElementById("narrative-user-answer").focus();
       document.querySelectorAll(".process-word").forEach((chip) => chip.classList.remove("used"));
-      document.getElementById("draft-feedback-narrative").style.display = "block";
+      document.getElementById("draft-feedback-narrative").style.display = "none";
       for (let i = 1; i <= 4; i++) {
         const chk = document.getElementById(`chk-narrative-rubric-${i}`);
         if (chk) chk.checked = false;
       }
-      updateRealTimeFeedback("narrative", "", data, topicId);
     });
     document.getElementById("btn-narrative-verify").addEventListener("click", () => {
       const topicId = narrativeSelect.value;
