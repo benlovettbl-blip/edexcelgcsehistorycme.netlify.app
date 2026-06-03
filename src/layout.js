@@ -362,81 +362,11 @@ function bindEvents() {
     document.getElementById('consequence-clue-text').innerHTML = `<strong>Clue:</strong> ${data.clue}`;
     document.getElementById('consequence-model-answer-text').innerHTML = highlightCausalConnectives(data.answer);
 
-    // Hide Step 2 writing zone initially
-    document.getElementById('consequence-input-area').style.display = 'none';
-
-    // Show Step 1 MCQ area
-    const mcqArea = document.getElementById('consequence-mcq-area');
-    mcqArea.style.display = 'block';
-
-    const mcqRow = document.getElementById('consequence-mcq-row');
-    mcqRow.className = 'sequence-item-container';
-
-    const statusMsg = document.getElementById('consequence-mcq-status-msg');
-    statusMsg.innerHTML = 'Choose the correct starter sentence to unlock the writing zone.';
-
-    // Generate MCQ opener choices dynamically
-    const correctOpener = data.answer.split('.')[0].trim() + '.';
-
-    // Collect all other openers as potential distractors
-    const allOtherOpeners = [];
-    for (const [key, item] of Object.entries(CONSEQUENCE_SKILLS_DATA)) {
-      if (key !== topicId) {
-        const opener = item.answer.split('.')[0].trim() + '.';
-        if (opener && !allOtherOpeners.includes(opener)) {
-          allOtherOpeners.push(opener);
-        }
-      }
-    }
-
-    // Pick 2 random distractors from the other 17 topics
-    const shuffledDistractors = allOtherOpeners.sort(() => 0.5 - Math.random());
-    const distractor1 = shuffledDistractors[0];
-    const distractor2 = shuffledDistractors[1];
-
-    // Combine and shuffle the 3 choices
-    const choices = [correctOpener, distractor1, distractor2];
-    const shuffledChoices = choices.sort(() => 0.5 - Math.random());
-
-    const mcqSelect = document.getElementById('consequence-mcq-select');
-    mcqSelect.innerHTML = '<option value="" disabled selected>-- Choose the correct starter sentence --</option>';
-    shuffledChoices.forEach(choice => {
-      mcqSelect.innerHTML += `<option value="${choice === correctOpener ? 'correct' : 'incorrect'}">${choice}</option>`;
-    });
-  });
-
-  // Verify Consequence MCQ choice
-  document.getElementById('btn-consequence-mcq-verify').addEventListener('click', () => {
-    const topicId = consequenceSelect.value;
-    if (!topicId || !CONSEQUENCE_SKILLS_DATA[topicId]) return;
-
-    const mcqSelect = document.getElementById('consequence-mcq-select');
-    const selectedValue = mcqSelect.value;
-    const statusMsg = document.getElementById('consequence-mcq-status-msg');
-    const mcqRow = document.getElementById('consequence-mcq-row');
-
-    if (!selectedValue) {
-      AudioEngine.play('fail');
-      statusMsg.innerHTML = '<span style="color: var(--accent);">Please choose an option before verifying.</span>';
-      return;
-    }
-
-    mcqRow.className = 'sequence-item-container';
-
-    if (selectedValue === 'correct') {
-      AudioEngine.play('success');
-      mcqRow.classList.add('correct-sequence');
-      statusMsg.innerHTML = '<span style="color: var(--success);"><i class="fa-solid fa-circle-check"></i> Correct! Opener Verified. Step 2 Unlocked.</span>';
-      document.getElementById('consequence-input-area').style.display = 'flex';
-      document.getElementById('consequence-user-answer').focus();
-      document.getElementById('draft-feedback-consequence').style.display = 'block';
-      updateRealTimeFeedback('consequence', '', CONSEQUENCE_SKILLS_DATA[topicId], topicId);
-    } else {
-      AudioEngine.play('fail');
-      mcqRow.classList.add('incorrect-sequence');
-      statusMsg.innerHTML = '<span style="color: var(--accent);"><i class="fa-solid fa-circle-xmark"></i> Incorrect. That did not happen as a result of this event. Try again!</span>';
-      document.getElementById('consequence-input-area').style.display = 'none';
-    }
+    // Show writing zone directly (bypassing multiple-choice step)
+    document.getElementById('consequence-input-area').style.display = 'flex';
+    document.getElementById('consequence-user-answer').focus();
+    document.getElementById('draft-feedback-consequence').style.display = 'block';
+    updateRealTimeFeedback('consequence', '', data, topicId);
   });
 
   document.getElementById('btn-consequence-clue').addEventListener('click', () => {
