@@ -1,0 +1,142 @@
+q_1_1_s1|What legal authority was Britain given by the League of Nations in 1920 to govern Palestine?|The British Mandate
+q_1_1_s2|What was the name of the nationalist movement aiming to create a Jewish homeland in Palestine?|Zionism
+q_1_1_s3|Which 1917 British declaration originally promised to support the establishment of a Jewish national home?|The Balfour Declaration
+q_1_1_s4|The horrors of which event during the Second World War vastly increased global sympathy for a Jewish state?|The Holocaust
+q_1_1_s5|What was the name of the moderate Jewish defence force that helped smuggle immigrants into Palestine?|The Haganah
+q_1_1_s6|Which extremist Jewish terrorist organisation bombed the British administrative headquarters in 1946?|The Irgun
+q_1_1_s7|In which city was this bombed headquarters, the King David Hotel, located?|Jerusalem
+q_1_1_s8|Exactly how many people died in the King David Hotel bombing?|91 people
+q_1_1_s9|What was the name of the ship carrying 4,500 Jewish refugees that the British notoriously turned back in 1947?|SS Exodus
+q_1_1_s10|In February 1947, exhausted by the insurgency, Britain handed the Palestine problem to which international organisation?|The United Nations (UN)
+q_1_1_d1|What was the name of the Austrian Jewish journalist who published The Jewish State in 1896, sparking the political Zionist movement?|Theodor Herzl
+q_1_1_d2|What was the name of the 1937 British Commission that was the very first to recommend the partition of Palestine?|The Peel Commission
+q_1_1_d3|Who was the British Foreign Secretary immediately after the Second World War who heavily clashed with Zionists?|Ernest Bevin
+q_1_1_d4|Exactly what percentage of Palestinian land was allocated to the proposed Jewish state under the UN Resolution 181 partition plan?|55 percent
+q_1_1_d5|What is the specific Hebrew term for the Jewish agricultural communal farms that often acted as fortified defensive outposts?|Kibbutz
+q_1_1_d6|Which prominent Palestinian leader and Grand Mufti of Jerusalem led the Arab Higher Committee in opposing Jewish immigration during the British Mandate?|Haj Amin al-Husseini
+q_1_2_s1|Which Arab country annexed the West Bank and East Jerusalem following the 1948–49 war?|Jordan
+q_1_2_s2|Which Arab country took military control over the Gaza Strip?|Egypt
+q_1_2_s3|What colour was used to describe the 1949 armistice lines that formed Israel's new borders?|The Green Line
+q_1_2_s4|What Arabic phrase, meaning 'the catastrophe', do Palestinians use to describe their mass displacement in the 1948 war?|Al-Nakba
+q_1_2_s5|Exactly how many Palestinian Arabs fled or were driven from their homes?|Over 700,000
+q_1_2_s6|What is the acronym of the UN agency created in December 1949 to provide camps and relief for these refugees?|UNRWA
+q_1_2_s7|What is the name of the new unified national army created by David Ben-Gurion during the war?|Israeli Defence Forces (IDF)
+q_1_2_s8|To build up its military strength, what mandatory service did Israel introduce for all 18-year-old men and women?|Compulsory conscription
+q_1_2_s9|What 1950 Law gave any Jew worldwide the right to Israeli citizenship?|The Law of Return
+q_1_2_s10|What is the Arabic name for the Palestinian guerrilla fighters who launched raids into Israel from Egyptian-controlled Gaza?|Fedayeen
+q_1_2_d1|What was the specific military codename for the severe Israeli reprisal attack on the Egyptian army headquarters in Gaza on 28 February 1955?|Operation Black Arrow
+q_1_2_d2|Who was the Israeli commander of the Paratroopers Brigade that led this 1955 attack on Gaza, and who later became a highly controversial political figure?|Ariel Sharon
+q_1_2_d3|What was the name of the Israeli southern port that was economically strangled by Egypt's blockade of the Straits of Tiran?|Eilat
+q_1_2_d4|Who was the Egyptian King overthrown in 1952, partly because of the army's anger over his failures in the 1948 war?|King Farouk
+q_1_2_d5|What was the name of the 1952 financial agreement in which West Germany agreed to pay compensation to Israel for the Holocaust?|The Reparations Agreement
+q_1_2_d6|Which UN mediator, dispatched to negotiate a peace settlement during the 1948 Arab-Israeli War, was assassinated in Jerusalem by the extremist Jewish Stern Gang?|Count Folke Bernadotte
+q_1_3_s1|Who is the Egyptian leader who became President in 1954 and championed Arab nationalism?|Gamal Abdel Nasser
+q_1_3_s2|What specific political ideology did this leader promote to unite Arabic-speaking nations against Western influence and Israel?|Pan-Arabism
+q_1_3_s3|In February 1955, the Israeli army launched a massive retaliation raid against the Egyptian military headquarters in which territory?|Gaza
+q_1_3_s4|From which Eastern Bloc country did Egypt sign a massive arms deal in September 1955 to bypass Western arms embargoes?|Czechoslovakia
+q_1_3_s5|What major infrastructure project did Egypt plan to build on the River Nile to control flooding and provide hydroelectric power?|The Aswan High Dam
+q_1_3_s6|Which global superpower famously withdrew its offer to fund this dam in July 1956 due to Egypt's growing ties with the Communist bloc?|The USA
+q_1_3_s7|In retaliation for this withdrawn funding, what vital waterway did the Egyptian President nationalize in July 1956?|The Suez Canal
+q_1_3_s8|What is the name of the secret agreement signed in October 1956 between Britain, France, and Israel to collude against Egypt?|Protocol of Sèvres
+q_1_3_s9|On 29 October 1956, Israel invaded which Egyptian territory as the first stage of this secret military plan?|The Sinai Peninsula
+q_1_3_s10|What acronym represents the United Nations peacekeeping force stationed on the Egyptian-Israeli border after the crisis?|UNEF (United Nations Emergency Force)
+q_1_3_d1|What was the specific operational codename for the devastating Israeli attack on Syrian outposts near the Sea of Galilee in December 1955?|Operation Kinneret (Olive Leaves)
+q_1_3_d2|Who was the moderate Israeli Prime Minister who preferred diplomacy but was overruled by hardliners in 1954-55?|Moshe Sharett
+q_1_3_d3|What is the specific name of the Egyptian town located at the extreme southern tip of the Sinai Peninsula, captured by Israel in 1956 to break the naval blockade?|Sharm el-Sheikh
+q_1_3_d4|What was the official Israeli military codename for their invasion of the Sinai Peninsula in October 1956?|Operation Kadesh
+q_1_3_d5|Under the secret Protocol of Sèvres, what specific diplomatic mechanism were Britain and France going to use as a false pretext to invade?|An Anglo-French ultimatum
+q_2_1_s1|What was the location of the 1964 Arab League Conference that officially set an anti-Israel agenda?|Cairo
+q_2_1_s2|What umbrella organisation was set up in 1964 to unite the Palestinian people?|The PLO (Palestine Liberation Organisation)
+q_2_1_s3|What is the name of the Palestinian guerrilla group, founded by Yasser Arafat, that began raiding Israel in 1965?|Fatah
+q_2_1_s4|The diversion of which vital river by Syria and Lebanon caused major border tensions with Israel?|The River Jordan
+q_2_1_s5|What was the name of the West Bank village where the IDF launched a massive, destructive reprisal raid in November 1966?|Samu
+q_2_1_s6|What type of Soviet-made fighter jets did Israel shoot down six of over Damascus on 7 April 1967?|Syrian MiGs
+q_2_1_s7|In May 1967, which global superpower deliberately gave Egypt false intelligence claiming Israel was massing troops?|The USSR (Soviet Union)
+q_2_1_s8|Which narrow waterway did Egypt blockade on 22 May 1967, cutting off Israel's vital trade route to the Red Sea?|The Straits of Tiran
+q_2_1_s9|What tactical advantage was crucial to the success of the initial Israeli attack on 5 June 1967?|Total surprise
+q_2_1_s10|What type of pre-emptive attack did Israel use to destroy the Egyptian air force on the ground?|A pre-emptive airstrike
+q_2_1_d1|Who was the Israeli Prime Minister who initially hesitated to go to war in May 1967, facing immense domestic criticism?|Levi Eshkol
+q_2_1_d2|What specific Arab military alliance, formed between Egypt and Syria in November 1966, meant an attack on one would bring the other into war?|The Egypt-Syria Defence Pact
+q_2_1_d3|What was the specific military codename for the highly secretive, pre-emptive Israeli airstrike on 5 June 1967?|Operation Focus
+q_2_1_d4|How many Egyptian troops did Nasser move into the Sinai Peninsula by mid-May 1967 after receiving the false intelligence?|100,000 troops
+q_2_1_d5|Who was the American President who suggested Israel wait for an international flotilla, a plan that failed?|Lyndon B. Johnson
+q_2_2_s1|What was the number of the UN Resolution passed in November 1967 that established the principle of 'land for peace'?|UN Resolution 242
+q_2_2_s2|In which city did the Arab League meet in August 1967, issuing the famous 'Three Nos' (no peace, no recognition, no negotiation)?|Khartoum
+q_2_2_s3|What name is given to the prolonged artillery and aerial conflict (1967–1970) initiated by Egypt to wear down Israeli forces?|The War of Attrition
+q_2_2_s4|Which occupied territory provided Israel with a massive physical military buffer zone against Egypt and contained valuable oil reserves?|The Sinai Peninsula
+q_2_2_s5|Which elevated occupied territory provided crucial fresh water sources and stopped Syrian artillery attacks on Israeli farming communities?|The Golan Heights
+q_2_2_s6|The 1967 war created over 300,000 new Palestinian what, the vast majority of whom fled into neighbouring Jordan?|Refugees
+q_2_2_s7|Realising conventional armies could not defeat Israel, Palestinian nationalist groups increasingly shifted to what violent tactic?|International terrorism
+q_2_2_s8|Which radical Marxist Palestinian organisation, founded by George Habash, pioneered the hijacking of international civilian flights?|The PFLP
+q_2_2_s9|At which Jordanian desert airfield did this group blow up three hijacked international passenger airliners in September 1970?|Dawson's Field
+q_2_2_s10|In which West German city did the 'Black September' group strike during the highly publicised 1972 Olympic Games?|Munich
+q_2_2_d1|Who was the Swedish UN diplomat appointed in November 1967 to try and implement Resolution 242?|Gunnar Jarring
+q_2_2_d2|Who was the founder of the PFLP, a Palestinian Christian doctor who believed only Marxist revolution would liberate Palestine?|George Habash
+q_2_2_d3|What was the official Israeli military codename for the covert assassination campaign launched to hunt down the Munich perpetrators?|Operation Wrath of God
+q_2_2_d4|What was the name of the West German military airbase where the botched police rescue attempt resulted in the deaths of the Israeli hostages?|Fürstenfeldbruck
+q_2_2_d5|Who was the Israeli Prime Minister who ordered fierce military reprisals and the Mossad assassination campaign following Munich?|Golda Meir
+q_2_3_s1|Who became the President of Egypt following the death of Nasser in September 1970?|Anwar Sadat
+q_2_3_s2|To encourage the USA to pressure Israel, how many Soviet military advisers did this new Egyptian President expel in 1972?|15,000 advisers
+q_2_3_s3|To secure its occupied territories, Israel built a massive defensive sand wall along the Suez Canal known as what?|The Bar-Lev Line
+q_2_3_s4|What is the specific term for the Jewish communities built by Israel in the newly conquered territories to consolidate its control?|Israeli settlements
+q_2_3_s5|On what specific Jewish holy day did Egypt and Syria launch a surprise coordinated attack in 1973?|Yom Kippur
+q_2_3_s6|What type of high-pressure weapon did Egyptian engineers innovatively use to blast through the Israeli sand walls?|Water cannons
+q_2_3_s7|What type of Soviet-built surface-to-air missiles successfully protected the initial Egyptian advance from Israeli fighter jets?|SAM-3 missiles
+q_2_3_s8|What global superpower organised a massive emergency airlift of military equipment to save Israel from defeat?|The USA
+q_2_3_s9|What economic 'weapon' did Arab states use to punish the West for supplying Israel with weapons?|The Oil Embargo
+q_2_3_s10|What was the number of the United Nations Security Council Resolution that eventually brought the fighting to a ceasefire?|Resolution 338
+q_2_3_d1|What was the name of the official Israeli judicial commission of inquiry set up in November 1973 to investigate the intelligence failures?|The Agranat Commission
+q_2_3_d2|Who was the Chief of Staff of the Israeli Defence Forces (IDF) who was forced to resign as a direct result of this commission's findings?|David 'Dado' Elazar
+q_2_3_d3|What was the specific name of the Soviet-built, wire-guided anti-tank missiles used by Egyptian infantry to devastate Israeli tanks?|Sagger missiles
+q_2_3_d4|What was the name of the Israeli intelligence assumption that Egypt would never attack without superior air power?|'The Conception'
+q_2_3_d5|Who was the King of Jordan who secretly flew to Tel Aviv in September 1973 to personally warn Golda Meir of the impending Syrian attack?|King Hussein
+q_3_1_s1|What economic 'weapon' did Arab states use in 1973 to punish the West for supporting Israel?|The Oil Embargo
+q_3_1_s2|What acronym represents the organisation of Arab petroleum-exporting countries that imposed this embargo?|OPEC
+q_3_1_s3|Which US Secretary of State engaged in intensive travel between Middle Eastern capitals to mediate peace agreements between 1974 and 1975?|Henry Kissinger
+q_3_1_s4|What specific term became famous to describe this process of the US mediator flying back and forth between hostile capitals?|Shuttle Diplomacy
+q_3_1_s5|Which vital international waterway was officially reopened to global shipping in June 1975 following these diplomatic agreements?|The Suez Canal
+q_3_1_s6|In November 1977, the Egyptian President made an unprecedented and historic visit to which city to offer peace?|Jerusalem
+q_3_1_s7|What is the name of the Israeli parliament where the Egyptian President delivered his famous peace speech?|The Knesset
+q_3_1_s8|Who was the US President who personally intervened to save the failing peace talks in 1978?|Jimmy Carter
+q_3_1_s9|What is the name of the secluded US presidential retreat in Maryland where the three leaders met in September 1978?|Camp David
+q_3_1_s10|In what month and year was the formal signing of the Egypt-Israel peace treaty in the US capital?|March 1979 (Treaty of Washington)
+q_3_1_d1|Which North African country's King hosted the highly secretive 1977 meetings between Israeli and Egyptian envoys?|Morocco (King Hassan II)
+q_3_1_d2|Who was the Egyptian Foreign Minister who dramatically resigned on the final day of the Camp David summit?|Muhammad Ibrahim Kamel
+q_3_1_d3|In July 1978, the USA hosted secret preliminary talks between Israeli and Egyptian foreign ministers at which historic English castle?|Leeds Castle
+q_3_1_d4|What Roman numeral is used to denote the September 1975 interim agreement, where Israel agreed to withdraw from strategic Sinai passes?|Sinai II
+q_3_1_d5|Who was the brilliant Israeli legal advisor who helped draft the deliberately ambiguous wording of the Camp David frameworks?|Aharon Barak
+q_3_1_d6|Which commander of the Egyptian Air Force during the Yom Kippur War succeeded Anwar Sadat as President of Egypt after Sadat's assassination in 1981?|Hosni Mubarak
+q_3_2_s1|Who made a historic speech to the General Assembly in 1974, claiming to bear "an olive branch and a freedom fighter's gun"?|Yasser Arafat
+q_3_2_s2|After being violently expelled from Jordan in 1970, to which neighbouring country did the PLO move its headquarters and guerrilla bases?|Lebanon
+q_3_2_s3|The PLO's arrival upset a delicate religious demographic balance, contributing to the outbreak of a devastating 15-year conflict in 1975 known as what?|The Lebanese Civil War
+q_3_2_s4|In March 1978, a deadly PLO bus hijacking triggered Israel to launch a limited 26,000-troop invasion known as what?|Operation Litani
+q_3_2_s5|Following this 1978 invasion, what acronym represents the UN peacekeeping force deployed to patrol the border buffer zone?|UNIFIL
+q_3_2_s6|In June 1982, the attempted assassination of the Israeli ambassador in London was used by Ariel Sharon to justify what?|A full-scale invasion
+q_3_2_s7|What was the official Israeli military codename for this 1982 invasion?|Operation Peace for Galilee
+q_3_2_s8|Which Lebanese capital city was heavily bombarded, cutting off food and water to trap 15,000 PLO fighters inside?|Beirut
+q_3_2_s9|In September 1982, Lebanese Christian Phalangist militias carried out a horrific two-day massacre of Palestinian refugees in the Shatila and which other camp?|Sabra and Shatila
+q_3_2_s10|In December 1987, an Israeli army truck crashed into civilian cars in Gaza, sparking a massive, spontaneous uprising known as what?|The First Intifada
+q_3_2_d1|What was the specific name of the 1978 Palestinian terror attack, where a hijacked bus resulted in 38 Israeli civilian deaths?|The Coastal Road Massacre
+q_3_2_d2|Who was the newly elected Lebanese Christian President whose assassination in September 1982 triggered the Phalangist militias' revenge?|Bashir Gemayel
+q_3_2_d3|Who was the Israeli Prime Minister who authorised the 1982 invasion of Lebanon, but who resigned in deep depression?|Menachem Begin
+q_3_2_d4|What was the specific Arabic acronym for the underground, grassroots leadership committee that coordinated the First Intifada?|UNLU
+q_3_2_d5|Who was the Israeli Defence Minister during the First Intifada who controversially ordered troops to use "force, might and beatings"?|Yitzhak Rabin
+q_3_2_d6|Which former leader of the militant Stern Gang served as the hardline Prime Minister of Israel during the First Intifada and the 1991 Madrid Peace Conference?|Yitzhak Shamir
+q_3_3_s1|In December 1988, Yasser Arafat made a historic speech renouncing terrorism at a special session of the UN General Assembly held in which Swiss city?|Geneva
+q_3_3_s2|By renouncing terrorism, Arafat accepted the existence of Israel and officially endorsed a solution based on how many states?|A two-state solution
+q_3_3_s3|Which global ideological conflict officially ended in December 1991, removing a major source of funding and weapons for the PLO and Arab states?|The Cold War
+q_3_3_s4|In August 1990, Iraqi dictator Saddam Hussein invaded which oil-rich neighbouring country, sparking a massive international crisis?|Kuwait
+q_3_3_s5|What was the name of the 1991 conflict where a US-led coalition successfully expelled Iraqi forces from this invaded country?|The Gulf War
+q_3_3_s6|Emerging as the sole superpower, the USA co-sponsored a major Middle East peace conference in November 1991 in which Spanish capital city?|Madrid
+q_3_3_s7|Frustrated by the lack of progress in public talks, Israeli and PLO negotiators began secret, back-channel meetings in 1993 in which European capital city?|Oslo
+q_3_3_s8|On the lawn of the White House in September 1993, what historic physical gesture did Rabin and Arafat share?|A handshake
+q_3_3_s9|The 1993 agreement led to the creation of a new governing body to administer parts of the West Bank and Gaza; what was its name?|Palestinian National Authority (PNA)
+q_3_3_s10|In October 1994, becoming only the second Arab state to do so, which neighbouring country signed a full peace treaty with Israel?|Jordan
+q_3_3_d1|Who was the US Secretary of State who made eight intense diplomatic trips to force the parties to attend the 1991 Madrid Conference?|James Baker
+q_3_3_d2|Who was the Norwegian Foreign Minister who hosted and mediated the top-secret back-channel talks in 1992-1993?|Johan Jørgen Holst
+q_3_3_d3|Under the 1995 Oslo II agreement, exactly what percentage of the West Bank was designated as 'Area A' (under full Palestinian civil and military control)?|3 percent
+q_3_3_d4|On the night he was assassinated in November 1995, what specific song had Yitzhak Rabin just finished singing to a crowd in Tel Aviv?|The Song of Peace (Shir LaShalom)
+q_3_3_d5|What was the surname of the Israeli religious extremist who assassinated Yitzhak Rabin?|Yigal Amir
+q_3_3_d6|Which Soviet leader's reforms ended the Cold War, halted military aid to Arab states, and co-sponsored the 1991 Madrid Peace Conference?|Mikhail Gorbachev
+q_3_3_d7|Which US President leveraged victory in the 1991 Gulf War and threatened to withhold $10 billion in loan guarantees to force Israel to attend the Madrid Peace Conference?|George H.W. Bush
+q_3_3_d8|Which founding member of Fatah and future Palestinian President was the key coordinator of the secret PLO negotiations in Norway that culminated in the 1993 Oslo Accords?|Mahmoud Abbas (Abu Mazen)
