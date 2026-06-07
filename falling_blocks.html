@@ -197,7 +197,7 @@
     /* TOP HUD */
     .arcade-hud {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 8px;
       background: rgba(0, 0, 0, 0.3);
       padding: 10px;
@@ -232,6 +232,7 @@
     .hud-value.highlight-green { color: var(--neon-green); text-shadow: 0 0 5px var(--neon-green-glow); }
     .hud-value.highlight-magenta { color: var(--neon-magenta); text-shadow: 0 0 5px var(--neon-magenta-glow); }
     .hud-value.highlight-primary { color: var(--primary); text-shadow: 0 0 5px var(--primary-glow); }
+    .hud-value.highlight-red { color: var(--neon-red); text-shadow: 0 0 5px var(--neon-red-glow); }
 
     /* Canvas Stage */
     .canvas-stage {
@@ -843,6 +844,10 @@
             <span class="hud-value highlight-green" id="hud-matches">0</span>
           </div>
           <div class="hud-metric">
+            <span class="hud-label">Lives</span>
+            <span class="hud-value highlight-red" id="hud-lives" style="font-size: 0.9rem; letter-spacing: 1px;">❤️❤️❤️</span>
+          </div>
+          <div class="hud-metric">
             <span class="hud-label">Intensity</span>
             <span class="hud-value highlight-magenta" id="hud-intensity">1.00x</span>
           </div>
@@ -1266,6 +1271,7 @@
         // Reset state
         this.score = 0;
         this.matches = 0;
+        this.lives = 3;
         this.speedMultiplier = 1.0;
         this.stacks = [[], [], []];
         this.particles = [];
@@ -1426,6 +1432,7 @@
           } else {
             // FAILED PLACEMENT (Correct block placed in Discard column)
             this.stats.incorrectPlacements++;
+            this.lives--;
             sound.playMistake();
             this.spawnTextFloat("MISSED OBJECTIVE", block.col * this.colWidth + 75, block.y, '#ef4444');
             
@@ -1456,6 +1463,7 @@
           } else {
             // FAILED PLACEMENT (Distractor steered to Target Column)
             this.stats.incorrectPlacements++;
+            this.lives--;
             sound.playMistake();
             this.spawnTextFloat("DISTRACTOR DETECTED!", block.col * this.colWidth + 75, block.y, '#ef4444');
             
@@ -1494,6 +1502,9 @@
       }
 
       checkGameOver() {
+        if (this.lives <= 0) {
+          return true;
+        }
         for (let col = 0; col < 3; col++) {
           const stackY = this.gridBottom - (this.stacks[col].length * this.blockHeight);
           if (stackY <= this.ceiling) {
@@ -1671,6 +1682,11 @@
         document.getElementById('hud-score').textContent = String(this.score).padStart(5, '0');
         document.getElementById('hud-matches').textContent = this.matches;
         document.getElementById('hud-intensity').textContent = this.speedMultiplier.toFixed(2) + 'x';
+        
+        const livesElement = document.getElementById('hud-lives');
+        if (livesElement) {
+          livesElement.innerHTML = '❤️'.repeat(Math.max(0, this.lives)) + '💔'.repeat(Math.max(0, 3 - this.lives));
+        }
       }
 
       spawnExplosion(x, y, color) {
