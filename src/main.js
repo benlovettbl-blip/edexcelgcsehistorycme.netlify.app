@@ -1,11 +1,14 @@
 import { initData } from './storage.js';
+console.log("=== MAIN.JS EXECUTING IN WINDOW CONTEXT ===");
 import { renderSidebarNav, updateGlobalStats, closeVideoModal } from './views.js';
 import { bindEvents } from './layout.js';
 import { switchView } from './navigation.js';
+import { initMapExplorer } from './map_explorer.js';
 
 // --- Application Entry Point ---
 window.addEventListener('DOMContentLoaded', () => {
   initData();
+  initMapExplorer();
   renderSidebarNav();
   updateGlobalStats();
   bindEvents();

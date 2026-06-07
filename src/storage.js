@@ -9,25 +9,19 @@ export function initData() {
   state.allQuestions = [];
   QUIZ_DATA.forEach(topic => {
     topic.subtopics.forEach(subtopic => {
-      subtopic.standard.forEach(q => {
-        state.allQuestions.push({
-          ...q,
-          type: 'standard',
-          topicId: topic.id,
-          topicTitle: topic.title,
-          subtopicId: subtopic.id,
-          subtopicTitle: subtopic.title
-        });
-      });
-      subtopic.depth.forEach(q => {
-        state.allQuestions.push({
-          ...q,
-          type: 'depth',
-          topicId: topic.id,
-          topicTitle: topic.title,
-          subtopicId: subtopic.id,
-          subtopicTitle: subtopic.title
-        });
+      ['easy', 'medium', 'difficult'].forEach(difficultyType => {
+        if (subtopic[difficultyType]) {
+          subtopic[difficultyType].forEach(q => {
+            state.allQuestions.push({
+              ...q,
+              type: difficultyType,
+              topicId: topic.id,
+              topicTitle: topic.title,
+              subtopicId: subtopic.id,
+              subtopicTitle: subtopic.title
+            });
+          });
+        }
       });
     });
   });

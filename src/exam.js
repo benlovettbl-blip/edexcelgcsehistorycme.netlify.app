@@ -2,7 +2,7 @@ import { state } from './state.js';
 import { AudioEngine } from './audio.js';
 import { Confetti } from './confetti.js';
 import { switchView } from './navigation.js';
-import { initExamLeaderboard } from './views.js';
+import { initExamLeaderboard, showWarningToast } from './views.js';
 
 // --- Quiz Generator Engine ---
 function showExamSetup() {
@@ -43,37 +43,61 @@ function startExam(scope, length, timeLimit) {
     state.examSession.length = pool.length;
   }
 
-  // Balanced Split selection (2/3 standard, 1/3 depth)
-  const standardPool = pool.filter(q => q.type === 'standard');
-  const depthPool = pool.filter(q => q.type === 'depth');
+  // Balanced Split selection (1/3 easy, 1/3 medium, 1/3 difficult)
+  const easyPool = pool.filter(q => q.type === 'easy');
+  const mediumPool = pool.filter(q => q.type === 'medium');
+  const difficultPool = pool.filter(q => q.type === 'difficult');
 
-  let stdCount = Math.round(state.examSession.length * (2/3));
-  let depthCount = state.examSession.length - stdCount;
+  let targetLength = state.examSession.length;
 
-  // Borrow count if one pool does not have enough questions
-  if (standardPool.length < stdCount) {
-    const diff = stdCount - standardPool.length;
-    stdCount = standardPool.length;
-    depthCount += diff;
+  let easyCount = Math.floor(targetLength / 3);
+  let mediumCount = Math.floor(targetLength / 3);
+  let difficultCount = targetLength - easyCount - mediumCount;
+
+  // Shuffle pools first
+  const shuffledEasy = [...easyPool].sort(() => Math.random() - 0.5);
+  const shuffledMedium = [...mediumPool].sort(() => Math.random() - 0.5);
+  const shuffledDifficult = [...difficultPool].sort(() => Math.random() - 0.5);
+
+  // Slices
+  const selectedEasy = [];
+  const selectedMedium = [];
+  const selectedDifficult = [];
+
+  const takeEasy = Math.min(easyCount, shuffledEasy.length);
+  const takeMedium = Math.min(mediumCount, shuffledMedium.length);
+  const takeDifficult = Math.min(difficultCount, shuffledDifficult.length);
+
+  selectedEasy.push(...shuffledEasy.slice(0, takeEasy));
+  selectedMedium.push(...shuffledMedium.slice(0, takeMedium));
+  selectedDifficult.push(...shuffledDifficult.slice(0, takeDifficult));
+
+  let currentTotal = selectedEasy.length + selectedMedium.length + selectedDifficult.length;
+  let remainingEasy = shuffledEasy.slice(takeEasy);
+  let remainingMedium = shuffledMedium.slice(takeMedium);
+  let remainingDifficult = shuffledDifficult.slice(takeDifficult);
+
+  while (currentTotal < targetLength) {
+    let added = false;
+    if (remainingEasy.length > 0 && currentTotal < targetLength) {
+      selectedEasy.push(remainingEasy.shift());
+      currentTotal++;
+      added = true;
+    }
+    if (remainingMedium.length > 0 && currentTotal < targetLength) {
+      selectedMedium.push(remainingMedium.shift());
+      currentTotal++;
+      added = true;
+    }
+    if (remainingDifficult.length > 0 && currentTotal < targetLength) {
+      selectedDifficult.push(remainingDifficult.shift());
+      currentTotal++;
+      added = true;
+    }
+    if (!added) break;
   }
-  if (depthPool.length < depthCount) {
-    const diff = depthCount - depthPool.length;
-    depthCount = depthPool.length;
-    stdCount += diff;
-  }
 
-  // Ensure counts are bounded
-  stdCount = Math.min(stdCount, standardPool.length);
-  depthCount = Math.min(depthCount, depthPool.length);
-
-  // Shuffle pools before slicing
-  const shuffledStd = [...standardPool].sort(() => Math.random() - 0.5);
-  const shuffledDepth = [...depthPool].sort(() => Math.random() - 0.5);
-
-  const selection = [
-    ...shuffledStd.slice(0, stdCount),
-    ...shuffledDepth.slice(0, depthCount)
-  ];
+  const selection = [...selectedEasy, ...selectedMedium, ...selectedDifficult];
 
   // Optional: Chronological sort or randomized shuffle
   const sortOrder = document.getElementById('exam-order-select').value;
@@ -103,7 +127,7 @@ function startExam(scope, length, timeLimit) {
       if (state.examSession.timeRemaining <= 0) {
         clearInterval(state.examSession.timerInterval);
         AudioEngine.play('fail');
-        alert("Time is up! Submitting your recall test.");
+        showWarningToast("Time is up! Submitting your recall test.");
         finishExam();
       }
     } else {
@@ -465,8 +489,8 @@ function displayExamQuestion() {
   
   // Question Card elements
   const badge = document.getElementById('exam-q-badge');
-  badge.textContent = q.type === 'standard' ? 'Standard' : 'Top Tier Trivia';
-  badge.className = `badge ${q.type === 'standard' ? 'badge-standard' : 'badge-depth'}`;
+  badge.textContent = q.type.charAt(0).toUpperCase() + q.type.slice(1);
+  badge.className = `badge badge-${q.type}`;
   
   document.getElementById('exam-q-text').textContent = q.question;
   

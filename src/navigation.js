@@ -1,5 +1,4 @@
 import { state } from './state.js';
-import { stopJswLoop } from './games.js';
 import { 
   renderDashboard, 
   renderBookmarksView, 
@@ -9,7 +8,10 @@ import {
   startFlashcardSession,
   renderGamesView,
   renderGoingBeyond,
-  renderKeyTopicOverview
+  renderKeyTopicOverview,
+  renderAiVideosView,
+  openStreakLeaderboard,
+  addXp
 } from './views.js';
 import { showExamSetup } from './exam.js';
 import { renderPastPapersView } from './past_papers.js';
@@ -18,22 +20,39 @@ import { updateBrandBanner } from './brand_config.js';
 import { closeMobileSidebar } from './layout.js';
 import { AudioEngine } from './audio.js';
 
+let lastViewSwitchTime = 0;
+
 const INQUIRY_QUESTIONS = {
-  "subtopic_1_1": "Inquiry: How did the British withdrawal lead to the creation of Israel, 1945–48?",
-  "subtopic_1_2": "Inquiry: What were the causes and consequences of the 1948–49 Arab-Israeli War?",
-  "subtopic_1_3": "Inquiry: Why did the nationalisation of the Suez Canal spark a major international crisis in 1956?",
-  "subtopic_2_1": "Inquiry: How did tensions escalate to cause the outbreak and swift outcome of the 1967 Six Day War?",
-  "subtopic_2_2": "Inquiry: Why did Palestinian nationalism grow and what impact did it have on the conflict?",
-  "subtopic_2_3": "Inquiry: Why did the Yom Kippur War break out in 1973 and how did it change the balance of power?",
-  "subtopic_3_1": "Inquiry: How was a historic peace accord achieved between Egypt and Israel at Camp David?",
-  "subtopic_3_2": "Inquiry: What were the causes and consequences of the Israeli invasion of Lebanon and the First Intifada?",
-  "subtopic_3_3": "Inquiry: How did the Oslo Accords attempt to resolve the conflict, and why did they ultimately stall?"
+  "subtopic_1_1": "How did the British withdrawal lead to the creation of Israel, 1945–48?",
+  "subtopic_1_2": "What were the causes and consequences of the 1948–49 Arab-Israeli War?",
+  "subtopic_1_3": "Why did the nationalisation of the Suez Canal spark a major international crisis in 1956?",
+  "subtopic_2_1": "How did tensions escalate to cause the outbreak and swift outcome of the 1967 Six Day War?",
+  "subtopic_2_2": "Why did Palestinian nationalism grow and what impact did it have on the conflict?",
+  "subtopic_2_3": "Why did the Yom Kippur War break out in 1973 and how did it change the balance of power?",
+  "subtopic_3_1": "How was a historic peace accord achieved between Egypt and Israel at Camp David?",
+  "subtopic_3_2": "What were the causes and consequences of the Israeli invasion of Lebanon and the First Intifada?",
+  "subtopic_3_3": "How did the Oslo Accords attempt to resolve the conflict, and why did they ultimately stall?"
 };
 
 // --- Navigation Controller ---
 export function switchView(viewName, subtopicId = null) {
+  AudioEngine.stopSpeaking();
   state.currentView = viewName;
-  stopJswLoop();
+
+  const backBtn = document.getElementById('header-back-btn');
+  if (backBtn) {
+    if (viewName === 'dashboard') {
+      backBtn.style.display = 'none';
+    } else {
+      backBtn.style.display = 'flex';
+    }
+  }
+
+  const now = Date.now();
+  if (now - lastViewSwitchTime > 3000) {
+    lastViewSwitchTime = now;
+    addXp(1);
+  }
 
   const inquiryEl = document.getElementById('header-inquiry-question');
   if (inquiryEl) {
@@ -60,6 +79,22 @@ export function switchView(viewName, subtopicId = null) {
     if (viewTitle) viewTitle.textContent = "Study Dashboard";
     state.selectedSubtopicId = null;
     renderDashboard();
+  } else if (viewName === 'leaderboard') {
+    const leaderboardNav = document.getElementById('nav-leaderboard');
+    if (leaderboardNav) leaderboardNav.classList.add('active');
+    if (headerModeSwitcher) headerModeSwitcher.style.display = 'none';
+    const viewTitle = document.getElementById('current-view-title');
+    if (viewTitle) viewTitle.textContent = "Streak & Level Leaderboard";
+    state.selectedSubtopicId = null;
+    openStreakLeaderboard();
+  } else if (viewName === 'map') {
+    const mapNav = document.getElementById('nav-map');
+    if (mapNav) mapNav.classList.add('active');
+    if (headerModeSwitcher) headerModeSwitcher.style.display = 'none';
+    const viewTitle = document.getElementById('current-view-title');
+    if (viewTitle) viewTitle.textContent = "Geographic Map Explorer";
+    state.selectedSubtopicId = null;
+    window.dispatchEvent(new CustomEvent('mapViewActivated'));
   } else if (viewName === 'bookmarks') {
     const bookmarksNav = document.getElementById('nav-bookmarks');
     if (bookmarksNav) bookmarksNav.classList.add('active');
@@ -118,6 +153,14 @@ export function switchView(viewName, subtopicId = null) {
     if (viewTitle) viewTitle.textContent = "Going Beyond: Modern Realities";
     state.selectedSubtopicId = null;
     renderGoingBeyond();
+  } else if (viewName === 'ai-videos') {
+    const aiVideosNav = document.getElementById('nav-ai-videos');
+    if (aiVideosNav) aiVideosNav.classList.add('active');
+    if (headerModeSwitcher) headerModeSwitcher.style.display = 'none';
+    const viewTitle = document.getElementById('current-view-title');
+    if (viewTitle) viewTitle.textContent = "2min AI Videos";
+    state.selectedSubtopicId = null;
+    renderAiVideosView();
   } else if (viewName === 'subtopic' && subtopicId) {
     state.selectedSubtopicId = subtopicId;
     state.selectedKeyTopicId = null;
@@ -187,7 +230,10 @@ export function switchView(viewName, subtopicId = null) {
     'past-papers': 'view-past-papers',
     'games': 'view-games',
     'going-beyond': 'view-going-beyond',
-    'key-topic': 'view-key-topic'
+    'key-topic': 'view-key-topic',
+    'ai-videos': 'view-ai-videos',
+    'map': 'view-map',
+    'leaderboard': 'view-leaderboard'
   };
 
   const targetViewId = viewName === 'subtopic' ? viewIdMap[state.currentMode] : viewIdMap[viewName];

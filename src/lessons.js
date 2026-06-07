@@ -2,7 +2,7 @@ import { LESSONS_DATA } from './lessons_data.js';
 import { PRACTICE_ROOM_DATA, practiceState } from './games.js';
 import { state } from './state.js';
 import { switchView } from './navigation.js';
-import { renderSidebarNav, updateGlobalStats, KEY_FIGURES_BIO } from './views.js';
+import { renderSidebarNav, updateGlobalStats, KEY_FIGURES_BIO, openVideoModal, addXp } from './views.js';
 import { saveProgress } from './storage.js';
 import { AudioEngine } from './audio.js';
 import { Confetti } from './confetti.js';
@@ -14,6 +14,8 @@ import { SPEC_CHECKLIST_DATA } from './spec_checklist_data.js';
 import { SCHOLARLY_EXTENSIONS } from './scholarly_extensions.js';
 import { CONTEMPORARY_SOURCES } from './contemporary_sources.js';
 import { GOING_BEYOND_DATA } from './going_beyond_data.js';
+import { LESSON_MAPS_DATA } from './lesson_maps_data.js';
+import { HISTORIAN_QUOTES } from './historian_quotes.js';
 
 export function renderPracticeRoomContent() {
   const example = PRACTICE_ROOM_DATA[practiceState.currentExampleIndex];
@@ -51,6 +53,7 @@ export function renderPracticeRoomContent() {
         if (span.classList.contains('stricken')) return;
         
         AudioEngine.play('success');
+        addXp(2);
         
         span.classList.add('stricken');
         practiceState.clickedErrors.add(idx);
@@ -77,6 +80,7 @@ export function renderPracticeRoomContent() {
         
         if (updatedFound === totalMistakes) {
           AudioEngine.play('cheer');
+          addXp(10);
           
           successContainer.style.display = 'block';
           examinerTip.innerHTML = example.examinerTip;
@@ -243,7 +247,131 @@ export function renderMasteryView(subtopicId) {
       `;
     }
 
-    doNowHtml = `
+    if (dn.format === '321') {
+      doNowHtml = `
+      <div class="mastery-card do-now-card" style="max-width: 800px; margin: 18px auto 24px auto; border-top: 4px solid var(--accent); position: relative; padding: 24px; overflow: visible !important;">
+        <div style="position: absolute; top: -12px; left: 16px; background: var(--accent); color: #000; font-size: 0.68rem; font-weight: 800; text-transform: uppercase; padding: 3px 10px; border-radius: 12px; letter-spacing: 0.8px; box-shadow: var(--shadow-sm); z-index: 10;">
+          ⚡ DO NOW starter (5-10 MINS)
+        </div>
+        
+        <div class="mastery-card-body" style="padding-top: 8px; margin: 0;">
+          ${prevLessonLinkHtml}
+          
+          <div class="do-now-split-container" style="display: flex; gap: 24px; flex-wrap: wrap;">
+            
+            <!-- Left Side: 3-2-1 Retrieval Challenge -->
+            <div class="do-now-left-col" style="flex: 1.3; min-width: 300px; display: flex; flex-direction: column; gap: 14px;">
+              <div class="retrieval-challenge-container" style="display: flex; flex-direction: column; gap: 10px;">
+                <div style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; border-bottom: 1px solid var(--border-glass); padding-bottom: 4px; margin-bottom: 4px;">
+                  ⚡ 3 - 2 - 1 Retrieval Challenge
+                </div>
+                
+                <!-- 3: Factual Recall -->
+                <div>
+                  <h5 style="margin: 0 0 4px 0; font-family: var(--font-heading); font-size: 0.82rem; font-weight: 700; color: var(--accent); display: flex; align-items: center; gap: 6px;">
+                    🎯 3 • Factual Recall (AO1)
+                  </h5>
+                  <ol style="margin: 0; padding-left: 18px; color: var(--text-main); font-size: 0.86rem; display: flex; flex-direction: column; gap: 4px; line-height: 1.4;">
+                    ${dn.threeTwoOne.factual.map((q) => `
+                      <li>${q.question}</li>
+                    `).join('')}
+                  </ol>
+                </div>
+
+                <!-- 2: Chronology & Geography -->
+                <div style="margin-top: 2px;">
+                  <h5 style="margin: 0 0 4px 0; font-family: var(--font-heading); font-size: 0.82rem; font-weight: 700; color: var(--secondary); display: flex; align-items: center; gap: 6px;">
+                    ⏳ 2 • Chronology & Geography (AO1/AO2)
+                  </h5>
+                  <ol start="4" style="margin: 0; padding-left: 18px; color: var(--text-main); font-size: 0.86rem; display: flex; flex-direction: column; gap: 4px; line-height: 1.4;">
+                    ${dn.threeTwoOne.chronology.map((q) => `
+                      <li>${q.question}</li>
+                    `).join('')}
+                  </ol>
+                </div>
+
+                <!-- 1: Exam Concept Link -->
+                <div style="margin-top: 2px;">
+                  <h5 style="margin: 0 0 4px 0; font-family: var(--font-heading); font-size: 0.82rem; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 6px;">
+                    ✏️ 1 • Exam Concept Link (AO2)
+                  </h5>
+                  <div style="margin: 0; padding: 10px 12px; background: rgba(168,85,247,0.04); border-left: 3px solid var(--primary); border-radius: 0 4px 4px 0; color: var(--text-main); font-size: 0.86rem; line-height: 1.45;">
+                    <strong style="color: var(--primary); display: block; margin-bottom: 4px;">The "${dn.threeTwoOne.concept.type}" Connection:</strong>
+                    <span style="font-style: italic;">"${dn.threeTwoOne.concept.prompt}"</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Right Side: Visual Anchor & Key Concept callout -->
+            <div class="do-now-right-col" style="flex: 0.9; min-width: 250px; display: flex; flex-direction: column; gap: 12px;">
+              <div class="visual-anchor-col" style="display: flex; flex-direction: column; gap: 12px;">
+                <!-- Visual Anchor image -->
+                <div style="background: #000; border-radius: var(--border-radius-sm); overflow: hidden; padding: 8px; border: 1px solid var(--border-glass); text-align: center; box-shadow: var(--shadow-sm);">
+                  <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 6px; text-align: left; display: flex; align-items: center; gap: 4px;">
+                    <i class="fa-solid fa-image" style="color: var(--primary);"></i> Visual Anchor
+                  </div>
+                  <img src="${dn.image}" alt="Straits of Tiran" style="max-width: 100%; max-height: 150px; object-fit: contain; border-radius: var(--border-radius-sm);" 
+                    onerror="const fallback = '${getFallbackUrl(dn.image) || ''}'; if (fallback && this.src !== fallback) { this.referrerPolicy = 'no-referrer'; this.src = fallback; } else { this.style.display='none'; }">
+                  <div style="font-size: 0.7rem; color: var(--text-muted); line-height: 1.35; margin-top: 6px; text-align: left;">
+                    ${dn.provenance}
+                  </div>
+                </div>
+
+                <!-- Key Concept callout box -->
+                <div style="background: rgba(245, 158, 11, 0.04); border: 1px solid rgba(245, 158, 11, 0.25); padding: 12px; border-radius: var(--border-radius-sm); box-shadow: var(--shadow-sm);">
+                  <strong style="color: var(--accent); display: flex; align-items: center; gap: 6px; font-size: 0.82rem; margin-bottom: 6px; text-transform: uppercase; font-family: var(--font-heading);">
+                    <i class="fa-solid fa-book-bookmark"></i> Key Concept: ${dn.keyConcept.title}
+                  </strong>
+                  <p style="margin: 0; color: var(--text-main); font-size: 0.78rem; line-height: 1.4; font-weight: 500;">
+                    ${dn.keyConcept.definition}
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+          
+          <!-- Bottom Section: Reveal Do Now Answers Button Row -->
+          <div style="margin-top: 16px; border-top: 1px solid var(--border-glass); padding-top: 16px;">
+            <button class="mastery-btn do-now-reveal-btn" style="background: rgba(245, 158, 11, 0.1); border: 1px solid var(--accent); color: var(--accent); font-weight: bold; font-size: 0.82rem; padding: 8px 16px; border-radius: 16px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+              <i class="fa-solid fa-graduation-cap"></i> Reveal Do Now Guide Answers
+            </button>
+            
+            <!-- Hidden structured responses drawer -->
+            <div class="do-now-answers-drawer" style="display: none; margin-top: 16px; padding: 16px; background: rgba(34, 197, 94, 0.04); border-left: 4px solid var(--success); border-radius: var(--border-radius-sm); border-top: 1px solid var(--border-glass); border-right: 1px solid var(--border-glass); border-bottom: 1px solid var(--border-glass);">
+              <h4 style="margin: 0 0 12px 0; color: var(--success); font-size: 0.95rem; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-circle-check"></i> Retrieval Answer Key:</h4>
+              <div style="display: flex; flex-direction: column; gap: 12px; font-size: 0.88rem; line-height: 1.45;">
+                <!-- 3 Factual Recall Answers -->
+                ${dn.threeTwoOne.factual.map((q, idx) => `
+                  <div>
+                    <strong style="color: var(--success); display: block; font-size: 0.82rem;">Answer ${idx + 1}:</strong>
+                    <p style="margin: 4px 0 0 0; color: var(--text-main);">${q.answer}</p>
+                  </div>
+                `).join('')}
+                
+                <!-- 2 Chronology Answers -->
+                ${dn.threeTwoOne.chronology.map((q, idx) => `
+                  <div>
+                    <strong style="color: var(--success); display: block; font-size: 0.82rem;">Answer ${idx + 4}:</strong>
+                    <p style="margin: 4px 0 0 0; color: var(--text-main);">${q.answer}</p>
+                  </div>
+                `).join('')}
+
+                <!-- 1 Concept Link Answer -->
+                <div>
+                  <strong style="color: var(--success); display: block; font-size: 0.82rem;">Answer 6 (${dn.threeTwoOne.concept.type} Link):</strong>
+                  <p style="margin: 4px 0 0 0; color: var(--text-main);">${dn.threeTwoOne.concept.answer}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+      `;
+    } else {
+      doNowHtml = `
       <div class="mastery-card do-now-card" style="max-width: 800px; margin: 18px auto 24px auto; border-top: 4px solid var(--accent); position: relative; padding: 24px; overflow: visible !important;">
         <div style="position: absolute; top: -12px; left: 16px; background: var(--accent); color: #000; font-size: 0.68rem; font-weight: 800; text-transform: uppercase; padding: 3px 10px; border-radius: 12px; letter-spacing: 0.8px; box-shadow: var(--shadow-sm); z-index: 10;">
           ⚡ DO NOW starter (5-10 MINS)
@@ -322,7 +450,8 @@ export function renderMasteryView(subtopicId) {
           
         </div>
       </div>
-    `;
+      `;
+    }
   } else if (subtopicId === 'subtopic_1_1') {
     doNowHtml = `
       <div class="mastery-card background-context-card" style="max-width: 800px; margin: 18px auto 24px auto; border-left: 4px solid var(--primary); background: rgba(59, 130, 246, 0.03); position: relative; padding: 24px; overflow: visible !important;">
@@ -392,10 +521,11 @@ export function renderMasteryView(subtopicId) {
         `;
       }
 
+      const displayTitle = scholarlyDepth.title ? `: ${scholarlyDepth.title.replace(/^(Scholarly Perspective|Scholarly Insight|Perspective):\s*/i, '')}` : '';
       scholarlyHtml = `
         <details class="scholarly-extension" style="margin-top: 16px;">
           <summary class="scholarly-summary">
-            <i class="fa-solid fa-graduation-cap"></i> Scholarly Perspective
+            <i class="fa-solid fa-graduation-cap"></i> Scholarly Perspective${displayTitle}
           </summary>
           <div class="scholarly-content" style="margin-top: 12px; font-size: 0.88rem; line-height: 1.5; color: var(--text-muted);">
             ${scholarlyImgHtml}
@@ -593,18 +723,46 @@ export function renderMasteryView(subtopicId) {
   const video = VIDEOS_DATA[subtopicId];
   let videoHtml = '';
   if (video) {
-    const cleanDuration = video.duration.startsWith('0') ? video.duration.slice(1) : video.duration;
     const questionsList = video.questions.map(q => `<li>${q}</li>`).join('');
     
+    let primaryHtml = '';
+    if (video.primary) {
+      const cleanDuration = video.primary.duration.startsWith('0') ? video.primary.duration.slice(1) : video.primary.duration;
+      primaryHtml = `
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+          <span style="font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--accent); background: var(--accent-glow); border: 1px solid rgba(244, 63, 94, 0.2); padding: 2px 6px; border-radius: 4px; font-family: var(--font-heading); white-space: nowrap;">Primary Brief</span>
+          <p style="font-size: 0.88rem; line-height: 1.5; color: var(--text-main); margin: 0; flex: 1; min-width: 250px;">
+            <i class="fa-brands fa-youtube" style="color: #ef4444; font-size: 1.05rem; margin-right: 4px; vertical-align: middle;"></i>
+            Watch the 2-minute AI summary: 
+            <a href="${video.primary.youtube_url}" class="lesson-video-link" data-url="${video.primary.youtube_url}" data-title="${video.primary.video_title.replace(/"/g, '&quot;')}" style="color: var(--primary); font-weight: bold; text-decoration: underline; transition: color var(--transition-fast);" onmouseover="this.style.color='var(--primary-hover)'" onmouseout="this.style.color='var(--primary)'">
+              "${video.primary.video_title}"
+            </a> (${cleanDuration} mins).
+          </p>
+        </div>
+      `;
+    }
+
+    let secondaryHtml = '';
+    if (video.secondary) {
+      const cleanDuration = video.secondary.duration.startsWith('0') ? video.secondary.duration.slice(1) : video.secondary.duration;
+      secondaryHtml = `
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+          <span style="font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--primary); background: var(--primary-glow); border: 1px solid rgba(168, 85, 247, 0.2); padding: 2px 6px; border-radius: 4px; font-family: var(--font-heading); white-space: nowrap;">Deconstruct</span>
+          <p style="font-size: 0.88rem; line-height: 1.5; color: var(--text-main); margin: 0; flex: 1; min-width: 250px;">
+            <i class="fa-brands fa-youtube" style="color: #ef4444; font-size: 1.05rem; margin-right: 4px; vertical-align: middle;"></i>
+            Secondary support video: 
+            <a href="${video.secondary.youtube_url}" class="lesson-video-link" data-url="${video.secondary.youtube_url}" data-title="${video.secondary.video_title.replace(/"/g, '&quot;')}" style="color: var(--primary); font-weight: bold; text-decoration: underline; transition: color var(--transition-fast);" onmouseover="this.style.color='var(--primary-hover)'" onmouseout="this.style.color='var(--primary)'">
+              "${video.secondary.video_title}"
+            </a> (${cleanDuration} mins) by ${video.secondary.production_source}.
+          </p>
+        </div>
+      `;
+    }
+
     videoHtml = `
-      <div class="lesson-video-wrapper" style="margin-top: 14px; border-top: 1px dashed var(--border-glass); padding-top: 12px;">
-        <p style="font-size: 0.88rem; line-height: 1.5; color: var(--text-main); margin: 0 0 10px 0;">
-          <i class="fa-brands fa-youtube" style="color: #ef4444; font-size: 1.1rem; margin-right: 6px; vertical-align: middle;"></i>
-          Watch this YouTube video on "${data.headerTitle.split(':').pop().trim()}" by ${video.production_source}: 
-          <a href="${video.youtube_url}" target="_blank" style="color: var(--primary); font-weight: bold; text-decoration: underline; transition: color var(--transition-fast);" onmouseover="this.style.color='var(--primary-hover)'" onmouseout="this.style.color='var(--primary)'">
-            "${video.video_title}"
-          </a> (${cleanDuration} mins).
-        </p>
+      <div class="lesson-video-wrapper" style="margin-top: 14px; border-top: 1px dashed var(--border-glass); padding-top: 12px; display: flex; flex-direction: column; gap: 10px;">
+        ${primaryHtml}
+        ${secondaryHtml}
         
         <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-glass); border-radius: var(--border-radius-sm); padding: 10px 14px;">
           <strong style="font-size: 0.75rem; color: var(--accent); display: block; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">
@@ -648,21 +806,28 @@ export function renderMasteryView(subtopicId) {
     if (extensionData.revisionQuestions && extensionData.revisionQuestions.length > 0) {
       let questionsListHtml = '';
       extensionData.revisionQuestions.forEach(q => {
-        let badgeColor = 'rgba(34, 197, 94, 0.2)'; // default green
-        let textColor = 'var(--success)';
-        if (q.number > 7) {
-          badgeColor = 'rgba(239, 68, 68, 0.2)'; // red
-          textColor = '#f87171';
-        } else if (q.number > 4) {
-          badgeColor = 'rgba(245, 158, 11, 0.2)'; // orange/amber
+        let badgeClass = 'badge-easy';
+        let badgeColor = 'rgba(34, 197, 94, 0.1)';
+        let textColor = '#22c55e';
+        let borderColor = 'rgba(34, 197, 94, 0.2)';
+        
+        if (q.difficulty === 'Difficult') {
+          badgeClass = 'badge-difficult';
+          badgeColor = 'var(--accent-glow)';
           textColor = 'var(--accent)';
+          borderColor = 'rgba(244, 63, 94, 0.2)';
+        } else if (q.difficulty === 'Medium') {
+          badgeClass = 'badge-medium';
+          badgeColor = 'var(--primary-glow)';
+          textColor = 'var(--primary)';
+          borderColor = 'rgba(168, 85, 247, 0.2)';
         }
         
         questionsListHtml += `
           <div class="revision-question-item">
             <div class="revision-question-header">
               <span class="revision-question-title">Question ${q.number}</span>
-              <span class="revision-difficulty-badge" style="background: ${badgeColor}; color: ${textColor};">
+              <span class="revision-difficulty-badge ${badgeClass}" style="background: ${badgeColor}; color: ${textColor}; border: 1px solid ${borderColor};">
                 ${q.difficulty}
               </span>
             </div>
@@ -718,9 +883,100 @@ export function renderMasteryView(subtopicId) {
     `;
   }
 
+  // Generate Interactive Lesson Map HTML
+  let mapHtml = '';
+  const mapConfig = LESSON_MAPS_DATA[subtopicId];
+  if (mapConfig) {
+    mapHtml = `
+      <div class="mastery-card lesson-map-card" style="max-width: 800px; margin: 0 auto 24px auto; border-left: 4px solid var(--primary); background: rgba(0, 0, 0, 0.15);">
+        <h3 class="mastery-card-title" style="display: flex; align-items: center; gap: 8px; font-size: 1rem; color: var(--primary); margin: 0 0 12px 0; border-bottom: 1px solid var(--border-glass); padding-bottom: 8px;">
+          <span><i class="fa-solid fa-map-location-dot"></i> Interactive Lesson Map: ${mapConfig.title}</span>
+        </h3>
+        <div class="mastery-card-body" style="padding-top: 4px;">
+          <p style="margin-top: 0; margin-bottom: 16px; font-style: italic; color: var(--text-muted); font-size: 0.85rem;">
+            Click on the pulsing markers to explore the locations where these historic events unfolded. Use the controls to zoom.
+          </p>
+          <div class="map-wrapper" style="position: relative; width: 100%; border-radius: var(--border-radius-md); overflow: hidden;">
+            <div id="lesson-leaflet-map-${subtopicId}" style="width: 100%; height: 350px; background: #111; z-index: 1;"></div>
+          </div>
+          <div class="map-significance-box" id="lesson-map-significance-${subtopicId}" style="margin-top: 14px; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-glass); border-radius: var(--border-radius-sm); padding: 12px 14px; font-size: 0.9rem; line-height: 1.45; border-left: 3px solid var(--accent); transition: all 0.2s;">
+            <strong>Map Notes:</strong> ${mapConfig.description}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // Generate Historian Interpretations HTML
+  let interpretationsHtml = '';
+  const histQuotes = HISTORIAN_QUOTES[subtopicId];
+  if (histQuotes) {
+    interpretationsHtml = `
+      <div class="mastery-card historian-interpretations-card" style="max-width: 800px; margin: 0 auto 24px auto; border-top: 4px solid var(--primary); background: rgba(0, 0, 0, 0.12);">
+        <h3 class="mastery-card-title" style="display: flex; align-items: center; gap: 8px; font-size: 1.15rem; color: var(--primary); margin: 0 0 16px 0; border-bottom: 1px solid var(--border-glass); padding-bottom: 8px;">
+          <span><i class="fa-solid fa-users-rectangle"></i> Historical Interpretations: Contrasting Historian Views</span>
+        </h3>
+        <div class="mastery-card-body" style="padding: 0;">
+          <p style="margin-top: 0; margin-bottom: 18px; font-style: italic; color: var(--text-muted); font-size: 0.85rem; line-height: 1.45;">
+            GCSE option papers require you to analyze how and why historians arrive at different interpretations. Read these contrasting viewpoints:
+          </p>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 16px;">
+            <!-- Historian 1 -->
+            <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); border-radius: var(--border-radius-sm); padding: 16px; border-left: 3px solid var(--primary); display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <strong style="color: var(--primary); display: block; margin-bottom: 2px; font-size: 0.85rem;">Interpretation 1: ${histQuotes.hist1Name}</strong>
+                <span style="font-size: 0.72rem; color: var(--text-muted); font-style: italic; display: block; margin-bottom: 10px;">${histQuotes.hist1Focus}</span>
+                <p style="font-family: Georgia, serif; font-size: 0.95rem; line-height: 1.5; color: var(--text-main); font-style: italic; margin: 0;">
+                  "${histQuotes.hist1Quote}"
+                </p>
+              </div>
+              <div style="margin-top: 12px; font-size: 0.8rem; color: var(--text-muted); border-top: 1px dashed var(--border-glass); padding-top: 8px;">
+                <strong>Key Argument:</strong> ${histQuotes.hist1Argument}
+              </div>
+            </div>
+            <!-- Historian 2 -->
+            <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); border-radius: var(--border-radius-sm); padding: 16px; border-left: 3px solid var(--accent); display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <strong style="color: var(--accent); display: block; margin-bottom: 2px; font-size: 0.85rem;">Interpretation 2: ${histQuotes.hist2Name}</strong>
+                <span style="font-size: 0.72rem; color: var(--text-muted); font-style: italic; display: block; margin-bottom: 10px;">${histQuotes.hist2Focus}</span>
+                <p style="font-family: Georgia, serif; font-size: 0.95rem; line-height: 1.5; color: var(--text-main); font-style: italic; margin: 0;">
+                  "${histQuotes.hist2Quote}"
+                </p>
+              </div>
+              <div style="margin-top: 12px; font-size: 0.8rem; color: var(--text-muted); border-top: 1px dashed var(--border-glass); padding-top: 8px;">
+                <strong>Key Argument:</strong> ${histQuotes.hist2Argument}
+              </div>
+            </div>
+          </div>
+          <div style="background: rgba(59, 130, 246, 0.04); border: 1px solid rgba(59, 130, 246, 0.15); border-radius: var(--border-radius-sm); padding: 12px 14px; font-size: 0.88rem; line-height: 1.45;">
+            <strong style="color: var(--primary); display: block; margin-bottom: 4px;"><i class="fa-solid fa-circle-question"></i> Synthesis & Interpretation Tip:</strong>
+            ${histQuotes.synthesisTip}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  let wrappedDoNowHtml = '';
+  if (doNowHtml) {
+    wrappedDoNowHtml = `
+      <div class="do-now-collapsible-wrapper" style="max-width: 800px; margin: 18px auto 24px auto;">
+        <div class="do-now-toggle-header" style="background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: var(--border-radius-sm); padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all var(--transition-fast); user-select: none;">
+          <span style="font-family: var(--font-heading); font-size: 0.88rem; font-weight: 700; color: var(--accent); display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-bolt"></i> Do Now Task (Click to Reveal)
+          </span>
+          <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 0.8rem; transition: transform 0.2s;"></i>
+        </div>
+        <div class="do-now-content-wrapper" style="display: none; margin-top: 12px;">
+          ${doNowHtml}
+        </div>
+      </div>
+    `;
+  }
+
   // Set the container innerHTML
   container.innerHTML = `
-    ${doNowHtml}
+    ${wrappedDoNowHtml}
 
     <!-- Header Card -->
     <div class="mastery-header-card" style="max-width: 800px; margin: 0 auto 24px auto;">
@@ -744,6 +1000,9 @@ export function renderMasteryView(subtopicId) {
     <!-- Going Beyond Connection Card -->
     ${renderGoingBeyondConnectionCard(subtopicId)}
 
+    <!-- Interactive Lesson Map Card -->
+    ${mapHtml}
+
     <!-- Interactive Legend and Switch -->
     <div class="mastery-controls" style="max-width: 800px; margin: 0 auto 20px auto;">
       <div class="legend-box">
@@ -763,6 +1022,9 @@ export function renderMasteryView(subtopicId) {
     ${stepsHtml}
     
     ${dualHtml}
+
+    <!-- Historical Interpretations Contrasting Quotes -->
+    ${interpretationsHtml}
     
     ${chainHtml}
     
@@ -785,6 +1047,18 @@ export function renderMasteryView(subtopicId) {
   `;
 
 
+
+  // Bind Video Link Event to open in Video Modal
+  const videoLinks = container.querySelectorAll('.lesson-video-link');
+  videoLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      AudioEngine.play('click');
+      const url = link.getAttribute('data-url');
+      const title = link.getAttribute('data-title');
+      openVideoModal(url, title);
+    });
+  });
 
   // Bind View in Timeline Event
   const viewTimelineBtn = container.querySelector('.view-in-timeline-btn');
@@ -825,6 +1099,24 @@ export function renderMasteryView(subtopicId) {
     });
   }
 
+  // Bind Do Now Collapsible Toggle
+  const toggleHeader = container.querySelector('.do-now-toggle-header');
+  const contentWrapper = container.querySelector('.do-now-content-wrapper');
+  if (toggleHeader && contentWrapper) {
+    toggleHeader.addEventListener('click', () => {
+      AudioEngine.play('click');
+      const isHidden = contentWrapper.style.display === 'none' || !contentWrapper.style.display;
+      const chevron = toggleHeader.querySelector('.fa-chevron-down');
+      if (isHidden) {
+        contentWrapper.style.display = 'block';
+        if (chevron) chevron.style.transform = 'rotate(180deg)';
+      } else {
+        contentWrapper.style.display = 'none';
+        if (chevron) chevron.style.transform = 'rotate(0deg)';
+      }
+    });
+  }
+
   // Bind Do Now Starter Events
   const doNowCard = container.querySelector('.do-now-card');
   if (doNowCard) {
@@ -847,6 +1139,7 @@ export function renderMasteryView(subtopicId) {
           if (isHidden) {
             drawer.style.display = 'block';
             revealAnswersBtn.innerHTML = `<i class="fa-solid fa-eye-slash"></i> Hide Do Now Answers`;
+            addXp(3);
           } else {
             drawer.style.display = 'none';
             revealAnswersBtn.innerHTML = `<i class="fa-solid fa-graduation-cap"></i> Reveal Do Now Guide Answers`;
@@ -955,7 +1248,9 @@ export function renderMasteryView(subtopicId) {
       const item = e.target.closest('.quiz-question-item');
       if (item) {
         AudioEngine.play('click');
+        const isRevealing = !item.classList.contains('revealed');
         item.classList.toggle('revealed');
+        if (isRevealing) addXp(2);
       }
     });
   }
@@ -967,7 +1262,9 @@ export function renderMasteryView(subtopicId) {
       const item = e.target.closest('.revision-question-item');
       if (item) {
         AudioEngine.play('click');
+        const isRevealing = !item.classList.contains('revealed');
         item.classList.toggle('revealed');
+        if (isRevealing) addXp(2);
       }
     });
   }
@@ -1103,6 +1400,7 @@ export function renderMasteryView(subtopicId) {
       const isCorrect = selectedChain.every((val, index) => val === data.narrativeChain.correctOrder[index]);
       if (isCorrect) {
         AudioEngine.play('success');
+        addXp(8);
         feedbackEl.style.color = 'var(--success)';
         feedbackEl.innerHTML = `
           <span style="font-size: 1.05rem; display: block; margin-bottom: 4px; font-weight: bold;">✓ CORRECT CHRONOLOGY!</span>
@@ -1170,6 +1468,7 @@ export function renderMasteryView(subtopicId) {
 
       if (newPerspective !== currentPerspective) {
         AudioEngine.play('click');
+        addXp(3);
         currentPerspective = newPerspective;
 
         const narrativeBox = card.querySelector('.dual-perspective-narrative-box');
@@ -1238,6 +1537,7 @@ export function renderMasteryView(subtopicId) {
       if (!isVisible) {
         panel.classList.add('active');
         btn.querySelector('i').className = 'fa-solid fa-chevron-up';
+        addXp(3);
       }
     });
   });
@@ -1247,6 +1547,7 @@ export function renderMasteryView(subtopicId) {
   if (btnMark) {
     btnMark.addEventListener('click', () => {
       AudioEngine.play('cheer');
+      addXp(25);
       btnMark.classList.add('clicked');
       btnMark.disabled = true;
       btnMark.innerText = "Mastered! Returning to Menu...";
@@ -1274,6 +1575,13 @@ export function renderMasteryView(subtopicId) {
 
   // Formatting vault answers
   formatVaultImportanceAnswers(container);
+
+  // Initialize Leaflet Map
+  if (mapConfig && window.L) {
+    setTimeout(() => {
+      initializeLessonLeafletMap(subtopicId, mapConfig);
+    }, 100);
+  }
 }
 
 export function setupHardModeKeywords(container) {
@@ -1422,4 +1730,78 @@ export function injectInlineBios(htmlString, matchedFigures) {
   
   walk(doc.body);
   return doc.body.innerHTML;
+}
+
+function initializeLessonLeafletMap(subtopicId, mapConfig) {
+  const mapContainer = document.getElementById(`lesson-leaflet-map-${subtopicId}`);
+  if (!mapContainer) return;
+  
+  if (mapContainer._leaflet_id) {
+    return; // Already initialized
+  }
+  
+  const map = window.L.map(mapContainer, {
+    center: mapConfig.center,
+    zoom: mapConfig.zoom,
+    zoomControl: true,
+    attributionControl: false
+  });
+  
+  window.L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    maxZoom: 19
+  }).addTo(map);
+  
+  const createMarkerIcon = (isActive) => {
+    const size = isActive ? 14 : 9;
+    const color = isActive ? 'var(--primary)' : '#475569';
+    const borderColor = isActive ? '#fff' : 'rgba(255,255,255,0.4)';
+    const shadow = isActive ? 'box-shadow: 0 0 8px var(--primary);' : '';
+    const pulseHtml = isActive ? `<div class="hotspot-pulse" style="width: 14px; height: 14px; border: 2px solid var(--primary); border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); animation: hotspot-ping 2s infinite ease-in-out; pointer-events: none;"></div>` : '';
+    
+    return window.L.divIcon({
+      html: `
+        <div style="position: relative; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">
+          ${pulseHtml}
+          <div style="width: ${size}px; height: ${size}px; border-radius: 50%; background: ${color}; border: 2px solid ${borderColor}; ${shadow}"></div>
+        </div>
+      `,
+      className: 'custom-leaflet-marker',
+      iconSize: [30, 30],
+      iconAnchor: [15, 15]
+    });
+  };
+
+  const significanceBox = document.getElementById(`lesson-map-significance-${subtopicId}`);
+  
+  mapConfig.points.forEach(pt => {
+    const icon = createMarkerIcon(pt.highlighted);
+    const marker = window.L.marker(pt.coords, { icon: icon }).addTo(map);
+    
+    marker.bindTooltip(pt.title, {
+      permanent: pt.highlighted,
+      direction: 'top',
+      offset: [0, -10],
+      className: pt.highlighted ? 'leaflet-tooltip-active' : 'leaflet-tooltip-inactive'
+    });
+    
+    marker.on('click', () => {
+      AudioEngine.play('click');
+      if (significanceBox) {
+        significanceBox.style.borderColor = 'var(--accent)';
+        significanceBox.style.background = 'rgba(249, 115, 22, 0.05)';
+        significanceBox.innerHTML = `<strong>📍 ${pt.title}:</strong> ${pt.description}`;
+      }
+      map.panTo(pt.coords);
+    });
+  });
+  
+  if (mapConfig.drawRoute && mapConfig.drawRoute.length > 0) {
+    window.L.polyline(mapConfig.drawRoute, {
+      color: 'var(--primary)',
+      weight: 3,
+      dashArray: '5, 5',
+      opacity: 0.85
+    }).addTo(map);
+  }
 }

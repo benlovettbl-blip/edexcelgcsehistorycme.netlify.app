@@ -14,3 +14,5 @@ local.properties
 # Build zip
 dist.zip
 
+# Scratch/temp workspace files
+scratch/

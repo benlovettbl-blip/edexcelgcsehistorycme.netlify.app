@@ -74,6 +74,11 @@ function bindEvents() {
     switchView('going-beyond');
   });
 
+  document.getElementById('nav-ai-videos').addEventListener('click', () => {
+    AudioEngine.play('click');
+    switchView('ai-videos');
+  });
+
   // Dashboard Shortcuts
   document.getElementById('shortcut-timeline').addEventListener('click', () => {
     AudioEngine.play('click');
@@ -90,9 +95,106 @@ function bindEvents() {
     switchView('exam-skills');
   });
 
+  const shortPast = document.getElementById('shortcut-past-papers');
+  if (shortPast) {
+    shortPast.addEventListener('click', () => {
+      AudioEngine.play('click');
+      switchView('past-papers');
+    });
+  }
+
+  const shortGames = document.getElementById('shortcut-games');
+  if (shortGames) {
+    shortGames.addEventListener('click', () => {
+      AudioEngine.play('click');
+      switchView('games');
+    });
+  }
+
+  const shortAi = document.getElementById('shortcut-ai-videos');
+  if (shortAi) {
+    shortAi.addEventListener('click', () => {
+      AudioEngine.play('click');
+      switchView('ai-videos');
+    });
+  }
+
+  // Header Back Button
+  const backBtn = document.getElementById('header-back-btn');
+  if (backBtn) {
+    backBtn.addEventListener('click', () => {
+      AudioEngine.play('click');
+      switchView('dashboard');
+    });
+  }
+
+  const leaderboardBackBtn = document.getElementById('btn-leaderboard-back');
+  if (leaderboardBackBtn) {
+    leaderboardBackBtn.addEventListener('click', () => {
+      AudioEngine.play('click');
+      switchView('dashboard');
+    });
+  }
+
+  // Dashboard New Shortcuts
+  const shortMap = document.getElementById('shortcut-map');
+  if (shortMap) {
+    shortMap.addEventListener('click', () => {
+      AudioEngine.play('click');
+      switchView('map');
+    });
+  }
+
+  const shortBookmarks = document.getElementById('shortcut-bookmarks');
+  if (shortBookmarks) {
+    shortBookmarks.addEventListener('click', () => {
+      AudioEngine.play('click');
+      switchView('bookmarks');
+    });
+  }
+
+  const shortLeaderboard = document.getElementById('shortcut-leaderboard');
+  if (shortLeaderboard) {
+    shortLeaderboard.addEventListener('click', () => {
+      AudioEngine.play('click');
+      switchView('leaderboard');
+    });
+  }
+
   // Mobile Menu Toggle
-  document.getElementById('menu-toggle').addEventListener('click', toggleMobileSidebar);
-  document.getElementById('sidebar-overlay').addEventListener('click', closeMobileSidebar);
+  const menuToggle = document.getElementById('menu-toggle');
+  if (menuToggle) {
+    menuToggle.addEventListener('click', toggleMobileSidebar);
+  }
+  const sidebarOverlay = document.getElementById('sidebar-overlay');
+  if (sidebarOverlay) {
+    sidebarOverlay.addEventListener('click', closeMobileSidebar);
+  }
+
+  // Settings Drawer Toggle
+  const btnSettingsToggle = document.getElementById('btn-settings-toggle');
+  const btnSettingsClose = document.getElementById('btn-settings-close');
+  const settingsOverlay = document.getElementById('settings-drawer-overlay');
+  if (btnSettingsToggle && settingsOverlay) {
+    btnSettingsToggle.addEventListener('click', () => {
+      AudioEngine.play('click');
+      settingsOverlay.style.display = 'flex';
+    });
+  }
+  if (btnSettingsClose && settingsOverlay) {
+    btnSettingsClose.addEventListener('click', () => {
+      AudioEngine.play('click');
+      settingsOverlay.style.display = 'none';
+    });
+  }
+  if (settingsOverlay) {
+    settingsOverlay.addEventListener('click', (e) => {
+      if (e.target === settingsOverlay) {
+        AudioEngine.play('click');
+        settingsOverlay.style.display = 'none';
+      }
+    });
+  }
 
   // Fullscreen Toggle
   const fullscreenBtn = document.getElementById('fullscreen-btn');
@@ -202,13 +304,16 @@ function bindEvents() {
 
 
   // Quiz generator controls
-  document.getElementById('btn-quick-exam-start').addEventListener('click', () => {
-    AudioEngine.play('click');
-    const scope = document.getElementById('quick-exam-scope').value;
-    const len = document.getElementById('quick-exam-count').value;
-    switchView('exam');
-    startExam(scope, len, 600); // Defaults to 10 minutes (600s)
-  });
+  const btnQuickStart = document.getElementById('btn-quick-exam-start');
+  if (btnQuickStart) {
+    btnQuickStart.addEventListener('click', () => {
+      AudioEngine.play('click');
+      const scope = document.getElementById('quick-exam-scope').value;
+      const len = document.getElementById('quick-exam-count').value;
+      switchView('exam');
+      startExam(scope, len, 600); // Defaults to 10 minutes (600s)
+    });
+  }
 
   document.getElementById('btn-exam-start').addEventListener('click', () => {
     AudioEngine.play('click');

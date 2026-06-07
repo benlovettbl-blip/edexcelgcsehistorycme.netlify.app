@@ -8,12 +8,237 @@ import { LESSONS_DATA } from './lessons_data.js';
 import { MASTERY_DATA } from './mastery_data.js';
 import { DECISIONS_DATA } from './decisions_data.js';
 import { MINDMAP_DATA } from './mindmap_data.js';
-import { stopJswLoop, initCrisisGame, initTugGame, initJswGame, initTabooGame } from './games.js';
+import { initCrisisGame, initTugGame, initTabooGame, initMeSimGame, initParserGame, initJaffaParserGame } from './games.js';
 import { getFallbackUrl } from './image_fallback.js';
 import { GOING_BEYOND_DATA } from './going_beyond_data.js';
 import { KEY_TOPICS_OVERVIEWS } from './key_topics_data.js';
+import { VIDEOS_DATA } from './videos_data.js';
+import { 
+  NARRATIVE_FRAMINGS, 
+  SYNTHESIS_CHALLENGES, 
+  getFactSplit, 
+  getElaborativePrompt, 
+  EXPLANATION_SPLITS, 
+  getCardRubrics 
+} from './flashcard_upgrades.js';
 
 // --- Dynamic Renders ---
+
+export function getLevelTitle(level) {
+  const titles = {
+    1: "Novice Historian",
+    2: "Diplomatic Envoy",
+    3: "Strategic Mediator",
+    4: "Coalition Commander",
+    5: "Chief Peacekeeper"
+  };
+  return titles[level] || "Veteran Scholar";
+}
+
+export function getXpForNextLevel(level) {
+  const levels = {
+    1: 100,
+    2: 300,
+    3: 600,
+    4: 1000,
+    5: 2000
+  };
+  return levels[level] || 999999;
+}
+
+export function showToast(message, type = 'info', actionText = null, actionCallback = null) {
+  let container = document.getElementById('app-toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'app-toast-container';
+    container.style.position = 'fixed';
+    container.style.bottom = '24px';
+    container.style.right = '24px';
+    container.style.zIndex = '9999';
+    container.style.display = 'flex';
+    container.style.flexDirection = 'column';
+    container.style.gap = '10px';
+    container.style.maxWidth = '360px';
+    document.body.appendChild(container);
+  }
+  
+  const toast = document.createElement('div');
+  toast.className = `app-toast toast-${type}`;
+  toast.style.background = 'var(--bg-card)';
+  toast.style.border = '1px solid var(--border-glass)';
+  toast.style.borderRadius = 'var(--border-radius-sm)';
+  toast.style.padding = '14px 18px';
+  toast.style.boxShadow = 'var(--shadow-lg)';
+  toast.style.display = 'flex';
+  toast.style.flexDirection = 'column';
+  toast.style.gap = '8px';
+  toast.style.color = 'var(--text-main)';
+  toast.style.fontSize = '0.88rem';
+  toast.style.lineHeight = '1.4';
+  toast.style.transform = 'translateY(100px)';
+  toast.style.opacity = '0';
+  toast.style.transition = 'all var(--transition-normal)';
+  
+  let leftBorderColor = 'var(--primary)';
+  if (type === 'success') leftBorderColor = 'var(--success)';
+  if (type === 'warning') leftBorderColor = 'var(--accent)';
+  toast.style.borderLeft = `4px solid ${leftBorderColor}`;
+  
+  let actionHtml = '';
+  if (actionText && actionCallback) {
+    actionHtml = `<button class="toast-action-btn" style="background: var(--primary); border: none; color: #fff; padding: 6px 12px; font-size: 0.75rem; font-weight: bold; border-radius: 4px; cursor: pointer; align-self: flex-start; margin-top: 4px;">${actionText}</button>`;
+  }
+  
+  toast.innerHTML = `
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
+      <div style="flex: 1;">${message}</div>
+      <button class="toast-close-btn" style="background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 0; font-size: 0.9rem; line-height: 1;"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    ${actionHtml}
+  `;
+  
+  container.appendChild(toast);
+  
+  setTimeout(() => {
+    toast.style.transform = 'translateY(0)';
+    toast.style.opacity = '1';
+  }, 10);
+  
+  const closeBtn = toast.querySelector('.toast-close-btn');
+  closeBtn.addEventListener('click', () => {
+    toast.style.transform = 'translateY(100px)';
+    toast.style.opacity = '0';
+    setTimeout(() => toast.remove(), 300);
+  });
+  
+  if (actionText && actionCallback) {
+    const actionBtn = toast.querySelector('.toast-action-btn');
+    actionBtn.addEventListener('click', () => {
+      actionCallback();
+      toast.remove();
+    });
+  }
+  
+  if (!actionText) {
+    setTimeout(() => {
+      if (toast.parentNode) {
+        toast.style.transform = 'translateY(100px)';
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
+      }
+    }, 5000);
+  }
+}
+
+export function showWarningToast(message) {
+  showToast(`<i class="fa-solid fa-triangle-exclamation" style="color: var(--accent); margin-right: 6px;"></i> ${message}`, 'warning');
+}
+
+export function showLevelUpNotification(level) {
+  const title = getLevelTitle(level);
+  showToast(`🎉 <strong>Level Up!</strong> You are now a <strong>Level ${level}: ${title}</strong>!`, 'success');
+}
+
+export function addXp(amount) {
+  if (!state.userStats) {
+    state.userStats = { xp: 0, level: 1, streak: 0, lastLoginDate: null };
+  }
+  state.userStats.xp += amount;
+  
+  // Update Live XP Counter Badge
+  const headerXpEl = document.getElementById('header-xp-value');
+  if (headerXpEl) {
+    headerXpEl.textContent = state.userStats.xp;
+  }
+  const badge = document.getElementById('live-xp-counter-badge');
+  if (badge) {
+    badge.style.transform = 'scale(1.15)';
+    badge.style.borderColor = 'var(--primary)';
+    badge.style.background = 'rgba(59, 130, 246, 0.18)';
+    setTimeout(() => {
+      badge.style.transform = '';
+      badge.style.borderColor = '';
+      badge.style.background = '';
+    }, 250);
+  }
+
+  let currentLevel = state.userStats.level;
+  let nextXpThreshold = getXpForNextLevel(currentLevel);
+  
+  while (state.userStats.xp >= nextXpThreshold && currentLevel < 5) {
+    currentLevel++;
+    nextXpThreshold = getXpForNextLevel(currentLevel);
+  }
+  
+  if (currentLevel > state.userStats.level) {
+    state.userStats.level = currentLevel;
+    setTimeout(() => {
+      AudioEngine.play('cheer');
+      if (typeof Confetti !== 'undefined' && typeof Confetti.spawn === 'function') {
+        Confetti.spawn(100);
+      }
+      showLevelUpNotification(currentLevel);
+    }, 500);
+  }
+  
+  localStorage.setItem('edexcel_prefs_user_stats', JSON.stringify(state.userStats));
+  if (state.currentView === 'dashboard') {
+    renderPlayerProfileWidget();
+  }
+}
+
+export function renderPlayerProfileWidget() {
+  const container = document.getElementById('dashboard-player-profile-container');
+  if (!container) return;
+  
+  const stats = state.userStats || { xp: 0, level: 1, streak: 0, lastLoginDate: null };
+  const levelTitle = getLevelTitle(stats.level);
+  const nextXp = getXpForNextLevel(stats.level);
+  const prevXp = stats.level === 1 ? 0 : getXpForNextLevel(stats.level - 1);
+  const levelProgressPct = stats.level === 5 ? 100 : Math.round(((stats.xp - prevXp) / (nextXp - prevXp)) * 100);
+  
+  container.innerHTML = `
+    <div class="gamification-widget" style="padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border: 1px solid var(--border-glass); background: rgba(0, 0, 0, 0.15); border-radius: var(--border-radius-sm); height: 72px; box-sizing: border-box; cursor: pointer;">
+      <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;">
+        <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--primary-glow); border: 2px solid var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--primary); font-weight: bold; flex-shrink: 0;" title="Level ${stats.level}">
+          ${stats.level}
+        </div>
+        <div style="flex: 1; text-align: left; min-width: 0;">
+          <div style="font-size: 0.55rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted); letter-spacing: 0.5px; line-height: 1;">Level ${stats.level} Profile</div>
+          <div style="font-family: var(--font-heading); font-size: 0.85rem; font-weight: 800; color: var(--text-main); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${levelTitle}">${levelTitle}</div>
+          
+          <!-- XP Progress Bar -->
+          <div style="margin-top: 3px;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.6rem; color: var(--text-muted); margin-bottom: 2px; line-height: 1;">
+              <span>XP: ${stats.xp}/${stats.level === 5 ? 'Max' : nextXp}</span>
+              <span>${levelProgressPct}%</span>
+            </div>
+            <div style="height: 4px; background: rgba(255,255,255,0.05); border-radius: 2px; overflow: hidden; border: 1px solid var(--border-glass);">
+              <div style="height: 100%; background: var(--primary); width: ${levelProgressPct}%;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Streak Inside Profile -->
+      <div class="streak-widget-panel" style="display: flex; align-items: center; gap: 6px; background: rgba(239, 68, 68, 0.08); padding: 6px 10px; border: 1px solid rgba(239, 68, 68, 0.25); border-radius: var(--border-radius-sm); flex-shrink: 0;" title="Study Streak">
+        <i class="fa-solid fa-fire" style="color: var(--accent); font-size: 1.1rem;"></i>
+        <div style="text-align: left;">
+          <span style="font-size: 0.55rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted); display: block; line-height: 1;">Streak</span>
+          <strong style="font-size: 0.85rem; color: var(--text-main); line-height: 1.1; white-space: nowrap;">${stats.streak} Days</strong>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const widget = container.querySelector('.gamification-widget');
+  if (widget) {
+    widget.addEventListener('click', () => {
+      AudioEngine.play('click');
+      switchView('leaderboard');
+    });
+  }
+}
 
 // 1. Sidebar sub-topic items
 function renderSidebarNav() {
@@ -121,28 +346,52 @@ function updateGlobalStats() {
   const totalMastered = state.allQuestions.filter(q => state.mastery[q.id]).length;
   const overallPct = total > 0 ? Math.round((totalMastered / total) * 100) : 0;
   
-  // Standard Recall
-  const standardQuestions = state.allQuestions.filter(q => q.type === 'standard');
-  const standardMastered = standardQuestions.filter(q => state.mastery[q.id]).length;
-  const standardPct = standardQuestions.length > 0 ? Math.round((standardMastered / standardQuestions.length) * 100) : 0;
+  // Easy
+  const easyQuestions = state.allQuestions.filter(q => q.type === 'easy');
+  const easyMastered = easyQuestions.filter(q => state.mastery[q.id]).length;
+  const easyPct = easyQuestions.length > 0 ? Math.round((easyMastered / easyQuestions.length) * 100) : 0;
   
-  // Top Tier Trivia
-  const depthQuestions = state.allQuestions.filter(q => q.type === 'depth');
-  const depthMastered = depthQuestions.filter(q => state.mastery[q.id]).length;
-  const depthPct = depthQuestions.length > 0 ? Math.round((depthMastered / depthQuestions.length) * 100) : 0;
+  // Medium
+  const mediumQuestions = state.allQuestions.filter(q => q.type === 'medium');
+  const mediumMastered = mediumQuestions.filter(q => state.mastery[q.id]).length;
+  const mediumPct = mediumQuestions.length > 0 ? Math.round((mediumMastered / mediumQuestions.length) * 100) : 0;
+  
+  // Difficult
+  const difficultQuestions = state.allQuestions.filter(q => q.type === 'difficult');
+  const difficultMastered = difficultQuestions.filter(q => state.mastery[q.id]).length;
+  const difficultPct = difficultQuestions.length > 0 ? Math.round((difficultMastered / difficultQuestions.length) * 100) : 0;
   
   // Update DOM values
-  document.getElementById('stat-overall-progress').textContent = `${overallPct}%`;
-  document.getElementById('stat-overall-progress-bar').style.width = `${overallPct}%`;
-  document.getElementById('stat-overall-fraction').textContent = `${totalMastered} / ${total}`;
+  const overallProgress = document.getElementById('stat-overall-progress');
+  if (overallProgress) overallProgress.textContent = `${overallPct}%`;
+  const overallProgressBar = document.getElementById('stat-overall-progress-bar');
+  if (overallProgressBar) overallProgressBar.style.width = `${overallPct}%`;
+  const overallFraction = document.getElementById('stat-overall-fraction');
+  if (overallFraction) overallFraction.textContent = `${totalMastered} / ${total}`;
+
+  const headerProgressVal = document.getElementById('header-progress-value');
+  if (headerProgressVal) headerProgressVal.textContent = `${overallPct}%`;
   
-  document.getElementById('stat-standard-progress').textContent = `${standardPct}%`;
-  document.getElementById('stat-standard-progress-bar').style.width = `${standardPct}%`;
-  document.getElementById('stat-standard-fraction').textContent = `${standardMastered} / ${standardQuestions.length}`;
+  const easyProgress = document.getElementById('stat-easy-progress');
+  if (easyProgress) easyProgress.textContent = `${easyPct}%`;
+  const easyProgressBar = document.getElementById('stat-easy-progress-bar');
+  if (easyProgressBar) easyProgressBar.style.width = `${easyPct}%`;
+  const easyFraction = document.getElementById('stat-easy-fraction');
+  if (easyFraction) easyFraction.textContent = `${easyMastered} / ${easyQuestions.length}`;
   
-  document.getElementById('stat-depth-progress').textContent = `${depthPct}%`;
-  document.getElementById('stat-depth-progress-bar').style.width = `${depthPct}%`;
-  document.getElementById('stat-depth-fraction').textContent = `${depthMastered} / ${depthQuestions.length}`;
+  const mediumProgress = document.getElementById('stat-medium-progress');
+  if (mediumProgress) mediumProgress.textContent = `${mediumPct}%`;
+  const mediumProgressBar = document.getElementById('stat-medium-progress-bar');
+  if (mediumProgressBar) mediumProgressBar.style.width = `${mediumPct}%`;
+  const mediumFraction = document.getElementById('stat-medium-fraction');
+  if (mediumFraction) mediumFraction.textContent = `${mediumMastered} / ${mediumQuestions.length}`;
+  
+  const difficultProgress = document.getElementById('stat-difficult-progress');
+  if (difficultProgress) difficultProgress.textContent = `${difficultPct}%`;
+  const difficultProgressBar = document.getElementById('stat-difficult-progress-bar');
+  if (difficultProgressBar) difficultProgressBar.style.width = `${difficultPct}%`;
+  const difficultFraction = document.getElementById('stat-difficult-fraction');
+  if (difficultFraction) difficultFraction.textContent = `${difficultMastered} / ${difficultQuestions.length}`;
   
   // Update sidebar subtopic nav percentages
   QUIZ_DATA.forEach(topic => {
@@ -158,6 +407,24 @@ function updateGlobalStats() {
 }
 
 // 3. Render Dashboard list
+const topicInquiries = {
+  'topic_1': 'How was the State of Israel created and what were the consequences of the 1948–49 war?',
+  'topic_2': 'Why did the Arab-Israeli conflict escalate and what were the outcomes of the 1967 and 1973 wars?',
+  'topic_3': 'How did superpowers and peace summits attempt to resolve the conflict, and why did the peace process struggle?'
+};
+
+const subtopicInquiries = {
+  "subtopic_1_1": "How did the British withdrawal lead to the creation of Israel, 1945–48?",
+  "subtopic_1_2": "What were the causes and consequences of the 1948–49 Arab-Israeli War?",
+  "subtopic_1_3": "Why did the nationalisation of the Suez Canal spark a major international crisis in 1956?",
+  "subtopic_2_1": "How did tensions escalate to cause the outbreak and swift outcome of the 1967 Six Day War?",
+  "subtopic_2_2": "Why did Palestinian nationalism grow and what impact did it have on the conflict?",
+  "subtopic_2_3": "Why did the Yom Kippur War break out in 1973 and how did it change the balance of power?",
+  "subtopic_3_1": "How was a historic peace accord achieved between Egypt and Israel at Camp David?",
+  "subtopic_3_2": "What were the causes and consequences of the Israeli invasion of Lebanon and the First Intifada?",
+  "subtopic_3_3": "How did the Oslo Accords attempt to resolve the conflict, and why did they ultimately stall?"
+};
+
 function renderDashboard() {
   const container = document.getElementById('dashboard-topics-list');
   container.innerHTML = '';
@@ -177,38 +444,73 @@ function renderDashboard() {
       const subMastered = subQs.filter(q => state.mastery[q.id]).length;
       const subPct = subQs.length > 0 ? Math.round((subMastered / subQs.length) * 100) : 0;
       
+      const cleanTitle = sub.title.replace(/^Topic (\d+\.\d+):\s*/, "KT $1: ");
+      
       subtopicsHTML += `
-        <div style="margin-top: 10px; padding-left: 12px; border-left: 2px solid var(--border-glass);">
-          <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 4px;">
-            <span style="color: var(--text-main); font-weight: 500;">${sub.title.replace(/^Topic \d\.\d:\s*/, "")}</span>
-            <span style="color: var(--primary); font-weight: 600;">${subMastered}/${subQs.length} Secured</span>
+        <div class="dashboard-subtopic-row" data-subtopic-id="${sub.id}">
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 8px;">
+            <span style="color: var(--text-main); font-family: var(--font-heading); font-size: 0.82rem; font-weight: 700;">
+              ${cleanTitle}
+            </span>
+            <span class="subtopic-pct-badge" style="font-size: 0.7rem; ${subPct === 0 ? 'background: rgba(148, 163, 184, 0.15); color: var(--text-muted);' : 'background: #ffb703; color: #0b0f19; font-weight: 800;'} padding: 2px 6px; border-radius: 10px; font-weight: 700; flex-shrink: 0;">
+              ${subPct}%
+            </span>
           </div>
-          <div class="topic-list-progress-bar" style="height: 3px;">
-            <div class="topic-list-progress-fill" style="width: ${subPct}%;"></div>
+          <div style="font-size: 0.72rem; color: var(--text-muted); line-height: 1.35; font-weight: 500; display: flex; justify-content: space-between; align-items: center; margin: 2px 0 4px 0; width: 100%;">
+            <span style="font-style: italic; color: var(--text-muted); opacity: 0.95;">${subtopicInquiries[sub.id] || ''}</span>
+            <span style="font-size: 0.68rem; font-weight: 600; opacity: 0.85; flex-shrink: 0; margin-left: 8px;">${subMastered}/${subQs.length} Secured</span>
+          </div>
+          <div class="topic-list-progress-bar" style="height: 4px; margin: 0; background: rgba(255,255,255,0.05); border-radius: 2px; overflow: hidden; width: 100%;">
+            <div class="topic-list-progress-fill" style="width: ${subPct}%; height: 100%; background: var(--primary); border-radius: 2px;"></div>
           </div>
         </div>
       `;
     });
     
+    const inquiryText = topicInquiries[topic.id] || '';
+    const mainBadgeStyle = pct === 0 
+      ? 'background: rgba(148, 163, 184, 0.15); color: var(--text-muted);' 
+      : 'background: #ffb703; color: #0b0f19; font-weight: 800;';
+    
     card.innerHTML = `
-      <div class="topic-list-info">
-        <span class="topic-list-name" style="font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700;">${topic.title}</span>
-        <span class="nav-item-progress" style="font-size: 0.8rem;">${pct}% Secured</span>
+      <div class="topic-list-info" style="border-bottom: 1px solid var(--border-glass); padding-bottom: 12px; margin-bottom: 6px; display: flex; flex-direction: column; width: 100%; gap: 6px; min-height: 105px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+          <span class="topic-list-name" style="font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700; color: var(--text-main); line-height: 1.25;">
+            ${topic.title}
+          </span>
+          <span class="nav-item-progress" style="font-size: 0.75rem; ${mainBadgeStyle} padding: 2px 8px; border-radius: 12px; font-weight: 700; flex-shrink: 0; margin-left: 8px;">${pct}%</span>
+        </div>
+        <div class="topic-list-inquiry" style="font-size: 0.78rem; color: var(--text-main); opacity: 0.8; font-style: italic; line-height: 1.3; margin-top: 4px; display: flex; align-items: flex-start; gap: 6px; width: 100%;">
+          <i class="fa-solid fa-compass" style="color: var(--accent); margin-top: 2px; flex-shrink: 0; font-size: 0.85rem;"></i>
+          <span>${inquiryText}</span>
+        </div>
       </div>
-      <div class="topic-list-progress-bar">
+      <div class="topic-list-progress-bar" style="height: 4px; margin-bottom: 10px; background: rgba(255,255,255,0.05);">
         <div class="topic-list-progress-fill" style="width: ${pct}%;"></div>
       </div>
-      <div style="display: flex; flex-direction: column; gap: 8px;">
+      <div style="display: flex; flex-direction: column; gap: 10px;">
         ${subtopicsHTML}
       </div>
     `;
     
-    // Clicking anywhere on topic card takes user to the first subtopic of that topic
+    // Attach individual subtopic row clicks
+    if (card.querySelectorAll) {
+      card.querySelectorAll('.dashboard-subtopic-row').forEach(row => {
+        row.addEventListener('click', (e) => {
+          e.stopPropagation(); // Avoid triggering card click
+          const subId = row.getAttribute('data-subtopic-id');
+          AudioEngine.play('click');
+          switchView('subtopic', subId);
+        });
+      });
+    }
+    
+    // Clicking anywhere on topic card (except subtopics) takes user to the Key Topic Overview page
     card.addEventListener('click', (e) => {
-      // Don't trigger if click was inside interactive elements
-      if (e.target.closest('a') || e.target.closest('button')) return;
+      // Don't trigger if click was inside interactive elements or subtopic rows
+      if (e.target.closest('.dashboard-subtopic-row') || e.target.closest('a') || e.target.closest('button')) return;
       AudioEngine.play('click');
-      switchView('subtopic', topic.subtopics[0].id);
+      switchView('key-topic', topic.id);
     });
     
     container.appendChild(card);
@@ -288,10 +590,12 @@ function renderClassicView() {
   let questions = state.allQuestions.filter(q => q.subtopicId === subtopicId);
   
   // Filter questions
-  if (activeClassicFilter === 'standard') {
-    questions = questions.filter(q => q.type === 'standard');
-  } else if (activeClassicFilter === 'depth') {
-    questions = questions.filter(q => q.type === 'depth');
+  if (activeClassicFilter === 'easy') {
+    questions = questions.filter(q => q.type === 'easy');
+  } else if (activeClassicFilter === 'medium') {
+    questions = questions.filter(q => q.type === 'medium');
+  } else if (activeClassicFilter === 'difficult') {
+    questions = questions.filter(q => q.type === 'difficult');
   } else if (activeClassicFilter === 'unmastered') {
     questions = questions.filter(q => !state.mastery[q.id]);
   }
@@ -324,7 +628,7 @@ function renderClassicView() {
           <span class="summary-text">${q.question}</span>
         </div>
         <div class="summary-badges">
-          <span class="badge ${q.type === 'standard' ? 'badge-standard' : 'badge-depth'}">${q.type === 'standard' ? 'Standard' : 'Top Tier Trivia'}</span>
+          <span class="badge badge-${q.type}">${q.type.charAt(0).toUpperCase() + q.type.slice(1)}</span>
           <span class="badge badge-year">${q.year}</span>
           <div class="mastery-checkbox-container ${isMastered ? 'mastered' : ''}" data-qid="${q.id}" title="Mark as Mastered">
             <i class="fa-solid fa-check"></i>
@@ -367,50 +671,214 @@ function renderClassicView() {
 }
 
 // 5. Flashcard View logic
+// 5. Flashcard View logic
 function startFlashcardSession(subtopicId) {
-  const questions = state.allQuestions.filter(q => q.subtopicId === subtopicId);
-  
-  // Shuffle cards for study session
-  state.flashcardSession.deck = [...questions].sort(() => Math.random() - 0.5);
-  state.flashcardSession.activeIndex = 0;
-  state.flashcardSession.originalLength = questions.length;
-  state.flashcardSession.masteredCount = 0;
-  
-  renderFlashcard();
+  const timelines = NARRATIVE_FRAMINGS[subtopicId];
+  if (timelines && timelines.length > 0) {
+    // Render Chronological Prime overview screen first
+    const container = document.getElementById('view-flashcards');
+    const subtopic = state.allQuestions.find(q => q.subtopicId === subtopicId);
+    const subTitle = subtopic ? subtopic.subtopicTitle.replace(/^Topic \d\.\d:\s*/, "") : "Timeline Overview";
+    
+    let timelineStepsHtml = timelines.map((step, idx) => {
+      return `
+        <div class="chronology-prime-step" style="display: flex; gap: 16px; align-items: flex-start; padding: 14px; background: rgba(0,0,0,0.15); border: 1px solid var(--border-glass); border-radius: var(--border-radius-sm); transition: transform 0.2s; margin-bottom: 10px;" onmouseover="this.style.transform='translateX(4px)'" onmouseout="this.style.transform='none'">
+          <div class="prime-step-number" style="width: 28px; height: 28px; border-radius: 50%; background: var(--primary-glow); border: 1px solid var(--primary); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 0.9rem;">
+            ${idx + 1}
+          </div>
+          <div class="prime-step-text" style="font-size: 0.92rem; line-height: 1.5; color: var(--text-normal); text-align: left;">
+            ${step.replace(/\*\*([^*]+)\*\*/g, '<strong style="color: var(--primary); font-weight: 700;">$1</strong>')}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    container.innerHTML = `
+      <div class="chronology-prime-container" style="max-width: 600px; margin: 0 auto; padding: 20px 10px; text-align: center; display: flex; flex-direction: column; gap: 20px; animation: fadeIn 0.4s;">
+        <div class="exam-skills-header-card" style="background: var(--gradient-hero); padding: 24px; border-radius: var(--border-radius-md); border: 1px solid var(--border-glass); box-shadow: var(--shadow-md); text-align: left;">
+          <div style="font-size: 0.65rem; font-weight: 800; text-transform: uppercase; color: var(--primary); letter-spacing: 0.8px; margin-bottom: 4px;">Chronological Prime</div>
+          <h2 style="font-family: var(--font-heading); font-size: 1.4rem; font-weight: 700; margin: 0 0 8px 0; color: var(--text-main); line-height: 1.25;">${subTitle}</h2>
+          <p style="font-size: 0.88rem; line-height: 1.5; color: var(--text-muted); margin: 0;">
+            Review the historical flow of events before studying the active recall deck. Building a chronological timeline anchor in your memory will improve recall score.
+          </p>
+        </div>
+        
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          ${timelineStepsHtml}
+        </div>
+
+        <button class="btn-primary" id="btn-prime-continue" style="padding: 12px; font-size: 0.95rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px;">
+          Start Active Recall Deck <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+    `;
+
+    document.getElementById('btn-prime-continue').addEventListener('click', () => {
+      AudioEngine.play('click');
+      addXp(5); // Reward 5 XP for reviewing prime timeline!
+      
+      const questions = state.allQuestions.filter(q => q.subtopicId === subtopicId);
+      state.flashcardSession.deck = [...questions].sort(() => Math.random() - 0.5);
+      
+      // Injects synoptic synthesis challenge as final card!
+      const synChallenge = SYNTHESIS_CHALLENGES[subtopicId];
+      if (synChallenge) {
+        state.flashcardSession.deck.push({
+          id: `synoptic_${subtopicId}`,
+          isSynoptic: true,
+          question: synChallenge.front,
+          answer: "Synthesis Guide Model Answer",
+          explanation: synChallenge.back,
+          type: 'difficult',
+          year: 0
+        });
+      }
+      
+      state.flashcardSession.activeIndex = 0;
+      state.flashcardSession.originalLength = state.flashcardSession.deck.length;
+      state.flashcardSession.masteredCount = 0;
+      state.flashcardSession.failedCardIds = [];
+      
+      restoreFlashcardSkeleton();
+      renderFlashcard();
+    });
+  } else {
+    const questions = state.allQuestions.filter(q => q.subtopicId === subtopicId);
+    state.flashcardSession.deck = [...questions].sort(() => Math.random() - 0.5);
+    
+    // Injects synoptic synthesis challenge as final card!
+    const synChallenge = SYNTHESIS_CHALLENGES[subtopicId];
+    if (synChallenge) {
+      state.flashcardSession.deck.push({
+        id: `synoptic_${subtopicId}`,
+        isSynoptic: true,
+        question: synChallenge.front,
+        answer: "Synthesis Guide Model Answer",
+        explanation: synChallenge.back,
+        type: 'difficult',
+        year: 0
+      });
+    }
+    
+    state.flashcardSession.activeIndex = 0;
+    state.flashcardSession.originalLength = state.flashcardSession.deck.length;
+    state.flashcardSession.masteredCount = 0;
+    state.flashcardSession.failedCardIds = [];
+    
+    restoreFlashcardSkeleton();
+    renderFlashcard();
+  }
+}
+
+function renderMarkdownSimple(text) {
+  if (!text) return "";
+  return text
+    .replace(/\r?\n/g, '<br>')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/\* ([^\n<]+)/g, '<li>$1</li>');
 }
 
 function renderFlashcard() {
   const deck = state.flashcardSession.deck;
   const idx = state.flashcardSession.activeIndex;
   
+  if (idx >= deck.length) {
+    // Finished session
+    showFlashcardCompletion();
+    return;
+  }
+
   // Update progress headers
   document.getElementById('flashcard-counter-text').textContent = `Card ${idx + 1} of ${deck.length}`;
   const masteryPct = deck.length > 0 ? Math.round((state.flashcardSession.masteredCount / state.flashcardSession.originalLength) * 100) : 0;
   document.getElementById('flashcard-mastery-text').textContent = `${masteryPct}% resolved this session`;
   document.getElementById('flashcard-progress-bar-fill').style.width = `${Math.min(100, Math.round(((idx) / deck.length) * 100))}%`;
   
-  if (idx >= deck.length) {
-    // Finished session
-    showFlashcardCompletion();
-    return;
-  }
-  
   const q = deck[idx];
   const isBookmarked = state.bookmarks.includes(q.id);
   
   // Render Front & Back Content
   const frontBadge = document.getElementById('card-front-badge');
-  frontBadge.textContent = q.type === 'standard' ? 'Standard' : 'Top Tier Trivia';
-  frontBadge.className = `badge ${q.type === 'standard' ? 'badge-standard' : 'badge-depth'}`;
+  frontBadge.textContent = q.isSynoptic ? 'Synoptic' : q.type.charAt(0).toUpperCase() + q.type.slice(1);
+  frontBadge.className = `badge badge-${q.type}`;
   
   const backBadge = document.getElementById('card-back-badge');
-  backBadge.textContent = q.type === 'standard' ? 'Standard' : 'Top Tier Trivia';
-  backBadge.className = `badge ${q.type === 'standard' ? 'badge-standard' : 'badge-depth'}`;
+  backBadge.textContent = q.isSynoptic ? 'Synoptic' : q.type.charAt(0).toUpperCase() + q.type.slice(1);
+  backBadge.className = `badge badge-${q.type}`;
   
-  document.getElementById('card-front-question').textContent = q.question;
-  document.getElementById('card-back-answer').textContent = q.answer;
-  document.getElementById('card-back-explanation').textContent = q.explanation;
+  const ktLabel = q.subtopicTitle ? q.subtopicTitle.replace(/^Topic\s+/i, "KT ") : "";
+  const frontTopic = document.getElementById('card-front-topic');
+  if (frontTopic) frontTopic.textContent = ktLabel;
+  const backTopic = document.getElementById('card-back-topic');
+  if (backTopic) backTopic.textContent = ktLabel;
   
+  // Custom Render Front face (including scaffolded hint if failed previously)
+  const frontBody = document.getElementById('card-front-question');
+  if (q.isSynoptic) {
+    frontBody.innerHTML = `
+      <div style="font-family: var(--font-heading); font-size: 0.8rem; font-weight: 800; color: var(--accent); border: 1px solid rgba(244,63,94,0.25); background: rgba(244,63,94,0.06); padding: 4px 10px; border-radius: 12px; display: inline-block; margin-bottom: 12px; letter-spacing: 0.5px;">
+        🧠 SYNOPTIC SYNTHESIS CHALLENGE
+      </div>
+      <h3 class="card-question" style="font-size: 1.15rem; line-height: 1.5; font-weight: 700; color: var(--text-main);">${q.question}</h3>
+    `;
+  } else {
+    let hintHtml = '';
+    if (state.flashcardSession.failedCardIds.includes(q.id)) {
+      const hintWords = q.answer.split(' ').map(w => {
+        if (w.length <= 1) return w;
+        return w.charAt(0) + '&bull;'.repeat(w.length - 1);
+      }).join(' ');
+      hintHtml = `
+        <div class="scaffolded-hint-box" style="margin-top: 14px; font-size: 0.8rem; color: var(--accent); font-weight: 600; text-align: center; padding: 6px 10px; background: rgba(244,63,94,0.05); border: 1px dashed rgba(244,63,94,0.25); border-radius: 4px; display: inline-flex; align-items: center; gap: 4px;">
+          <i class="fa-solid fa-lightbulb"></i> Hint: <span style="font-family: monospace; letter-spacing: 1px;">${hintWords}</span>
+        </div>
+      `;
+    }
+    frontBody.innerHTML = `
+      <h3 class="card-question">${q.question}</h3>
+      ${hintHtml}
+    `;
+  }
+
+  // Custom Render Back face (Double sided context/significance split, date badge)
+  const backBody = document.querySelector('.flashcard-back .card-body');
+  if (q.isSynoptic) {
+    backBody.innerHTML = `
+      <div style="font-family: var(--font-heading); font-size: 0.8rem; font-weight: 800; color: var(--accent); border: 1px solid rgba(244,63,94,0.25); background: rgba(244,63,94,0.06); padding: 4px 10px; border-radius: 12px; display: inline-block; margin-bottom: 12px; letter-spacing: 0.5px;">
+        🧠 SYNOPTIC SYNTHESIS ANSWER
+      </div>
+      <div style="max-height: 250px; overflow-y: auto; padding-right: 6px; text-align: left;" class="synoptic-scroll-container">
+        ${renderMarkdownSimple(q.explanation)}
+      </div>
+    `;
+  } else {
+    const splits = getFactSplit(q);
+    
+    backBody.innerHTML = `
+      <span class="card-answer-label">Correct Key Term</span>
+      <h2 class="card-answer-text" id="card-back-answer" style="font-size: 1.5rem; font-weight: 800; color: var(--success); margin: 4px 0 10px 0;">${q.answer}</h2>
+      
+      <div class="card-back-split-container" style="display: flex; flex-direction: column; gap: 10px; text-align: left; width: 100%;">
+        <div class="card-split-section context-section" style="border-left: 3px solid var(--primary); padding-left: 10px; margin-bottom: 2px;">
+          <strong style="color: var(--primary); font-size: 0.72rem; text-transform: uppercase; display: block; margin-bottom: 2px; font-weight: 700;">Context</strong>
+          <p style="margin: 0; font-size: 0.82rem; line-height: 1.4; color: var(--text-normal);">${splits.context}</p>
+        </div>
+        <div class="card-split-section significance-section" style="border-left: 3px solid var(--accent); padding-left: 10px;">
+          <strong style="color: var(--accent); font-size: 0.72rem; text-transform: uppercase; display: block; margin-bottom: 2px; font-weight: 700;">Significance / Consequence</strong>
+          <p style="margin: 0; font-size: 0.82rem; line-height: 1.4; color: var(--text-normal);">${splits.significance}</p>
+        </div>
+      </div>
+
+      <div class="card-date-badge-container" style="margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap;">
+        <span class="badge badge-year" style="font-weight: 700; background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.25); color: var(--accent); font-size: 0.7rem; padding: 2px 8px; border-radius: 12px;">
+          <i class="fa-regular fa-calendar-days"></i> ${q.year || 'Concept'}
+        </span>
+      </div>
+    `;
+  }
+
+  updateCmeGotItButtonState();
+
   // Set bookmark states on flashcard faces
   const frontBkmk = document.getElementById('card-front-bookmark');
   const backBkmk = document.getElementById('card-back-bookmark');
@@ -440,30 +908,24 @@ function renderFlashcard() {
 
 function getMultipleChoiceChoices(q) {
   const correct = q.answer;
-  // Get other answers in the same subtopic
   let pool = state.allQuestions
     .filter(other => other.subtopicId === q.subtopicId && other.answer !== correct)
     .map(other => other.answer);
     
-  // If pool is too small, pull from all questions
   if (pool.length < 3) {
     const allPool = state.allQuestions
       .filter(other => other.answer !== correct)
       .map(other => other.answer);
     pool = pool.concat(allPool);
   }
-  
-  // Dedup pool
   pool = Array.from(new Set(pool));
   
-  // Pick 3 random distractors
   const distractors = [];
   while (distractors.length < 3 && pool.length > 0) {
     const randIdx = Math.floor(Math.random() * pool.length);
     distractors.push(pool.splice(randIdx, 1)[0]);
   }
   
-  // Combine correct and distractors and shuffle
   const choices = [correct, ...distractors].sort(() => Math.random() - 0.5);
   return choices;
 }
@@ -483,7 +945,7 @@ function showFlashcardMCQ(q) {
   overlay.innerHTML = `
     <div class="mcq-overlay-content">
       <div class="mcq-header">
-        <span>🎯 ACTIVE RECALL CHECK</span>
+        <span>🎯 ACTIVE RECALL REINFORCEMENT MCQ</span>
       </div>
       <h3 class="mcq-question">
         ${q.question}
@@ -497,7 +959,7 @@ function showFlashcardMCQ(q) {
         `).join('')}
       </div>
       <div id="mcq-feedback-text" class="mcq-feedback">
-        Select the correct answer to verify your recall.
+        Choose the correct term to reinforce memory traces!
       </div>
     </div>
   `;
@@ -505,7 +967,7 @@ function showFlashcardMCQ(q) {
   const buttons = overlay.querySelectorAll('.mcq-choice-btn');
   buttons.forEach(btn => {
     btn.addEventListener('click', (e) => {
-      e.stopPropagation(); // Stop card flip trigger
+      e.stopPropagation();
       if (overlay.classList.contains('answered')) return;
       overlay.classList.add('answered');
       
@@ -515,26 +977,25 @@ function showFlashcardMCQ(q) {
       
       if (isCorrect) {
         btn.classList.add('correct');
-        
-        feedbackText.innerHTML = `<span class="feedback-success"><i class="fa-solid fa-circle-check"></i> Correct! Fact Memorized.</span>`;
+        feedbackText.innerHTML = `<span class="feedback-success"><i class="fa-solid fa-circle-check"></i> Correct! Memory reinforced. (+2 XP)</span>`;
         AudioEngine.play('success');
+        addXp(2);
         
         setTimeout(() => {
           overlay.style.display = 'none';
           overlay.classList.remove('answered');
           btn.classList.remove('correct');
-          executeFlashcardGrade(true, q);
-        }, 1200);
+          executeFlashcardGrade(false, q); // Still recycle it since they failed initial check
+        }, 1500);
       } else {
         btn.classList.add('incorrect');
-        
         buttons.forEach(b => {
           if (decodeURIComponent(b.getAttribute('data-choice')) === q.answer) {
             b.classList.add('correct');
           }
         });
         
-        feedbackText.innerHTML = `<span class="feedback-error"><i class="fa-solid fa-circle-xmark"></i> Incorrect. Spacing this card for review.</span>`;
+        feedbackText.innerHTML = `<span class="feedback-error"><i class="fa-solid fa-circle-xmark"></i> Incorrect. Recycling card for review.</span>`;
         AudioEngine.play('fail');
         
         setTimeout(() => {
@@ -543,7 +1004,7 @@ function showFlashcardMCQ(q) {
           btn.classList.remove('incorrect');
           buttons.forEach(b => b.classList.remove('correct'));
           executeFlashcardGrade(false, q);
-        }, 2200);
+        }, 2500);
       }
     });
   });
@@ -557,16 +1018,13 @@ function executeFlashcardGrade(correct, q) {
     setMastered(q.id, true);
     state.flashcardSession.masteredCount++;
     
-    // Swipe Right Animation
     cardEl.classList.add('swipe-right');
     setTimeout(() => {
       state.flashcardSession.activeIndex++;
       renderFlashcard();
     }, 300);
   } else {
-    setMastered(q.id, false);
-    
-    // Swipe Left Animation
+    // Fail: recycle card to end of deck
     cardEl.classList.add('swipe-left');
     setTimeout(() => {
       state.flashcardSession.deck.push(q);
@@ -587,10 +1045,20 @@ function handleFlashcardGrade(correct) {
   const q = deck[idx];
   
   if (correct) {
-    showFlashcardMCQ(q);
+    // Reward XP!
+    addXp(q.isSynoptic ? 15 : 5);
+    executeFlashcardGrade(true, q);
   } else {
     AudioEngine.play('fail');
-    executeFlashcardGrade(false, q);
+    if (!q.isSynoptic) {
+      // Add to failed list to show scaffolded hint next time
+      if (!state.flashcardSession.failedCardIds.includes(q.id)) {
+        state.flashcardSession.failedCardIds.push(q.id);
+      }
+      showFlashcardMCQ(q);
+    } else {
+      executeFlashcardGrade(false, q);
+    }
   }
 }
 
@@ -615,7 +1083,6 @@ function showFlashcardCompletion() {
   
   document.getElementById('btn-fc-restart').addEventListener('click', () => {
     AudioEngine.play('click');
-    // Restore normal structure first
     restoreFlashcardSkeleton();
     startFlashcardSession(state.selectedSubtopicId);
   });
@@ -631,9 +1098,11 @@ function restoreFlashcardSkeleton() {
   const container = document.getElementById('view-flashcards');
   container.innerHTML = `
     <div class="flashcard-view-container">
-      <div class="flashcard-progress-header">
-        <span id="flashcard-counter-text">Card 1 of 15</span>
-        <span id="flashcard-mastery-text">0% resolved this session</span>
+      <div class="flashcard-progress-header" style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 8px;">
+        <div style="display: flex; flex-direction: column; gap: 2px;">
+          <span id="flashcard-counter-text" style="font-weight: 700; color: var(--text-main);">Card 1 of 15</span>
+          <span id="flashcard-mastery-text" style="font-size: 0.72rem; color: var(--text-muted);">0% resolved this session</span>
+        </div>
       </div>
       <div class="flashcard-progress-bar">
         <div class="flashcard-progress-fill" id="flashcard-progress-bar-fill"></div>
@@ -642,17 +1111,19 @@ function restoreFlashcardSkeleton() {
         <div class="flashcard-card" id="flashcard-card">
           <div class="flashcard-face flashcard-front">
             <div class="card-top">
-              <span class="badge" id="card-front-badge">Standard</span>
+              <span class="badge" id="card-front-badge">Easy</span>
               <span class="bookmark-icon-container" id="card-front-bookmark"><i class="fa-regular fa-star"></i></span>
             </div>
+            <div class="card-top-topic" id="card-front-topic" style="font-size: 0.75rem; font-weight: 600; color: var(--primary); margin-top: 8px; text-align: left; width: 100%; opacity: 0.8;"></div>
             <div class="card-body"><h3 class="card-question" id="card-front-question"></h3></div>
             <div class="card-bottom"><i class="fa-solid fa-rotate"></i> Click card to flip and reveal answer</div>
           </div>
           <div class="flashcard-face flashcard-back">
             <div class="card-top">
-              <span class="badge badge-standard" id="card-back-badge">Standard</span>
+              <span class="badge badge-easy" id="card-back-badge">Easy</span>
               <span class="bookmark-icon-container" id="card-back-bookmark"><i class="fa-regular fa-star"></i></span>
             </div>
+            <div class="card-top-topic" id="card-back-topic" style="font-size: 0.75rem; font-weight: 600; color: var(--primary); margin-top: 8px; text-align: left; width: 100%; opacity: 0.8;"></div>
             <div class="card-body">
               <span class="card-answer-label">Correct Answer</span>
               <h2 class="card-answer-text" id="card-back-answer"></h2>
@@ -662,6 +1133,7 @@ function restoreFlashcardSkeleton() {
           </div>
         </div>
       </div>
+
       <div class="flashcard-controls">
         <button class="btn-secondary" id="btn-flashcard-reveal"><i class="fa-solid fa-rotate"></i> Flip Card</button>
         <div id="flashcard-self-grade-actions" style="display: none; width: 100%; gap: 16px;">
@@ -677,7 +1149,7 @@ function restoreFlashcardSkeleton() {
   document.getElementById('btn-flashcard-reveal').addEventListener('click', flipFlashcard);
   document.getElementById('btn-flashcard-incorrect').addEventListener('click', () => handleFlashcardGrade(false));
   document.getElementById('btn-flashcard-correct').addEventListener('click', () => handleFlashcardGrade(true));
-  
+
   const bkmks = [document.getElementById('card-front-bookmark'), document.getElementById('card-back-bookmark')];
   bkmks.forEach(b => {
     b.addEventListener('click', (e) => {
@@ -689,6 +1161,7 @@ function restoreFlashcardSkeleton() {
 
 function flipFlashcard() {
   const card = document.getElementById('flashcard-card');
+  if (!card) return;
   card.classList.toggle('flipped');
   AudioEngine.play('flip');
   
@@ -703,6 +1176,15 @@ function flipFlashcard() {
     revealBtn.style.display = 'flex';
     actionBtns.style.display = 'none';
   }
+}
+
+export function updateCmeGotItButtonState() {
+  const correctBtn = document.getElementById('btn-flashcard-correct');
+  if (!correctBtn) return;
+  correctBtn.disabled = false;
+  correctBtn.style.opacity = '1';
+  correctBtn.style.pointerEvents = 'auto';
+  correctBtn.style.cursor = 'pointer';
 }
 
 // 6. Timeline View Assembly
@@ -2262,7 +2744,7 @@ function renderMasteryLeaderboard(unitId) {
           <td style="padding: 8px 4px; font-weight: bold; color: var(--primary);">${medal}${idx + 1}</td>
           <td style="padding: 8px 4px; color: var(--text-main);">${s.name}${yrText}</td>
           <td style="padding: 8px 4px; font-weight: 700; color: var(--success); text-align: right;">${s.score} pts</td>
-          <td style="padding: 8px 4px; color: var(--text-muted); text-align: right; font-size: 0.72rem;">${s.date}</td>
+          <td class="desktop-only" style="padding: 8px 4px; color: var(--text-muted); text-align: right; font-size: 0.72rem;">${s.date}</td>
         </tr>
       `;
     }).join('');
@@ -2272,13 +2754,13 @@ function renderMasteryLeaderboard(unitId) {
         <h4 style="font-family: var(--font-heading); font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin: 0 0 12px 0; display: flex; align-items: center; gap: 6px;">
           <i class="fa-solid fa-ranking-star" style="color: var(--accent);"></i> Top High Scores (Unit Leaderboard)
         </h4>
-        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+        <table class="leaderboard-table" style="width: 100%; border-collapse: collapse; text-align: left;">
           <thead>
             <tr style="border-bottom: 1px solid var(--border-glass); color: var(--text-muted); font-size: 0.72rem; text-transform: uppercase;">
               <th style="padding: 4px; font-weight: 600;">Rank</th>
               <th style="padding: 4px; font-weight: 600;">Student</th>
               <th style="padding: 4px; font-weight: 600; text-align: right;">Score</th>
-              <th style="padding: 4px; font-weight: 600; text-align: right;">Date</th>
+              <th class="desktop-only" style="padding: 4px; font-weight: 600; text-align: right;">Date</th>
             </tr>
           </thead>
           <tbody>
@@ -2390,7 +2872,7 @@ function renderMindMapLeaderboard(subtopicId) {
           <td style="padding: 8px 4px; font-weight: bold; color: var(--primary);">${medal}${idx + 1}</td>
           <td style="padding: 8px 4px; color: var(--text-main);">${s.name}${yrText}</td>
           <td style="padding: 8px 4px; font-weight: 700; color: var(--success); text-align: right;">${s.score} pts</td>
-          <td style="padding: 8px 4px; color: var(--text-muted); text-align: right; font-size: 0.72rem;">${s.date}</td>
+          <td class="desktop-only" style="padding: 8px 4px; color: var(--text-muted); text-align: right; font-size: 0.72rem;">${s.date}</td>
         </tr>
       `;
     }).join('');
@@ -2400,13 +2882,13 @@ function renderMindMapLeaderboard(subtopicId) {
         <h4 style="font-family: var(--font-heading); font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin: 0 0 12px 0; display: flex; align-items: center; gap: 6px;">
           <i class="fa-solid fa-ranking-star" style="color: var(--accent);"></i> Top High Scores (Topic Leaderboard)
         </h4>
-        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+        <table class="leaderboard-table" style="width: 100%; border-collapse: collapse; text-align: left;">
           <thead>
             <tr style="border-bottom: 1px solid var(--border-glass); color: var(--text-muted); font-size: 0.72rem; text-transform: uppercase;">
               <th style="padding: 4px; font-weight: 600;">Rank</th>
               <th style="padding: 4px; font-weight: 600;">Student</th>
               <th style="padding: 4px; font-weight: 600; text-align: right;">Score</th>
-              <th style="padding: 4px; font-weight: 600; text-align: right;">Date</th>
+              <th class="desktop-only" style="padding: 4px; font-weight: 600; text-align: right;">Date</th>
             </tr>
           </thead>
           <tbody>
@@ -2860,12 +3342,13 @@ function endMasteryGame(success) {
       let initials = initialsInput ? initialsInput.value.trim().toUpperCase() : "";
       let yearGroup = yearInput ? yearInput.value : "";
       
-      if (initials.length !== 3 || !/^[A-Z]{3}$/.test(initials)) {
-        alert("Please enter exactly 3 letters for your initials (e.g. ABC).");
+      const val = validateScoreBoardInitials(initials);
+      if (!val.valid) {
+        showWarningToast(val.message);
         return;
       }
       if (!yearGroup) {
-        alert("Please select your Year Group.");
+        showWarningToast("Please select your Year Group.");
         return;
       }
       
@@ -3225,12 +3708,13 @@ function endMindMapGame(success) {
       let initials = initialsInput ? initialsInput.value.trim().toUpperCase() : "";
       let yearGroup = yearInput ? yearInput.value : "";
       
-      if (initials.length !== 3 || !/^[A-Z]{3}$/.test(initials)) {
-        alert("Please enter exactly 3 letters for your initials (e.g. ABC).");
+      const val = validateScoreBoardInitials(initials);
+      if (!val.valid) {
+        showWarningToast(val.message);
         return;
       }
       if (!yearGroup) {
-        alert("Please select your Year Group.");
+        showWarningToast("Please select your Year Group.");
         return;
       }
       
@@ -3593,8 +4077,10 @@ function renderGamesView() {
     decisions: document.getElementById('btn-tab-game-decisions'),
     crisis: document.getElementById('btn-tab-game-crisis'),
     tug: document.getElementById('btn-tab-game-tug'),
-    jsw: document.getElementById('btn-tab-game-jsw'),
-    taboo: document.getElementById('btn-tab-game-taboo')
+    taboo: document.getElementById('btn-tab-game-taboo'),
+    meSim: document.getElementById('btn-tab-game-me-sim'),
+    parser: document.getElementById('btn-tab-game-parser'),
+    parserJaffa: document.getElementById('btn-tab-game-parser-jaffa')
   };
 
   const panes = {
@@ -3605,12 +4091,13 @@ function renderGamesView() {
     decisions: document.getElementById('game-decisions-container'),
     crisis: document.getElementById('game-crisis-container'),
     tug: document.getElementById('game-tug-container'),
-    jsw: document.getElementById('game-jsw-container'),
-    taboo: document.getElementById('game-taboo-container')
+    taboo: document.getElementById('game-taboo-container'),
+    meSim: document.getElementById('game-me-sim-container'),
+    parser: document.getElementById('game-parser-container'),
+    parserJaffa: document.getElementById('game-parser-jaffa-container')
   };
 
   const cleanUpGames = () => {
-    stopJswLoop();
     if (state.tugGameSession && state.tugGameSession.timeoutId) {
       clearTimeout(state.tugGameSession.timeoutId);
       state.tugGameSession.timeoutId = null;
@@ -3670,10 +4157,14 @@ function renderGamesView() {
       initCrisisGame();
     } else if (tabName === 'tug') {
       initTugGame();
-    } else if (tabName === 'jsw') {
-      initJswGame();
     } else if (tabName === 'taboo') {
       initTabooGame();
+    } else if (tabName === 'meSim') {
+      initMeSimGame();
+    } else if (tabName === 'parser') {
+      initParserGame();
+    } else if (tabName === 'parserJaffa') {
+      initJaffaParserGame();
     }
   };
 
@@ -3790,12 +4281,13 @@ function initExamLeaderboard(scope, pct) {
       const initials = (initialsInput.value || '').trim().toUpperCase();
       const yearGroup = yearInput.value;
 
-      if (!/^[A-Z]{3}$/.test(initials)) {
-        alert("Please enter exactly 3 uppercase letters for your initials.");
+      const val = validateScoreBoardInitials(initials);
+      if (!val.valid) {
+        showWarningToast(val.message);
         return;
       }
       if (!yearGroup) {
-        alert("Please select your Year Group.");
+        showWarningToast("Please select your Year Group.");
         return;
       }
 
@@ -4696,6 +5188,323 @@ function renderKeyTopicOverview(topicId) {
   }
 }
 
+function renderAiVideosView() {
+  const container = document.getElementById('video-revision-grid');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const subtopicIds = Object.keys(VIDEOS_DATA).sort();
+
+  subtopicIds.forEach(subtopicId => {
+    const video = VIDEOS_DATA[subtopicId];
+    if (!video || !video.primary) return;
+
+    const subtopicData = QUIZ_DATA.flatMap(t => t.subtopics).find(s => s.id === subtopicId);
+    const lessonTitle = subtopicData ? subtopicData.title : subtopicId;
+    const formattedKT = formatSubtopicIdToKT(subtopicId);
+
+    const card = document.createElement('div');
+    card.className = 'mastery-card';
+    card.style.display = 'flex';
+    card.style.flexDirection = 'column';
+    card.style.justifyContent = 'space-between';
+    card.style.height = '100%';
+    card.style.padding = '20px';
+    card.style.border = '1px solid var(--border-glass)';
+    card.style.background = 'rgba(255, 255, 255, 0.01)';
+    card.style.transition = 'transform 0.2s, box-shadow 0.2s, background-color 0.2s';
+    card.style.borderRadius = 'var(--border-radius-md)';
+    card.style.cursor = 'pointer';
+
+    card.addEventListener('mouseenter', () => {
+      card.style.transform = 'translateY(-2px)';
+      card.style.background = 'rgba(255, 255, 255, 0.03)';
+      card.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.2)';
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = 'translateY(0)';
+      card.style.background = 'rgba(255, 255, 255, 0.01)';
+      card.style.boxShadow = 'none';
+    });
+
+    const header = `
+      <div style="margin-bottom: 12px;">
+        <span style="font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--accent); background: var(--accent-glow); border: 1px solid rgba(244, 63, 94, 0.2); padding: 2px 8px; border-radius: 4px; font-family: var(--font-heading); display: inline-block; margin-bottom: 6px;">${formattedKT}</span>
+        <h3 style="font-size: 0.95rem; font-weight: 700; margin: 0; line-height: 1.3; color: var(--text-main);">${lessonTitle.split(':').slice(1).join(':').trim() || lessonTitle}</h3>
+      </div>
+    `;
+
+    const videoId = video.primary.youtube_url.split('v=')[1];
+    const thumbnail = `
+      <div class="video-thumbnail-container" style="position: relative; width: 100%; aspect-ratio: 16/9; background: #000; border-radius: var(--border-radius-sm); border: 1px solid var(--border-glass); margin-bottom: 14px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+        <img src="https://img.youtube.com/vi/${videoId}/hqdefault.jpg" alt="${video.primary.video_title}" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.65; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='0.65'">
+        <div style="position: absolute; width: 50px; height: 50px; border-radius: 50%; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4); transition: transform 0.2s;" class="play-btn">
+          <i class="fa-solid fa-play" style="margin-left: 3px;"></i>
+        </div>
+        <span style="position: absolute; bottom: 8px; right: 8px; font-size: 0.7rem; font-weight: 700; background: rgba(0,0,0,0.8); color: #fff; padding: 2px 6px; border-radius: 4px; font-family: var(--font-heading);">${video.primary.duration} mins</span>
+      </div>
+    `;
+
+    const body = `
+      <p style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.45; margin: 0 0 16px 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+        Watch the quick 2-minute overview covering: ${video.questions.map(q => q.replace(/\?$/, "")).join(', ')}.
+      </p>
+    `;
+
+    const actions = document.createElement('div');
+    actions.style.display = 'flex';
+    actions.style.gap = '8px';
+    actions.style.marginTop = 'auto';
+
+    const playBtn = document.createElement('button');
+    playBtn.className = 'mastery-btn';
+    playBtn.style.flex = '1';
+    playBtn.style.padding = '8px';
+    playBtn.style.fontSize = '0.78rem';
+    playBtn.style.fontWeight = 'bold';
+    playBtn.style.background = 'var(--primary)';
+    playBtn.style.color = '#fff';
+    playBtn.style.display = 'inline-flex';
+    playBtn.style.alignItems = 'center';
+    playBtn.style.justifyContent = 'center';
+    playBtn.style.gap = '6px';
+    playBtn.innerHTML = `<i class="fa-solid fa-play"></i> Watch`;
+    playBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      AudioEngine.play('click');
+      openVideoModal(video.primary.youtube_url, video.primary.video_title);
+    });
+
+    const studyBtn = document.createElement('button');
+    studyBtn.className = 'mastery-btn';
+    studyBtn.style.padding = '8px';
+    studyBtn.style.fontSize = '0.78rem';
+    studyBtn.style.fontWeight = 'bold';
+    studyBtn.style.background = 'rgba(255,255,255,0.05)';
+    studyBtn.style.border = '1px solid var(--border-glass)';
+    studyBtn.style.color = 'var(--text-main)';
+    studyBtn.innerHTML = `Study Lesson`;
+    studyBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      AudioEngine.play('click');
+      switchView('subtopic', subtopicId);
+    });
+
+    actions.appendChild(playBtn);
+    actions.appendChild(studyBtn);
+
+    card.innerHTML = header + thumbnail + body;
+    card.appendChild(actions);
+
+    card.addEventListener('click', () => {
+      AudioEngine.play('click');
+      openVideoModal(video.primary.youtube_url, video.primary.video_title);
+    });
+
+    container.appendChild(card);
+  });
+}
+
+// Add Streak Leaderboard functions
+function triggerAngrySweepAnimation() {
+  const logos = document.querySelectorAll('.brand-icon, .brand-subheader-logo');
+  logos.forEach(logo => {
+    logo.classList.add('angry');
+    for (let i = 0; i < 15; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'soot-particle';
+      particle.style.background = '#1a1a1a';
+      particle.style.width = `${Math.random() * 8 + 4}px`;
+      particle.style.height = particle.style.width;
+      particle.style.borderRadius = '50%';
+      particle.style.position = 'fixed';
+      particle.style.zIndex = '99999';
+      const rect = logo.getBoundingClientRect();
+      const x = rect.left + rect.width / 2;
+      const y = rect.top + rect.height / 2;
+      particle.style.left = `${x}px`;
+      particle.style.top = `${y}px`;
+      const angle = Math.random() * Math.PI * 2;
+      const speed = Math.random() * 80 + 40;
+      const vx = Math.cos(angle) * speed;
+      const vy = Math.sin(angle) * speed - 60;
+      document.body.appendChild(particle);
+      let start = null;
+      function animate(timestamp) {
+        if (!start) start = timestamp;
+        const progress = (timestamp - start) / 1000;
+        particle.style.transform = `translate(${vx * progress}px, ${vy * progress}px) scale(${1 - progress})`;
+        particle.style.opacity = `${1 - progress}`;
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          particle.remove();
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+    setTimeout(() => {
+      logo.classList.remove('angry');
+    }, 1200);
+  });
+}
+
+function triggerChimneyAnger() {
+  AudioEngine.play('fail');
+  triggerAngrySweepAnimation();
+}
+
+function validateScoreBoardInitials(initials) {
+  if (!/^[A-Z]{3}$/.test(initials)) {
+    AudioEngine.play('fail');
+    triggerAngrySweepAnimation();
+    return { valid: false, message: "Please enter exactly 3 letters for your initials." };
+  }
+  const profane = new Set([
+    'ASS', 'WTF', 'FUC', 'SHI', 'CNT', 'CUM', 'FAG', 'DIK', 'KYS', 'KKK', 'SEX', 
+    'NIG', 'TIT', 'FAP', 'WOP', 'PIS', 'HEL', 'DAM', 'SOB', 'PEE', 'POO', 'DIE', 
+    'GAY', 'PNS', 'VAG', 'KOK', 'FUK', 'FCK', 'BCH', 'MLF', 'DCK', 'BUM', 'FUG',
+    'SHT', 'XXX', 'SUK', 'HOE', 'SLT', 'WHR', 'NOB', 'KNO', 'COK', 'TAD', 'PUB',
+    'NGR', 'BXT'
+  ]);
+  if (profane.has(initials)) {
+    triggerChimneyAnger();
+    return { valid: false, message: "The Fareham chimney master will not allow that." };
+  }
+  return { valid: true };
+}
+
+function getStreakLeaderboard() {
+  const key = 'edexcel_streak_leaderboard';
+  let board = localStorage.getItem(key);
+  if (!board) {
+    board = [
+      { name: "BEN", yearGroup: "Year 11", streak: 12, xp: 450, level: 3, date: "2026-06-05" },
+      { name: "LUC", yearGroup: "Year 10", streak: 8, xp: 320, level: 2, date: "2026-06-06" },
+      { name: "SAM", yearGroup: "Year 9", streak: 5, xp: 180, level: 1, date: "2026-06-04" },
+      { name: "JON", yearGroup: "Year 11", streak: 4, xp: 510, level: 3, date: "2026-06-03" },
+      { name: "EMM", yearGroup: "Year 8", streak: 3, xp: 90, level: 1, date: "2026-06-06" }
+    ];
+    localStorage.setItem(key, JSON.stringify(board));
+  } else {
+    board = JSON.parse(board);
+  }
+  return board.sort((a, b) => {
+    if (b.streak !== a.streak) return b.streak - a.streak;
+    if (b.xp !== a.xp) return b.xp - a.xp;
+    if (b.level !== a.level) return b.level - a.level;
+    return new Date(b.date) - new Date(a.date);
+  }).slice(0, 10);
+}
+
+function saveStreakHighScoreLocal(name, yearGroup) {
+  const stats = state.userStats || { xp: 0, level: 1, streak: 0, lastLoginDate: null };
+  const board = getStreakLeaderboard();
+  const dateStr = new Date().toISOString().split('T')[0];
+  const existing = board.find(x => x.name.toUpperCase() === name.toUpperCase() && x.yearGroup === yearGroup);
+  if (existing) {
+    if (stats.streak > existing.streak || (stats.streak === existing.streak && stats.xp > existing.xp)) {
+      existing.streak = stats.streak;
+      existing.xp = stats.xp;
+      existing.level = stats.level;
+      existing.date = dateStr;
+    }
+  } else {
+    board.push({
+      name: name.toUpperCase(),
+      yearGroup: yearGroup,
+      streak: stats.streak,
+      xp: stats.xp,
+      level: stats.level,
+      date: dateStr
+    });
+  }
+  board.sort((a, b) => {
+    if (b.streak !== a.streak) return b.streak - a.streak;
+    if (b.xp !== a.xp) return b.xp - a.xp;
+    if (b.level !== a.level) return b.level - a.level;
+    return new Date(b.date) - new Date(a.date);
+  });
+  localStorage.setItem('edexcel_streak_leaderboard', JSON.stringify(board.slice(0, 10)));
+}
+
+export function renderStreakLeaderboardList() {
+  const container = document.getElementById('streak-leaderboard-list-container');
+  if (!container) return;
+  const scores = getStreakLeaderboard();
+  let rowsHtml = scores.map((s, idx) => {
+    let medal = '';
+    let rowClass = '';
+    if (idx === 0) { medal = '🥇 '; rowClass = 'rank-gold'; }
+    else if (idx === 1) { medal = '🥈 '; rowClass = 'rank-silver'; }
+    else if (idx === 2) { medal = '🥉 '; rowClass = 'rank-bronze'; }
+    const yrText = s.yearGroup ? ` <span style="font-size: 0.72rem; color: var(--text-muted);">(${s.yearGroup})</span>` : '';
+    return `
+      <tr class="${rowClass}" style="border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem;">
+        <td style="padding: 10px 6px; font-weight: bold; color: var(--primary);">${medal}${idx + 1}</td>
+        <td style="padding: 10px 6px; font-weight: 700; color: var(--text-main);">${s.name}${yrText}</td>
+        <td style="padding: 10px 6px; font-weight: 800; color: var(--accent); text-align: center;">🔥 ${s.streak} Days</td>
+        <td style="padding: 10px 6px; text-align: center;">
+          <span style="font-size: 0.72rem; background: rgba(6,182,212,0.1); color: #06b6d4; border: 1px solid rgba(6,182,212,0.2); padding: 2px 8px; border-radius: 12px; font-weight: bold;">
+            Lvl ${s.level}
+          </span>
+        </td>
+        <td style="padding: 10px 6px; font-weight: 700; color: var(--success); text-align: right;">${s.xp} XP</td>
+        <td class="desktop-only" style="padding: 10px 6px; color: var(--text-muted); text-align: right; font-size: 0.72rem;">${s.date}</td>
+      </tr>
+    `;
+  }).join('');
+  container.innerHTML = `
+    <table class="leaderboard-table" style="width: 100%; border-collapse: collapse; text-align: left;">
+      <thead>
+        <tr style="border-bottom: 1px solid var(--border-glass); color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px;">
+          <th style="padding: 6px; font-weight: 700;">Rank</th>
+          <th style="padding: 6px; font-weight: 700;">Student</th>
+          <th style="padding: 6px; font-weight: 700; text-align: center;">Streak</th>
+          <th style="padding: 6px; font-weight: 700; text-align: center;">Level</th>
+          <th style="padding: 6px; font-weight: 700; text-align: right;">Total XP</th>
+          <th class="desktop-only" style="padding: 6px; font-weight: 700; text-align: right;">Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rowsHtml}
+      </tbody>
+    </table>
+  `;
+}
+
+export function openStreakLeaderboard() {
+  renderStreakLeaderboardList();
+  const submitBtn = document.getElementById('btn-submit-leaderboard');
+  const initialsInput = document.getElementById('leaderboard-initials');
+  const yearSelect = document.getElementById('leaderboard-year');
+  if (submitBtn && initialsInput && yearSelect) {
+    const newSubmitBtn = submitBtn.cloneNode(true);
+    submitBtn.parentNode.replaceChild(newSubmitBtn, submitBtn);
+    newSubmitBtn.addEventListener('click', () => {
+      const name = initialsInput.value.trim().toUpperCase();
+      const year = yearSelect.value;
+      const val = validateScoreBoardInitials(name);
+      if (!val.valid) {
+        showWarningToast(val.message);
+        return;
+      }
+      if (!year) {
+        AudioEngine.play('fail');
+        showWarningToast("Please select a Year Group!");
+        return;
+      }
+      AudioEngine.play('cheer');
+      Confetti.spawn(60);
+      saveStreakHighScoreLocal(name, year);
+      renderStreakLeaderboardList();
+      initialsInput.value = '';
+      yearSelect.value = '';
+      showToast("Score successfully posted to the Streak Leaderboard!", "success");
+    });
+  }
+}
+
 export {
   renderSidebarNav,
   updateBookmarksUI,
@@ -4723,5 +5532,8 @@ export {
   initExamLeaderboard,
   renderGoingBeyond,
   formatSubtopicIdToKT,
-  renderKeyTopicOverview
+  renderKeyTopicOverview,
+  renderAiVideosView,
+  saveStreakHighScoreLocal,
+  validateScoreBoardInitials
 };

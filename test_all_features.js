@@ -60,12 +60,14 @@ window.cancelAnimationFrame = (id) => clearTimeout(id);
 // Mock HTMLCanvasElement context
 window.HTMLCanvasElement.prototype.getContext = function(type) {
   if (type === '2d') {
+    const gradientMock = { addColorStop: () => {} };
     return {
       fillRect: () => {},
       strokeRect: () => {},
       fillText: () => {},
       clearRect: () => {},
       beginPath: () => {},
+      closePath: () => {},
       moveTo: () => {},
       lineTo: () => {},
       stroke: () => {},
@@ -74,7 +76,17 @@ window.HTMLCanvasElement.prototype.getContext = function(type) {
       restore: () => {},
       translate: () => {},
       rotate: () => {},
+      scale: () => {},
+      ellipse: () => {},
+      arcTo: () => {},
+      quadraticCurveTo: () => {},
+      bezierCurveTo: () => {},
       drawImage: () => {},
+      createLinearGradient: () => gradientMock,
+      createRadialGradient: () => gradientMock,
+      arc: () => {},
+      rect: () => {},
+      clip: () => {},
       getContextAttributes: () => ({}),
       isPointInPath: () => false,
       measureText: () => ({ width: 10 })
@@ -97,6 +109,32 @@ window.localStorage = {
   setItem: (key, val) => { storage[key] = String(val); },
   removeItem: (key) => { delete storage[key]; },
   clear: () => { Object.keys(storage).forEach(k => delete storage[k]); }
+};
+
+// Mock Leaflet (L) for Map Explorer and Game Map
+window.L = {
+  map: () => ({
+    setView: function() { return this; },
+    invalidateSize: function() { return this; },
+    addTo: function() { return this; }
+  }),
+  tileLayer: () => ({
+    addTo: function() { return this; }
+  }),
+  layerGroup: () => ({
+    addTo: function() { return this; },
+    clearLayers: function() { return this; }
+  }),
+  divIcon: (opts) => opts,
+  marker: () => ({
+    addTo: function() { return this; },
+    bindPopup: function() { return this; },
+    openPopup: function() { return this; }
+  }),
+  polyline: () => ({
+    addTo: function() { return this; },
+    setStyle: function() { return this; }
+  })
 };
 
 // Capture DOMContentLoaded listener
@@ -179,14 +217,10 @@ try {
   // Test 2: Dashboard stats check
   console.log("\n--- TEST 2: Dashboard Statistics Display ---");
   fireClick(document.getElementById('nav-dashboard'));
-  const overallProgText = document.getElementById('stat-overall-progress').textContent;
-  const standardProgText = document.getElementById('stat-standard-progress').textContent;
-  const depthProgText = document.getElementById('stat-depth-progress').textContent;
-  console.log(`  - Overall Progress Displayed: ${overallProgText}`);
-  console.log(`  - Standard Recall Displayed: ${standardProgText}`);
-  console.log(`  - Depth Recall Displayed: ${depthProgText}`);
-  if (!overallProgText.includes('%') || !standardProgText.includes('%') || !depthProgText.includes('%')) {
-    throw new Error("Stats percentages are not formatted correctly!");
+  const overallProgText = document.getElementById('header-progress-value').textContent;
+  console.log(`  - Header Overall Progress Displayed: ${overallProgText}`);
+  if (!overallProgText.includes('%')) {
+    throw new Error("Header progress percentage is not formatted correctly!");
   }
   console.log("✓ Dashboard statistics test passed.");
 
@@ -259,8 +293,8 @@ try {
   // Test filters
   const filterBtns = document.querySelectorAll('.classic-filters .filter-btn');
   if (filterBtns.length > 0) {
-    fireClick(filterBtns[1]); // Standard Recall
-    console.log("    * Filtered standard recall questions.");
+    fireClick(filterBtns[1]); // Easy
+    console.log("    * Filtered easy questions.");
   }
 
   // Test toggling mastery inside accordion summary
@@ -279,7 +313,16 @@ try {
   const btnFC = modeSwitcher.querySelector('[data-mode="flashcards"]');
   fireClick(btnFC);
   
-  const flashcardCounter = document.getElementById('flashcard-counter-text').textContent;
+  const primeContinue = document.getElementById('btn-prime-continue');
+  if (primeContinue) {
+    fireClick(primeContinue);
+  }
+  
+  const flashcardCounterTextEl = document.getElementById('flashcard-counter-text');
+  if (!flashcardCounterTextEl) {
+    throw new Error("flashcard-counter-text element not found in DOM!");
+  }
+  const flashcardCounter = flashcardCounterTextEl.textContent;
   if (!flashcardCounter.includes('Card 1')) {
     throw new Error("Flashcards view did not initialize with Card 1!");
   }
@@ -294,12 +337,12 @@ try {
   }
   console.log("    * Flipped card face to reveal answer.");
 
-  // Got it / Correct check (starts MCQ Active Recall overlay)
-  const correctBtn = document.getElementById('btn-flashcard-correct');
-  fireClick(correctBtn);
+  // Study Again / Incorrect check (starts MCQ Active Recall overlay)
+  const incorrectBtn = document.getElementById('btn-flashcard-incorrect');
+  fireClick(incorrectBtn);
   const mcqOverlay = document.getElementById('flashcard-mcq-overlay');
   if (!mcqOverlay || mcqOverlay.style.display === 'none') {
-    throw new Error("Active Recall MCQ overlay did not display on correct grading!");
+    throw new Error("Active Recall MCQ overlay did not display on incorrect grading!");
   }
   console.log("    * Active Recall MCQ check displayed.");
 
@@ -308,6 +351,68 @@ try {
   if (choiceBtn) {
     fireClick(choiceBtn);
     console.log("    * Answered MCQ Active Recall question.");
+  }
+
+  // 3d. 3-2-1 Starter Challenge Test for subtopic_2_2
+  console.log("  - Testing 3-2-1 Starter Challenge (Topic 2.2):");
+  const sub22Btn = document.getElementById('nav-subtopic-subtopic_2_2');
+  if (sub22Btn) {
+    fireClick(sub22Btn);
+    
+    // Switch to lessons mode just in case
+    const btnMastery = modeSwitcher.querySelector('[data-mode="lessons"]');
+    if (btnMastery) fireClick(btnMastery);
+    
+    // Verify Do Now starts collapsed
+    const contentWrapper = document.querySelector('.do-now-content-wrapper');
+    if (!contentWrapper || contentWrapper.style.display !== 'none') {
+      throw new Error("Do Now Starter should be hidden/collapsed by default!");
+    }
+    
+    // Click the toggle header to reveal the starter
+    const toggleHeader = document.querySelector('.do-now-toggle-header');
+    if (!toggleHeader) {
+      throw new Error("Do Now toggle header not found!");
+    }
+    fireClick(toggleHeader);
+    
+    if (contentWrapper.style.display !== 'block') {
+      throw new Error("Do Now Starter did not expand after clicking toggle header!");
+    }
+    console.log("    * Collapsible Do Now task header toggled successfully.");
+
+    // Check for 3-2-1 starter elements
+    const starterTitle = document.querySelector('.retrieval-challenge-container');
+    if (!starterTitle) {
+      throw new Error("3-2-1 Retrieval Challenge container not found for subtopic_2_2!");
+    }
+    
+    // Check for Casus Belli concept
+    const htmlContent = document.getElementById('mastery-content-container').innerHTML;
+    if (!htmlContent.includes('Key Concept: Casus Belli')) {
+      throw new Error("Key Concept: Casus Belli not found in subtopic_2_2 starter!");
+    }
+    console.log("    * 3-2-1 Starter and Key Concept 'Casus Belli' rendered successfully.");
+    
+    // Click reveal answers button
+    const revealBtn = document.querySelector('.do-now-reveal-btn');
+    if (!revealBtn) {
+      throw new Error("Reveal Do Now Answers button not found for subtopic_2_2!");
+    }
+    fireClick(revealBtn);
+    
+    // Check if answers drawer is revealed
+    const answersDrawer = document.querySelector('.do-now-answers-drawer');
+    if (!answersDrawer || answersDrawer.style.display === 'none') {
+      throw new Error("Answers drawer did not reveal after clicking button!");
+    }
+    console.log("    * Answers drawer revealed successfully.");
+    
+    // Switch back to subtopic_1_1 to keep subsequent tests clean
+    const sub11Btn = document.getElementById('nav-subtopic-subtopic_1_1');
+    if (sub11Btn) fireClick(sub11Btn);
+  } else {
+    console.log("    * Warning: nav-subtopic-subtopic_2_2 button not found, skipping 3-2-1 starter test.");
   }
 
   console.log("✓ Subtopic study view tests passed.");
@@ -414,8 +519,10 @@ try {
     { btnId: 'btn-tab-game-decisions', containerId: 'game-decisions-container', name: 'Decision Simulator' },
     { btnId: 'btn-tab-game-crisis', containerId: 'game-crisis-container', name: 'Crisis Hotline 1973' },
     { btnId: 'btn-tab-game-tug', containerId: 'game-tug-container', name: 'Chronological Tug-of-War' },
-    { btnId: 'btn-tab-game-jsw', containerId: 'game-jsw-container', name: 'Jet Set Willy' },
-    { btnId: 'btn-tab-game-taboo', containerId: 'game-taboo-container', name: 'Taboo Game' }
+    { btnId: 'btn-tab-game-taboo', containerId: 'game-taboo-container', name: 'Taboo Game' },
+    { btnId: 'btn-tab-game-me-sim', containerId: 'game-me-sim-container', name: 'Simulator Hub' },
+    { btnId: 'btn-tab-game-parser', containerId: 'game-parser-container', name: 'Haifa to Sinai: Text Adventure' },
+    { btnId: 'btn-tab-game-parser-jaffa', containerId: 'game-parser-jaffa-container', name: 'Chronology Command: Jaffa to Gaza (1947–1953)' }
   ];
 
   gameTabs.forEach(g => {
@@ -462,12 +569,91 @@ try {
     console.log("      . Taboo initialized, turn started.");
   }
 
-  // 7d. JSW Game loop
-  console.log("    * Verifying Jet Set Willy Canvas Game Loop:");
-  fireClick(document.getElementById('btn-tab-game-jsw'));
-  const canvas = document.getElementById('jswCanvas');
-  if (!canvas) throw new Error("JSW game canvas not found!");
-  console.log("      . Canvas element verified.");
+  // 7d. Haifa to Sinai: Text Adventure Game
+  console.log("    * Verifying Haifa to Sinai: Text Adventure:");
+  fireClick(document.getElementById('btn-tab-game-parser'));
+  dom.window.initParserGame();
+  const parserForm = document.getElementById('me-parser-form');
+  const parserField = document.getElementById('me-user-input');
+  if (parserForm && parserField) {
+    parserField.value = 'look';
+    const submitEvent = new dom.window.Event('submit', { bubbles: true, cancelable: true });
+    parserForm.dispatchEvent(submitEvent);
+    console.log("      . Command form submitted successfully.");
+
+    // Assert chokepoint puzzle behavior
+    const state = dom.window.meEpicEngine.state;
+    state.chapter = 3;
+    state.room = "DUNES";
+    state.inventory = ["orders"];
+    
+    // Submit "use orders"
+    parserField.value = 'use orders';
+    parserForm.dispatchEvent(new dom.window.Event('submit', { bubbles: true, cancelable: true }));
+    if (!state.ch3_awaitingChokepoint) {
+      throw new Error("Game state did not transition to ch3_awaitingChokepoint after using orders");
+    }
+    console.log("      . Transition to ch3_awaitingChokepoint verified.");
+
+    // Submit incorrect answer
+    parserField.value = 'red sea';
+    parserForm.dispatchEvent(new dom.window.Event('submit', { bubbles: true, cancelable: true }));
+    if (state.ch3_victory) {
+      throw new Error("Game won with incorrect answer 'red sea'");
+    }
+    console.log("      . Rejection of incorrect answer 'red sea' verified.");
+
+    // Submit correct fuzzy answer
+    parserField.value = 'Straits of Tiran';
+    parserForm.dispatchEvent(new dom.window.Event('submit', { bubbles: true, cancelable: true }));
+    if (!state.ch3_victory) {
+      throw new Error("Game did not register victory with correct fuzzy answer 'Straits of Tiran'");
+    }
+    console.log("      . Puzzle victory with correct answer 'Straits of Tiran' verified.");
+  }
+
+  // 7e. Chronology Command: Jaffa to Gaza (1947–1953) Game
+  console.log("    * Verifying Chronology Command: Jaffa to Gaza (1947–1953):");
+  fireClick(document.getElementById('btn-tab-game-parser-jaffa'));
+  dom.window.initJaffaParserGame();
+  const jaffaForm = document.getElementById('jaffa-parser-form');
+  const jaffaField = document.getElementById('jaffa-user-input');
+  if (jaffaForm && jaffaField) {
+    jaffaField.value = 'look';
+    const submitEvent = new dom.window.Event('submit', { bubbles: true, cancelable: true });
+    jaffaForm.dispatchEvent(submitEvent);
+    console.log("      . Command form submitted successfully.");
+
+    // Assert chokepoint puzzle behavior
+    const state = dom.window.jaffaEpicEngine.state;
+    state.chapter = 3;
+    state.room = "CAMPS";
+    state.inventory = [];
+    
+    // Submit "talk fedayeen"
+    jaffaField.value = 'talk fedayeen';
+    jaffaForm.dispatchEvent(new dom.window.Event('submit', { bubbles: true, cancelable: true }));
+    if (!state.ch3_awaitingChokepoint) {
+      throw new Error("Jaffa game state did not transition to ch3_awaitingChokepoint after talking to fedayeen");
+    }
+    console.log("      . Transition to ch3_awaitingChokepoint verified.");
+
+    // Submit incorrect answer
+    jaffaField.value = 'gaza';
+    jaffaForm.dispatchEvent(new dom.window.Event('submit', { bubbles: true, cancelable: true }));
+    if (state.ch3_victory) {
+      throw new Error("Jaffa game won with incorrect answer 'gaza'");
+    }
+    console.log("      . Rejection of incorrect answer 'gaza' verified.");
+
+    // Submit correct fuzzy answer
+    jaffaField.value = 'Shati';
+    jaffaForm.dispatchEvent(new dom.window.Event('submit', { bubbles: true, cancelable: true }));
+    if (!state.ch3_victory) {
+      throw new Error("Jaffa game did not register victory with correct fuzzy answer 'Shati'");
+    }
+    console.log("      . Puzzle victory with correct answer 'Shati' verified.");
+  }
 
   console.log("✓ Revision Games Hub tests passed.");
 

@@ -21,7 +21,12 @@ export const state = {
     deck: [],
     activeIndex: 0,
     originalLength: 0,
-    masteredCount: 0
+    masteredCount: 0,
+    reinforcing: false,
+    reinforceQuestion: null,
+    wasDragged: false,
+    failedCardIds: [],
+    speedStudyMode: false
   },
   
   // Quiz Generator State
@@ -66,29 +71,6 @@ export const state = {
     gameEvents: []
   },
 
-  // Jet Set Willy: The War Room Game State
-  jswGameSession: {
-    score: 0,
-    lives: 3,
-    loopActive: false,
-    player: { x: 50, y: 200, width: 16, height: 24, vx: 0, vy: 0, isJumping: false, color: "#ffff00" },
-    platforms: [
-      { x: 0, y: 260, width: 600, height: 40, color: "#0000ff" },
-      { x: 120, y: 190, width: 140, height: 12, color: "#00ff00" },
-      { x: 340, y: 190, width: 140, height: 12, color: "#00ff00" },
-      { x: 200, y: 120, width: 200, height: 12, color: "#ff0000" }
-    ],
-    items: [
-      { x: 180, y: 160, collected: false, spec: "OPERATION NICKEL GRASS: Massive US airlift helps stabilize IDF lines in October 1973." },
-      { x: 400, y: 160, collected: false, spec: "OPEC OIL EMBARGO: Arab oil ministers use production cuts as economic leverage against the West." },
-      { x: 300, y: 80, collected: false, spec: "UN RESOLUTION 338: Superpower-brokered ceasefire calls for immediate end to hostilities." },
-      { x: 50, y: 230, collected: false, spec: "DEFCON 3 ALERT: High strategic readiness level triggered during US-Soviet brinkmanship." }
-    ],
-    hazards: [
-      { x: 200, y: 104, width: 16, height: 16, vx: 2, rangeMin: 200, rangeMax: 380, color: "#ff00ff", label: "☢" },
-      { x: 150, y: 174, width: 12, height: 16, vx: 1.5, rangeMin: 120, rangeMax: 240, color: "#00ffff", label: "☎" }
-    ]
-  },
   
   // Taboo Revision Game State
   tabooGameSession: {
@@ -103,5 +85,13 @@ export const state = {
     timerRemaining: 60,
     timerInterval: null,
     isPlaying: false
+  },
+  
+  // Gamification Player Stats
+  userStats: {
+    xp: 0,
+    level: 1,
+    streak: 0,
+    lastLoginDate: null
   }
 };
