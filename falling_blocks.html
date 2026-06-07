@@ -1394,6 +1394,7 @@
         const col = this.activeBlock.col;
         const isTargetCol = (col === this.targetColumn);
         const block = this.activeBlock;
+        let gotCorrectMatch = false;
         
         if (block.type === 'CORRECT') {
           if (isTargetCol) {
@@ -1401,17 +1402,20 @@
             this.score += 100;
             this.matches++;
             this.stats.correctMatches++;
+            gotCorrectMatch = true;
             
-            // Check for speed upgrade every 5 matches
+            // Speed up on EVERY correct match (e.g. +5% speed multiplier)
+            this.speedMultiplier *= 1.05;
+            
+            // Special milestone celebration every 5 matches
             if (this.matches > 0 && this.matches % 5 === 0) {
-              this.speedMultiplier *= 1.15;
               sound.playLevelUp();
-              this.spawnTextFloat("SPEED UP! +15%", block.col * this.colWidth + 75, block.y, '#d946ef');
+              this.spawnTextFloat("SPEED UP! +5% | MATCH +100", block.col * this.colWidth + 75, block.y, '#d946ef');
             } else {
               sound.playSuccessMatch();
+              this.spawnTextFloat("CORRECT MATCH +100 (SPEED +5%)", block.col * this.colWidth + 75, block.y, '#10b981');
             }
             
-            this.spawnTextFloat("CORRECT MATCH +100", block.col * this.colWidth + 75, block.y, '#10b981');
             this.spawnExplosion(block.col * this.colWidth + 75, block.y + 22, '#10b981');
             
             // Rewarding Mechanic: Clear top stacked block from target column
@@ -1478,9 +1482,14 @@
         if (this.checkGameOver()) {
           this.endGame();
         } else {
-          // Spawn next block in sequence
-          this.currentBlockIndex++;
-          this.spawnBlock();
+          if (gotCorrectMatch) {
+            // Question completed (correct matched), immediately advance to next question
+            this.nextQuestion();
+          } else {
+            // Spawn next block in sequence
+            this.currentBlockIndex++;
+            this.spawnBlock();
+          }
         }
       }
 
