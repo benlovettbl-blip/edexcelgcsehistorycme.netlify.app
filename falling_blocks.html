@@ -767,6 +767,28 @@
       border-color: rgba(6, 182, 212, 0.3);
       border-left-color: var(--neon-cyan) !important;
     }
+
+    /* Angry Chimney Shake & Heavy Red Smoke State */
+    @keyframes chimneyAngryShake {
+      0%, 100% { transform: scale(1.15) translate(0, 0) rotate(0deg); }
+      10% { transform: scale(1.15) translate(-2px, -1px) rotate(-1deg); }
+      20% { transform: scale(1.15) translate(1px, 2px) rotate(1deg); }
+      30% { transform: scale(1.15) translate(-1px, -2px) rotate(-1deg); }
+      40% { transform: scale(1.15) translate(2px, 1px) rotate(1deg); }
+      50% { transform: scale(1.15) translate(-2px, 2px) rotate(0deg); }
+      60% { transform: scale(1.15) translate(1px, -1px) rotate(1deg); }
+      70% { transform: scale(1.15) translate(-1px, 1px) rotate(-1deg); }
+      80% { transform: scale(1.15) translate(2px, -2px) rotate(1deg); }
+      90% { transform: scale(1.15) translate(-1px, 2px) rotate(0deg); }
+    }
+
+    .header-logo.angry {
+      animation: chimneyAngryShake 0.12s infinite linear !important;
+      background: rgba(239, 68, 68, 0.25) !important;
+      color: var(--neon-red) !important;
+      border-color: rgba(239, 68, 68, 0.6) !important;
+      box-shadow: 0 0 16px rgba(239, 68, 68, 0.8) !important;
+    }
   </style>
 </head>
 <body>
@@ -1546,10 +1568,10 @@
         }
 
         // Check if high score
-        const localHigh = parseInt(localStorage.getItem('fb_highscore_v2') || '0');
+        const localHigh = parseInt(localStorage.getItem('fb_highscore_v3') || '0');
         let formHTML = '';
         if (this.score > localHigh || localHigh === 0) {
-          localStorage.setItem('fb_highscore_v2', this.score);
+          localStorage.setItem('fb_highscore_v3', this.score);
           document.getElementById('hud-highscore').textContent = String(this.score).padStart(5, '0');
         }
         
@@ -1633,7 +1655,7 @@
         if (!val.valid) return;
 
         // Load existing scores
-        let scores = JSON.parse(localStorage.getItem('fb_leaderboard_v2') || '[]');
+        let scores = JSON.parse(localStorage.getItem('fb_leaderboard_v3') || '[]');
         scores.push({
           name: initials,
           year: year,
@@ -1645,7 +1667,7 @@
         scores.sort((a, b) => b.score - a.score);
         scores = scores.slice(0, 5);
         
-        localStorage.setItem('fb_leaderboard_v2', JSON.stringify(scores));
+        localStorage.setItem('fb_leaderboard_v3', JSON.stringify(scores));
         this.loadHighscores();
         
         // Disable form on successful save
@@ -1738,10 +1760,10 @@
 
       loadHighscores() {
         const hsBoard = document.getElementById('highscore-board');
-        const scores = JSON.parse(localStorage.getItem('fb_leaderboard_v2') || '[]');
+        const scores = JSON.parse(localStorage.getItem('fb_leaderboard_v3') || '[]');
         
         // Update highscore HUD value
-        const localHigh = parseInt(localStorage.getItem('fb_highscore_v2') || '0');
+        const localHigh = parseInt(localStorage.getItem('fb_highscore_v3') || '0');
         document.getElementById('hud-highscore').textContent = String(localHigh).padStart(5, '0');
         
         if (scores.length === 0) {
