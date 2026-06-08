@@ -768,6 +768,83 @@
       border-left-color: var(--neon-cyan) !important;
     }
 
+    /* Bouncy Chimney Sweeper Logo Animations */
+    @keyframes chimneyBounce {
+      0%, 100% { transform: translateY(0) scale(1); }
+      30% { transform: translateY(-5px) scale(0.96) rotate(-2deg); }
+      50% { transform: translateY(-8px) scale(1.05) rotate(2deg); }
+      70% { transform: translateY(-3px) scale(0.98) rotate(-1deg); }
+      85% { transform: translateY(-1px) scale(1.01) rotate(0.5deg); }
+    }
+
+    .bouncy-chimney {
+      animation: chimneyBounce 2.5s cubic-bezier(0.25, 0.8, 0.25, 1) infinite;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: filter var(--transition-fast), transform var(--transition-fast);
+      position: relative;
+    }
+
+    .bouncy-chimney:hover {
+      filter: drop-shadow(0 0 12px var(--primary-glow)) drop-shadow(0 0 4px var(--primary));
+      animation-play-state: paused;
+      transform: scale(1.15) rotate(3deg);
+    }
+
+    .bouncy-chimney:active {
+      transform: scale(0.95);
+    }
+
+    /* Smoke Particles */
+    .smoke-particle {
+      position: absolute;
+      top: -4px;
+      left: 50%;
+      width: 5px;
+      height: 5px;
+      background: rgba(28, 25, 23, 0.85);
+      border-radius: 50%;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(-50%) scale(1);
+      filter: blur(1.5px);
+    }
+
+    @keyframes smokeRise1 {
+      0% { transform: translate(-50%, 0) scale(1); opacity: 0; }
+      25% { opacity: 0.65; }
+      100% { transform: translate(-14px, -26px) scale(3.5); opacity: 0; filter: blur(4px); }
+    }
+
+    @keyframes smokeRise2 {
+      0% { transform: translate(-50%, 0) scale(1); opacity: 0; }
+      25% { opacity: 0.65; }
+      100% { transform: translate(10px, -32px) scale(4); opacity: 0; filter: blur(5px); }
+    }
+
+    @keyframes smokeRise3 {
+      0% { transform: translate(-50%, 0) scale(1); opacity: 0; }
+      25% { opacity: 0.7; }
+      100% { transform: translate(-2px, -38px) scale(4.5); opacity: 0; filter: blur(6px); }
+    }
+
+    .bouncy-chimney:hover .smoke-1 {
+      animation: smokeRise1 1.6s infinite linear;
+    }
+
+    .bouncy-chimney:hover .smoke-2 {
+      animation: smokeRise2 1.8s infinite linear;
+      animation-delay: 0.5s;
+    }
+
+    .bouncy-chimney:hover .smoke-3 {
+      animation: smokeRise3 2.0s infinite linear;
+      animation-delay: 1.0s;
+    }
+
     /* Angry Chimney Shake & Heavy Red Smoke State */
     @keyframes chimneyAngryShake {
       0%, 100% { transform: scale(1.15) translate(0, 0) rotate(0deg); }
@@ -789,6 +866,40 @@
       border-color: rgba(239, 68, 68, 0.6) !important;
       box-shadow: 0 0 16px rgba(239, 68, 68, 0.8) !important;
     }
+
+    .header-logo.angry svg polygon {
+      fill: #dc2626 !important;
+      transition: fill 0.25s ease;
+    }
+    .header-logo.angry svg rect {
+      fill: #7f1d1d !important;
+      transition: fill 0.25s ease;
+    }
+    .header-logo.angry svg rect[fill="#ffffff"] {
+      fill: #f59e0b !important;
+      transition: fill 0.25s ease;
+    }
+
+    .header-logo.angry .smoke-1 {
+      animation: smokeRise1 0.6s infinite linear !important;
+      background: rgba(239, 68, 68, 0.95) !important;
+      width: 7px;
+      height: 7px;
+    }
+    .header-logo.angry .smoke-2 {
+      animation: smokeRise2 0.7s infinite linear !important;
+      animation-delay: 0.15s !important;
+      background: rgba(185, 28, 28, 0.95) !important;
+      width: 8px;
+      height: 8px;
+    }
+    .header-logo.angry .smoke-3 {
+      animation: smokeRise3 0.8s infinite linear !important;
+      animation-delay: 0.3s !important;
+      background: rgba(28, 25, 23, 0.95) !important;
+      width: 9px;
+      height: 9px;
+    }
   </style>
 </head>
 <body>
@@ -797,8 +908,18 @@
     <!-- Header -->
     <header>
       <div class="header-left">
-        <div class="header-logo">
-          <i class="fa-solid fa-gamepad"></i>
+        <div class="header-logo bouncy-chimney brand-icon" id="header-brand-logo" title="Fareham Chimney Sweep">
+          <div class="smoke-particle smoke-1"></div>
+          <div class="smoke-particle smoke-2"></div>
+          <div class="smoke-particle smoke-3"></div>
+          <svg width="24" height="28" viewBox="0 0 24 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="5" y="24" width="14" height="2" rx="0.5" fill="#a03018" />
+            <polygon points="6,24 8,4 16,4 18,24" fill="#e65c00" />
+            <rect x="7" y="2" width="10" height="2" rx="0.5" fill="#b34700" />
+            <rect x="7.8" y="6" width="8.4" height="1.5" fill="#ffffff" />
+            <rect x="8.0" y="9.5" width="8.0" height="1.5" fill="#ffffff" />
+            <rect x="8.2" y="13" width="7.6" height="1.5" fill="#ffffff" />
+          </svg>
         </div>
         <div class="header-info">
           <h1>Falling Blocks Arcade</h1>
@@ -849,6 +970,15 @@
               <li><i class="fa-solid fa-circle-check"></i> Steering DISTRACTORS into red DISCARD columns removes them safely.</li>
               <li><i class="fa-solid fa-triangle-exclamation"></i> Incorrect placements freeze and stack up. Pile up to the top and you lose!</li>
             </ul>
+
+            <!-- Lesson Selector Dropdown -->
+            <div class="lesson-select-container" style="margin: 15px 0; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+              <label for="lesson-select" style="font-size: 0.8rem; font-weight: 700; color: var(--neon-cyan); text-transform: uppercase;">Select Study Unit:</label>
+              <select id="lesson-select" style="width: 100%; max-width: 320px; padding: 10px 14px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); border-radius: var(--border-radius-sm); color: var(--text-main); font-size: 0.85rem; outline: none; cursor: pointer; text-align: left;">
+                <option value="all">All Lessons (Entire Syllabus)</option>
+              </select>
+            </div>
+
             <button class="overlay-button" id="start-game-btn">
               <i class="fa-solid fa-play"></i> Start Challenge
             </button>
@@ -1000,11 +1130,10 @@
       }
     ];
 
-    let questionsPool = [...baseQuestionsPool];
+    let allParsedQuestions = [];
 
     // Dynamically load all short questions from global QUIZ_DATA if available
     if (typeof QUIZ_DATA !== 'undefined') {
-      const parsedPool = [];
       QUIZ_DATA.forEach(topic => {
         if (!topic.subtopics) return;
         topic.subtopics.forEach(subtopic => {
@@ -1015,10 +1144,11 @@
                 if (q.question && q.answer && q.answer.length <= 25 && q.distractors && q.distractors.length >= 2) {
                   const shortDistractors = q.distractors.filter(d => d.length <= 25);
                   if (shortDistractors.length >= 2) {
-                    parsedPool.push({
+                    allParsedQuestions.push({
                       target: q.question,
                       correct: q.answer.toUpperCase(),
-                      distractors: shortDistractors.slice(0, 2).map(d => d.toUpperCase())
+                      distractors: shortDistractors.slice(0, 2).map(d => d.toUpperCase()),
+                      subtopicId: subtopic.id
                     });
                   }
                 }
@@ -1027,12 +1157,49 @@
           });
         });
       });
-      // Overwrite the pool if we parsed enough questions
-      if (parsedPool.length > 0) {
-        questionsPool = parsedPool;
-        console.log(`Successfully imported ${questionsPool.length} terms from global QUIZ_DATA!`);
-      }
+      console.log(`Successfully parsed ${allParsedQuestions.length} terms from global QUIZ_DATA!`);
     }
+
+    let questionsPool = allParsedQuestions.length > 0 ? [...allParsedQuestions] : [...baseQuestionsPool];
+
+    function initLessonSelect() {
+      const select = document.getElementById('lesson-select');
+      if (!select || typeof QUIZ_DATA === 'undefined') return;
+
+      select.innerHTML = '<option value="all">All Lessons (Entire Syllabus)</option>';
+
+      QUIZ_DATA.forEach(topic => {
+        if (!topic.subtopics) return;
+        const optgroup = document.createElement('optgroup');
+        optgroup.label = topic.title.replace(/^Key Topic \d:\s*/, "");
+        
+        topic.subtopics.forEach(subtopic => {
+          const option = document.createElement('option');
+          option.value = subtopic.id;
+          option.textContent = subtopic.title.replace(/^Topic \d\.\d:\s*/, "");
+          optgroup.appendChild(option);
+        });
+        select.appendChild(optgroup);
+      });
+    }
+
+    function updateActivePool(lessonId) {
+      if (!lessonId || lessonId === 'all') {
+        questionsPool = allParsedQuestions.length > 0 ? [...allParsedQuestions] : [...baseQuestionsPool];
+      } else {
+        questionsPool = allParsedQuestions.filter(q => q.subtopicId === lessonId);
+        if (questionsPool.length === 0) {
+          questionsPool = [...baseQuestionsPool];
+        }
+      }
+      initKeywordBank();
+    }
+
+    window.updateActivePool = updateActivePool;
+    Object.defineProperty(window, 'questionsPool', {
+      get: () => questionsPool,
+      set: (val) => { questionsPool = val; }
+    });
 
     // =========================================================================
     // 2. AUDIO SYNTHESIZER ENGINE (Web Audio API)
@@ -1238,6 +1405,8 @@
         
         this.initDOM();
         this.loadHighscores();
+        this.selectedLessonId = 'all';
+        initLessonSelect();
       }
 
       initDOM() {
@@ -1264,7 +1433,12 @@
         document.getElementById('btn-move-right').addEventListener('click', () => this.moveActiveBlock(1));
         
         // Start game button
-        document.getElementById('start-game-btn').addEventListener('click', () => this.startGame());
+        document.getElementById('start-game-btn').addEventListener('click', () => {
+          const select = document.getElementById('lesson-select');
+          this.selectedLessonId = select ? select.value : 'all';
+          updateActivePool(this.selectedLessonId);
+          this.startGame();
+        });
 
         // Keyboard listeners
         window.addEventListener('keydown', (e) => {
@@ -1623,10 +1797,17 @@
           <button class="overlay-button" id="restart-game-btn" style="margin-top: 5px;">
             <i class="fa-solid fa-rotate-left"></i> Play Again
           </button>
+          <button class="overlay-button" id="change-lesson-btn" style="margin-top: 5px; background: rgba(6, 182, 212, 0.15); border-color: var(--neon-cyan); color: var(--neon-cyan);">
+            <i class="fa-solid fa-sliders"></i> Change Lesson
+          </button>
         `;
         
         // Register button listeners on dynamic nodes
-        document.getElementById('restart-game-btn').addEventListener('click', () => this.startGame());
+        document.getElementById('restart-game-btn').addEventListener('click', () => {
+          updateActivePool(this.selectedLessonId);
+          this.startGame();
+        });
+        document.getElementById('change-lesson-btn').addEventListener('click', () => this.showInstructions());
         
         const submitBtn = document.getElementById('submit-score-btn');
         if (submitBtn) {
@@ -1677,6 +1858,66 @@
           initialsInput.disabled = true;
           yearSelect.disabled = true;
         }
+      }
+
+      showInstructions() {
+        this.state = 'INIT';
+        const overlay = document.getElementById('game-overlay');
+        overlay.style.display = 'flex';
+        
+        document.getElementById('modal-content').innerHTML = `
+          <div class="overlay-icon primary">
+            <i class="fa-solid fa-rocket"></i>
+          </div>
+          <h2 class="overlay-title">Arcade Match Play</h2>
+          <p class="overlay-desc">
+            Steer keywords into columns to match the exam prompt at the bottom!
+          </p>
+          <div class="performance-grid">
+            <div class="perf-metric">
+              <span class="perf-val">3</span>
+              <span class="perf-lbl">Columns</span>
+            </div>
+            <div class="perf-metric">
+              <span class="perf-val">100%</span>
+              <span class="perf-lbl">Recall</span>
+            </div>
+            <div class="perf-metric">
+              <span class="perf-val">+15%</span>
+              <span class="perf-lbl">Speed Up</span>
+            </div>
+          </div>
+          <ul class="guide-list" style="text-align: left; padding: 0 5px;">
+            <li><i class="fa-solid fa-circle-check"></i> Steering the CORRECT term into the green TARGET zone earns 100 XP.</li>
+            <li><i class="fa-solid fa-circle-check"></i> Steering DISTRACTORS into red DISCARD columns removes them safely.</li>
+            <li><i class="fa-solid fa-triangle-exclamation"></i> Incorrect placements freeze and stack up. Pile up to the top and you lose!</li>
+          </ul>
+          
+          <div class="lesson-select-container" style="margin: 15px 0; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+            <label for="lesson-select" style="font-size: 0.8rem; font-weight: 700; color: var(--neon-cyan); text-transform: uppercase;">Select Study Unit:</label>
+            <select id="lesson-select" style="width: 100%; max-width: 320px; padding: 10px 14px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); border-radius: var(--border-radius-sm); color: var(--text-main); font-size: 0.85rem; outline: none; cursor: pointer; text-align: left;">
+              <option value="all">All Lessons (Entire Syllabus)</option>
+            </select>
+          </div>
+
+          <button class="overlay-button" id="start-game-btn">
+            <i class="fa-solid fa-play"></i> Start Challenge
+          </button>
+        `;
+        
+        initLessonSelect();
+        
+        if (this.selectedLessonId) {
+          const select = document.getElementById('lesson-select');
+          if (select) select.value = this.selectedLessonId;
+        }
+
+        document.getElementById('start-game-btn').addEventListener('click', () => {
+          const select = document.getElementById('lesson-select');
+          this.selectedLessonId = select ? select.value : 'all';
+          updateActivePool(this.selectedLessonId);
+          this.startGame();
+        });
       }
 
       validateInitials(initials) {

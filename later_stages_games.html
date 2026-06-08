@@ -140,15 +140,13 @@
     }
 
     .header-logo {
-      background: var(--primary-glow);
+      background: transparent;
       color: var(--primary);
       width: 44px;
       height: 44px;
-      border-radius: var(--border-radius-md);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.3rem;
     }
 
     .header-info h1 {
@@ -1017,6 +1015,136 @@
       50% { transform: scale(1.03); box-shadow: 0 0 25px rgba(234, 88, 12, 0.6); }
       100% { transform: scale(1); box-shadow: 0 0 15px rgba(234, 88, 12, 0.4); }
     }
+
+    /* Bouncy Chimney Sweeper Logo Animations */
+    @keyframes chimneyBounce {
+      0%, 100% { transform: translateY(0) scale(1); }
+      30% { transform: translateY(-5px) scale(0.96) rotate(-2deg); }
+      50% { transform: translateY(-8px) scale(1.05) rotate(2deg); }
+      70% { transform: translateY(-3px) scale(0.98) rotate(-1deg); }
+      85% { transform: translateY(-1px) scale(1.01) rotate(0.5deg); }
+    }
+
+    .bouncy-chimney {
+      animation: chimneyBounce 2.5s cubic-bezier(0.25, 0.8, 0.25, 1) infinite;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: filter var(--transition-fast), transform var(--transition-fast);
+      position: relative;
+    }
+
+    .bouncy-chimney:hover {
+      filter: drop-shadow(0 0 12px var(--primary-glow)) drop-shadow(0 0 4px var(--primary));
+      animation-play-state: paused;
+      transform: scale(1.15) rotate(3deg);
+    }
+
+    .bouncy-chimney:active {
+      transform: scale(0.95);
+    }
+
+    /* Smoke Particles */
+    .smoke-particle {
+      position: absolute;
+      top: -4px;
+      left: 50%;
+      width: 5px;
+      height: 5px;
+      background: rgba(28, 25, 23, 0.85);
+      border-radius: 50%;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(-50%) scale(1);
+      filter: blur(1.5px);
+    }
+
+    @keyframes smokeRise1 {
+      0% { transform: translate(-50%, 0) scale(1); opacity: 0; }
+      25% { opacity: 0.65; }
+      100% { transform: translate(-14px, -26px) scale(3.5); opacity: 0; filter: blur(4px); }
+    }
+
+    @keyframes smokeRise2 {
+      0% { transform: translate(-50%, 0) scale(1); opacity: 0; }
+      25% { opacity: 0.65; }
+      100% { transform: translate(10px, -32px) scale(4); opacity: 0; filter: blur(5px); }
+    }
+
+    @keyframes smokeRise3 {
+      0% { transform: translate(-50%, 0) scale(1); opacity: 0; }
+      25% { opacity: 0.7; }
+      100% { transform: translate(-2px, -38px) scale(4.5); opacity: 0; filter: blur(6px); }
+    }
+
+    .bouncy-chimney:hover .smoke-1 {
+      animation: smokeRise1 1.6s infinite linear;
+    }
+
+    .bouncy-chimney:hover .smoke-2 {
+      animation: smokeRise2 1.8s infinite linear;
+      animation-delay: 0.5s;
+    }
+
+    .bouncy-chimney:hover .smoke-3 {
+      animation: smokeRise3 2.0s infinite linear;
+      animation-delay: 1.0s;
+    }
+
+    /* Angry Chimney Shake & Heavy Red Smoke State */
+    @keyframes chimneyAngryShake {
+      0%, 100% { transform: scale(1.15) translate(0, 0) rotate(0deg); }
+      10% { transform: scale(1.15) translate(-2px, -1px) rotate(-1deg); }
+      20% { transform: scale(1.15) translate(1px, 2px) rotate(1deg); }
+      30% { transform: scale(1.15) translate(-1px, -2px) rotate(-1deg); }
+      40% { transform: scale(1.15) translate(2px, 1px) rotate(1deg); }
+      50% { transform: scale(1.15) translate(-2px, 2px) rotate(0deg); }
+      60% { transform: scale(1.15) translate(1px, -1px) rotate(1deg); }
+      70% { transform: scale(1.15) translate(-1px, 1px) rotate(-1deg); }
+      80% { transform: scale(1.15) translate(2px, -2px) rotate(1deg); }
+      90% { transform: scale(1.15) translate(-1px, 2px) rotate(0deg); }
+    }
+
+    .bouncy-chimney.angry {
+      animation: chimneyAngryShake 0.12s infinite linear !important;
+      filter: drop-shadow(0 0 16px rgba(239, 68, 68, 0.95)) drop-shadow(0 0 6px #dc2626) !important;
+    }
+
+    .bouncy-chimney.angry svg polygon {
+      fill: #dc2626 !important;
+      transition: fill 0.25s ease;
+    }
+    .bouncy-chimney.angry svg rect {
+      fill: #7f1d1d !important;
+      transition: fill 0.25s ease;
+    }
+    .bouncy-chimney.angry svg rect[fill="#ffffff"] {
+      fill: #f59e0b !important;
+      transition: fill 0.25s ease;
+    }
+
+    .bouncy-chimney.angry .smoke-1 {
+      animation: smokeRise1 0.6s infinite linear !important;
+      background: rgba(239, 68, 68, 0.95) !important;
+      width: 7px;
+      height: 7px;
+    }
+    .bouncy-chimney.angry .smoke-2 {
+      animation: smokeRise2 0.7s infinite linear !important;
+      animation-delay: 0.15s !important;
+      background: rgba(185, 28, 28, 0.95) !important;
+      width: 8px;
+      height: 8px;
+    }
+    .bouncy-chimney.angry .smoke-3 {
+      animation: smokeRise3 0.8s infinite linear !important;
+      animation-delay: 0.3s !important;
+      background: rgba(28, 25, 23, 0.95) !important;
+      width: 9px;
+      height: 9px;
+    }
   </style>
 </head>
 <body>
@@ -1029,8 +1157,18 @@
     <!-- Header -->
     <header>
       <div class="header-left">
-        <div class="header-logo">
-          <i class="fa-solid fa-graduation-cap"></i>
+        <div class="header-logo bouncy-chimney brand-icon" id="header-brand-logo" title="Fareham Chimney Sweep">
+          <div class="smoke-particle smoke-1"></div>
+          <div class="smoke-particle smoke-2"></div>
+          <div class="smoke-particle smoke-3"></div>
+          <svg width="24" height="28" viewBox="0 0 24 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="5" y="24" width="14" height="2" rx="0.5" fill="#a03018" />
+            <polygon points="6,24 8,4 16,4 18,24" fill="#e65c00" />
+            <rect x="7" y="2" width="10" height="2" rx="0.5" fill="#b34700" />
+            <rect x="7.8" y="6" width="8.4" height="1.5" fill="#ffffff" />
+            <rect x="8.0" y="9.5" width="8.0" height="1.5" fill="#ffffff" />
+            <rect x="8.2" y="13" width="7.6" height="1.5" fill="#ffffff" />
+          </svg>
         </div>
         <div class="header-info">
           <h1>Conflict in the Middle East: Later Stages</h1>
