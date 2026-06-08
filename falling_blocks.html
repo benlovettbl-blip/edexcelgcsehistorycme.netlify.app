@@ -1546,10 +1546,10 @@
         }
 
         // Check if high score
-        const localHigh = parseInt(localStorage.getItem('fb_highscore') || '0');
+        const localHigh = parseInt(localStorage.getItem('fb_highscore_v2') || '0');
         let formHTML = '';
         if (this.score > localHigh || localHigh === 0) {
-          localStorage.setItem('fb_highscore', this.score);
+          localStorage.setItem('fb_highscore_v2', this.score);
           document.getElementById('hud-highscore').textContent = String(this.score).padStart(5, '0');
         }
         
@@ -1558,7 +1558,7 @@
           <div class="highscore-form">
             <span style="font-size:0.75rem; color:var(--neon-cyan); font-weight:700;">SAVE TO LOCAL LEADERBOARD</span>
             <div class="form-inputs">
-              <input type="text" id="hs-initials" class="form-input" placeholder="AAA" maxlength="3" required>
+              <input type="text" id="hs-initials" class="form-input" placeholder="AAA" maxlength="3" required style="text-transform: uppercase;">
               <select id="hs-year" class="form-input" required>
                 <option value="" disabled selected>Year</option>
                 <option value="Year 7">Year 7</option>
@@ -1569,6 +1569,7 @@
               </select>
               <button class="submit-form-btn" id="submit-score-btn">SAVE</button>
             </div>
+            <div id="hs-error-msg" style="color: var(--neon-red); font-size: 0.75rem; font-weight: 700; margin-top: 5px; display: none; text-shadow: 0 0 5px var(--neon-red-glow);"></div>
           </div>
         `;
 
@@ -1619,13 +1620,20 @@
         const initials = initialsInput.value.trim().toUpperCase();
         const year = yearSelect.value;
         
-        if (!initials || initials.length < 2 || !year) {
-          alert("Please input your initials (2-3 letters) and select your Year!");
+        if (!year) {
+          const errorDisplay = document.getElementById('hs-error-msg');
+          if (errorDisplay) {
+            errorDisplay.textContent = "Please select your Year Group.";
+            errorDisplay.style.display = 'block';
+          }
           return;
         }
 
+        const val = this.validateInitials(initials);
+        if (!val.valid) return;
+
         // Load existing scores
-        let scores = JSON.parse(localStorage.getItem('fb_leaderboard') || '[]');
+        let scores = JSON.parse(localStorage.getItem('fb_leaderboard_v2') || '[]');
         scores.push({
           name: initials,
           year: year,
@@ -1637,7 +1645,7 @@
         scores.sort((a, b) => b.score - a.score);
         scores = scores.slice(0, 5);
         
-        localStorage.setItem('fb_leaderboard', JSON.stringify(scores));
+        localStorage.setItem('fb_leaderboard_v2', JSON.stringify(scores));
         this.loadHighscores();
         
         // Disable form on successful save
@@ -1649,12 +1657,91 @@
         }
       }
 
+      validateInitials(initials) {
+        const logo = document.querySelector('.header-logo');
+        const triggerValidationFailure = (message) => {
+          sound.playMistake();
+          
+          if (logo) {
+            logo.classList.add('bouncy-chimney', 'brand-icon', 'angry');
+            
+            // Spawn soot particles!
+            for (let i = 0; i < 15; i++) {
+              let startTime = null;
+              const particle = document.createElement('div');
+              particle.style.background = '#1a1a1a';
+              const size = Math.random() * 8 + 4;
+              particle.style.width = `${size}px`;
+              particle.style.height = `${size}px`;
+              particle.style.borderRadius = '50%';
+              particle.style.position = 'fixed';
+              particle.style.zIndex = '99999';
+              
+              const rect = logo.getBoundingClientRect();
+              const startX = rect.left + rect.width / 2;
+              const startY = rect.top + rect.height / 2;
+              particle.style.left = `${startX}px`;
+              particle.style.top = `${startY}px`;
+              
+              const angle = Math.random() * Math.PI * 2;
+              const force = Math.random() * 80 + 40;
+              const targetX = Math.cos(angle) * force;
+              const targetY = Math.sin(angle) * force - 60;
+              
+              document.body.appendChild(particle);
+              
+              const animate = (timestamp) => {
+                if (!startTime) startTime = timestamp;
+                const elapsed = (timestamp - startTime) / 1000;
+                
+                particle.style.transform = `translate(${targetX * elapsed}px, ${targetY * elapsed}px) scale(${1 - elapsed})`;
+                particle.style.opacity = `${1 - elapsed}`;
+                
+                if (elapsed < 1) {
+                  requestAnimationFrame(animate);
+                } else {
+                  particle.remove();
+                }
+              };
+              requestAnimationFrame(animate);
+            }
+            
+            setTimeout(() => {
+              logo.classList.remove('angry');
+            }, 1200);
+          }
+          
+          const errorDisplay = document.getElementById('hs-error-msg');
+          if (errorDisplay) {
+            errorDisplay.textContent = message;
+            errorDisplay.style.display = 'block';
+          }
+          return { valid: false, message };
+        };
+
+        const errorDisplay = document.getElementById('hs-error-msg');
+        if (errorDisplay) {
+          errorDisplay.style.display = 'none';
+        }
+
+        if (!/^[A-Z]{3}$/.test(initials)) {
+          return triggerValidationFailure("Please enter exactly 3 letters for your initials.");
+        }
+
+        const profanityList = new Set(["ASS","WTF","FUC","SHI","CNT","CUM","FAG","DIK","KYS","KKK","SEX","NIG","TIT","FAP","WOP","PIS","HEL","DAM","SOB","PEE","POO","DIE","GAY","PNS","VAG","KOK","FUK","FCK","BCH","MLF","DCK","BUM","FUG","SHT","XXX","SUK","HOE","SLT","WHR","NOB","KNO","COK","TAD","PUB","NGR","BXT"]);
+        if (profanityList.has(initials)) {
+          return triggerValidationFailure("The Fareham chimney master will not allow that.");
+        }
+
+        return { valid: true };
+      }
+
       loadHighscores() {
         const hsBoard = document.getElementById('highscore-board');
-        const scores = JSON.parse(localStorage.getItem('fb_leaderboard') || '[]');
+        const scores = JSON.parse(localStorage.getItem('fb_leaderboard_v2') || '[]');
         
         // Update highscore HUD value
-        const localHigh = parseInt(localStorage.getItem('fb_highscore') || '0');
+        const localHigh = parseInt(localStorage.getItem('fb_highscore_v2') || '0');
         document.getElementById('hud-highscore').textContent = String(localHigh).padStart(5, '0');
         
         if (scores.length === 0) {
