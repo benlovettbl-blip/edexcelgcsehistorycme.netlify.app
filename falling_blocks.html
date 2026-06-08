@@ -2148,9 +2148,9 @@
         // 5. Draw Active Falling Block
         if (this.activeBlock) {
           const block = this.activeBlock;
-          // Render block using smooth lerped horizontal coordinate
-          const borderStyle = block.type === 'CORRECT' ? '#d946ef' : '#06b6d4';
-          const fillStyle = block.type === 'CORRECT' ? 'rgba(217, 70, 239, 0.12)' : 'rgba(6, 182, 212, 0.12)';
+          // Render active block using smooth lerped horizontal coordinate (uniform cyan styling to prevent cheating)
+          const borderStyle = '#06b6d4';
+          const fillStyle = 'rgba(6, 182, 212, 0.12)';
           
           this.drawBlockNode(this.activeLerpX, block.y, block.text, fillStyle, borderStyle, true);
         }
