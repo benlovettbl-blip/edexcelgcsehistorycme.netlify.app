@@ -3397,7 +3397,7 @@ details > summary::marker {
 .vault-question-btn {
   width: 100%;
   text-align: left;
-  background: #ffffff;
+  background: var(--bg-card);
   border: 1px solid var(--border-glass);
   color: var(--text-main);
   padding: 14px 18px;
@@ -3413,12 +3413,12 @@ details > summary::marker {
 
 .vault-question-btn:hover {
   border-color: var(--border-active);
-  background: rgba(var(--primary-rgb), 0.02);
+  background: var(--bg-card-hover);
 }
 
 .vault-answer-panel {
   display: none;
-  background: #f8fafc;
+  background: var(--bg-app);
   border: 1px solid var(--border-glass);
   border-top: none;
   border-radius: 0 0 var(--border-radius-md) var(--border-radius-md);

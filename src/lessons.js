@@ -722,6 +722,7 @@ export function renderMasteryView(subtopicId) {
 
   let vaultHtml = '';
   let formulaHtml = '';
+  let scaffoldedPracticeHtml = '';
   if (isCoreMode) {
     formulaHtml = `
       <div style="background: rgba(16, 185, 129, 0.03); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: var(--border-radius-sm); padding: 14px 16px; margin-bottom: 18px; font-size: 0.88rem; line-height: 1.45; border-left: 4px solid var(--success); box-shadow: var(--shadow-sm); text-align: left;">
@@ -731,9 +732,99 @@ export function renderMasteryView(subtopicId) {
         <p style="margin: 0 0 8px 0; color: var(--text-main);">To get all 4 marks, write one clear paragraph with three parts:</p>
         <ol style="margin: 0; padding-left: 20px; color: var(--text-muted); display: flex; flex-direction: column; gap: 4px;">
           <li><strong>Point (1 Mark):</strong> Clearly state the consequence. (e.g., <em>"One consequence of the war was a change in the borders of the Middle East..."</em>)</li>
-          <li><strong>Evidence (1 Mark):</strong> Add specific names, dates, or statistics. (e.g., <em>"...where Israel captured 50% more land than originally planned in the UN Partition Plan."</em>)</li>
+          <li><strong>Evidence (1 Mark):</strong> Add specific facts, dates, or statistics. (e.g., <em>"...where Israel captured 50% more land than originally planned in the UN Partition Plan."</em>)</li>
           <li><strong>Explain (2 Marks):</strong> Explain what this led to or meant. (e.g., <em>"This meant that surrounding Arab states were left hostile, and it created a major refugee crisis as 700,000 Palestinians fled."</em>)</li>
         </ol>
+      </div>
+    `;
+
+    scaffoldedPracticeHtml = `
+      <div class="mastery-card scaffold-practice-card" style="max-width: 800px; margin: 0 auto 24px auto; border-left: 4px solid var(--primary); background: rgba(168, 85, 247, 0.01); text-align: left;">
+        <h3 class="mastery-card-title" style="display: flex; align-items: center; gap: 8px; border: none; margin-bottom: 6px;">
+          <i class="fa-solid fa-cubes" style="color: var(--primary);"></i> 🛠️ Grade 4 Exam Practice: 4-Mark Paragraph Builder
+        </h3>
+        <p style="font-style: italic; margin-top: 0; margin-bottom: 20px; color: var(--text-muted); font-size: 0.85rem;">
+          Build a model answer to the exam question below by selecting the correct Point, Evidence, and Explanation blocks in order.
+        </p>
+        
+        <div style="background: rgba(0, 0, 0, 0.15); border: 1px solid var(--border-glass); border-radius: var(--border-radius-sm); padding: 16px; margin-bottom: 20px;">
+          <strong style="color: var(--accent); display: block; font-size: 0.75rem; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 0.5px;">Exam Question:</strong>
+          <span style="font-size: 1.05rem; font-weight: 700; color: var(--text-main);">Explain one consequence of the King David Hotel bombing (1946). (4 marks)</span>
+        </div>
+
+        <div class="scaffold-steps-container" style="display: flex; flex-direction: column; gap: 20px;">
+          <!-- Step 1: Point -->
+          <div class="scaffold-step-block" data-step="point">
+            <h4 style="margin: 0 0 10px 0; font-size: 0.92rem; color: var(--text-main); font-family: var(--font-heading); display: flex; align-items: center; gap: 8px;">
+              <span style="background: var(--primary); color: #fff; width: 20px; height: 20px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold;">1</span>
+              Select the Point (1 Mark)
+            </h4>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <button class="scaffold-option-btn" data-step="point" data-correct="false" data-idx="0" style="width: 100%; text-align: left; background: var(--bg-card); border: 1px solid var(--border-glass); color: var(--text-main); padding: 12px 16px; border-radius: var(--border-radius-sm); cursor: pointer; transition: all var(--transition-fast) ease; font-size: 0.85rem;">
+                A. Britain decided to launch a counter-offensive to occupy the neighboring Arab nations.
+              </button>
+              <button class="scaffold-option-btn" data-step="point" data-correct="true" data-idx="1" style="width: 100%; text-align: left; background: var(--bg-card); border: 1px solid var(--border-glass); color: var(--text-main); padding: 12px 16px; border-radius: var(--border-radius-sm); cursor: pointer; transition: all var(--transition-fast) ease; font-size: 0.85rem;">
+                B. One consequence of the bombing of the King David Hotel was that it shattered British political resolve to govern Palestine.
+              </button>
+              <button class="scaffold-option-btn" data-step="point" data-correct="false" data-idx="2" style="width: 100%; text-align: left; background: var(--bg-card); border: 1px solid var(--border-glass); color: var(--text-main); padding: 12px 16px; border-radius: var(--border-radius-sm); cursor: pointer; transition: all var(--transition-fast) ease; font-size: 0.85rem;">
+                C. One consequence was that it led to the immediate signature of the Camp David Accords.
+              </button>
+            </div>
+          </div>
+
+          <!-- Step 2: Evidence -->
+          <div class="scaffold-step-block" data-step="evidence" style="opacity: 0.5; pointer-events: none; transition: opacity 0.3s;">
+            <h4 style="margin: 0 0 10px 0; font-size: 0.92rem; color: var(--text-main); font-family: var(--font-heading); display: flex; align-items: center; gap: 8px;">
+              <span style="background: var(--primary); color: #fff; width: 20px; height: 20px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold;">2</span>
+              Select the Evidence (1 Mark)
+            </h4>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <button class="scaffold-option-btn" data-step="evidence" data-correct="false" data-idx="0" style="width: 100%; text-align: left; background: var(--bg-card); border: 1px solid var(--border-glass); color: var(--text-main); padding: 12px 16px; border-radius: var(--border-radius-sm); cursor: pointer; transition: all var(--transition-fast) ease; font-size: 0.85rem;">
+                A. For example, the United Nations voted in November 1947 to divide Palestine into two states.
+              </button>
+              <button class="scaffold-option-btn" data-step="evidence" data-correct="true" data-idx="1" style="width: 100%; text-align: left; background: var(--bg-card); border: 1px solid var(--border-glass); color: var(--text-main); padding: 12px 16px; border-radius: var(--border-radius-sm); cursor: pointer; transition: all var(--transition-fast) ease; font-size: 0.85rem;">
+                B. Specifically, the attack on 22 July 1946 by the Irgun killed 91 people, devastating their administrative headquarters.
+              </button>
+              <button class="scaffold-option-btn" data-step="evidence" data-correct="false" data-idx="2" style="width: 100%; text-align: left; background: var(--bg-card); border: 1px solid var(--border-glass); color: var(--text-main); padding: 12px 16px; border-radius: var(--border-radius-sm); cursor: pointer; transition: all var(--transition-fast) ease; font-size: 0.85rem;">
+                C. Specifically, President Harry Truman demanded the immediate entry of 100,000 Jewish refugees.
+              </button>
+            </div>
+          </div>
+
+          <!-- Step 3: Explanation -->
+          <div class="scaffold-step-block" data-step="explain" style="opacity: 0.5; pointer-events: none; transition: opacity 0.3s;">
+            <h4 style="margin: 0 0 10px 0; font-size: 0.92rem; color: var(--text-main); font-family: var(--font-heading); display: flex; align-items: center; gap: 8px;">
+              <span style="background: var(--primary); color: #fff; width: 20px; height: 20px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold;">3</span>
+              Select the Explanation (2 Marks)
+            </h4>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <button class="scaffold-option-btn" data-step="explain" data-correct="false" data-idx="0" style="width: 100%; text-align: left; background: var(--bg-card); border: 1px solid var(--border-glass); color: var(--text-main); padding: 12px 16px; border-radius: var(--border-radius-sm); cursor: pointer; transition: all var(--transition-fast) ease; font-size: 0.85rem;">
+                A. This meant that Egypt immediately blockaded the Straits of Tiran, halting all international trade.
+              </button>
+              <button class="scaffold-option-btn" data-step="explain" data-correct="true" data-idx="1" style="width: 100%; text-align: left; background: var(--bg-card); border: 1px solid var(--border-glass); color: var(--text-main); padding: 12px 16px; border-radius: var(--border-radius-sm); cursor: pointer; transition: all var(--transition-fast) ease; font-size: 0.85rem;">
+                B. This massive loss of life and security breach convinced an exhausted British government that maintaining the mandate was too dangerous and expensive, prompting them to refer the problem to the United Nations and withdraw.
+              </button>
+              <button class="scaffold-option-btn" data-step="explain" data-correct="false" data-idx="2" style="width: 100%; text-align: left; background: var(--bg-card); border: 1px solid var(--border-glass); color: var(--text-main); padding: 12px 16px; border-radius: var(--border-radius-sm); cursor: pointer; transition: all var(--transition-fast) ease; font-size: 0.85rem;">
+                C. This resulted in the Israeli Defence Forces being consolidated into a single unified national military under David Ben-Gurion.
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feedback & Preview Area -->
+        <div class="scaffold-feedback-area" style="margin-top: 20px; display: none;">
+          <div class="scaffold-model-preview-card" style="background: rgba(34, 197, 94, 0.02); border: 1px solid rgba(34, 197, 94, 0.2); border-radius: var(--border-radius-sm); padding: 16px; margin-bottom: 16px;">
+            <strong style="color: var(--success); display: block; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 8px;">Model Answer Preview:</strong>
+            <p id="scaffold-preview-text" style="margin: 0; font-size: 0.95rem; line-height: 1.5; color: var(--text-main); font-style: italic;"></p>
+          </div>
+          
+          <div class="scaffold-success-feedback" style="display: none; padding: 16px; background: rgba(34, 197, 94, 0.05); border-left: 4px solid var(--success); border-radius: 0 var(--border-radius-sm) var(--border-radius-sm) 0;">
+            <strong style="color: var(--success); display: block; font-size: 1rem; margin-bottom: 6px;">✓ Paragraph Completed Successfully! (+10 XP)</strong>
+            <p style="margin: 0 0 10px 0; font-size: 0.85rem; color: var(--text-muted); line-height: 1.45;">
+              <strong>Examiner Commentary:</strong> Excellent building! You\'ve structured a perfect 4-mark response. Notice how the response connects a clear consequence (loss of British resolve) to solid evidence (July 1946 bombing, 91 deaths) and then explains the ultimate impact (withdrawal and UN referral).
+            </p>
+          </div>
+        </div>
       </div>
     `;
   }
@@ -1145,6 +1236,8 @@ export function renderMasteryView(subtopicId) {
     ${kcHtml}
     
     ${impHtml}
+    
+    ${scaffoldedPracticeHtml}
     
     ${vaultHtml}
     
@@ -1659,6 +1752,91 @@ export function renderMasteryView(subtopicId) {
       AudioEngine.play('flip');
       flipCard.classList.toggle('flipped');
     });
+  }
+
+  // Bind Scaffolded Practice Events
+  if (isCoreMode) {
+    const scaffoldCard = container.querySelector('.scaffold-practice-card');
+    if (scaffoldCard) {
+      let answers = { point: null, evidence: null, explain: null };
+      const optionBtns = scaffoldCard.querySelectorAll('.scaffold-option-btn');
+      
+      const updatePreview = () => {
+        const previewEl = scaffoldCard.querySelector('#scaffold-preview-text');
+        const feedbackArea = scaffoldCard.querySelector('.scaffold-feedback-area');
+        const successBox = scaffoldCard.querySelector('.scaffold-success-feedback');
+        
+        let textParts = [];
+        if (answers.point) textParts.push(`<strong>${answers.point}</strong>`);
+        if (answers.evidence) textParts.push(answers.evidence);
+        if (answers.explain) textParts.push(answers.explain);
+        
+        if (textParts.length > 0) {
+          feedbackArea.style.display = 'block';
+          previewEl.innerHTML = textParts.join(' ');
+        } else {
+          feedbackArea.style.display = 'none';
+        }
+        
+        if (answers.point && answers.evidence && answers.explain) {
+          successBox.style.display = 'block';
+          if (!scaffoldCard.dataset.completed) {
+            scaffoldCard.dataset.completed = 'true';
+            AudioEngine.play('cheer');
+            addXp(10);
+            if (typeof Confetti !== 'undefined' && typeof Confetti.spawn === 'function') {
+              Confetti.spawn(50);
+            }
+          }
+        }
+      };
+
+      optionBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const step = btn.getAttribute('data-step');
+          const isCorrect = btn.getAttribute('data-correct') === 'true';
+          const siblingBtns = scaffoldCard.querySelectorAll(`.scaffold-option-btn[data-step="${step}"]`);
+          
+          siblingBtns.forEach(b => {
+            b.style.borderColor = 'var(--border-glass)';
+            b.style.background = 'var(--bg-card)';
+          });
+          
+          if (isCorrect) {
+            AudioEngine.play('success');
+            btn.style.borderColor = 'var(--success)';
+            btn.style.background = 'rgba(16, 185, 129, 0.05)';
+            
+            // Clean text of prefix "A. ", "B. ", "C. "
+            const textContent = btn.innerText.replace(/^[A-C]\.\s+/, '');
+            answers[step] = textContent;
+            
+            // Unlock next step
+            if (step === 'point') {
+              const nextBlock = scaffoldCard.querySelector('.scaffold-step-block[data-step="evidence"]');
+              if (nextBlock) {
+                nextBlock.style.opacity = '1';
+                nextBlock.style.pointerEvents = 'auto';
+              }
+            } else if (step === 'evidence') {
+              const nextBlock = scaffoldCard.querySelector('.scaffold-step-block[data-step="explain"]');
+              if (nextBlock) {
+                nextBlock.style.opacity = '1';
+                nextBlock.style.pointerEvents = 'auto';
+              }
+            }
+            
+            updatePreview();
+          } else {
+            AudioEngine.play('fail');
+            btn.style.borderColor = 'var(--accent)';
+            btn.style.background = 'rgba(244, 63, 94, 0.05)';
+            answers[step] = null;
+            updatePreview();
+          }
+        });
+      });
+    }
   }
 
   // Exam Question Vault Accordion Toggles
