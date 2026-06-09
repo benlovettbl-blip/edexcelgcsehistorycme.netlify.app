@@ -67,7 +67,7 @@ export const LESSONS_DATA = {
       "rightHeadline": "Palestinian and 'New Historian' Narrative",
       "rightText": "This perspective argues that the UN Partition Plan was inherently unjust, dividing land without the consent of the indigenous Arab majority. Rather than a simple defensive war, revisionist historians point out that Israeli forces carried out forced expulsions. For Palestinians, 1948 is known as the Nakba (Catastrophe), where 700,000 civilians fled or were driven from their homes, losing their land.",
       "neutralTitle": "⚖️ Dual Interpretation: The Competing Narratives of 1948",
-      "tipHtml": "<div class=\"examiner-tip-box\" style=\"margin-top: 18px; margin-bottom: 0;\">\r\n        <span class=\"tip-icon\">💡</span>\r\n        <div>\r\n          <strong>AO2 Exam Skill:</strong> Reflecting on both competing narratives of the 1948 war allows you to demonstrate high-level critical analysis on source and essay questions!\r\n        </div>"
+      "tipHtml": "<div class=\"examiner-tip-box\" style=\"margin-top: 18px; margin-bottom: 0;\">\r\n        <span class=\"tip-icon\">💡</span>\r\n        <div>\r\n          <strong>AO2 Exam Skill:</strong> Reflecting on both competing narratives of the 1948 war allows you to demonstrate high-level critical analysis on source and essay questions!\r\n        </div>\r\n      </div>"
     },
     "narrativeChain": {
       "chainData": [
@@ -188,7 +188,7 @@ export const LESSONS_DATA = {
       "rightHeadline": "Palestinian and 'New Historian' Narrative",
       "rightText": "This perspective focuses on the Nakba (Catastrophe), arguing that the refugee crisis was not a mere byproduct of war but the result of a deliberate, pre-planned Zionist strategy of ethnic cleansing (such as Plan Dalet). Revisionist historians and Palestinian accounts argue that IDF forces intentionally used intimidation, massacres (such as Deir Yassin), and the destruction of hundreds of Arab villages to forcibly expel the population and ensure a Jewish demographic majority in the new state.",
       "neutralTitle": "⚖️ Dual Interpretation: The Consolidation of 1948–49",
-      "tipHtml": "<div class=\"examiner-tip-box\" style=\"margin-top: 18px; margin-bottom: 0;\">\r\n        <span class=\"tip-icon\">💡</span>\r\n        <div>\r\n          <strong>AO2 Exam Skill:</strong> Underline process words to trace cause and effect directly. Reflecting dual viewpoints yields top marks!\r\n        </div>"
+      "tipHtml": "<div class=\"examiner-tip-box\" style=\"margin-top: 18px; margin-bottom: 0;\">\r\n        <span class=\"tip-icon\">💡</span>\r\n        <div>\r\n          <strong>AO2 Exam Skill:</strong> Underline process words to trace cause and effect directly. Reflecting dual viewpoints yields top marks!\r\n        </div>\r\n      </div>"
     },
     "narrativeChain": {
       "chainData": [
@@ -364,7 +364,7 @@ export const LESSONS_DATA = {
       "rightHeadline": "Arab and Anti-Imperialist Narrative",
       "rightText": "This perspective views the 1956 war as an unprovoked act of colonial aggression. In this narrative, Israel willingly colluded with decaying European empires (Britain and France) to overthrow a popular Arab leader who was simply reclaiming Egypt's rightful national resources. Nasser's political survival against this tripartite invasion is celebrated as a heroic, defining victory against Western imperialism.",
       "neutralTitle": "⚖️ Dual Interpretation: The Suez Crisis of 1956",
-      "tipHtml": "<div class=\"examiner-tip-box\" style=\"margin-top: 18px; margin-bottom: 0;\">\r\n        <span class=\"tip-icon\">💡</span>\r\n        <div>\r\n          <strong>AO2 Exam Skill:</strong> Contrast the preemptive defense motive against the charges of imperial collusion to write a sophisticated, high-scoring essay on 1956.\r\n        </div>"
+      "tipHtml": "<div class=\"examiner-tip-box\" style=\"margin-top: 18px; margin-bottom: 0;\">\r\n        <span class=\"tip-icon\">💡</span>\r\n        <div>\r\n          <strong>AO2 Exam Skill:</strong> Contrast the preemptive defense motive against the charges of imperial collusion to write a sophisticated, high-scoring essay on 1956.\r\n        </div>\r\n      </div>"
     },
     "narrativeChain": {
       "chainData": [
@@ -532,7 +532,7 @@ export const LESSONS_DATA = {
       "rightHeadline": "Arab and Revisionist Narrative",
       "rightText": "This perspective argues that Israel exaggerated the threat of Arab annihilation to seize territory and crush Arab military power. In this view, Nasser was engaged in political brinkmanship rather than planning a genuine invasion, and Israeli leaders deliberately provoked Syria in the demilitarized zones (as Defence Minister Moshe Dayan later admitted) to create a pretext for war and territorial expansion.",
       "neutralTitle": "⚖️ Dual Interpretation: The Six Day War of 1967",
-      "tipHtml": "<div class=\"examiner-tip-box\" style=\"margin-top: 18px; margin-bottom: 0;\">\r\n        <span class=\"tip-icon\">💡</span>\r\n        <div>\r\n          <strong>AO2 Exam Skill:</strong> In 8-mark importance or narrative questions, show how differing military and political expectations created contrasting explanations for the war's outbreak.\r\n        </div>"
+      "tipHtml": "<div class=\"examiner-tip-box\" style=\"margin-top: 18px; margin-bottom: 0;\">\r\n        <span class=\"tip-icon\">💡</span>\r\n        <div>\r\n          <strong>AO2 Exam Skill:</strong> In 8-mark importance or narrative questions, show how differing military and political expectations created contrasting explanations for the war's outbreak.\r\n        </div>\r\n      </div>"
     },
     "narrativeChain": {
       "chainData": [
@@ -703,7 +703,7 @@ export const LESSONS_DATA = {
       "rightHeadline": "An Illegal Military Occupation (Give It Back)",
       "rightText": "Taking land by force is completely illegal under international law. Under UN Resolution 242, Israel must withdraw its armed forces and return this stolen land to its rightful Arab owners in exchange for a lasting peace.",
       "neutralTitle": "⚖️ Dual Interpretation: The Post-1967 Captured Territories",
-      "tipHtml": "<div class=\"examiner-tip-box\" style=\"margin-top: 18px; margin-bottom: 0;\">\r\n        <span class=\"tip-icon\">💡</span>\r\n        <div>\r\n          <strong>AO2 Exam Skill:</strong> Examiners award top marks when you can explain why different groups reacted completely differently to the exact same event!\r\n        </div>"
+      "tipHtml": "<div class=\"examiner-tip-box\" style=\"margin-top: 18px; margin-bottom: 0;\">\r\n        <span class=\"tip-icon\">💡</span>\r\n        <div>\r\n          <strong>AO2 Exam Skill:</strong> Examiners award top marks when you can explain why different groups reacted completely differently to the exact same event!\r\n        </div>\r\n      </div>"
     },
     "narrativeChain": {
       "chainData": [
