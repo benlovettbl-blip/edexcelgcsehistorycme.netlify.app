@@ -452,20 +452,20 @@ export const LESSONS_DATA = {
     },
     "scaffoldedPractice": {
       "questionType": "narrative",
-      "questionText": "Write a narrative account of the 1948–49 war. (Focus: The Ceasefire & Reorganisation) (8 marks)",
+      "questionText": "Write a narrative account of the creation of the Israeli Defence Forces and the Law of Return. (8 marks)",
       "steps": {
         "point": {
           "options": [
             {
-              "text": "A. One consequence of the war was that it led to the immediate signing of the Camp David Accords.",
+              "text": "A. The creation of the IDF began when the UN sent peacekeepers to partition Palestine in 1948.",
               "correct": false
             },
             {
-              "text": "B. The war began when five Arab nations invaded Israel in May 1948, but a crucial UN-mandated ceasefire in June 1948 changed the course of the conflict.",
+              "text": "B. In May 1948, during the early stages of the Arab-Israeli War, Prime Minister David Ben-Gurion ordered the merger of underground militias (Haganah, Irgun, and Lehi) to create a single national army: the Israeli Defence Forces (IDF).",
               "correct": true
             },
             {
-              "text": "C. The conflict started with the Balfour Declaration being rejected by Arab leaders.",
+              "text": "C. The IDF was created as a joint military force between Israel and Egypt.",
               "correct": false
             }
           ]
@@ -473,15 +473,15 @@ export const LESSONS_DATA = {
         "evidence": {
           "options": [
             {
-              "text": "A. For example, British forces withdrew completely and handed control over to the United Nations.",
+              "text": "A. To maintain the army, Israel signed the Camp David Accords and received Soviet troops.",
               "correct": false
             },
             {
-              "text": "B. During this truce, Israel secretly imported modern weapons from Czechoslovakia and consolidated rival militias into the unified IDF.",
+              "text": "B. To maintain this army and protect the state's vulnerable borders, Israel introduced universal conscription, and in July 1950 passed the Law of Return, granting any Jew worldwide the right to settle and gain immediate citizenship.",
               "correct": true
             },
             {
-              "text": "C. During the ceasefire, Egypt signed an armistice returning the Gaza Strip to Israeli control.",
+              "text": "C. To maintain the army, the IDF banned all Jewish immigration to prevent economic strain.",
               "correct": false
             }
           ]
@@ -489,21 +489,21 @@ export const LESSONS_DATA = {
         "explain": {
           "options": [
             {
-              "text": "A. This meant that the Suez Canal was nationalized by Egypt.",
+              "text": "A. This resulted in Israel returning all captured lands to Jordan.",
               "correct": false
             },
             {
-              "text": "B. This allowed the reinforced IDF to launch successful counter-offensives when fighting resumed, ultimately securing Israel's survival and expanding its territory by 50% more than the UN plan.",
+              "text": "B. This meant that a massive wave of Jewish immigrants doubled the state's population in three years, which strained the economy but successfully consolidated the demographic and military manpower needed to secure the state's survival.",
               "correct": true
             },
             {
-              "text": "C. This resulted in the United States cutting all financial aid to the new state of Israel.",
+              "text": "C. This led to the immediate creation of the state of Palestine.",
               "correct": false
             }
           ]
         }
       },
-      "commentary": "Excellent work! You have constructed a strong narrative sequence. Notice how the ceasefire acts as a key turning point that connects the initial invasion (beginning) to the reorganisation and Czech arms deals (middle), leading to the final victory and territorial expansion (end)."
+      "commentary": "Superb narrative writing! You've traced the sequence of consolidating the new state. Merging the militias to form the IDF during the war (beginning) led to universal conscription and the passage of the Law of Return in 1950 (middle), which demographically secured the manpower needed for the state's defense (end)."
     }
   },
   "subtopic_1_3": {
@@ -720,20 +720,20 @@ export const LESSONS_DATA = {
     },
     "scaffoldedPractice": {
       "questionType": "importance",
-      "questionText": "Explain the importance of the Palestinian refugee crisis (Nakba) for Arab-Israeli relations. (8 marks)",
+      "questionText": "Explain the importance of the Suez Crisis (1956) for Egypt's leadership of the Arab world. (8 marks)",
       "steps": {
         "point": {
           "options": [
             {
-              "text": "A. The refugee crisis was important because it allowed Israel to quickly sign peace treaties with Jordan.",
+              "text": "A. The Suez Crisis was important because it forced Nasser to immediately resign and flee to the USSR.",
               "correct": false
             },
             {
-              "text": "B. The refugee crisis was highly important because it created a permanent source of border conflict and hostility between Israel and Egypt.",
+              "text": "B. The Suez Crisis (1956) was highly important because it established Egyptian President Gamal Abdel Nasser as the undisputed political leader of the Arab world.",
               "correct": true
             },
             {
-              "text": "C. The crisis was important because it led to the immediate creation of the United Nations.",
+              "text": "C. The Suez Crisis was important because it caused the immediate collapse of the Egyptian army and led to a British protectorate.",
               "correct": false
             }
           ]
@@ -741,15 +741,15 @@ export const LESSONS_DATA = {
         "evidence": {
           "options": [
             {
-              "text": "A. Specifically, Israel decided to accept all 700,000 refugees back into their original homes.",
+              "text": "A. Specifically, Israel successfully annexed the entire Sinai Peninsula and Suez Canal permanently in 1956.",
               "correct": false
             },
             {
-              "text": "B. Specifically, 200,000 Palestinian refugees were trapped in the Gaza Strip, from where Fedayeen militants launched frequent cross-border raids into Israel.",
+              "text": "B. Specifically, when Britain, France, and Israel launched a coordinated invasion of Egypt after Nasser nationalised the Suez Canal, Nasser stood firm, and pressure from the USA and UN forced the invaders to withdraw.",
               "correct": true
             },
             {
-              "text": "C. Specifically, the US government stopped all trade with the Middle East to protest the crisis.",
+              "text": "C. Specifically, the Soviet Union launched nuclear weapons against London and Paris in defense of Cairo.",
               "correct": false
             }
           ]
@@ -757,21 +757,21 @@ export const LESSONS_DATA = {
         "explain": {
           "options": [
             {
-              "text": "A. This led to the signing of the Oslo Accords in Washington.",
+              "text": "A. This led to Egypt banning all Arab countries from forming alliances with the Soviet Union.",
               "correct": false
             },
             {
-              "text": "B. This led to harsh Israeli military reprisal raids and economic retaliation from Egypt, such as blockading the Straits of Tiran, which made any peaceful relations impossible.",
+              "text": "B. This meant that despite suffering a military defeat, Nasser won a massive political victory, demonstrating that an Arab nation could successfully resist European imperial powers, which greatly boosted his status and led to the formation of the United Arab Republic (UAR) in 1958.",
               "correct": true
             },
             {
-              "text": "C. This resulted in Egypt opening the Suez Canal to Israeli shipping.",
+              "text": "C. This resulted in the United Nations taking permanent control of the entire Egyptian government.",
               "correct": false
             }
           ]
         }
       },
-      "commentary": "Great job! You have written a solid importance paragraph. By connecting the point (border conflict) to the evidence (200,000 refugees in Gaza and Fedayeen raids) and explaining the consequence (reprisals and Straits blockade), you have demonstrated why the crisis was a major barrier to peace."
+      "commentary": "Fantastic work! This paragraph demonstrates the importance of the Suez Crisis by explaining how Nasser's political victory over imperial powers cemented his leadership and fueled the pan-Arab movement, culminating in the formation of the UAR in 1958."
     }
   },
   "subtopic_2_1": {
@@ -980,20 +980,20 @@ export const LESSONS_DATA = {
     },
     "scaffoldedPractice": {
       "questionType": "consequence",
-      "questionText": "Explain one consequence of the nationalisation of the Suez Canal (1956). (4 marks)",
+      "questionText": "Explain one consequence of the Israeli raid on Samu (1966). (4 marks)",
       "steps": {
         "point": {
           "options": [
             {
-              "text": "A. One consequence of the nationalisation was that Britain and France gained permanent control of the canal.",
+              "text": "A. One consequence of the raid on Samu was the signing of the Oslo Accords.",
               "correct": false
             },
             {
-              "text": "B. One consequence of the nationalisation of the Suez Canal was that it triggered a secret military invasion of Egypt by Britain, France, and Israel.",
+              "text": "B. One consequence of the Israeli raid on Samu was a major escalation of political and military tension between Israel and Jordan.",
               "correct": true
             },
             {
-              "text": "C. One consequence was that it led to the immediate outbreak of the Six-Day War.",
+              "text": "C. One consequence was that Jordan immediately declared war on Syria.",
               "correct": false
             }
           ]
@@ -1001,15 +1001,15 @@ export const LESSONS_DATA = {
         "evidence": {
           "options": [
             {
-              "text": "A. Specifically, Egypt signed the Camp David Accords with Israel to resolve the dispute.",
+              "text": "A. Specifically, Jordan and Israel signed a permanent peace treaty the following week.",
               "correct": false
             },
             {
-              "text": "B. Specifically, under the secret Protocol of Sèvres in October 1956, Israel invaded the Sinai Peninsula, giving Britain and France a pretext to intervene and occupy the Canal Zone.",
+              "text": "B. Specifically, in November 1966, after Fatah landmine attacks, the IDF launched a massive raid on the West Bank village of Samu, destroying homes and clashing with the Jordanian army, leading to numerous Jordanian casualties.",
               "correct": true
             },
             {
-              "text": "C. Specifically, the United Nations sent 100,000 troops to defend Egypt from any attack.",
+              "text": "C. Specifically, the United States cut off all economic aid to Israel to punish them.",
               "correct": false
             }
           ]
@@ -1017,21 +1017,21 @@ export const LESSONS_DATA = {
         "explain": {
           "options": [
             {
-              "text": "A. This meant that Israel annexed the Sinai Peninsula permanently.",
+              "text": "A. This resulted in Egypt withdrawing all military forces from the Sinai Peninsula.",
               "correct": false
             },
             {
-              "text": "B. This meant that international condemnation from the US and USSR forced the invaders to withdraw, boosting President Nasser's prestige as a hero of Arab nationalism who successfully stood up to Western powers.",
+              "text": "B. This meant that King Hussein of Jordan felt deeply betrayed by Israel (with whom he had secret security agreements) and faced massive internal protests from West Bank Palestinians, forcing Jordan to sign a mutual defense pact with Egypt in May 1967, which directly paved the way for the Six-Day War.",
               "correct": true
             },
             {
-              "text": "C. This resulted in the immediate collapse of the Soviet Union.",
+              "text": "C. This meant that Fatah was completely disbanded and ceased all militancy.",
               "correct": false
             }
           ]
         }
       },
-      "commentary": "Well done! You have built a perfect consequence paragraph. It clearly links the nationalisation to the military response (invasion via the secret Protocol of Sèvres) and explains the geopolitical result (forced withdrawal and Nasser's massive political boost)."
+      "commentary": "Great work! This response demonstrates how the raid on Samu escalated tensions by destroying trust between Israel and Jordan and provoking protests that pressured King Hussein into a defensive alliance with Nasser, directly contributing to the outbreak of the 1967 war."
     }
   },
   "subtopic_2_2": {
@@ -1227,20 +1227,20 @@ export const LESSONS_DATA = {
     },
     "scaffoldedPractice": {
       "questionType": "importance",
-      "questionText": "Explain the importance of the Six-Day War (1967) for the balance of power in the Middle East. (8 marks)",
+      "questionText": "Explain the importance of the occupied territories for Arab-Israeli relations. (8 marks)",
       "steps": {
         "point": {
           "options": [
             {
-              "text": "A. The war was important because it led to the immediate creation of a Palestinian state.",
+              "text": "A. The occupied territories were important because they immediately led to a permanent peace treaty between Egypt and Syria.",
               "correct": false
             },
             {
-              "text": "B. The Six-Day War was highly important because it established Israel as the dominant military power in the region and humiliated Arab leadership.",
+              "text": "B. The occupied territories (West Bank, Gaza, Sinai, Golan Heights, and East Jerusalem) were highly important because they became the central point of ongoing military and political conflict between Israel and its Arab neighbours.",
               "correct": true
             },
             {
-              "text": "C. The war was important because it caused Egypt to annex the Gaza Strip.",
+              "text": "C. The occupied territories were important because they caused the UN to dissolve the state of Israel.",
               "correct": false
             }
           ]
@@ -1248,15 +1248,15 @@ export const LESSONS_DATA = {
         "evidence": {
           "options": [
             {
-              "text": "A. Specifically, Jordan successfully captured West Jerusalem and forced Israel to surrender.",
+              "text": "A. Specifically, Israel immediately withdrew all of its forces and returned the lands in 1968.",
               "correct": false
             },
             {
-              "text": "B. Specifically, Israel's preemptive air strike (Operation Focus) destroyed 338 Egyptian planes on the ground in three hours, securing complete air superiority.",
+              "text": "B. Specifically, following the 1967 war, Israel placed millions of Palestinians under direct military rule in these territories, while Arab leaders at the Khartoum Conference declared the 'three Nos' (no peace, no recognition, no negotiation).",
               "correct": true
             },
             {
-              "text": "C. Specifically, the Soviet Union sent troops to occupy the Sinai Peninsula.",
+              "text": "C. Specifically, Egypt and Jordan annexed the Golan Heights to secure their borders.",
               "correct": false
             }
           ]
@@ -1264,21 +1264,21 @@ export const LESSONS_DATA = {
         "explain": {
           "options": [
             {
-              "text": "A. This led to Israel returning all captured territories within a week.",
+              "text": "A. This resulted in the immediate signing of the Camp David Accords in 1968.",
               "correct": false
             },
             {
-              "text": "B. This complete military dominance enabled Israel to defeat three Arab nations simultaneously in just six days, capturing East Jerusalem, the West Bank, Gaza, Sinai, and the Golan Heights.",
+              "text": "B. This meant that the focus of Arab-Israeli relations shifted from conventional wars between states to long-term disputes over land, settlements, and borders, which was addressed by UN Resolution 242 demanding land for peace.",
               "correct": true
             },
             {
-              "text": "C. This resulted in the immediate signing of the Oslo peace treaty.",
+              "text": "C. This meant that all Palestinian refugees were immediately granted Israeli citizenship.",
               "correct": false
             }
           ]
         }
       },
-      "commentary": "Excellent work! You have shown why the Six-Day War was a turning point. The paragraph explains how Israel's air superiority (Operation Focus) translated into total victory on the ground, reshaping the map and regional balance of power."
+      "commentary": "Superb paragraph! You have explained how the occupied territories shifted the conflict from conventional state wars to long-term disputes over military occupation and settlements, establishing the 'land for peace' framework under UN Resolution 242."
     }
   },
   "subtopic_2_3": {
@@ -1458,20 +1458,20 @@ export const LESSONS_DATA = {
     },
     "scaffoldedPractice": {
       "questionType": "narrative",
-      "questionText": "Write a narrative account of the rise of Palestinian militancy after 1967. (Focus: The Munich Olympics Massacre, 1972) (8 marks)",
+      "questionText": "Write a narrative account of the Yom Kippur War (1973). (8 marks)",
       "steps": {
         "point": {
           "options": [
             {
-              "text": "A. One consequence of the Munich massacre was the immediate signing of the Camp David Accords.",
+              "text": "A. The Yom Kippur War began when Israel launched a preemptive strike on Egyptian airfields in 1973.",
               "correct": false
             },
             {
-              "text": "B. Following the 1967 war, Palestinian militant groups turned to international terrorism, leading to the Black September attack at the 1972 Munich Olympics.",
+              "text": "B. In October 1973, Egypt and Syria launched a coordinated surprise attack on Israeli positions in the occupied Sinai and Golan Heights during the Jewish holy day of Yom Kippur.",
               "correct": true
             },
             {
-              "text": "C. The rise of militancy began when Israel withdrew from the Gaza Strip in 1972.",
+              "text": "C. The war began with the signing of the Treaty of Washington by Anwar Sadat.",
               "correct": false
             }
           ]
@@ -1479,15 +1479,15 @@ export const LESSONS_DATA = {
         "evidence": {
           "options": [
             {
-              "text": "A. For example, Ariel Sharon visited the Temple Mount, sparking widespread protests.",
+              "text": "A. Although Israel was defeated, the UN immediately sent a peacekeeping force to occupy Cairo.",
               "correct": false
             },
             {
-              "text": "B. During the games, militants took 11 Israeli athletes hostage, resulting in a failed West German rescue attempt where all hostages were killed.",
+              "text": "B. Although the Arab forces initially broke through Israeli lines (such as the Bar Lev Line), the IDF mobilized its reserves and launched a successful counter-offensive after receiving emergency US military supplies.",
               "correct": true
             },
             {
-              "text": "C. During the attack, the UN peacekeepers successfully negotiated the release of all hostages.",
+              "text": "C. Although Syria captured Jerusalem, they were forced to return it by the Soviet Union.",
               "correct": false
             }
           ]
@@ -1495,21 +1495,21 @@ export const LESSONS_DATA = {
         "explain": {
           "options": [
             {
-              "text": "A. This meant that the Suez Canal was permanently closed to all international shipping.",
+              "text": "A. This resulted in Egypt annexing the entire state of Israel.",
               "correct": false
             },
             {
-              "text": "B. This tragedy shocked the international community and drew global media attention to the Palestinian cause, while prompting Israel to launch targeted assassinations of PLO operatives.",
+              "text": "B. The war ended with a UN-brokered ceasefire, which restored Israel's military lines but shattered Israel's confidence in its absolute security and forced the USA to initiate shuttle diplomacy to seek peace.",
               "correct": true
             },
             {
-              "text": "C. This resulted in the immediate collapse of the State of Israel.",
+              "text": "C. This meant that the Suez Canal was permanently destroyed.",
               "correct": false
             }
           ]
         }
       },
-      "commentary": "Outstanding sequence! You've traced the narrative accurately. The tragic events in Munich (middle) flowed directly from the shift toward global terrorism (beginning) and led to massive international publicity as well as covert Israeli retaliation (end)."
+      "commentary": "Excellent narrative sequence! You've traced the Yom Kippur War from the initial joint Arab surprise attack (beginning) through the IDF's counter-offensives and US supply dynamics (middle), culminating in the UN ceasefire and the pressure for peace negotiations (end)."
     }
   },
   "subtopic_3_1": {
@@ -1698,20 +1698,20 @@ export const LESSONS_DATA = {
     },
     "scaffoldedPractice": {
       "questionType": "consequence",
-      "questionText": "Explain one consequence of the Yom Kippur War (1973). (4 marks)",
+      "questionText": "Explain one consequence of the oil crisis (1973). (4 marks)",
       "steps": {
         "point": {
           "options": [
             {
-              "text": "A. One consequence was that Israel permanently annexed the Suez Canal.",
+              "text": "A. One consequence of the oil crisis was that Israel immediately annexed all Arab nations.",
               "correct": false
             },
             {
-              "text": "B. One consequence of the Yom Kippur War was that it shattered the myth of Israeli military invincibility and restored Arab political pride.",
+              "text": "B. One consequence of the 1973 oil crisis was a significant increase in the global political influence of Arab oil-producing nations.",
               "correct": true
             },
             {
-              "text": "C. One consequence was the immediate return of the West Bank to Jordanian control.",
+              "text": "C. One consequence was the immediate end of US involvement in the Middle East.",
               "correct": false
             }
           ]
@@ -1719,15 +1719,15 @@ export const LESSONS_DATA = {
         "evidence": {
           "options": [
             {
-              "text": "A. Specifically, Israeli forces were caught entirely by surprise, allowing Egyptian troops to breach the Bar Lev Line.",
-              "correct": true
-            },
-            {
-              "text": "B. Specifically, President Jimmy Carter immediately signed the Camp David Accords.",
+              "text": "A. Specifically, Arab nations began selling oil to Israel at discounted rates.",
               "correct": false
             },
             {
-              "text": "C. Specifically, the UN sent 50,000 peacekeepers to establish a Palestinian state.",
+              "text": "B. Specifically, Arab members of OPEC placed an oil embargo on Western nations supporting Israel during the Yom Kippur War, causing global oil prices to quadruple and causing severe energy shortages in the West.",
+              "correct": true
+            },
+            {
+              "text": "C. Specifically, OPEC dissolved and stopped producing oil completely.",
               "correct": false
             }
           ]
@@ -1735,21 +1735,21 @@ export const LESSONS_DATA = {
         "explain": {
           "options": [
             {
-              "text": "A. This meant that Egypt joined the Soviet Union as a formal satellite state.",
+              "text": "A. This resulted in the immediate collapse of the US government.",
               "correct": false
             },
             {
-              "text": "B. This initial success demonstrated that Arab armies could challenge Israel, which forced Israel to realize it could not rely purely on military dominance, paving the long-term path to the Camp David peace talks.",
+              "text": "B. This meant that Western superpowers, particularly the USA, recognized their heavy dependence on Middle Eastern oil, forcing them to adopt a more balanced diplomatic approach in the Arab-Israeli conflict to protect their economic interests, leading directly to peace initiatives like shuttle diplomacy.",
               "correct": true
             },
             {
-              "text": "C. This resulted in the immediate disarmament of the Israeli military.",
+              "text": "C. This meant that the Suez Canal was permanently filled with concrete.",
               "correct": false
             }
           ]
         }
       },
-      "commentary": "Perfect structure! Your answer connects the consequence (shattered myth of invincibility) to the evidence (surprise attack and Bar Lev Line breach) and explains the outcome (forcing Israel to seek diplomatic negotiations at Camp David)."
+      "commentary": "Great response! This explanation successfully connects the OPEC oil embargo (evidence) to the quadrupling of oil prices, explaining how this leverage forced Western powers like the US to pursue peace initiatives (such as shuttle diplomacy) to secure their energy interests."
     }
   },
   "subtopic_3_2": {
@@ -1938,20 +1938,20 @@ export const LESSONS_DATA = {
     },
     "scaffoldedPractice": {
       "questionType": "importance",
-      "questionText": "Explain the importance of the Camp David Accords (1978) for the peace process in the Middle East. (8 marks)",
+      "questionText": "Explain the importance of the First Palestinian Intifada (1987–93) for the peace process. (8 marks)",
       "steps": {
         "point": {
           "options": [
             {
-              "text": "A. The Accords were important because they immediately solved the Palestinian refugee crisis.",
+              "text": "A. The Intifada was important because it led to the immediate creation of a unified Arab army that defeated the IDF.",
               "correct": false
             },
             {
-              "text": "B. The Camp David Accords were highly important because they led to the first-ever peace treaty between Israel and a major Arab nation.",
+              "text": "B. The First Palestinian Intifada was highly important because it demonstrated that Israeli military occupation of the West Bank and Gaza was unsustainable and forced both sides to consider a diplomatic solution.",
               "correct": true
             },
             {
-              "text": "C. The Accords were important because they forced Israel to withdraw from East Jerusalem.",
+              "text": "C. The Intifada was important because it caused the USA to cut off all diplomatic ties with Israel.",
               "correct": false
             }
           ]
@@ -1959,15 +1959,15 @@ export const LESSONS_DATA = {
         "evidence": {
           "options": [
             {
-              "text": "A. Specifically, Egypt declared war on the United States to show solidarity with Palestine.",
+              "text": "A. Specifically, the PLO launched nuclear missiles from Lebanon into Tel Aviv.",
               "correct": false
             },
             {
-              "text": "B. Specifically, in 1979, Israeli Prime Minister Menachem Begin and Egyptian President Anwar Sadat signed a treaty returning the Sinai Peninsula to Egypt in exchange for recognition.",
+              "text": "B. Specifically, starting in 1987, Palestinians in the occupied territories launched a massive, grassroots uprising using strikes, civil disobedience, and stone-throwing against the IDF, drawing international media attention to the harsh Israeli military response.",
               "correct": true
             },
             {
-              "text": "C. Specifically, Syria and Jordan signed identical peace treaties with Israel the following week.",
+              "text": "C. Specifically, Israel immediately agreed to withdraw from all occupied territories in 1987.",
               "correct": false
             }
           ]
@@ -1975,21 +1975,21 @@ export const LESSONS_DATA = {
         "explain": {
           "options": [
             {
-              "text": "A. This led to Egypt becoming the leader of a unified Arab war coalition.",
+              "text": "A. This resulted in the immediate expulsion of all Palestinians from the Middle East.",
               "correct": false
             },
             {
-              "text": "B. This meant that Egypt was suspended from the Arab League for breaking Arab solidarity, but it successfully neutralized Israel's largest military opponent, creating a lasting peace on Israel's southern border.",
+              "text": "B. This meant that Israel suffered a severe public relations blow, while the PLO faced pressure to moderate its stance, leading directly to Yasser Arafat's renunciation of terrorism in 1988 and opening the path to the Oslo Accords.",
               "correct": true
             },
             {
-              "text": "C. This resulted in the United Nations taking direct administrative control of the Sinai.",
+              "text": "C. This led to Egypt annexing the West Bank and Gaza Strip.",
               "correct": false
             }
           ]
         }
       },
-      "commentary": "Great work! This paragraph demonstrates the importance of Camp David by showing how the return of Sinai and Egypt's recognition of Israel neutralized Israel's largest military opponent, changing regional dynamics forever."
+      "commentary": "Superb response! This paragraph explains the importance of the First Intifada by linking the grassroots uprising (evidence) to the international public relations pressure on Israel and the diplomatic shift for the PLO, which opened the path to peace talks (Oslo)."
     }
   },
   "subtopic_3_3": {
@@ -2177,20 +2177,20 @@ export const LESSONS_DATA = {
     },
     "scaffoldedPractice": {
       "questionType": "narrative",
-      "questionText": "Write a narrative account of the collapse of the Oslo peace process. (Focus: The Second Intifada, 2000) (8 marks)",
+      "questionText": "Write a narrative account of developments in the peace process in the years 1988–95. (Focus: The Oslo Accords) (8 marks)",
       "steps": {
         "point": {
           "options": [
             {
-              "text": "A. The collapse of the peace process began when Egypt and Israel signed the Camp David Accords.",
+              "text": "A. The peace process began when Egypt and Jordan formed a military alliance against the USA.",
               "correct": false
             },
             {
-              "text": "B. The Oslo peace process of the 1990s collapsed due to unresolved issues, leading to the outbreak of the Second Intifada in September 2000.",
+              "text": "B. The peace process began to move forward in December 1988 when PLO leader Yasser Arafat officially renounced terrorism at the UN, coupled with the end of the Cold War and the Gulf War (1991) leaving the USA as the primary mediator.",
               "correct": true
             },
             {
-              "text": "C. The Oslo process collapsed because the UN withdrew all peacekeepers from the West Bank.",
+              "text": "C. The peace process began with Israel invading Lebanon to defeat the PLO in 1988.",
               "correct": false
             }
           ]
@@ -2198,15 +2198,15 @@ export const LESSONS_DATA = {
         "evidence": {
           "options": [
             {
-              "text": "A. For example, Israel immediately withdrew from East Jerusalem in response to the Oslo Accords.",
+              "text": "A. This resulted in Israel immediately annexing all territories and dissolving the PLO.",
               "correct": false
             },
             {
-              "text": "B. This uprising was sparked by Ariel Sharon's controversial visit to the Al-Aqsa compound, escalating into widespread suicide bombings and Israeli military crackdowns.",
+              "text": "B. This enabled secret peace talks in Norway, resulting in Arafat and Israeli Prime Minister Yitzhak Rabin signing the Oslo I Accord in 1993, which set up the Palestinian National Authority for self-rule.",
               "correct": true
             },
             {
-              "text": "C. This conflict was resolved when Yasser Arafat signed the Camp David treaty in 2000.",
+              "text": "C. This led to the immediate creation of a fully independent Palestinian state with Jerusalem as its capital.",
               "correct": false
             }
           ]
@@ -2214,21 +2214,21 @@ export const LESSONS_DATA = {
         "explain": {
           "options": [
             {
-              "text": "A. This meant that Israel and Egypt signed a permanent mutual defense pact.",
+              "text": "A. This resulted in Egypt declaring war on Jordan in 1995.",
               "correct": false
             },
             {
-              "text": "B. This violence destroyed the Israeli peace movement, led to the construction of the West Bank barrier wall, and locked both sides into a cycle of mutual distrust and security containment.",
+              "text": "B. This breakthrough led to the Israel-Jordan peace treaty in 1994 and the Oslo II Accord in 1995, which divided the West Bank into administrative zones, establishing a historic framework for mutual recognition and Palestinian self-government.",
               "correct": true
             },
             {
-              "text": "C. This resulted in the immediate creation of a fully independent state of Palestine.",
+              "text": "C. This meant that the peace process was completely abandoned by the UN.",
               "correct": false
             }
           ]
         }
       },
-      "commentary": "Superb narrative writing! You've traced the tragic collapse of the peace process. Sharon's visit and the Second Intifada (middle) linked the breakdown of Oslo negotiations (beginning) to a complete breakdown in trust and the building of the security wall (end)."
+      "commentary": "Outstanding narrative account! You've traced the timeline of the peace process perfectly. Arafat's renunciation of terrorism and superpower changes (beginning) opened the door to secret talks and the Oslo I Accord in 1993 (middle), culminating in the Jordan peace treaty and Oslo II in 1995 (end)."
     }
   }
 };
