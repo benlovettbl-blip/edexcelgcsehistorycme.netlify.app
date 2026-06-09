@@ -460,3 +460,739 @@ export function renderExamSheetStats() {
     `;
   }
 }
+
+// --- Printable Mock Creator & Word Export Helpers ---
+
+export function downloadHtmlAsWord(filename, htmlContent) {
+  let processedHtml = htmlContent;
+  
+  // Inject inline page breaks and other word formatting fixes in htmlContent
+  processedHtml = processedHtml.replace(/class="print-page"/g, 'class="print-page" style="page-break-after: always; mso-special-character: line-break; clear: both;"');
+  processedHtml = processedHtml.replace(/class="print-page-last"/g, 'class="print-page-last" style="page-break-after: avoid; clear: both;"');
+
+  let finalHtml = '';
+  const trimmed = processedHtml.trim().toLowerCase();
+  
+  if (trimmed.startsWith('<!doctype html') || trimmed.startsWith('<html')) {
+    finalHtml = '\ufeff' + processedHtml;
+  } else {
+    const header = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+  <head>
+    <title>Export HTML to Word</title>
+    <!--[if gte mso 9]>
+    <xml>
+      <w:WordDocument>
+        <w:View>Print</w:View>
+        <w:Zoom>100</w:Zoom>
+        <w:DoNotOptimizeForBrowser/>
+      </w:WordDocument>
+    </xml>
+    <![endif]-->
+    <style>
+      @page {
+        size: 21cm 29.7cm; /* A4 */
+        margin: 2cm 2cm 2cm 2cm;
+        mso-page-orientation: portrait;
+      }
+      body {
+        font-family: 'Arial', sans-serif;
+        font-size: 11pt;
+        color: #000000;
+        line-height: 1.5;
+      }
+      .print-page {
+        page-break-after: always;
+        clear: both;
+      }
+      .edexcel-header-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+      }
+      .edexcel-header-table td {
+        border: 1.5px solid #000000;
+        padding: 8px 12px;
+        font-size: 9pt;
+        vertical-align: top;
+      }
+      .edexcel-candidate-label {
+        font-weight: bold;
+        text-transform: uppercase;
+        font-size: 7.5pt;
+        display: block;
+        margin-bottom: 4px;
+      }
+      .edexcel-title-block {
+        text-align: center;
+        margin: 30px 0 20px 0;
+      }
+      .edexcel-title-pearson {
+        font-size: 14pt;
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+      }
+      .edexcel-title-main {
+        font-size: 18pt;
+        font-weight: 800;
+        display: block;
+        margin-bottom: 12px;
+      }
+      .edexcel-paper-details {
+        font-size: 11pt;
+        font-weight: bold;
+        border-top: 2px solid #000000;
+        border-bottom: 2px solid #000000;
+        padding: 10px 0;
+        margin: 15px 0;
+        text-align: center;
+      }
+      .edexcel-meta-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 10pt;
+        font-weight: bold;
+        margin-bottom: 25px;
+      }
+      .edexcel-instruction-box {
+        border: 2px solid #000000;
+        padding: 15px;
+        margin-bottom: 20px;
+        font-size: 9.5pt;
+        text-align: left;
+      }
+      .edexcel-instruction-title {
+        font-weight: bold;
+        text-transform: uppercase;
+        display: block;
+        margin-bottom: 6px;
+        border-bottom: 1px solid #000000;
+        padding-bottom: 2px;
+      }
+      .edexcel-double-line {
+        border-top: 1px solid #000;
+        border-bottom: 3px double #000;
+        height: 4px;
+        margin: 30px 0 20px 0;
+      }
+      .edexcel-section-title {
+        font-size: 14pt;
+        font-weight: bold;
+        text-transform: uppercase;
+        margin-bottom: 15px;
+      }
+      .edexcel-question-container {
+        margin-bottom: 30px;
+      }
+      .edexcel-question-header {
+        font-weight: bold;
+        font-size: 11.5pt;
+        margin-bottom: 12px;
+        line-height: 1.4;
+      }
+      .edexcel-question-marks {
+        font-weight: bold;
+        font-size: 11pt;
+        float: right;
+      }
+      .edexcel-stimulus-box {
+        border: 1px solid #000000;
+        padding: 10px 15px;
+        margin: 10px 0 20px 0;
+        background: #ffffff;
+        font-size: 10.5pt;
+      }
+      .edexcel-stimulus-item {
+        font-weight: bold;
+        border: 1.5px solid #000000;
+        padding: 6px 20px;
+        margin: 0 10px;
+        display: inline-block;
+      }
+      .edexcel-writing-line {
+        border-bottom: 1px dashed #777777;
+        height: 32px;
+        width: 100%;
+      }
+      /* Answers styling */
+      .model-answer-section {
+        background: #f9fafb;
+        border-left: 3px solid #10b981;
+        padding: 12px;
+        margin-top: 10px;
+        font-size: 10pt;
+      }
+    </style>
+  </head>
+  <body>
+    ${processedHtml}
+  </body>
+  </html>`;
+    finalHtml = '\ufeff' + header;
+  }
+
+  const blob = new Blob([finalHtml], {
+    type: 'application/msword;charset=utf-8'
+  });
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename.endsWith('.doc') ? filename : filename + '.doc';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+export function initMockCreator() {
+  const modeSelect = document.getElementById('mock-creator-mode');
+  const presetRow = document.getElementById('mock-creator-preset-select-row');
+  const customSelectors = document.getElementById('mock-creator-custom-selectors');
+  
+  if (modeSelect) {
+    modeSelect.addEventListener('change', () => {
+      const mode = modeSelect.value;
+      if (mode === 'preset') {
+        if (presetRow) presetRow.style.display = 'block';
+        if (customSelectors) customSelectors.style.display = 'none';
+      } else if (mode === 'random') {
+        if (presetRow) presetRow.style.display = 'none';
+        if (customSelectors) customSelectors.style.display = 'none';
+      } else if (mode === 'custom') {
+        if (presetRow) presetRow.style.display = 'none';
+        if (customSelectors) customSelectors.style.display = 'flex';
+      }
+    });
+  }
+
+  // Populate Presets dropdown
+  const presetDropdown = document.getElementById('mock-creator-preset');
+  if (presetDropdown) {
+    presetDropdown.innerHTML = PAST_PAPERS_DATA.map(p => `
+      <option value="${p.id}">${p.title} (${p.year})</option>
+    `).join('');
+  }
+
+  // Populate Custom selectors
+  const q1Select = document.getElementById('mock-creator-custom-q1');
+  if (q1Select) {
+    q1Select.innerHTML = Object.entries(CONSEQUENCE_SKILLS_DATA).map(([key, data]) => `
+      <option value="${key}">${key}: ${data.question.slice(0, 75)}...</option>
+    `).join('');
+  }
+
+  const q2Select = document.getElementById('mock-creator-custom-q2');
+  if (q2Select) {
+    q2Select.innerHTML = Object.entries(NARRATIVE_SKILLS_DATA).map(([key, data]) => `
+      <option value="${key}">${key}: ${data.question.slice(0, 75)}...</option>
+    `).join('');
+  }
+
+  const q3_1 = document.getElementById('mock-creator-custom-q3-1');
+  const q3_2 = document.getElementById('mock-creator-custom-q3-2');
+  const q3_3 = document.getElementById('mock-creator-custom-q3-3');
+  
+  if (q3_1 && q3_2 && q3_3) {
+    const q3Options = Object.entries(EXAM_SKILLS_DATA).map(([key, data]) => `
+      <option value="${key}">${key}: ${data.question.slice(0, 75)}...</option>
+    `).join('');
+    
+    q3_1.innerHTML = q3Options;
+    q3_2.innerHTML = q3Options;
+    q3_3.innerHTML = q3Options;
+    
+    // Auto select unique choices
+    const keys = Object.keys(EXAM_SKILLS_DATA);
+    if (keys.length >= 3) {
+      q3_1.value = keys[0];
+      q3_2.value = keys[1];
+      q3_3.value = keys[2];
+    }
+  }
+
+  // Bind Export Buttons
+  const btnWord = document.getElementById('btn-mock-export-word');
+  if (btnWord) {
+    btnWord.addEventListener('click', () => {
+      const compiled = compileMockData();
+      if (!compiled) return;
+      const html = generateMockHtml(compiled);
+      downloadHtmlAsWord(`Edexcel_GCSE_History_Mock_${compiled.paperId}.doc`, html);
+      AudioEngine.play('success');
+    });
+  }
+
+  const btnPrint = document.getElementById('btn-mock-print');
+  if (btnPrint) {
+    btnPrint.addEventListener('click', () => {
+      const compiled = compileMockData();
+      if (!compiled) return;
+      const html = generateMockHtml(compiled);
+      const printArea = document.getElementById('print-area');
+      if (printArea) {
+        printArea.innerHTML = html;
+        window.print();
+        AudioEngine.play('success');
+      }
+    });
+  }
+
+  // Open & Close
+  const btnOpen = document.getElementById('btn-mock-creator-open');
+  const modal = document.getElementById('mock-creator-modal');
+  if (btnOpen && modal) {
+    btnOpen.addEventListener('click', () => {
+      modal.style.display = 'flex';
+      AudioEngine.play('click');
+    });
+  }
+
+  const btnClose = document.getElementById('btn-mock-creator-close');
+  if (btnClose && modal) {
+    btnClose.addEventListener('click', () => {
+      modal.style.display = 'none';
+      AudioEngine.play('click');
+    });
+  }
+}
+
+function compileMockData() {
+  const mode = document.getElementById('mock-creator-mode').value;
+  const lineDensity = parseInt(document.getElementById('mock-creator-lines').value);
+  const includeCover = document.getElementById('mock-creator-extras').value;
+  const includeAnswers = document.getElementById('mock-creator-answers').value === 'yes';
+  const paperFont = document.getElementById('mock-creator-font').value;
+
+  let compiled = {
+    paperId: 'custom',
+    title: 'Custom History GCSE Mock Exam',
+    year: 'Mock 2026',
+    font: paperFont === 'times' ? 'Times New Roman, serif' : 'Arial, sans-serif',
+    includeCover: includeCover,
+    lineDensity: lineDensity,
+    includeAnswers: includeAnswers,
+    q1: null,
+    q2: null,
+    q3: []
+  };
+
+  if (mode === 'preset') {
+    const presetId = document.getElementById('mock-creator-preset').value;
+    const presetPaper = PAST_PAPERS_DATA.find(p => p.id === presetId);
+    if (!presetPaper) return null;
+
+    compiled.paperId = presetPaper.id;
+    compiled.title = presetPaper.title;
+    compiled.year = presetPaper.year;
+
+    // Consequence
+    if (presetPaper.q1) {
+      if (presetPaper.q1.type === 'consequence_split_4') {
+        compiled.q1 = {
+          title: "Section A: Explain two consequences of...",
+          subQuestions: presetPaper.q1.subQuestions.map(sq => ({
+            question: sq.title,
+            marks: 4,
+            model: sq.model || sq.answer
+          }))
+        };
+      } else {
+        compiled.q1 = {
+          title: presetPaper.q1.question,
+          marks: 8,
+          model: presetPaper.q1.model || presetPaper.q1.answer
+        };
+      }
+    }
+    // Narrative
+    if (presetPaper.q2) {
+      compiled.q2 = {
+        question: presetPaper.q2.question,
+        stimulus: presetPaper.q2.stimulus || [],
+        marks: 8,
+        model: presetPaper.q2.model || presetPaper.q2.answer
+      };
+    }
+    // Importance choices
+    if (presetPaper.q3 && presetPaper.q3.choices) {
+      compiled.q3 = presetPaper.q3.choices.map((c, idx) => ({
+        letter: ['a', 'b', 'c'][idx],
+        title: c.title,
+        marks: 8,
+        model: c.model || c.answer
+      }));
+    }
+  } else if (mode === 'random') {
+    compiled.paperId = 'rand_' + Date.now();
+    compiled.title = 'Randomly Generated GCSE History Mock';
+
+    // Q1 Consequence
+    const consequenceKeys = Object.keys(CONSEQUENCE_SKILLS_DATA);
+    const rc1 = consequenceKeys[Math.floor(Math.random() * consequenceKeys.length)];
+    const rc2 = consequenceKeys.filter(k => k !== rc1)[Math.floor(Math.random() * (consequenceKeys.length - 1))];
+    compiled.q1 = {
+      title: "Section A: Explain two consequences of...",
+      subQuestions: [
+        {
+          question: `Explain one consequence of ${CONSEQUENCE_SKILLS_DATA[rc1].question.replace("Explain one consequence of ", "")}`,
+          marks: 4,
+          model: CONSEQUENCE_SKILLS_DATA[rc1].answer
+        },
+        {
+          question: `Explain one consequence of ${CONSEQUENCE_SKILLS_DATA[rc2].question.replace("Explain one consequence of ", "")}`,
+          marks: 4,
+          model: CONSEQUENCE_SKILLS_DATA[rc2].answer
+        }
+      ]
+    };
+
+    // Q2 Narrative
+    const narrativeKeys = Object.keys(NARRATIVE_SKILLS_DATA);
+    const rn = narrativeKeys[Math.floor(Math.random() * narrativeKeys.length)];
+    compiled.q2 = {
+      question: NARRATIVE_SKILLS_DATA[rn].question,
+      stimulus: NARRATIVE_SKILLS_DATA[rn].events.slice(0, 2),
+      marks: 8,
+      model: NARRATIVE_SKILLS_DATA[rn].model
+    };
+
+    // Q3 Importance Choice
+    const importanceKeys = Object.keys(EXAM_SKILLS_DATA);
+    const selected = [];
+    while (selected.length < 3) {
+      const rKey = importanceKeys[Math.floor(Math.random() * importanceKeys.length)];
+      if (!selected.includes(rKey)) selected.push(rKey);
+    }
+    compiled.q3 = selected.map((key, idx) => {
+      const qText = EXAM_SKILLS_DATA[key].question;
+      const cleanText = qText.replace("Explain the importance of ", "").replace(" for ", " for the ").replace("?", "");
+      return {
+        letter: ['a', 'b', 'c'][idx],
+        title: `The importance of ${cleanText}.`,
+        marks: 8,
+        model: EXAM_SKILLS_DATA[key].answer
+      };
+    });
+  } else if (mode === 'custom') {
+    compiled.paperId = 'custom_' + Date.now();
+    compiled.title = 'Custom Mixed GCSE History Mock';
+
+    const q1Key = document.getElementById('mock-creator-custom-q1').value;
+    const q1Data = CONSEQUENCE_SKILLS_DATA[q1Key];
+    compiled.q1 = {
+      title: q1Data.question,
+      marks: 8,
+      model: q1Data.answer
+    };
+
+    const q2Key = document.getElementById('mock-creator-custom-q2').value;
+    const q2Data = NARRATIVE_SKILLS_DATA[q2Key];
+    compiled.q2 = {
+      question: q2Data.question,
+      stimulus: q2Data.events.slice(0, 2),
+      marks: 8,
+      model: q2Data.model
+    };
+
+    const q3_1Key = document.getElementById('mock-creator-custom-q3-1').value;
+    const q3_2Key = document.getElementById('mock-creator-custom-q3-2').value;
+    const q3_3Key = document.getElementById('mock-creator-custom-q3-3').value;
+
+    const q3Keys = [q3_1Key, q3_2Key, q3_3Key];
+    compiled.q3 = q3Keys.map((key, idx) => {
+      const qData = EXAM_SKILLS_DATA[key];
+      const cleanText = qData.question.replace("Explain the importance of ", "").replace(" for ", " for the ").replace("?", "");
+      return {
+        letter: ['a', 'b', 'c'][idx],
+        title: `The importance of ${cleanText}.`,
+        marks: 8,
+        model: qData.answer
+      };
+    });
+  }
+
+  return compiled;
+}
+
+function generateMockHtml(compiled) {
+  let html = `<div style="font-family: ${compiled.font}; text-align: left; padding: 20px; color: #000000; background-color: #ffffff;">`;
+
+  // Page 1: Cover Page
+  if (compiled.includeCover !== 'none') {
+    html += `
+      <div class="print-page" style="page-break-after: always; padding: 20px;">
+        <table class="edexcel-header-table" style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+          <tr>
+            <td style="border: 1.5px solid #000000; padding: 8px 12px; width: 60%;">
+              <span class="edexcel-candidate-label" style="font-weight: bold; text-transform: uppercase; font-size: 7.5pt; display: block; margin-bottom: 4px;">Surname</span>
+              <div style="height: 20px;"></div>
+            </td>
+            <td style="border: 1.5px solid #000000; padding: 8px 12px; width: 40%;" colspan="2">
+              <span class="edexcel-candidate-label" style="font-weight: bold; text-transform: uppercase; font-size: 7.5pt; display: block; margin-bottom: 4px;">Other Names</span>
+              <div style="height: 20px;"></div>
+            </td>
+          </tr>
+          ${compiled.includeCover === 'both' ? `
+          <tr>
+            <td style="border: 1.5px solid #000000; padding: 8px 12px;">
+              <span class="edexcel-candidate-label" style="font-weight: bold; text-transform: uppercase; font-size: 7.5pt; display: block; margin-bottom: 4px;">Candidate Signature</span>
+              <div style="height: 20px;"></div>
+            </td>
+            <td style="border: 1.5px solid #000000; padding: 8px 12px; width: 20%;">
+              <span class="edexcel-candidate-label" style="font-weight: bold; text-transform: uppercase; font-size: 7.5pt; display: block; margin-bottom: 4px;">Centre No.</span>
+              <div style="height: 20px; border: 1px solid #777777;"></div>
+            </td>
+            <td style="border: 1.5px solid #000000; padding: 8px 12px; width: 20%;">
+              <span class="edexcel-candidate-label" style="font-weight: bold; text-transform: uppercase; font-size: 7.5pt; display: block; margin-bottom: 4px;">Candidate No.</span>
+              <div style="height: 20px; border: 1px solid #777777;"></div>
+            </td>
+          </tr>` : ''}
+        </table>
+
+        <div class="edexcel-title-block" style="text-align: center; margin: 30px 0 20px 0;">
+          <span class="edexcel-title-pearson" style="font-size: 14pt; font-weight: bold; display: block;">Pearson Edexcel GCSE (9-1)</span>
+          <span class="edexcel-title-main" style="font-size: 18pt; font-weight: 800; display: block;">History</span>
+          <div class="edexcel-paper-details" style="font-size: 11pt; font-weight: bold; border-top: 2px solid #000000; border-bottom: 2px solid #000000; padding: 10px 0; margin: 15px 0;">
+            Paper 2: Period study and British depth study<br>
+            Option 26/27: Conflict in the Middle East, 1945-95
+          </div>
+        </div>
+
+        <div class="edexcel-meta-row" style="display: flex; justify-content: space-between; font-weight: bold; font-size: 10pt; margin-bottom: 20px;">
+          <span>Exam Reference: ${compiled.paperId.toUpperCase()}</span>
+          <span>Time: 50 minutes</span>
+        </div>
+
+        <div class="edexcel-instruction-box" style="border: 2px solid #000000; padding: 15px; font-size: 9.5pt; text-align: left;">
+          <span class="edexcel-instruction-title" style="font-weight: bold; text-transform: uppercase; display: block; border-bottom: 1px solid #000000; padding-bottom: 2px; margin-bottom: 6px;">Instructions</span>
+          <ul>
+            <li>Use black ink or ball-point pen.</li>
+            <li>Fill in the boxes at the top of this page with your name, centre number and candidate number.</li>
+            <li>Answer all questions.</li>
+            <li>Answer the questions in the spaces provided - <i>there may be more space than you need</i>.</li>
+          </ul>
+          <span class="edexcel-instruction-title" style="font-weight: bold; text-transform: uppercase; display: block; border-bottom: 1px solid #000000; padding-bottom: 2px; margin-top: 12px; margin-bottom: 6px;">Information</span>
+          <ul>
+            <li>The total mark for this paper is 32.</li>
+            <li>The marks for each question are shown in brackets - <i>use this as a guide as to how much time to spend on each question</i>.</li>
+          </ul>
+        </div>
+      </div>
+    `;
+  }
+
+  // Question 1 Page
+  if (compiled.q1) {
+    html += `
+      <div class="print-page" style="page-break-after: always; padding: 20px;">
+        <div class="print-page-header" style="font-size: 8.5pt; color: #555555; border-bottom: 1px solid #cccccc; padding-bottom: 4px; margin-bottom: 20px; display: flex; justify-content: space-between;">
+          <span>${compiled.title}</span>
+          <span>Section A</span>
+        </div>
+        <div class="edexcel-section-title" style="font-size: 14pt; font-weight: bold; text-transform: uppercase; margin-bottom: 15px; text-align: left;">Section A: Consequence Questions</div>
+        
+        <div class="edexcel-question-container" style="margin-bottom: 30px; text-align: left;">
+    `;
+
+    if (compiled.q1.subQuestions) {
+      compiled.q1.subQuestions.forEach((sq, idx) => {
+        html += `
+          <div style="margin-bottom: 25px;">
+            <div class="edexcel-question-header" style="font-weight: bold; font-size: 11.5pt; margin-bottom: 12px; display: flex; justify-content: space-between;">
+              <span>Q1(${idx === 0 ? 'a' : 'b'}): ${sq.question}</span>
+              <span class="edexcel-question-marks" style="font-weight: bold; font-size: 11pt; margin-left: 15px;">(4 marks)</span>
+            </div>
+            ${generateLinesHtml(compiled.lineDensity / 2)}
+          </div>
+        `;
+      });
+    } else {
+      html += `
+        <div class="edexcel-question-header" style="font-weight: bold; font-size: 11.5pt; margin-bottom: 12px; display: flex; justify-content: space-between;">
+          <span>Question 1: ${compiled.q1.title}</span>
+          <span class="edexcel-question-marks" style="font-weight: bold; font-size: 11pt; margin-left: 15px;">(${compiled.q1.marks} marks)</span>
+        </div>
+        ${generateLinesHtml(compiled.lineDensity)}
+      `;
+    }
+
+    html += `
+        </div>
+        <div class="print-page-footer" style="position: absolute; bottom: 10px; left: 20px; right: 20px; font-size: 8pt; color: #555555; border-top: 1px solid #cccccc; padding-top: 4px; text-align: center;">Page 2</div>
+      </div>
+    `;
+  }
+
+  // Question 2 Page
+  if (compiled.q2) {
+    html += `
+      <div class="print-page" style="page-break-after: always; padding: 20px;">
+        <div class="print-page-header" style="font-size: 8.5pt; color: #555555; border-bottom: 1px solid #cccccc; padding-bottom: 4px; margin-bottom: 20px; display: flex; justify-content: space-between;">
+          <span>${compiled.title}</span>
+          <span>Section B</span>
+        </div>
+        <div class="edexcel-section-title" style="font-size: 14pt; font-weight: bold; text-transform: uppercase; margin-bottom: 15px; text-align: left;">Section B: Narrative Accounts</div>
+        
+        <div class="edexcel-question-container" style="margin-bottom: 30px; text-align: left;">
+          <div class="edexcel-question-header" style="font-weight: bold; font-size: 11.5pt; margin-bottom: 12px; display: flex; justify-content: space-between;">
+            <span>Question 2: ${compiled.q2.question}</span>
+            <span class="edexcel-question-marks" style="font-weight: bold; font-size: 11pt; margin-left: 15px;">(${compiled.q2.marks} marks)</span>
+          </div>
+
+          ${compiled.q2.stimulus && compiled.q2.stimulus.length > 0 ? `
+          <div class="edexcel-stimulus-box" style="border: 1px solid #000000; padding: 10px 15px; margin: 10px 0 20px 0; background: #ffffff; font-size: 10.5pt; display: flex; justify-content: space-around;">
+            ${compiled.q2.stimulus.map(s => `<span class="edexcel-stimulus-item" style="font-weight: bold; border: 1.5px solid #000000; padding: 6px 20px;">${s}</span>`).join('')}
+          </div>` : ''}
+
+          <p style="font-size: 8.5pt; color: #555555; font-style: italic; margin-bottom: 10px;">
+            Write your narrative response here. You may use the stimulus points above, but you must also include your own knowledge.
+          </p>
+          ${generateLinesHtml(compiled.lineDensity)}
+        </div>
+        <div class="print-page-footer" style="position: absolute; bottom: 10px; left: 20px; right: 20px; font-size: 8pt; color: #555555; border-top: 1px solid #cccccc; padding-top: 4px; text-align: center;">Page 3</div>
+      </div>
+    `;
+  }
+
+  // Question 3 Page
+  if (compiled.q3 && compiled.q3.length > 0) {
+    html += `
+      <div class="print-page" style="page-break-after: ${compiled.includeAnswers ? 'always' : 'avoid'}; padding: 20px;">
+        <div class="print-page-header" style="font-size: 8.5pt; color: #555555; border-bottom: 1px solid #cccccc; padding-bottom: 4px; margin-bottom: 20px; display: flex; justify-content: space-between;">
+          <span>${compiled.title}</span>
+          <span>Section C</span>
+        </div>
+        <div class="edexcel-section-title" style="font-size: 14pt; font-weight: bold; text-transform: uppercase; margin-bottom: 15px; text-align: left;">Section C: Importance Choice</div>
+        
+        <div class="edexcel-question-container" style="margin-bottom: 30px; text-align: left;">
+          <div class="edexcel-question-header" style="font-weight: bold; font-size: 11.5pt; margin-bottom: 12px; display: flex; justify-content: space-between;">
+            <span>Question 3: Explain two of the following:</span>
+            <span class="edexcel-question-marks" style="font-weight: bold; font-size: 11pt; margin-left: 15px;">(16 marks total)</span>
+          </div>
+
+          <div style="margin: 15px 0 25px 0; border: 1.5px solid #000000; padding: 15px; line-height: 1.6; font-size: 10.5pt;">
+            ${compiled.q3.map(c => `<strong>Q3(${c.letter}):</strong> ${c.title}<br>`).join('<div style="height: 8px;"></div>')}
+          </div>
+
+          <p style="font-size: 9pt; font-weight: bold; color: #ef4444; text-transform: uppercase; margin-bottom: 10px;">
+            INDICATE WHICH QUESTIONS YOU ARE ANSWERING BELOW:
+          </p>
+          <div style="margin-bottom: 20px; font-size: 10pt;">
+            <span>I am answering: </span>
+            <label style="margin-right: 15px;"><input type="checkbox"> Option Q3(a)</label>
+            <label style="margin-right: 15px;"><input type="checkbox"> Option Q3(b)</label>
+            <label style="margin-right: 15px;"><input type="checkbox"> Option Q3(c)</label>
+          </div>
+
+          ${generateLinesHtml(compiled.lineDensity)}
+        </div>
+        <div class="print-page-footer" style="position: absolute; bottom: 10px; left: 20px; right: 20px; font-size: 8pt; color: #555555; border-top: 1px solid #cccccc; padding-top: 4px; text-align: center;">Page 4</div>
+      </div>
+    `;
+  }
+
+  // Page 5: Mark Scheme/Model Answers
+  if (compiled.includeAnswers) {
+    html += `
+      <div class="print-page" style="padding: 20px;">
+        <div class="print-page-header" style="font-size: 8.5pt; color: #555555; border-bottom: 1px solid #cccccc; padding-bottom: 4px; margin-bottom: 20px; display: flex; justify-content: space-between;">
+          <span>${compiled.title}</span>
+          <span>Educator Mark Scheme</span>
+        </div>
+        <div class="edexcel-section-title" style="font-size: 14pt; font-weight: bold; text-transform: uppercase; margin-bottom: 15px; text-align: left;">Teacher Mark Scheme &amp; Model Answers</div>
+        <p style="font-size: 9pt; color: #555555; margin-bottom: 20px; text-align: left;">
+          This section contains Level 7-9 model responses and key vocabulary markers to guide grading and student feedback.
+        </p>
+
+        <!-- Q1 Answers -->
+        ${compiled.q1 ? `
+        <div style="margin-bottom: 20px; border-bottom: 1px solid #dddddd; padding-bottom: 15px; text-align: left;">
+          <h4 style="margin: 0 0 8px 0; font-size: 11pt; color: #1f2937;">Question 1 Model Answers</h4>
+          ${compiled.q1.subQuestions ? compiled.q1.subQuestions.map((sq, idx) => `
+            <div style="margin-bottom: 10px;">
+              <strong>Q1(${idx === 0 ? 'a' : 'b'}):</strong> ${sq.question}
+              <div class="model-answer-section" style="background: #f9fafb; border-left: 3px solid #10b981; padding: 10px; margin-top: 6px; font-size: 9.5pt;">${sq.model}</div>
+            </div>
+          `).join('') : `
+            <div class="model-answer-section" style="background: #f9fafb; border-left: 3px solid #10b981; padding: 10px; font-size: 9.5pt;">${compiled.q1.model}</div>
+          `}
+        </div>` : ''}
+
+        <!-- Q2 Answers -->
+        ${compiled.q2 ? `
+        <div style="margin-bottom: 20px; border-bottom: 1px solid #dddddd; padding-bottom: 15px; text-align: left;">
+          <h4 style="margin: 0 0 8px 0; font-size: 11pt; color: #1f2937;">Question 2 Model Answer</h4>
+          <div class="model-answer-section" style="background: #f9fafb; border-left: 3px solid #10b981; padding: 10px; font-size: 9.5pt;">${compiled.q2.model}</div>
+        </div>` : ''}
+
+        <!-- Q3 Answers -->
+        ${compiled.q3 && compiled.q3.length > 0 ? `
+        <div style="margin-bottom: 20px; text-align: left;">
+          <h4 style="margin: 0 0 8px 0; font-size: 11pt; color: #1f2937;">Question 3 Choice Model Answers</h4>
+          ${compiled.q3.map(c => `
+            <div style="margin-bottom: 10px;">
+              <strong>Option Q3(${c.letter}):</strong> ${c.title}
+              <div class="model-answer-section" style="background: #f9fafb; border-left: 3px solid #10b981; padding: 10px; margin-top: 6px; font-size: 9.5pt;">${c.model}</div>
+            </div>
+          `).join('')}
+        </div>` : ''}
+      </div>
+    `;
+  }
+
+  html += `</div>`;
+  return html;
+}
+
+function generateLinesHtml(lineCount) {
+  if (lineCount <= 0) return '';
+  let lines = '<div class="edexcel-writing-lines" style="margin-top: 15px;">';
+  for (let i = 0; i < lineCount; i++) {
+    lines += '<div class="edexcel-writing-line" style="border-bottom: 1px dashed #777777; height: 32px; width: 100%;"></div>';
+  }
+  lines += '</div>';
+  return lines;
+}
+
+export function initBulkWorkbookCreator() {
+  const btnPrint = document.getElementById('btn-bulk-workbook-print');
+  const btnWord = document.getElementById('btn-bulk-workbook-word');
+
+  if (btnPrint) {
+    btnPrint.addEventListener('click', () => {
+      const style = document.getElementById('bulk-workbook-style').value;
+      const density = document.getElementById('bulk-workbook-density').value;
+      const answers = document.getElementById('bulk-workbook-answers').value;
+      
+      AudioEngine.play('click');
+      
+      const html = window.generateBulkWorkbookHtml(style, density, answers === 'yes');
+      
+      const newWin = window.open();
+      if (newWin) {
+        newWin.document.write(html);
+        newWin.document.close();
+      } else {
+        alert("Pop-up blocker prevented opening the bulk worksheets. Please allow popups for this site.");
+      }
+    });
+  }
+
+  if (btnWord) {
+    btnWord.addEventListener('click', () => {
+      const style = document.getElementById('bulk-workbook-style').value;
+      const density = document.getElementById('bulk-workbook-density').value;
+      const answers = document.getElementById('bulk-workbook-answers').value;
+      
+      AudioEngine.play('click');
+      
+      const html = window.generateBulkWorkbookHtml(style, density, answers === 'yes');
+      const styleLabel = style.charAt(0).toUpperCase() + style.slice(1);
+      
+      downloadHtmlAsWord(`Course_Worksheet_Pack_All_Lessons_${styleLabel}.doc`, html);
+      AudioEngine.play('success');
+    });
+  }
+}
+

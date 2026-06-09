@@ -16,6 +16,8 @@ import { CONTEMPORARY_SOURCES } from './contemporary_sources.js';
 import { GOING_BEYOND_DATA } from './going_beyond_data.js';
 import { LESSON_MAPS_DATA } from './lesson_maps_data.js';
 import { HISTORIAN_QUOTES } from './historian_quotes.js';
+import { downloadHtmlAsWord } from './past_papers.js';
+import { WORKBOOK_DATA } from './workbook_data.js';
 
 export function renderPracticeRoomContent() {
   const example = PRACTICE_ROOM_DATA[practiceState.currentExampleIndex];
@@ -984,9 +986,19 @@ export function renderMasteryView(subtopicId) {
         <h2 class="mastery-header-title" style="margin: 0; flex: 1; min-width: 250px;">
           ${data.headerTitle}
         </h2>
-        <button class="mastery-btn view-in-timeline-btn" data-subtopic="${subtopicId}" style="background: rgba(59, 130, 246, 0.1); border: 1px solid var(--primary); color: var(--primary); font-weight: bold; font-size: 0.8rem; padding: 6px 12px; border-radius: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; margin-top: 4px;">
-          <i class="fa-solid fa-timeline"></i> View in Timeline
-        </button>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+          <button class="mastery-btn view-in-timeline-btn" data-subtopic="${subtopicId}" style="background: rgba(59, 130, 246, 0.1); border: 1px solid var(--primary); color: var(--primary); font-weight: bold; font-size: 0.8rem; padding: 6px 12px; border-radius: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; margin-top: 4px;">
+            <i class="fa-solid fa-timeline"></i> View in Timeline
+          </button>
+          ${WORKBOOK_DATA[subtopicId] ? `
+          <button class="mastery-btn print-workbook-btn" data-subtopic="${subtopicId}" style="background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; color: #10b981; font-weight: bold; font-size: 0.8rem; padding: 6px 12px; border-radius: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; margin-top: 4px;">
+            <i class="fa-solid fa-print"></i> Print Lesson Workbook
+          </button>
+          <button class="mastery-btn view-worksheet-page-btn" data-subtopic="${subtopicId}" style="background: rgba(249, 115, 22, 0.1); border: 1px solid #f97316; color: #f97316; font-weight: bold; font-size: 0.8rem; padding: 6px 12px; border-radius: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; margin-top: 4px;">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i> Lesson Worksheet Page
+          </button>
+          ` : ''}
+        </div>
       </div>
       <p class="mastery-header-intro" style="margin-bottom: ${videoHtml ? '16px' : '0'};">
         ${data.headerIntro}
@@ -1074,28 +1086,33 @@ export function renderMasteryView(subtopicId) {
       }
       
       switchView('timeline');
-      
-      // Wait for view switch and render
-      setTimeout(() => {
-        const targetMilestone = document.querySelector(`.timeline-item[data-subtopic="${subtopicId}"]`);
-        if (targetMilestone) {
-          targetMilestone.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          const card = targetMilestone.querySelector('.timeline-content-card');
-          if (card) {
-            if (!card.classList.contains('revealed')) {
-              card.classList.add('revealed');
-            }
-            const originalBorder = card.style.border;
-            card.style.border = '2px solid var(--accent)';
-            card.style.boxShadow = '0 0 15px rgba(245, 158, 11, 0.4)';
-            card.style.transition = 'border 0.3s, box-shadow 0.3s';
-            setTimeout(() => {
-              card.style.border = originalBorder;
-              card.style.boxShadow = '';
-            }, 3000);
-          }
-        }
-      }, 100);
+      state.timelineEraFilter = 'all';
+      state.highlightTimelineSubtopicId = subtopicId;
+    });
+  }
+
+  const printWorkbookBtn = container.querySelector('.print-workbook-btn');
+  if (printWorkbookBtn) {
+    printWorkbookBtn.addEventListener('click', () => {
+      AudioEngine.play('click');
+      const subtopic = printWorkbookBtn.getAttribute('data-subtopic');
+      openWorkbookModal(subtopic);
+    });
+  }
+
+  const viewWorksheetPageBtn = container.querySelector('.view-worksheet-page-btn');
+  if (viewWorksheetPageBtn) {
+    viewWorksheetPageBtn.addEventListener('click', () => {
+      AudioEngine.play('click');
+      const subtopic = viewWorksheetPageBtn.getAttribute('data-subtopic');
+      const html = generateWorkbookHtml(subtopic, 'booklet', 'comfortable', false);
+      const newWin = window.open();
+      if (newWin) {
+        newWin.document.write(html);
+        newWin.document.close();
+      } else {
+        alert("Pop-up blocker prevented opening the worksheet page. Please allow popups for this site.");
+      }
     });
   }
 
@@ -1805,3 +1822,1317 @@ function initializeLessonLeafletMap(subtopicId, mapConfig) {
     }).addTo(map);
   }
 }
+
+let activeWorkbookSubtopicId = 'subtopic_1_1';
+
+export function openWorkbookModal(subtopicId) {
+  activeWorkbookSubtopicId = subtopicId;
+  const modal = document.getElementById('lesson-workbook-modal');
+  if (modal) {
+    modal.style.display = 'flex';
+  }
+
+  // Populate dynamic exam questions list if available
+  const listContainer = document.getElementById('workbook-exam-questions-list');
+  if (listContainer) {
+    const questions = LESSONS_DATA[subtopicId]?.questionVault || [];
+    listContainer.innerHTML = questions.map((q, idx) => {
+      const qText = q.question;
+      let badgeColor = '#3b82f6';
+      let styleLabel = 'Consequence';
+      if (qText.toLowerCase().includes('importance')) {
+        badgeColor = '#f59e0b';
+        styleLabel = 'Importance';
+      } else if (qText.toLowerCase().includes('narrative')) {
+        badgeColor = '#10b981';
+        styleLabel = 'Narrative';
+      }
+      return `
+        <label style="display: flex; align-items: flex-start; gap: 8px; font-size: 0.82rem; color: var(--text-main); cursor: pointer; line-height: 1.35; padding: 4px 0;">
+          <input type="checkbox" class="workbook-question-checkbox" value="${idx}" checked style="margin-top: 2px; cursor: pointer;">
+          <div>
+            <span style="display: inline-block; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; color: #fff; background: ${badgeColor}; padding: 1px 5px; border-radius: 4px; margin-right: 4px;">${styleLabel}</span>
+            <span>${qText}</span>
+          </div>
+        </label>
+      `;
+    }).join('');
+  }
+
+  // Set initial visibility of questions selector
+  const styleSelect = document.getElementById('workbook-creator-style');
+  const wrapper = document.getElementById('workbook-exam-questions-selector-wrapper');
+  if (styleSelect && wrapper) {
+    wrapper.style.display = styleSelect.value === 'exam' ? 'flex' : 'none';
+  }
+}
+
+export function initWorkbookCreator() {
+  const modal = document.getElementById('lesson-workbook-modal');
+  const btnClose = document.getElementById('btn-workbook-creator-close');
+  const btnPrint = document.getElementById('btn-workbook-print');
+  const btnWord = document.getElementById('btn-workbook-export-word');
+  const styleSelect = document.getElementById('workbook-creator-style');
+  const wrapper = document.getElementById('workbook-exam-questions-selector-wrapper');
+
+  if (styleSelect) {
+    styleSelect.addEventListener('change', () => {
+      if (styleSelect.value === 'exam') {
+        if (wrapper) wrapper.style.display = 'flex';
+      } else {
+        if (wrapper) wrapper.style.display = 'none';
+      }
+    });
+  }
+
+  if (btnClose && modal) {
+    btnClose.addEventListener('click', () => {
+      modal.style.display = 'none';
+      AudioEngine.play('click');
+    });
+  }
+
+  if (btnPrint) {
+    btnPrint.addEventListener('click', () => {
+      const style = document.getElementById('workbook-creator-style').value;
+      const density = document.getElementById('workbook-creator-density').value;
+      const answers = document.getElementById('workbook-creator-answers').value;
+      
+      let selectedIndices = [];
+      if (style === 'exam') {
+        const checkboxes = document.querySelectorAll('.workbook-question-checkbox:checked');
+        selectedIndices = Array.from(checkboxes).map(cb => parseInt(cb.value));
+        if (selectedIndices.length === 0) {
+          alert("Please select at least one exam question to include in your practice pack.");
+          return;
+        }
+      }
+
+      const html = generateWorkbookHtml(activeWorkbookSubtopicId, style, density, answers === 'yes', selectedIndices);
+      
+      const printArea = document.getElementById('print-area');
+      if (printArea) {
+        printArea.innerHTML = html;
+      }
+      
+      AudioEngine.play('success');
+      window.print();
+    });
+  }
+
+  if (btnWord) {
+    btnWord.addEventListener('click', () => {
+      const style = document.getElementById('workbook-creator-style').value;
+      const density = document.getElementById('workbook-creator-density').value;
+      const answers = document.getElementById('workbook-creator-answers').value;
+      
+      let selectedIndices = [];
+      if (style === 'exam') {
+        const checkboxes = document.querySelectorAll('.workbook-question-checkbox:checked');
+        selectedIndices = Array.from(checkboxes).map(cb => parseInt(cb.value));
+        if (selectedIndices.length === 0) {
+          alert("Please select at least one exam question to include in your practice pack.");
+          return;
+        }
+      }
+
+      const html = generateWorkbookHtml(activeWorkbookSubtopicId, style, density, answers === 'yes', selectedIndices);
+      const styleLabel = style.charAt(0).toUpperCase() + style.slice(1);
+      downloadHtmlAsWord(`Lesson_Workbook_${activeWorkbookSubtopicId.replace('subtopic_', '')}_${styleLabel}.doc`, html);
+      AudioEngine.play('success');
+    });
+  }
+}
+
+
+function generateWorkbookHtml(subtopicId, style, density, includeAnswers, selectedIndices = []) {
+  const data = WORKBOOK_DATA[subtopicId];
+  if (!data) {
+    return `<html><body><h3>Workbook pack not available for subtopic: ${subtopicId}</h3></body></html>`;
+  }
+
+  const specList = SPEC_CHECKLIST_DATA[subtopicId] || [];
+
+  const detailsHtml = `
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 12px; font-family: Arial, sans-serif;">
+      <tr>
+        <td style="border: 1px solid #9ca3af; padding: 5px 8px; font-size: 8.5pt; width: 50%;"><strong>Student Name:</strong> ___________________________________</td>
+        <td style="border: 1px solid #9ca3af; padding: 5px 8px; font-size: 8.5pt; width: 25%;"><strong>Date:</strong> __________________</td>
+        <td style="border: 1px solid #9ca3af; padding: 5px 8px; font-size: 8.5pt; width: 25%;"><strong>Class:</strong> __________________</td>
+      </tr>
+    </table>
+  `;
+
+  if (style === 'booklet') {
+    const narrativeHtml = data.narrative.map(sec => `
+      <div class="sub-title">${sec.title}</div>
+      ${sec.paragraphs.map(p => `<p>${p}</p>`).join('')}
+    `).join('');
+
+    const vocabHtml = data.vocabulary.map(item => `
+      <div class="vocab-item"><strong>${item.term}</strong>: ${item.definition}</div>
+    `).join('');
+
+    const timelineCells = [];
+    data.timeline.forEach((item, idx) => {
+      timelineCells.push(`
+        <td class="timeline-card">
+          <div class="timeline-date">${item.date}</div>
+          <div class="timeline-desc">${item.desc}</div>
+        </td>
+      `);
+      if (idx < data.timeline.length - 1) {
+        timelineCells.push(`
+          <td style="text-align: center; font-size: 11pt; width: 4%; vertical-align: middle; color: #9ca3af;">➔</td>
+        `);
+      }
+    });
+
+    const comprehensionHtml = data.comprehensionCheck.map((q, idx) => `
+      <div class="question-block">
+        <span class="question-title">${q.title}</span>
+        <span class="scaffold-tip">${q.scaffold}</span>
+        ${q.stretch ? `<span class="stretch-challenge">${q.stretch}</span>` : ''}
+      </div>
+    `).join('');
+
+    const matrixHeaders = data.causationMatrix.columns.map(col => `
+      <th class="matrix-header" style="width: ${100 / data.causationMatrix.columns.length}%;">${col}</th>
+    `).join('');
+    const matrixCells = data.causationMatrix.columns.map(() => `
+      <td class="matrix-cell"></td>
+    `).join('');
+    const factBankText = data.causationMatrix.factBank.map((fact, idx) => `(${idx + 1}) ${fact}`).join(' • ');
+
+    const matrixHtml = `
+      <table class="matrix-table">
+        <tr>${matrixHeaders}</tr>
+        <tr>${matrixCells}</tr>
+      </table>
+    `;
+
+    let sourcesTable = '';
+    if (data.sources && data.sources.length > 0) {
+      sourcesTable += `<table style="width: 100%; border-collapse: collapse; margin-bottom: 3px;">`;
+      for (let i = 0; i < data.sources.length; i += 2) {
+        sourcesTable += `<tr>`;
+        const s1 = data.sources[i];
+        sourcesTable += `
+          <td style="width: 50%; padding-right: 4px; padding-bottom: 4px; vertical-align: top;">
+            <div class="source-box">
+              <strong>${s1.id}: ${s1.title}</strong>
+              <p style="font-family: 'Times New Roman', Times, serif; font-size: 7.5pt; margin: 2px 0 0 0; line-height: 1.2;">
+                "${s1.text}"
+              </p>
+            </div>
+          </td>
+        `;
+        const s2 = data.sources[i + 1];
+        if (s2) {
+          sourcesTable += `
+            <td style="width: 50%; padding-left: 4px; padding-bottom: 4px; vertical-align: top;">
+              <div class="source-box">
+                <strong>${s2.id}: ${s2.title}</strong>
+                <p style="font-family: 'Times New Roman', Times, serif; font-size: 7.5pt; margin: 2px 0 0 0; line-height: 1.2;">
+                  "${s2.text}"
+                </p>
+              </div>
+            </td>
+          `;
+        } else {
+          sourcesTable += `<td style="width: 50%;"></td>`;
+        }
+        sourcesTable += `</tr>`;
+      }
+      sourcesTable += `</table>`;
+    }
+
+    const sourceTasksHtml = data.sourceTasks.map(task => `
+      <span class="scaffold-tip"><strong>${task.title}:</strong> ${task.scaffold}</span>
+    `).join('');
+
+    const examQuestionsHtml = data.examPractice.questions.map((q, idx) => {
+      if (q.stimulus) {
+        return `
+          <div style="margin-bottom: 4px;">
+            <span style="font-weight: bold; font-size: 8pt;">${q.title}:</span>
+            <span style="display: block; font-size: 7.5pt; color: #374151; margin-bottom: 2px;">${q.text}</span>
+            <div style="font-size: 6.5pt; color: #4b5563; line-height: 1.25; border-left: 2px solid #d1d5db; padding-left: 6px; margin-left: 2px; margin-top: 2px;">
+              You may use the following in your answer:<br>
+              ${q.stimulus.map(s => `• ${s}<br>`).join('')}
+              You must also use information of your own.
+            </div>
+          </div>
+        `;
+      } else {
+        return `
+          <div style="margin-bottom: 4px;">
+            <span style="font-weight: bold; font-size: 8pt;">${q.title}:</span>
+            <span style="display: block; font-size: 7.5pt; color: #374151;">${q.text}</span>
+          </div>
+        `;
+      }
+    }).join('');
+
+    const examWordBankText = data.examPractice.wordBank.join(' • ');
+
+    const quizItemsHtml = data.peerQuiz.map(item => `
+      <li style="margin: 0 0 1.5px 0; padding: 0;">${item.q}</li>
+    `).join('');
+
+    const mindMapBranchesHtml = data.mindMap.branches.map(br => `
+      <div class="map-branch-item">
+        <strong>${br.title}</strong>
+        <div class="keyword-pill-box">🔑 ${br.keywords.join(' • ')}</div>
+      </div>
+    `).join('');
+
+    return `<!DOCTYPE html>
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+  <meta charset="utf-8">
+  <title>GCSE History Lesson Resource - ${data.title}</title>
+  <style>
+    @page {
+      size: 21cm 29.7cm; /* A4 */
+      margin: 0.8cm 1.0cm 0.8cm 1.0cm;
+      mso-page-orientation: portrait;
+    }
+    body {
+      font-family: 'Arial', sans-serif;
+      font-size: 9.5pt;
+      color: #1f2937;
+      line-height: 1.3;
+      background: #ffffff;
+      margin: 0;
+      padding: 0;
+    }
+    .print-page, .print-page-last {
+      clear: both;
+      box-sizing: border-box;
+      position: relative;
+      background: #ffffff;
+    }
+    .print-page {
+      page-break-after: always;
+    }
+    .print-page-last {
+      page-break-after: avoid;
+    }
+    @media screen {
+      body {
+        background-color: #f3f4f6;
+        padding: 20px 0;
+      }
+      .print-page, .print-page-last {
+        width: 21cm;
+        min-height: 29.7cm;
+        margin: 0 auto 20px auto;
+        padding: 0.8cm 1.0cm;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        border: 1px solid #e5e7eb;
+        border-radius: 4px;
+      }
+    }
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #1f2937 !important;
+        font-size: 9.5pt !important;
+        line-height: 1.3 !important;
+      }
+      .print-page, .print-page-last {
+        width: 100% !important;
+        min-height: 27.7cm !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        border: none !important;
+        border-radius: 0 !important;
+      }
+    }
+    
+    .main-title {
+      font-size: 13pt;
+      font-weight: 800;
+      border-bottom: 2px solid #111827;
+      padding-bottom: 3px;
+      margin-top: 0;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #111827;
+    }
+    .section-title {
+      font-size: 9.2pt;
+      font-weight: bold;
+      text-transform: uppercase;
+      color: #111827;
+      border-bottom: 1.5px solid #4b5563;
+      padding-bottom: 1px;
+      margin-top: 5px;
+      margin-bottom: 2px;
+    }
+    .sub-title {
+      font-size: 8.2pt;
+      font-weight: bold;
+      color: #111827;
+      margin-top: 4px;
+      margin-bottom: 1px;
+    }
+    
+    .narrative-layout {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 4px;
+    }
+    .narrative-text {
+      width: 70%;
+      padding-right: 10px;
+      vertical-align: top;
+      text-align: justify;
+      font-size: 8pt;
+      line-height: 1.25;
+    }
+    .narrative-text p {
+      margin: 0 0 2px 0;
+    }
+    .side-panel {
+      width: 30%;
+      padding-left: 8px;
+      border-left: 1px solid #d1d5db;
+      vertical-align: top;
+    }
+    
+    .spec-box {
+      border: 1px solid #d1d5db;
+      padding: 4px 6px;
+      margin-bottom: 4px;
+      background: #f9fafb;
+      font-size: 7.5pt;
+      line-height: 1.15;
+    }
+    .spec-box ul {
+      margin: 1px 0 0 0;
+      padding-left: 12px;
+    }
+    .active-reading-box {
+      border: 1px solid #d1d5db;
+      padding: 4px 6px;
+      background: #f3f4f6;
+      margin-bottom: 4px;
+      font-size: 7.5pt;
+      line-height: 1.15;
+    }
+    .vocab-box {
+      background: #f9fafb;
+      padding: 4px;
+      border: 1px solid #e5e7eb;
+      border-radius: 4px;
+    }
+    .vocab-box h4 {
+      font-size: 7.2pt;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-top: 0;
+      margin-bottom: 2px;
+      border-bottom: 1px solid #9ca3af;
+      padding-bottom: 1px;
+    }
+    .vocab-item {
+      font-size: 6.8pt;
+      line-height: 1.15;
+      margin-bottom: 2px;
+    }
+    .source-box {
+      border-left: 3px solid #4b5563;
+      background: #f9fafb;
+      padding: 4px 6px;
+      font-size: 7.2pt;
+      margin-bottom: 3px;
+      box-sizing: border-box;
+      height: 100%;
+    }
+    
+    .timeline-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 4px;
+    }
+    .timeline-card {
+      border: 1px solid #d1d5db;
+      padding: 3px 4px;
+      width: 22%;
+      vertical-align: top;
+      background: #f9fafb;
+    }
+    .timeline-date {
+      font-weight: bold;
+      font-size: 7.2pt;
+      text-transform: uppercase;
+      border-bottom: 1px solid #e5e7eb;
+      margin-bottom: 2px;
+      padding-bottom: 1px;
+    }
+    .timeline-desc {
+      font-size: 6.8pt;
+      line-height: 1.15;
+    }
+    
+    .question-block {
+      margin-bottom: 3px;
+      padding: 4px 6px;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 4px;
+    }
+    .question-title {
+      font-size: 8.2pt;
+      font-weight: bold;
+      display: block;
+      margin-bottom: 1px;
+    }
+    .scaffold-tip {
+      font-size: 6.8pt;
+      color: #4b5563;
+      font-style: italic;
+      display: block;
+      margin-bottom: 1px;
+    }
+    .stretch-challenge {
+      font-size: 6.8pt;
+      color: #b45309;
+      font-weight: bold;
+      display: block;
+      margin-top: 1px;
+    }
+    
+    .matrix-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 4px;
+    }
+    .matrix-header {
+      font-weight: bold;
+      font-size: 7.2pt;
+      text-transform: uppercase;
+      text-align: center;
+      background-color: #f3f4f6;
+      border: 1px solid #9ca3af;
+      padding: 2px;
+    }
+    .matrix-cell {
+      border: 1px solid #9ca3af;
+      padding: 3px;
+      min-height: 30px;
+      vertical-align: top;
+      font-size: 6.8pt;
+      color: #9ca3af;
+      font-style: italic;
+    }
+    
+    .framework-container {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 3px;
+      font-size: 6.8pt;
+      background: #f9fafb;
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+    }
+    .framework-column {
+      vertical-align: top;
+      padding: 4px;
+    }
+
+    .retention-box {
+      border: 1.5px solid #111827;
+      background: #ffffff;
+      border-radius: 4px;
+      margin-top: 3px;
+      padding: 3px 6px;
+    }
+    .retention-header {
+      font-weight: bold;
+      font-size: 8.2pt;
+      color: #111827;
+      text-transform: uppercase;
+      border-bottom: 1.5px solid #111827;
+      padding-bottom: 1px;
+      margin-bottom: 2px;
+    }
+    .split-layout {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .split-col-left {
+      width: 50%;
+      border-right: 1px dashed #d1d5db;
+      padding-right: 8px;
+      vertical-align: top;
+    }
+    .split-col-right {
+      width: 50%;
+      padding-left: 8px;
+      vertical-align: top;
+    }
+    .quiz-title-box {
+      font-weight: bold;
+      font-size: 7.2pt;
+      text-transform: uppercase;
+      color: #4b5563;
+      margin-bottom: 2px;
+    }
+    .quiz-list {
+      margin: 0;
+      padding-left: 14px;
+      font-size: 7.2pt;
+      line-height: 1.15;
+    }
+    .quiz-list li {
+      margin-bottom: 1px;
+    }
+    .map-blueprint {
+      font-size: 7pt;
+      line-height: 1.15;
+    }
+    .map-branch-item {
+      margin-bottom: 2px;
+      background: #f9fafb;
+      padding: 2px 4px;
+      border-left: 2px solid #b45309;
+    }
+    .map-branch-item strong {
+      color: #111827;
+      display: block;
+    }
+    .keyword-pill-box {
+      margin-top: 2px;
+      font-style: italic;
+      color: #4b5563;
+    }
+    
+    .footer-note {
+      font-size: 7pt;
+      color: #6b7280;
+      text-align: center;
+      border-top: 1px solid #e5e7eb;
+      padding-top: 2px;
+      margin-top: 5px;
+      clear: both;
+    }
+    @media screen {
+      .footer-note {
+        position: absolute;
+        bottom: 0.8cm;
+        left: 1.0cm;
+        right: 1.0cm;
+        margin-top: 0;
+      }
+    }
+    @media print {
+      .footer-note {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin-top: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PAGE 1: NARRATIVE & TIMELINE -->
+  <div class="print-page">
+    <h2 class="main-title">${data.title}</h2>
+
+    <div class="spec-box">
+      <strong>📋 Curriculum Specification Checklist</strong>
+      <ul>
+        ${specList.map(item => `<li style="margin: 0 0 2px 0; padding: 0;">${item.point}</li>`).join('')}
+      </ul>
+    </div>
+
+    <div class="active-reading-box">
+      <strong>✍️ Active Reading Focus:</strong> ${data.activeReadingFocus}
+    </div>
+
+    <div class="section-title" style="margin-top: 5px; margin-bottom: 3px;">Section 1: Historical Narrative & Core Knowledge</div>
+    
+    <table class="narrative-layout">
+      <tr>
+        <td class="narrative-text">
+          ${narrativeHtml}
+        </td>
+        <td class="side-panel">
+          <div class="vocab-box">
+            <h4>Vocabulary Focus</h4>
+            ${vocabHtml}
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <div class="section-title" style="margin-top: 5px; margin-bottom: 3px;">Section 2: Visual Chronological Timeline</div>
+    <p style="font-size: 7.5pt; color: #4b5563; margin: 0 0 3px 0; font-style: italic;">
+      <strong>Timeline Task:</strong> In your exercise book, choose any two events from the timeline below. Write a short explanation of how the earlier event directly led to or caused the later event.
+    </p>
+    <table class="timeline-table" style="margin-bottom: 3px;">
+      <tr>
+        ${timelineCells.join('')}
+      </tr>
+    </table>
+    <div class="footer-note">Page 1</div>
+  </div>
+
+  <!-- PAGE 2: ANALYTICAL TASKS & ASSESSMENT PREP -->
+  <div class="print-page-last">
+    <div class="section-title" style="margin-top: 0; margin-bottom: 3px;">Section 3: Comprehension Check (AO1)</div>
+    <p style="font-size: 7.5pt; color: #4b5563; margin: 0 0 3px 0; font-style: italic;">Provide structured analytical answers in your exercise book using the prompts below.</p>
+
+    ${comprehensionHtml}
+
+    <div class="section-title" style="margin-top: 6px; margin-bottom: 3px;">Section 4: Causation Matrix (Analytical Essay Prep)</div>
+    <p style="font-size: 7.5pt; color: #4b5563; margin: 0 0 3px 0; font-style: italic;">
+      <strong>Task:</strong> In your exercise book, recreate and populate this matrix. Categorize by writing the fact numbers (1-6) from the Fact Bank in the corresponding columns, then write a short sentence explaining which factor was the most important.
+    </p>
+    
+    <div style="border: 1px dashed #9ca3af; padding: 3px 6px; font-size: 7pt; background: #f9fafb; line-height: 1.25; border-radius: 4px; margin-bottom: 3px;">
+      <strong>Fact Bank:</strong> ${factBankText}
+    </div>
+
+    ${matrixHtml}
+
+    <div class="section-title" style="margin-top: 6px; margin-bottom: 3px;">Section 5: Historical Sources & Evidence (AO3)</div>
+    <p style="font-size: 7.5pt; color: #4b5563; margin: 0 0 3px 0; font-style: italic;">Analyze the conflicting viewpoints surrounding the topic using the evidence below.</p>
+    
+    ${sourcesTable}
+
+    <div class="question-block" style="margin-bottom: 4px; padding: 4px 6px;">
+      <span class="question-title" style="font-size: 8pt;">Source Tasks (Answer in your exercise book):</span>
+      ${sourceTasksHtml}
+    </div>
+
+    <div class="section-title" style="margin-top: 6px; margin-bottom: 3px;">Section 6: Exam Practice & Higher Tier Synthesis</div>
+    
+    <table class="framework-container" style="margin-bottom: 0;">
+      <tr>
+        <td class="framework-column" style="width: 52%; padding-right: 6px; border-right: 1px solid #e5e7eb;">
+          <strong>📝 Exam Practice Questions (Answer in your exercise book):</strong>
+          <div style="margin-top: 3px;">
+            ${examQuestionsHtml}
+          </div>
+        </td>
+        <td class="framework-column" style="width: 48%; padding-left: 6px;">
+          <strong>🏆 Exam Word Bank &amp; Writing Support:</strong>
+          <div style="margin-top: 2px; font-size: 7pt; line-height: 1.25;">
+            <strong>Word Bank:</strong> ${examWordBankText}
+            <div style="margin-top: 3px; font-style: italic; color: #4b5563;">
+              <strong>Synthesis Model:</strong> ${data.examPractice.synthesisModel}
+            </div>
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <div class="retention-box">
+      <div class="retention-header">🧠 Section 7: Knowledge Retention &amp; Synoptic Revision Guide</div>
+      <table class="split-layout">
+        <tr>
+          <td class="split-col-left">
+            <div class="quiz-title-box">⚡ Quick-Fire Peer-To-Peer Quiz</div>
+            <ol class="quiz-list" style="margin: 0; padding-left: 14px;">
+              ${quizItemsHtml}
+            </ol>
+          </td>
+          
+          <td class="split-col-right">
+            <div class="quiz-title-box">🗺️ Exercise Book Mind-Map Blueprint</div>
+            <div class="map-blueprint">
+              <p style="margin: 0 0 4px 0; font-style: italic; color: #4b5563;">In your book, construct a central node titled <strong>"${data.mindMap.centralNode}"</strong> and link these three core analytical branches using the keywords:</p>
+              
+              ${mindMapBranchesHtml}
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="footer-note">Page 2</div>
+  </div>
+
+</body>
+</html>`;
+  }
+
+  let html = `<!DOCTYPE html>
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+  <meta charset="utf-8">
+  <title>GCSE History Lesson Resource - Workbook</title>
+  <style>
+    @page {
+      size: 21cm 29.7cm; /* A4 */
+      margin: 1.0cm;
+      mso-page-orientation: portrait;
+    }
+    body {
+      font-family: 'Arial', sans-serif;
+      font-size: 9.5pt;
+      color: #1f2937;
+      line-height: 1.4;
+      background: #ffffff;
+      margin: 0;
+      padding: 0;
+    }
+    .print-page, .print-page-last {
+      clear: both;
+      box-sizing: border-box;
+      position: relative;
+      background: #ffffff;
+    }
+    .print-page {
+      page-break-after: always;
+    }
+    .print-page-last {
+      page-break-after: avoid;
+    }
+    @media screen {
+      body {
+        background-color: #f3f4f6;
+        padding: 20px 0;
+      }
+      .print-page, .print-page-last {
+        width: 21cm;
+        min-height: 29.7cm;
+        margin: 0 auto 20px auto;
+        padding: 1.0cm;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        border: 1px solid #e5e7eb;
+        border-radius: 4px;
+      }
+    }
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #1f2937 !important;
+        font-size: 9.5pt !important;
+        line-height: 1.4 !important;
+      }
+      .print-page, .print-page-last {
+        width: 100% !important;
+        min-height: 27.2cm !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        border: none !important;
+        border-radius: 0 !important;
+      }
+    }
+    .main-title {
+      font-size: 13.5pt;
+      font-weight: 800;
+      border-bottom: 2px solid #111827;
+      padding-bottom: 3px;
+      margin-top: 0;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #111827;
+    }
+    .sub-title {
+      font-size: 8.5pt;
+      font-weight: bold;
+      color: #111827;
+      margin-top: 6px;
+      margin-bottom: 2px;
+    }
+    .dotted-writing-line {
+      border-bottom: 1px dashed #9ca3af;
+      height: 28px;
+      margin-bottom: 4px;
+    }
+    .footer-note {
+      font-size: 7pt;
+      color: #6b7280;
+      text-align: center;
+      border-top: 1px solid #e5e7eb;
+      padding-top: 2px;
+      margin-top: 15px;
+      clear: both;
+    }
+    @media screen {
+      .footer-note {
+        position: absolute;
+        bottom: 1.0cm;
+        left: 1.0cm;
+        right: 1.0cm;
+        margin-top: 0;
+      }
+    }
+    @media print {
+      .footer-note {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin-top: 0;
+      }
+    }
+    /* Cornell grid styles */
+    .print-cornell-grid {
+      display: table;
+      width: 100%;
+      border: 1.5px solid #111827;
+      margin-top: 10px;
+      box-sizing: border-box;
+    }
+    .print-cornell-row {
+      display: table-row;
+    }
+    .print-cornell-cues {
+      display: table-cell;
+      width: 30%;
+      border-right: 1.5px solid #111827;
+      border-bottom: 1.5px solid #111827;
+      padding: 10px;
+      vertical-align: top;
+      font-size: 8pt;
+      font-weight: bold;
+      background: #f9fafb;
+    }
+    .print-cornell-notes {
+      display: table-cell;
+      width: 70%;
+      border-bottom: 1.5px solid #111827;
+      padding: 10px;
+      vertical-align: top;
+      background: #ffffff;
+    }
+    .print-cornell-summary-row {
+      display: table-row;
+    }
+    .print-cornell-summary-cell {
+      display: table-cell;
+      colspan: 2;
+      padding: 10px;
+      vertical-align: top;
+      background: #f9fafb;
+      font-size: 8.5pt;
+    }
+    /* Flowchart styles */
+    .flowchart-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      margin-bottom: 15px;
+    }
+    .flowchart-box {
+      border: 1.5px solid #111827;
+      padding: 8px;
+      width: 22%;
+      vertical-align: top;
+      background: #ffffff;
+      font-size: 8pt;
+    }
+    .flowchart-arrow {
+      text-align: center;
+      font-size: 14pt;
+      font-weight: bold;
+      width: 4%;
+      vertical-align: middle;
+      color: #4b5563;
+    }
+    /* Vocabulary Match-up styles */
+    .vocab-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      margin-bottom: 10px;
+    }
+    .vocab-th {
+      font-weight: bold;
+      font-size: 7.5pt;
+      text-transform: uppercase;
+      background-color: #f3f4f6;
+      border: 1px solid #9ca3af;
+      padding: 4px 6px;
+      text-align: left;
+    }
+    .vocab-td {
+      border: 1px solid #9ca3af;
+      padding: 5px 6px;
+      font-size: 7.5pt;
+      vertical-align: middle;
+    }
+    /* Exam Rubric styles */
+    .rubric-box {
+      border: 1px solid #111827;
+      background: #f9fafb;
+      padding: 8px;
+      margin-top: 15px;
+      font-size: 8pt;
+    }
+    @media screen {
+      body {
+        background-color: #f3f4f6;
+        padding: 20px 0;
+      }
+      .print-page, .print-page-last {
+        background: #ffffff;
+        width: 21cm;
+        min-height: 29.7cm;
+        margin: 0 auto 20px auto;
+        padding: 1.0cm;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        border: 1px solid #e5e7eb;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+    }
+  </style>
+</head>
+<body>
+`;
+
+  if (style === 'cloze') {
+    // Scramble the word bank so words do not appear in chronological order of the blanks
+    const scrambledWordBank = [...data.cloze.wordBank].sort(() => Math.random() - 0.5);
+    const wordBank = scrambledWordBank.join(' | ');
+    
+    const fill = (word) => {
+      if (includeAnswers) {
+        return `<span style="font-weight: bold; text-decoration: underline; color: #16a34a;">${word}</span>`;
+      } else {
+        return `<strong>____________________</strong>`;
+      }
+    };
+
+    const parseClozeText = (text) => {
+      return text.replace(/\[\[(.*?)\]\]/g, (match, p1) => {
+        return fill(p1);
+      });
+    };
+
+    const clozeSectionsHtml = data.cloze.sections.map(sec => `
+      <h3 class="sub-title">${sec.title}</h3>
+      <p>
+        ${parseClozeText(sec.text)}
+      </p>
+    `).join('');
+
+    html += `
+      <div class="print-page-last">
+        <h2 class="main-title">Guided Cloze Review: ${data.title}</h2>
+        ${detailsHtml}
+        <div style="border: 1px solid #111827; padding: 10px; margin-bottom: 15px; font-size: 9pt; background: #f9fafb;">
+          <strong>Instructions:</strong> Read the passage below and fill in the blanks using the terms from the Word Bank at the bottom.
+        </div>
+        
+        <div style="font-size: 10pt; line-height: 1.8; text-align: justify;">
+          ${clozeSectionsHtml}
+        </div>
+
+        <div style="border: 1.5px solid #111827; padding: 12px; margin-top: 30px; background: #f9fafb; border-radius: 4px;">
+          <strong style="display: block; margin-bottom: 6px; text-transform: uppercase; font-size: 8.5pt;">Word Bank</strong>
+          <div style="font-size: 8.5pt; line-height: 1.5; text-align: center; font-style: italic;">
+            ${wordBank}
+          </div>
+        </div>
+        
+        <div class="footer-note">GCSE History Workbook &bull; Guided Cloze Review &bull; Page 1 of 1</div>
+      </div>
+    `;
+
+  } else if (style === 'cornell') {
+    const linesCount = density === 'compact' ? 5 : 8;
+    const makeDottedLines = (count) => Array(count).fill('<div class="dotted-writing-line"></div>').join('');
+    
+    const fillNote = (ans) => {
+      if (includeAnswers) {
+        return `<div style="font-size: 9.5pt; color: #16a34a; font-style: italic; padding: 5px 0;"><strong>Model Notes:</strong> ${ans}</div>`;
+      } else {
+        return makeDottedLines(linesCount);
+      }
+    };
+
+    const cues = data.cornell.cues;
+    const page1Cues = cues.slice(0, 3);
+    const page2Cues = cues.slice(3);
+
+    const renderCueRow = (cue) => `
+      <div class="print-cornell-row">
+        <div class="print-cornell-cues">
+          ${cue.title}<br><br>
+          <span style="font-size: 7.5pt; font-weight: normal; color: #4b5563;">
+            ${cue.subCues.map(sc => `${sc}`).join('<br>')}
+          </span>
+        </div>
+        <div class="print-cornell-notes">
+          ${fillNote(cue.modelNotes)}
+        </div>
+      </div>
+    `;
+
+    html += `
+      <div class="print-page">
+        <h2 class="main-title">Cornell Note-Taking: ${data.title}</h2>
+        ${detailsHtml}
+        <div style="border: 1px solid #111827; padding: 10px; margin-bottom: 10px; font-size: 8.5pt; background: #f9fafb;">
+          <strong>Methodology:</strong> Use the left-hand column cues to guide your note-taking on the historical narrative. Re-read sections 1-3 to extract precise dates, groups, and motivations.
+        </div>
+
+        <div class="print-cornell-grid">
+          ${page1Cues.map(renderCueRow).join('')}
+        </div>
+        
+        <div class="footer-note">GCSE History Workbook &bull; Cornell Notes &bull; Page 1 of 2</div>
+      </div>
+
+      <div class="print-page-last">
+        <div class="print-cornell-grid">
+          ${page2Cues.map(renderCueRow).join('')}
+
+          <div class="print-cornell-summary-row">
+            <div class="print-cornell-summary-cell" style="border: 1.5px solid #111827;">
+              <strong>Synthesis Summary:</strong> ${data.cornell.synthesis.prompt}
+              ${includeAnswers ? `
+                <div style="font-size: 9.5pt; color: #16a34a; font-style: italic; margin-top: 8px;">
+                  <strong>Model Synthesis:</strong> ${data.cornell.synthesis.modelAnswer}
+                </div>
+              ` : makeDottedLines(6)}
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-note">GCSE History Workbook &bull; Cornell Notes &bull; Page 2 of 2</div>
+      </div>
+    `;
+
+  } else if (style === 'organizer') {
+    const flowchartLines = density === 'compact' ? 3 : 5;
+    const makeDottedLines = (count) => Array(count).fill('<div class="dotted-writing-line"></div>').join('');
+    
+    const fillBox = (ans) => {
+      if (includeAnswers) {
+        return `<div style="font-size: 8pt; color: #16a34a; font-style: italic; line-height: 1.4;"><strong>Key Points:</strong> ${ans}</div>`;
+      } else {
+        return makeDottedLines(flowchartLines);
+      }
+    };
+
+    const boxes = data.organizer.boxes;
+    const vocabMatch = data.organizer.vocabMatch;
+
+    const flowchartCells = [];
+    boxes.forEach((box, idx) => {
+      flowchartCells.push(`
+        <td class="flowchart-box">
+          <div style="font-weight: bold; font-size: 8.5pt; text-transform: uppercase; border-bottom: 1px solid #111827; margin-bottom: 6px; padding-bottom: 2px;">
+            ${box.title}
+          </div>
+          ${fillBox(box.modelNotes)}
+        </td>
+      `);
+      if (idx < boxes.length - 1) {
+        flowchartCells.push(`<td class="flowchart-arrow">➔</td>`);
+      }
+    });
+
+    const sortedDefs = [...vocabMatch].sort((a, b) => a.match.localeCompare(b.match));
+    const vocabRows = vocabMatch.map((item, idx) => `
+      <tr>
+        <td class="vocab-td"><strong>${item.term}</strong></td>
+        <td class="vocab-td" style="text-align: center; font-weight: bold; color: #16a34a;">${includeAnswers ? item.match : ""}</td>
+        <td class="vocab-td">${sortedDefs[idx].match}. ${sortedDefs[idx].definition}</td>
+      </tr>
+    `).join('');
+
+    html += `
+      <div class="print-page-last">
+        <h2 class="main-title">Graphic Organizer: ${data.title}</h2>
+        ${detailsHtml}
+        <div style="border: 1px solid #111827; padding: 10px; margin-bottom: 10px; font-size: 8.5pt; background: #f9fafb;">
+          <strong>Task 1: Causal Flowchart.</strong> In the boxes below, record the key causes, actions, and consequences for each turning point, tracing the chronology of the Mandate's collapse.
+        </div>
+
+        <table class="flowchart-table">
+          <tr>
+            ${flowchartCells.join('')}
+          </tr>
+        </table>
+
+        <div class="section-title">Task 2: Key Vocabulary Match-Up</div>
+        <table class="vocab-table">
+          <thead>
+            <tr>
+              <th class="vocab-th" style="width: 25%;">Historical Term</th>
+              <th class="vocab-th" style="width: 15%; text-align: center;">Your Match</th>
+              <th class="vocab-th" style="width: 60%;">Definition / Significance</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${vocabRows}
+          </tbody>
+        </table>
+
+        <div class="footer-note">GCSE History Workbook &bull; Graphic Organizer &bull; Page 1 of 1</div>
+      </div>
+    `;
+
+  } else if (style === 'exam') {
+    const questionsData = LESSONS_DATA[subtopicId]?.questionVault || [];
+    
+    selectedIndices.forEach((idx, qNum) => {
+      const qObj = questionsData[idx];
+      if (!qObj) return;
+      
+      const qText = qObj.question;
+      const qAnswer = qObj.answer;
+
+      let marks = 8;
+      if (qText.toLowerCase().includes('4 marks') || qText.toLowerCase().includes('(4)')) {
+        marks = 4;
+      }
+      
+      let linesCount = marks === 4 ? 6 : 12;
+      if (density === 'compact') {
+        linesCount = marks === 4 ? 4 : 8;
+      }
+
+      let rubricHtml = '';
+      const qTextLower = qText.toLowerCase();
+      if (qTextLower.includes('consequence')) {
+        rubricHtml = `
+          <strong style="text-transform: uppercase; display: block; margin-bottom: 4px; color: #111827; font-size: 8.5pt;">Consequence Rubric (4 Marks)</strong>
+          <label style="display: block; margin-bottom: 4px;"><input type="checkbox"> [ ] <strong>Point:</strong> Clearly state one consequence of the event [1 Mark]</label>
+          <label style="display: block; margin-bottom: 4px;"><input type="checkbox"> [ ] <strong>Detail:</strong> Support with specific historical details (dates/names/key terms) [1 Mark]</label>
+          <label style="display: block; margin-bottom: 4px;"><input type="checkbox"> [ ] <strong>Explanation:</strong> Explain exactly how the consequence resulted from the event [2 Marks]</label>
+        `;
+      } else if (qTextLower.includes('narrative')) {
+        rubricHtml = `
+          <strong style="text-transform: uppercase; display: block; margin-bottom: 4px; color: #111827; font-size: 8.5pt;">Narrative Account Rubric (8 Marks)</strong>
+          <label style="display: block; margin-bottom: 4px;"><input type="checkbox"> [ ] <strong>Sequence:</strong> Structure the account in clear chronological order (Beginning &rarr; Middle &rarr; End) [2 Marks]</label>
+          <label style="display: block; margin-bottom: 4px;"><input type="checkbox"> [ ] <strong>Linkage:</strong> Use connection words (e.g. 'This led to', 'As a direct result') to link events [2 Marks]</label>
+          <label style="display: block; margin-bottom: 4px;"><input type="checkbox"> [ ] <strong>Knowledge:</strong> Support with precise historical details (dates, names, key terms) [2 Marks]</label>
+          <label style="display: block; margin-bottom: 4px;"><input type="checkbox"> [ ] <strong>Analysis:</strong> Explain how the chain of events led to the final outcome [2 Marks]</label>
+        `;
+      } else if (qTextLower.includes('importance')) {
+        rubricHtml = `
+          <strong style="text-transform: uppercase; display: block; margin-bottom: 4px; color: #111827; font-size: 8.5pt;">Importance Rubric (8 Marks)</strong>
+          <label style="display: block; margin-bottom: 4px;"><input type="checkbox"> [ ] <strong>Significance:</strong> State why the event is important for the specified development [2 Marks]</label>
+          <label style="display: block; margin-bottom: 4px;"><input type="checkbox"> [ ] <strong>Before/After:</strong> Explain the 'before' and 'after' state to show the change/significance [2 Marks]</label>
+          <label style="display: block; margin-bottom: 4px;"><input type="checkbox"> [ ] <strong>Knowledge:</strong> Support with precise historical facts (dates, names, events) [2 Marks]</label>
+          <label style="display: block; margin-bottom: 4px;"><input type="checkbox"> [ ] <strong>Explanation:</strong> Link the event directly to its impact on the specified outcome [2 Marks]</label>
+        `;
+      } else {
+        rubricHtml = `
+          <strong style="text-transform: uppercase; display: block; margin-bottom: 4px; color: #111827; font-size: 8.5pt;">Self-Evaluation Rubric</strong>
+          <label style="display: block; margin-bottom: 4px;"><input type="checkbox"> [ ] Answered in full, grammatically correct sentences.</label>
+          <label style="display: block; margin-bottom: 4px;"><input type="checkbox"> [ ] Included specific historical details (dates, names, events).</label>
+          <label style="display: block; margin-bottom: 4px;"><input type="checkbox"> [ ] Explained the connection between cause and consequence or narrative progression.</label>
+        `;
+      }
+      
+      const isQuestionLast = qNum === selectedIndices.length - 1 && !includeAnswers;
+      html += `
+        <div class="${isQuestionLast ? 'print-page-last' : 'print-page'}">
+          <div class="main-title">GCSE Exam Practice: ${data.title}</div>
+          ${detailsHtml}
+          <div style="font-size: 11pt; font-weight: bold; margin-bottom: 15px; border-bottom: 1.5px solid #111827; padding-bottom: 4px;">
+            Question ${qNum + 1} [${marks} Marks]
+          </div>
+          
+          <p style="font-size: 11pt; font-weight: bold; margin-bottom: 12px; line-height: 1.45;">
+            ${qText}
+          </p>
+
+          <div style="margin-top: 15px;">
+            ${Array(linesCount).fill('<div class="dotted-writing-line"></div>').join('')}
+          </div>
+
+          <div class="rubric-box">
+            ${rubricHtml}
+          </div>
+
+          <div class="footer-note">GCSE History Workbook &bull; Exam Practice &bull; Page ${qNum + 1}</div>
+        </div>
+      `;
+      
+      if (includeAnswers) {
+        const isAnswerLast = qNum === selectedIndices.length - 1;
+        html += `
+          <div class="${isAnswerLast ? 'print-page-last' : 'print-page'}">
+            <div class="main-title">Teacher Answer Key &bull; Model Answer</div>
+            <div style="font-size: 11pt; font-weight: bold; margin-bottom: 15px; border-bottom: 1.5px solid #111827; padding-bottom: 4px;">
+              Model Answer for Question ${qNum + 1} [${marks} Marks]
+            </div>
+            
+            <p style="font-size: 10pt; font-weight: bold; margin-bottom: 10px; font-style: italic; color: #4b5563;">
+              Question: ${qText}
+            </p>
+
+            <div style="border-left: 3px solid #16a34a; background: #f0fdf4; padding: 12px; font-size: 10pt; line-height: 1.6; text-align: justify; margin-top: 15px;">
+              ${qAnswer}
+            </div>
+            
+            <div class="footer-note">GCSE History Workbook &bull; Exam Practice Answer Key &bull; Page ${qNum + 1}</div>
+          </div>
+        `;
+      }
+    });
+  }
+
+  html += `
+</body>
+</html>
+  `;
+  return html;
+}
+
+export function generateBulkWorkbookHtml(style, density, includeAnswers) {
+  const subtopicIds = [
+    'subtopic_1_1', 'subtopic_1_2', 'subtopic_1_3',
+    'subtopic_2_1', 'subtopic_2_2', 'subtopic_2_3',
+    'subtopic_3_1', 'subtopic_3_2', 'subtopic_3_3'
+  ];
+
+  let combinedBodyContent = '';
+  let documentHeader = '';
+  
+  subtopicIds.forEach((subId, index) => {
+    let selectedIndices = [];
+    if (style === 'exam') {
+      const questionsData = LESSONS_DATA[subId]?.questionVault || [];
+      selectedIndices = questionsData.map((_, idx) => idx);
+    }
+
+    const html = generateWorkbookHtml(subId, style, density, includeAnswers, selectedIndices);
+    
+    const bodyStartIdx = html.indexOf('<body>');
+    const bodyEndIdx = html.lastIndexOf('</body>');
+    if (bodyStartIdx !== -1 && bodyEndIdx !== -1) {
+      let bodyContent = html.substring(bodyStartIdx + 6, bodyEndIdx).trim();
+      
+      // Convert all print-page-last to print-page to force page break, except for the last lesson
+      if (index < subtopicIds.length - 1) {
+        bodyContent = bodyContent.replace(/class="print-page-last"/g, 'class="print-page"');
+      }
+      
+      combinedBodyContent += `\n<!-- LESSON ${subId} -->\n` + bodyContent;
+    }
+    
+    if (index === 0) {
+      documentHeader = html.substring(0, bodyStartIdx + 6);
+    }
+  });
+
+  return documentHeader + combinedBodyContent + '\n</body>\n</html>';
+}
+
+window.generateWorkbookHtml = generateWorkbookHtml;
+window.generateBulkWorkbookHtml = generateBulkWorkbookHtml;
+
+
+

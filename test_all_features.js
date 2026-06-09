@@ -657,6 +657,50 @@ try {
 
   console.log("✓ Revision Games Hub tests passed.");
 
+  // Test 8: Workbook HTML Generation for All Lessons & Styles
+  console.log("\n--- TEST 8: Workbook HTML Generation for All Lessons & Styles ---");
+  const subtopicIds = [
+    'subtopic_1_1', 'subtopic_1_2', 'subtopic_1_3',
+    'subtopic_2_1', 'subtopic_2_2', 'subtopic_2_3',
+    'subtopic_3_1', 'subtopic_3_2', 'subtopic_3_3'
+  ];
+  const styles = ['booklet', 'cloze', 'cornell', 'organizer', 'exam'];
+  
+  subtopicIds.forEach(subId => {
+    styles.forEach(style => {
+      const selectedIndices = [0, 1];
+      const resultHtml = dom.window.generateWorkbookHtml(subId, style, 'standard', false, selectedIndices);
+      if (!resultHtml || typeof resultHtml !== 'string') {
+        throw new Error(`Workbook HTML is not a string for ${subId} and style ${style}`);
+      }
+      if (resultHtml.includes('undefined')) {
+        throw new Error(`Workbook HTML for ${subId} and style ${style} contains "undefined"!`);
+      }
+      if (resultHtml.length < 100) {
+        throw new Error(`Workbook HTML is too short for ${subId} and style ${style}`);
+      }
+    });
+  });
+  console.log("✓ All workbook generations run and verified successfully without ReferenceError or 'undefined' markers.");
+
+  // Test 9: Bulk Workbook HTML Generation for All Styles
+  console.log("\n--- TEST 9: Course-Wide Bulk Workbook HTML Generation ---");
+  const bulkStyles = ['booklet', 'cloze', 'cornell', 'organizer', 'exam'];
+  bulkStyles.forEach(style => {
+    const resultHtml = dom.window.generateBulkWorkbookHtml(style, 'standard', false);
+    if (!resultHtml || typeof resultHtml !== 'string') {
+      throw new Error(`Bulk Workbook HTML is not a string for style ${style}`);
+    }
+    if (resultHtml.includes('undefined')) {
+      throw new Error(`Bulk Workbook HTML for style ${style} contains "undefined"!`);
+    }
+    if (resultHtml.length < 5000) {
+      throw new Error(`Bulk Workbook HTML is too short for style ${style} (${resultHtml.length} chars)`);
+    }
+    console.log(`  - Style ${style}: Generated ${resultHtml.length} characters.`);
+  });
+  console.log("✓ Bulk workbook generations run and verified successfully without ReferenceError or 'undefined' markers.");
+
   console.log("\n=================================================");
   console.log("ALL FEATURES VERIFIED AND CONFIRMED FUNCTIONAL!");
   console.log("=================================================");

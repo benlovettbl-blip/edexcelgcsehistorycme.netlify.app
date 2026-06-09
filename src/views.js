@@ -2,7 +2,7 @@ import { state } from './state.js';
 import { QUIZ_DATA, CONSEQUENCE_SKILLS_DATA, NARRATIVE_SKILLS_DATA, EXAM_SKILLS_DATA } from '../questions.js';
 import { AudioEngine } from './audio.js';
 import { switchView, switchSubtopicMode } from './navigation.js';
-import { setMastered, toggleBookmark } from './storage.js';
+import { setMastered, toggleBookmark, getActiveProfile, getProfileStorageKey } from './storage.js';
 import { Confetti } from './confetti.js';
 import { LESSONS_DATA } from './lessons_data.js';
 import { MASTERY_DATA } from './mastery_data.js';
@@ -181,7 +181,7 @@ export function addXp(amount) {
     }, 500);
   }
   
-  localStorage.setItem('edexcel_prefs_user_stats', JSON.stringify(state.userStats));
+  localStorage.setItem(getProfileStorageKey('edexcel_prefs_user_stats'), JSON.stringify(state.userStats));
   if (state.currentView === 'dashboard') {
     renderPlayerProfileWidget();
   }
@@ -196,6 +196,7 @@ export function renderPlayerProfileWidget() {
   const nextXp = getXpForNextLevel(stats.level);
   const prevXp = stats.level === 1 ? 0 : getXpForNextLevel(stats.level - 1);
   const levelProgressPct = stats.level === 5 ? 100 : Math.round(((stats.xp - prevXp) / (nextXp - prevXp)) * 100);
+  const activeProfile = getActiveProfile();
   
   container.innerHTML = `
     <div class="gamification-widget" style="padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border: 1px solid var(--border-glass); background: rgba(0, 0, 0, 0.15); border-radius: var(--border-radius-sm); height: 72px; box-sizing: border-box; cursor: pointer;">
@@ -204,7 +205,7 @@ export function renderPlayerProfileWidget() {
           ${stats.level}
         </div>
         <div style="flex: 1; text-align: left; min-width: 0;">
-          <div style="font-size: 0.55rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted); letter-spacing: 0.5px; line-height: 1;">Level ${stats.level} Profile</div>
+          <div style="font-size: 0.55rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted); letter-spacing: 0.5px; line-height: 1;">Level ${stats.level} Profile: ${activeProfile}</div>
           <div style="font-family: var(--font-heading); font-size: 0.85rem; font-weight: 800; color: var(--text-main); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${levelTitle}">${levelTitle}</div>
           
           <!-- XP Progress Bar -->
@@ -515,6 +516,7 @@ function renderDashboard() {
     
     container.appendChild(card);
   });
+  renderPlayerProfileWidget();
 }
 
 
@@ -2147,7 +2149,7 @@ export const GOOGLE_SHEET_WEBAPP_URL = "";
 // --- Spaced Repetition / Missed Terms Helpers ---
 function getMissedTerms() {
   try {
-    const list = localStorage.getItem('antigravity_mastery_missed_terms');
+    const list = localStorage.getItem(getProfileStorageKey('antigravity_mastery_missed_terms'));
     return list ? JSON.parse(list) : [];
   } catch (e) {
     return [];
@@ -2159,7 +2161,7 @@ function recordMissedTerm(term) {
     const list = getMissedTerms();
     if (!list.includes(term)) {
       list.push(term);
-      localStorage.setItem('antigravity_mastery_missed_terms', JSON.stringify(list));
+      localStorage.setItem(getProfileStorageKey('antigravity_mastery_missed_terms'), JSON.stringify(list));
     }
   } catch (e) {}
 }
@@ -2168,7 +2170,7 @@ function resolveMissedTerm(term) {
   try {
     let list = getMissedTerms();
     list = list.filter(t => t !== term);
-    localStorage.setItem('antigravity_mastery_missed_terms', JSON.stringify(list));
+    localStorage.setItem(getProfileStorageKey('antigravity_mastery_missed_terms'), JSON.stringify(list));
   } catch (e) {}
 }
 

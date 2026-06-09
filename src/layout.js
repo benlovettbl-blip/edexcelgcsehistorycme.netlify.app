@@ -10,11 +10,23 @@ import {
   renderSidebarNav, 
   updateGlobalStats,
   setActiveClassicFilter,
-  highlightCausalConnectives
+  highlightCausalConnectives,
+  renderDashboard
 } from './views.js';
 import { showExamSetup, startExam, nextExamQuestion, displayExamQuestion, finishExam } from './exam.js';
-import { saveProgress } from './storage.js';
-import { startPastPaper, generateMockExam } from './past_papers.js';
+import { 
+  saveProgress, 
+  getActiveProfile, 
+  setActiveProfile, 
+  getProfilesList, 
+  createProfile, 
+  deleteProfile, 
+  exportActiveProfileData, 
+  importProfileData,
+  initData
+} from './storage.js';
+import { startPastPaper, generateMockExam, initMockCreator, initBulkWorkbookCreator } from './past_papers.js';
+import { initWorkbookCreator } from './lessons.js';
 import { CONSEQUENCE_SKILLS_DATA, NARRATIVE_SKILLS_DATA, EXAM_SKILLS_DATA } from '../questions.js';
 
 // --- Sidebar Overlay Drawer (Mobile UI) ---
@@ -44,6 +56,18 @@ function updateSoundBtnUI() {
       }
     }
   });
+}
+
+function updateProfileDropdownUI() {
+  const select = document.getElementById('profile-selector');
+  if (!select) return;
+  
+  const active = getActiveProfile();
+  const list = getProfilesList();
+  
+  select.innerHTML = list.map(p => `
+    <option value="${p}" ${p === active ? 'selected' : ''}>${p}</option>
+  `).join('');
 }
 
 // --- Bind Event Listeners ---
@@ -419,7 +443,108 @@ function bindEvents() {
   bindResetBtn('reset-progress-btn');
   bindResetBtn('sidebar-reset-progress-btn');
 
-
+  // Profile bindings
+  updateProfileDropdownUI();
+  
+  const profileSelector = document.getElementById('profile-selector');
+  if (profileSelector) {
+    profileSelector.addEventListener('change', (e) => {
+      const selected = e.target.value;
+      setActiveProfile(selected);
+      initData();
+      renderSidebarNav();
+      updateGlobalStats();
+      if (state.currentView === 'dashboard') {
+        renderDashboard();
+      }
+      AudioEngine.play('click');
+    });
+  }
+  
+  const btnCreateProfile = document.getElementById('btn-profile-create');
+  if (btnCreateProfile) {
+    btnCreateProfile.addEventListener('click', () => {
+      const name = prompt("Enter a name for the new profile:");
+      if (!name) return;
+      const cleanName = name.trim();
+      if (!cleanName) return;
+      if (createProfile(cleanName)) {
+        setActiveProfile(cleanName);
+        initData();
+        updateProfileDropdownUI();
+        renderSidebarNav();
+        updateGlobalStats();
+        if (state.currentView === 'dashboard') {
+          renderDashboard();
+        }
+        AudioEngine.play('success');
+        alert(`Profile "${cleanName}" created and activated!`);
+      } else {
+        alert("Failed to create profile. Name may already exist or be invalid.");
+      }
+    });
+  }
+  
+  const btnDeleteProfile = document.getElementById('btn-profile-delete');
+  if (btnDeleteProfile) {
+    btnDeleteProfile.addEventListener('click', () => {
+      const active = getActiveProfile();
+      if (active === 'Default') {
+        alert("Cannot delete the Default profile.");
+        return;
+      }
+      if (confirm(`Are you sure you want to delete the profile "${active}"? All progress for this profile will be permanently deleted.`)) {
+        deleteProfile(active);
+        initData();
+        updateProfileDropdownUI();
+        renderSidebarNav();
+        updateGlobalStats();
+        if (state.currentView === 'dashboard') {
+          renderDashboard();
+        }
+        AudioEngine.play('fail');
+        alert("Profile deleted.");
+      }
+    });
+  }
+  
+  const btnExportProfile = document.getElementById('btn-profile-export');
+  if (btnExportProfile) {
+    btnExportProfile.addEventListener('click', () => {
+      const code = exportActiveProfileData();
+      if (code) {
+        navigator.clipboard.writeText(code).then(() => {
+          alert("Backup code copied to clipboard! Keep this code safe to restore your progress later.");
+        }).catch(() => {
+          prompt("Copy this profile backup code:", code);
+        });
+      } else {
+        alert("Failed to export profile data.");
+      }
+    });
+  }
+  
+  const btnImportProfile = document.getElementById('btn-profile-import');
+  if (btnImportProfile) {
+    btnImportProfile.addEventListener('click', () => {
+      const code = prompt("Paste your profile backup code:");
+      if (!code) return;
+      const res = importProfileData(code.trim());
+      if (res && res.success) {
+        initData();
+        updateProfileDropdownUI();
+        renderSidebarNav();
+        updateGlobalStats();
+        if (state.currentView === 'dashboard') {
+          renderDashboard();
+        }
+        AudioEngine.play('success');
+        alert(`Profile "${res.profileName}" successfully imported and activated!`);
+      } else {
+        alert("Failed to import profile. " + (res ? res.error : "Invalid backup code."));
+      }
+    });
+  }
 
   // Exam Practice Nav Click
   document.getElementById('nav-exam-skills').addEventListener('click', () => {
@@ -958,6 +1083,11 @@ function bindEvents() {
       updateRealTimeFeedback('importance', e.target.value, EXAM_SKILLS_DATA[topicId], topicId);
     }
   });
+
+  // Initialize Mock Creator and Workbook Creator
+  initMockCreator();
+  initWorkbookCreator();
+  initBulkWorkbookCreator();
 }
 
 // --- Real-time Fact / Connective Verification Checklist for Essay Writing ---
@@ -997,10 +1127,18 @@ function extractKeywordsFromAnswer(htmlAnswer) {
   return filtered.slice(0, 5);
 }
 
-function getKeywordsForQuestion(type, questionId, questionObj) {
-  if (!questionObj) return [];
-  if (questionObj.keywords && Array.isArray(questionObj.keywords)) {
-    return questionObj.keywords;
+function getKeywordsForQuestion(typeOrQuestionObj, questionId, questionObj) {
+  let actualQuestionObj = questionObj;
+  let type = typeOrQuestionObj;
+  
+  if (typeOrQuestionObj && typeof typeOrQuestionObj === 'object') {
+    actualQuestionObj = typeOrQuestionObj;
+    type = null;
+  }
+  
+  if (!actualQuestionObj) return [];
+  if (actualQuestionObj.keywords && Array.isArray(actualQuestionObj.keywords)) {
+    return actualQuestionObj.keywords;
   }
   
   const predefined = {
@@ -1039,11 +1177,11 @@ function getKeywordsForQuestion(type, questionId, questionObj) {
     }
   };
   
-  if (predefined[type] && predefined[type][questionId]) {
+  if (type && questionId && predefined[type] && predefined[type][questionId]) {
     return predefined[type][questionId];
   }
   
-  return extractKeywordsFromAnswer(questionObj.answer || "");
+  return extractKeywordsFromAnswer(actualQuestionObj.answer || actualQuestionObj.model || "");
 }
 
 function updateRealTimeFeedback(type, value, questionObj, questionId) {
@@ -1132,6 +1270,7 @@ export {
   bindEvents,
   extractKeywordsFromAnswer,
   getKeywordsForQuestion,
-  updateRealTimeFeedback
+  updateRealTimeFeedback,
+  updateProfileDropdownUI
 };
 
