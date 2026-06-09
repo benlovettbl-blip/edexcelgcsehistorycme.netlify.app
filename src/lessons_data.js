@@ -8,6 +8,29 @@ export const LESSONS_DATA = {
     ],
     "headerTitle": "<i class=\"fa-solid fa-book-open\"></i>\r\n        🎓 GCSE CORE MASTERY: Key Topic 1.1 - British Withdrawal & Creation of Israel (1945–1948)",
     "headerIntro": "To achieve top marks in this topic, you cannot just tell a story. You need to know the exact names, dates, and statistics that caused the British to flee Palestine and led to the violent birth of Israel.",
+    "simplifiedHeaderIntro": "Aiming for a Grade 4 pass? Switch to this mode to focus only on the core facts, dates, and events you need to know to pass this topic.",
+    "simplifiedSteps": [
+      {
+        "title": "Step 1: The Conflicting Demands",
+        "isSplit": false,
+        "bodyHtml": "<p>After World War II and the <strong>Holocaust</strong>, Britain struggled to control Palestine because of two opposing groups:</p>\r\n        <ul>\r\n          <li><strong>Jewish Demands:</strong> Jewish leaders wanted their own independent country (called <strong>Zionism</strong>). The US supported them, demanding entry for <strong>100,000</strong> refugees.</li>\r\n          <li><strong>Arab Demands:</strong> Palestinian Arabs were the majority. They wanted independence and strongly opposed Jewish immigration.</li>\r\n          <li><strong>British Quota:</strong> Caught in the middle, Britain limited Jewish entry to only <strong>1,500</strong> people a month to avoid angering Arab oil nations. This made both sides furious.</li>\r\n        </ul>"
+      },
+      {
+        "title": "Step 2: The Insurgency & King David Hotel",
+        "isSplit": false,
+        "bodyHtml": "<p>Furious at the British limits, Jewish armed groups started attacking British forces to force them to leave:</p>\r\n        <ul>\r\n          <li><strong>King David Hotel Bombing (22 July 1946):</strong> Jewish group <strong>Irgun</strong> bombed the British headquarters, killing <strong>91</strong> people. This broke British morale.</li>\r\n          <li><strong>UN Referral (Feb 1947):</strong> Tired of the attacks and costs, Britain handed control of Palestine to the <strong>United Nations</strong>.</li>\r\n          <li><strong>Sergeants Affair (July 1947):</strong> The Irgun hanged <strong>two British soldiers</strong>. This caused outrage in the UK and destroyed public support for keeping troops there.</li>\r\n        </ul>"
+      },
+      {
+        "title": "Step 3: UN Resolution 181 (The Partition Plan)",
+        "isSplit": false,
+        "bodyHtml": "<p>On <strong>29 November 1947</strong>, the UN voted to split Palestine into two separate countries:</p>\r\n        <ul>\r\n          <li><strong>The Split:</strong> The UN proposed one Jewish state and one Arab state, with Jerusalem kept under international control.</li>\r\n          <li><strong>The Reactions:</strong> Jewish leaders accepted the plan because it gave them a country. Arab leaders rejected it because the Jewish state got <strong>55%</strong> of the land, despite Jews only being <strong>33%</strong> of the population.</li>\r\n          <li><strong>Result:</strong> With no agreement, fighting broke out immediately between Arabs and Jews.</li>\r\n        </ul>"
+      },
+      {
+        "title": "Step 4: The 1948–49 Arab-Israeli War",
+        "isSplit": false,
+        "bodyHtml": "<p>In <strong>May 1948</strong>, Israel declared independence. Five Arab countries immediately invaded to destroy it, but Israel won:</p>\r\n        <ul>\r\n          <li><strong>Why Israel Won:</strong> The Arab armies were uncoordinated and lacked a single leader. Meanwhile, Israel merged its groups into a single army (the <strong>IDF</strong>) and got modern weapons from <strong>Czechoslovakia</strong>.</li>\r\n          <li><strong>The Outcome:</strong> Israel won and captured <strong>50% more land</strong> than the UN originally proposed. For Palestinians, this is the <strong>Nakba</strong> (Catastrophe), as <strong>700,000</strong> refugees lost their homes.</li>\r\n        </ul>"
+      }
+    ],
     "steps": [
       {
         "title": "Step 1: The Conflicting Demands",

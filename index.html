@@ -87,10 +87,10 @@
               <span class="nav-text">Exam Practice (Q1-Q3)</span>
             </span>
           </a>
-          <a class="nav-item" id="nav-past-papers" title="Past Exam Papers">
+          <a class="nav-item" id="nav-past-papers" title="Resource Hub">
             <span class="nav-item-content">
               <i class="fa-solid fa-file-invoice"></i>
-              <span class="nav-text">Past Exam Papers</span>
+              <span class="nav-text">Resource Hub</span>
             </span>
           </a>
           <a class="nav-item" id="nav-games" title="Revision Games Hub">
@@ -351,14 +351,14 @@
                 </div>
               </div>
 
-              <!-- Past Papers -->
+              <!-- Resource Hub -->
               <div class="shortcut-card" id="shortcut-past-papers">
                 <div class="shortcut-icon" style="background: var(--accent-glow); color: var(--accent);">
                   <i class="fa-solid fa-file-invoice"></i>
                 </div>
                 <div>
-                  <h3>Past Papers</h3>
-                  <p>Full past papers & mocks</p>
+                  <h3>Resource Hub</h3>
+                  <p>Mocks & Worksheet Packs</p>
                 </div>
               </div>
 
@@ -695,7 +695,7 @@
         <div class="past-papers-container" style="max-width: 800px; margin: 0 auto; padding: 12px 4px;">
           <div class="exam-skills-header-card">
             <h2 class="exam-skills-title">
-              <i class="fa-solid fa-file-invoice" style="color: var(--primary);"></i> Past Exam Papers & Mock Generator
+              <i class="fa-solid fa-file-invoice" style="color: var(--primary);"></i> Educator Resource Hub & Exam Mocks
             </h2>
             <p class="exam-skills-desc">
               Select an official Edexcel GCSE past paper from the archive, or generate a randomized full mock exam. Draft your responses in the textareas, toggle educator clues to guide your writing, and check your work against the official model answers.
@@ -722,14 +722,14 @@
                   <option value="mock_paper_4">🔥 Mock Exam Paper 4 (Israel's Creation & Later Conflicts - HIGH PROBABILITY)</option>
                 </select>
               </div>
-              <div style="flex: 1; min-width: 200px; display: flex; gap: 12px;">
-                <button class="btn-primary" id="btn-start-past-paper" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; padding: 12px;">
+              <div style="flex: 1.5; min-width: 420px; display: flex; gap: 12px; flex-wrap: wrap;">
+                <button class="btn-primary" id="btn-start-past-paper" style="flex: 1; min-width: 120px; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; padding: 12px;">
                   <i class="fa-solid fa-play"></i> Open Paper
                 </button>
-                <button class="btn-secondary" id="btn-generate-mock" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; padding: 12px; border-color: var(--primary); color: var(--primary);">
+                <button class="btn-secondary" id="btn-generate-mock" style="flex: 1; min-width: 120px; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; padding: 12px; border-color: var(--primary); color: var(--primary);">
                   <i class="fa-solid fa-dice"></i> Generate Mock
                 </button>
-                <button class="btn-secondary" id="btn-mock-creator-open" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; padding: 12px; border-color: var(--accent); color: var(--accent);">
+                <button class="btn-secondary" id="btn-mock-creator-open" style="flex: 1; min-width: 120px; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; padding: 12px; border-color: var(--accent); color: var(--accent);">
                   <i class="fa-solid fa-print"></i> Printable Mock
                 </button>
               </div>
@@ -2068,7 +2068,7 @@
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <!-- Scripts -->
-  <script src="questions.js"></script>
-  <script src="app.js"></script>
+  <script src="questions.js?v=12"></script>
+  <script src="app.js?v=12"></script>
 </body>
 </html>

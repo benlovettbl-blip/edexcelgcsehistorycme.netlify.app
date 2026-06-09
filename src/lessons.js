@@ -210,6 +210,14 @@ export function renderMasteryView(subtopicId) {
   const container = document.getElementById('mastery-content-container');
   if (!container) return;
 
+  const isCoreMode = (state.studyLevel === 'core' && subtopicId === 'subtopic_1_1');
+  console.log('=== renderMasteryView ===', { subtopicId, studyLevel: state.studyLevel, isCoreMode });
+  if (isCoreMode) {
+    container.classList.add('core-mode-active');
+  } else {
+    container.classList.remove('core-mode-active');
+  }
+
   const data = LESSONS_DATA[subtopicId];
 
   if (!data) {
@@ -475,13 +483,14 @@ export function renderMasteryView(subtopicId) {
   // Generate Steps HTML
   let stepsHtml = '';
   const matchedFigures = new Set();
-  data.steps.forEach((step, index) => {
+  const stepsToRender = isCoreMode ? (data.simplifiedSteps || data.steps) : data.steps;
+  stepsToRender.forEach((step, index) => {
     const processedBodyHtml = injectInlineBios(step.bodyHtml, matchedFigures);
     let scholarlyHtml = '';
     
     // Retrieve scholarly perspective for this subtopic and step index from database
-    const dbScholarly = SCHOLARLY_EXTENSIONS[subtopicId]?.[index];
-    const scholarlyDepth = dbScholarly || step.scholarlyDepth;
+    const dbScholarly = isCoreMode ? null : SCHOLARLY_EXTENSIONS[subtopicId]?.[index];
+    const scholarlyDepth = isCoreMode ? null : (dbScholarly || step.scholarlyDepth);
     
     if (scholarlyDepth) {
       let scholarlyImgHtml = '';
@@ -664,7 +673,7 @@ export function renderMasteryView(subtopicId) {
   let impHtml = '';
   if (data.importanceAnalyser) {
     impHtml = `
-      <div class="mastery-card" style="max-width: 800px; margin: 0 auto 24px auto;">
+      <div class="mastery-card importance-analyser-wrapper-card" style="max-width: 800px; margin: 0 auto 24px auto;">
         <h3 class="mastery-card-title">🔍 8-Mark Skill: The Importance Analyser</h3>
         <p style="font-style: italic; margin-top: 0; margin-bottom: 20px; color: var(--text-muted);">
           Click the card below to flip it and view the examiner's model analysis.
@@ -688,9 +697,13 @@ export function renderMasteryView(subtopicId) {
 
   // Generate Question Vault HTML
   let vaultItemsHtml = '';
-  data.questionVault.forEach((q, index) => {
+  const vaultQuestionsToRender = isCoreMode 
+    ? data.questionVault.filter(q => q.question.toLowerCase().includes('consequence') || q.question.toLowerCase().includes('4 marks') || q.question.toLowerCase().includes('4-mark'))
+    : data.questionVault;
+
+  vaultQuestionsToRender.forEach((q, index) => {
     const highProbBadge = q.isHighProbability ? `
-      <span class="high-prob-badge" style="background: linear-gradient(135deg, #ef4444 0%, #f97316 100%); color: white; font-size: 0.72rem; font-weight: bold; padding: 2px 8px; border-radius: 12px; margin-left: 8px; display: inline-flex; align-items: center; gap: 3px; border: 1px solid rgba(255,255,255,0.15); box-sizing: border-box;">
+      <span class="high-prob-badge" style="background: linear-gradient(135deg, #ef4444 0%, #f97316 100%); color: white; font-size: 0.72rem; font-weight: bold; padding: 2px 8px; border-radius: 12px; margin-left: 8px; display: inline-flex; align-items: center; gap: 3px; border: 1px solid rgba(255,255,255,0.15); box-shadow: var(--shadow-sm); z-index: 10;">
         <i class="fa-solid fa-fire"></i> HIGH PROBABILITY
       </span>
     ` : '';
@@ -708,13 +721,31 @@ export function renderMasteryView(subtopicId) {
   });
 
   let vaultHtml = '';
-  if (data.questionVault.length > 0) {
+  let formulaHtml = '';
+  if (isCoreMode) {
+    formulaHtml = `
+      <div style="background: rgba(16, 185, 129, 0.03); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: var(--border-radius-sm); padding: 14px 16px; margin-bottom: 18px; font-size: 0.88rem; line-height: 1.45; border-left: 4px solid var(--success); box-shadow: var(--shadow-sm); text-align: left;">
+        <strong style="color: var(--success); font-family: var(--font-heading); display: flex; margin-bottom: 6px; font-size: 0.95rem; justify-content: flex-start; align-items: center; gap: 6px;">
+          <i class="fa-solid fa-graduation-cap"></i> Grade 4 Formula: How to write a 4-Mark Consequence
+        </strong>
+        <p style="margin: 0 0 8px 0; color: var(--text-main);">To get all 4 marks, write one clear paragraph with three parts:</p>
+        <ol style="margin: 0; padding-left: 20px; color: var(--text-muted); display: flex; flex-direction: column; gap: 4px;">
+          <li><strong>Point (1 Mark):</strong> Clearly state the consequence. (e.g., <em>"One consequence of the war was a change in the borders of the Middle East..."</em>)</li>
+          <li><strong>Evidence (1 Mark):</strong> Add specific names, dates, or statistics. (e.g., <em>"...where Israel captured 50% more land than originally planned in the UN Partition Plan."</em>)</li>
+          <li><strong>Explain (2 Marks):</strong> Explain what this led to or meant. (e.g., <em>"This meant that surrounding Arab states were left hostile, and it created a major refugee crisis as 700,000 Palestinians fled."</em>)</li>
+        </ol>
+      </div>
+    `;
+  }
+
+  if (vaultQuestionsToRender.length > 0) {
     vaultHtml = `
       <div class="exam-question-vault" style="max-width: 800px; margin: 0 auto 24px auto;">
         <h3 class="mastery-card-title" style="border: none; margin-bottom: 6px;">📝 Test Your Knowledge (Exam Question Vault)</h3>
         <p style="font-style: italic; margin-top: 0; margin-bottom: 16px; color: var(--text-muted);">
           Click each question to view the model response blueprint.
         </p>
+        ${formulaHtml}
         <div class="vault-items">
           ${vaultItemsHtml}
         </div>
@@ -976,9 +1007,75 @@ export function renderMasteryView(subtopicId) {
     `;
   }
 
+  let levelSelectorHtml = '';
+  let coreSupportHtml = '';
+  if (subtopicId === 'subtopic_1_1') {
+    const isCore = state.studyLevel === 'core';
+    levelSelectorHtml = `
+      <div class="study-level-selector" style="display: flex; background: rgba(0, 0, 0, 0.15); border: 1px solid var(--border-glass); padding: 4px; border-radius: 20px; width: fit-content; margin: 0 auto 24px auto; gap: 4px; box-shadow: var(--shadow-sm); position: relative; z-index: 10;">
+        <button class="level-toggle-btn ${isCore ? 'active' : ''}" data-level="core" style="border: none; background: ${isCore ? 'var(--primary)' : 'transparent'}; color: ${isCore ? 'var(--text-inverse)' : 'var(--text-muted)'}; font-weight: 700; font-size: 0.82rem; padding: 8px 18px; border-radius: 16px; cursor: pointer; transition: all var(--transition-fast); display: inline-flex; align-items: center; gap: 6px; box-shadow: ${isCore ? 'var(--shadow-primary)' : 'none'};">
+          <i class="fa-solid fa-graduation-cap"></i> Core Pass (Grade 4)
+        </button>
+        <button class="level-toggle-btn ${!isCore ? 'active' : ''}" data-level="mastery" style="border: none; background: ${!isCore ? 'var(--primary)' : 'transparent'}; color: ${!isCore ? 'var(--text-inverse)' : 'var(--text-muted)'}; font-weight: 700; font-size: 0.82rem; padding: 8px 18px; border-radius: 16px; cursor: pointer; transition: all var(--transition-fast); display: inline-flex; align-items: center; gap: 6px; box-shadow: ${!isCore ? 'var(--shadow-primary)' : 'none'};">
+          <i class="fa-solid fa-trophy"></i> Mastery (Grades 5-9)
+        </button>
+      </div>
+    `;
+
+    if (isCoreMode) {
+      coreSupportHtml = `
+        <div class="core-support-container" style="max-width: 800px; margin: 0 auto 24px auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+          
+          <!-- Vocabulary Glossary Card -->
+          <div class="mastery-card core-vocab-card" style="margin: 0; padding: 20px; border-left: 4px solid var(--secondary); background: rgba(6, 182, 212, 0.02); text-align: left;">
+            <h4 style="margin: 0 0 12px 0; font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700; color: var(--secondary); display: flex; align-items: center; gap: 8px; justify-content: flex-start;">
+              <i class="fa-solid fa-key"></i> Key Vocabulary Definitions
+            </h4>
+            <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 0.88rem; line-height: 1.45;">
+              <li><strong>Mandate:</strong> Official control given to a country (Britain) to rule an area (Palestine) until it is ready to govern itself.</li>
+              <li><strong>Zionism:</strong> The movement to create and protect a Jewish nation in Israel.</li>
+              <li><strong>Insurgency:</strong> A violent rebellion or fight against a ruling government or force.</li>
+              <li><strong>Partition:</strong> Splitting or dividing a country into separate pieces (in this case, Jewish and Arab areas).</li>
+              <li><strong>Armistice:</strong> An official agreement between enemies to stop fighting a war.</li>
+            </ul>
+          </div>
+
+          <!-- Vertical Timeline Card -->
+          <div class="mastery-card core-timeline-card" style="margin: 0; padding: 20px; border-left: 4px solid var(--accent); background: rgba(244, 63, 94, 0.02); text-align: left;">
+            <h4 style="margin: 0 0 12px 0; font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700; color: var(--accent); display: flex; align-items: center; gap: 8px; justify-content: flex-start;">
+              <i class="fa-solid fa-clock-rotate-left"></i> Core Timeline (1946–1949)
+            </h4>
+            <div style="display: flex; flex-direction: column; gap: 12px; font-size: 0.88rem; line-height: 1.4; position: relative; padding-left: 14px; border-left: 2px solid var(--border-glass);">
+              <div style="position: relative;">
+                <span style="position: absolute; left: -19px; top: 3px; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.25);"></span>
+                <strong style="color: var(--accent);">July 1946:</strong> <strong>King David Hotel Bombing</strong>. Jewish rebels attack British HQ, breaking British willpower to stay.
+              </div>
+              <div style="position: relative;">
+                <span style="position: absolute; left: -19px; top: 3px; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.25);"></span>
+                <strong style="color: var(--accent);">Nov 1947:</strong> <strong>UN Partition Plan</strong>. UN votes to split Palestine into Jewish and Arab states.
+              </div>
+              <div style="position: relative;">
+                <span style="position: absolute; left: -19px; top: 3px; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.25);"></span>
+                <strong style="color: var(--accent);">May 1948:</strong> <strong>Israel Created</strong>. British troops leave, and Israel immediately declares independence.
+              </div>
+              <div style="position: relative;">
+                <span style="position: absolute; left: -19px; top: 3px; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.25);"></span>
+                <strong style="color: var(--accent);">1948–1949:</strong> <strong>Arab-Israeli War</strong>. Five Arab nations invade; Israel wins and expands its territory.
+              </div>
+            </div>
+          </div>
+
+        </div>
+      `;
+    }
+  }
+
+  const displayHeaderIntro = isCoreMode ? (data.simplifiedHeaderIntro || data.headerIntro) : data.headerIntro;
+
   // Set the container innerHTML
   container.innerHTML = `
     ${wrappedDoNowHtml}
+    ${levelSelectorHtml}
 
     <!-- Header Card -->
     <div class="mastery-header-card" style="max-width: 800px; margin: 0 auto 24px auto;">
@@ -1001,13 +1098,16 @@ export function renderMasteryView(subtopicId) {
         </div>
       </div>
       <p class="mastery-header-intro" style="margin-bottom: ${videoHtml ? '16px' : '0'};">
-        ${data.headerIntro}
+        ${displayHeaderIntro}
       </p>
       ${videoHtml}
     </div>
 
     <!-- Specification Checklist Card -->
     ${renderSpecChecklistCard(subtopicId, SPEC_CHECKLIST_DATA[subtopicId])}
+
+    <!-- Core Pass Support Block (Vocab & Timeline) -->
+    ${coreSupportHtml}
 
     <!-- Going Beyond Connection Card -->
     ${renderGoingBeyondConnectionCard(subtopicId)}
@@ -1021,7 +1121,7 @@ export function renderMasteryView(subtopicId) {
         <span class="legend-highlight">Process Word</span> Legend: Underlined process words show cause and effect—use these in your exam answers!
       </div>
       <label class="toggle-wrapper" id="mastery-toggle-wrapper">
-        <span>🧠 Hard Mode (Hide Key Facts)</span>
+        <span>${isCoreMode ? '🧠 Practice Mode (Hide Key Facts)' : '🧠 Hard Mode (Hide Key Facts)'}</span>
         <div class="toggle-switch">
           <input type="checkbox" id="mastery-hard-mode-toggle">
           <span class="toggle-slider"></span>
@@ -1055,6 +1155,11 @@ export function renderMasteryView(subtopicId) {
       <button class="mastery-btn mastery-btn-success" id="btn-mark-mastery-mastered">
         ✓ Mark Topic ${subtopicId.replace('subtopic_', '').replace('_', '.')} as Mastered
       </button>
+    </div>
+
+    <!-- Temporary Debug info -->
+    <div style="max-width: 800px; margin: 20px auto; padding: 10px; background: #000; color: #00ff00; font-family: monospace; font-size: 0.8rem; border-radius: 4px; text-align: left; border: 1px solid #00ff00; z-index: 9999; position: relative;">
+      DEBUG: subtopicId="${subtopicId}" | studyLevel="${state.studyLevel}" | isCoreMode=${isCoreMode} | vaultCount=${vaultQuestionsToRender.length} | formulaHtmlLength=${formulaHtml ? formulaHtml.length : 0}
     </div>
   `;
 
@@ -1234,6 +1339,13 @@ export function renderMasteryView(subtopicId) {
     hardModeToggle.addEventListener('change', () => {
       AudioEngine.play('click');
       const isHard = hardModeToggle.checked;
+      
+      if (isHard) {
+        container.classList.add('hard-mode-active');
+      } else {
+        container.classList.remove('hard-mode-active');
+      }
+      
       const cardContents = container.querySelectorAll('.card-content');
       cardContents.forEach(content => {
         if (isHard) {
@@ -1245,6 +1357,18 @@ export function renderMasteryView(subtopicId) {
       setupHardModeKeywords(container);
     });
   }
+
+  // Bind Study Level Selector Toggles
+  const levelBtns = container.querySelectorAll('.level-toggle-btn');
+  levelBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      AudioEngine.play('click');
+      const level = btn.getAttribute('data-level');
+      console.log('=== Clicked Level Button ===', { level });
+      state.studyLevel = level;
+      renderMasteryView(subtopicId);
+    });
+  });
 
   // Bind keyword reveal clicks on hard-mode-blank
   container.addEventListener('click', (e) => {
@@ -1950,18 +2074,20 @@ function generateWorkbookHtml(subtopicId, style, density, includeAnswers, select
   if (!data) {
     return `<html><body><h3>Workbook pack not available for subtopic: ${subtopicId}</h3></body></html>`;
   }
+  const topicName = subtopicId.replace('subtopic_', '').replace('_', '.');
 
   const specList = SPEC_CHECKLIST_DATA[subtopicId] || [];
 
-  const detailsHtml = `
-    <table style="width: 100%; border-collapse: collapse; margin-bottom: 12px; font-family: Arial, sans-serif;">
-      <tr>
-        <td style="border: 1px solid #9ca3af; padding: 5px 8px; font-size: 8.5pt; width: 50%;"><strong>Student Name:</strong> ___________________________________</td>
-        <td style="border: 1px solid #9ca3af; padding: 5px 8px; font-size: 8.5pt; width: 25%;"><strong>Date:</strong> __________________</td>
-        <td style="border: 1px solid #9ca3af; padding: 5px 8px; font-size: 8.5pt; width: 25%;"><strong>Class:</strong> __________________</td>
-      </tr>
-    </table>
-  `;
+  const specBoxHtml = specList.length > 0 ? `
+    <div class="spec-box" style="border: 1px solid #d1d5db; padding: 6px 10px; margin-bottom: 10px; font-size: 7.5pt; background: #f9fafb; border-radius: 4px; line-height: 1.3; box-sizing: border-box; text-align: left;">
+      <strong style="text-transform: uppercase; font-size: 8pt; color: #111827; display: block; margin-bottom: 3px;">📋 Curriculum Specification Checklist (Pearson Edexcel)</strong>
+      <ul style="margin: 0; padding-left: 14px;">
+        ${specList.map(item => `<li style="margin: 0 0 2px 0; padding: 0;">${item.point}</li>`).join('')}
+      </ul>
+    </div>
+  ` : '';
+
+  const detailsHtml = '';
 
   if (style === 'booklet') {
     const narrativeHtml = data.narrative.map(sec => `
@@ -2445,14 +2571,8 @@ function generateWorkbookHtml(subtopicId, style, density, includeAnswers, select
 
   <!-- PAGE 1: NARRATIVE & TIMELINE -->
   <div class="print-page">
-    <h2 class="main-title">${data.title}</h2>
-
-    <div class="spec-box">
-      <strong>📋 Curriculum Specification Checklist</strong>
-      <ul>
-        ${specList.map(item => `<li style="margin: 0 0 2px 0; padding: 0;">${item.point}</li>`).join('')}
-      </ul>
-    </div>
+    <h2 class="main-title">Topic ${topicName}: ${data.title}</h2>
+    ${specBoxHtml}
 
     <div class="active-reading-box">
       <strong>✍️ Active Reading Focus:</strong> ${data.activeReadingFocus}
@@ -2824,8 +2944,8 @@ function generateWorkbookHtml(subtopicId, style, density, includeAnswers, select
 
     html += `
       <div class="print-page-last">
-        <h2 class="main-title">Guided Cloze Review: ${data.title}</h2>
-        ${detailsHtml}
+        <h2 class="main-title">Guided Cloze Review &bull; Topic ${topicName}: ${data.title}</h2>
+        ${specBoxHtml}
         <div style="border: 1px solid #111827; padding: 10px; margin-bottom: 15px; font-size: 9pt; background: #f9fafb;">
           <strong>Instructions:</strong> Read the passage below and fill in the blanks using the terms from the Word Bank at the bottom.
         </div>
@@ -2862,49 +2982,52 @@ function generateWorkbookHtml(subtopicId, style, density, includeAnswers, select
     const page2Cues = cues.slice(3);
 
     const renderCueRow = (cue) => `
-      <div class="print-cornell-row">
-        <div class="print-cornell-cues">
+      <tr class="print-cornell-row">
+        <td class="print-cornell-cues" style="width: 30%; border-right: 1.5px solid #111827; border-bottom: 1.5px solid #111827; padding: 10px; vertical-align: top; font-size: 8pt; font-weight: bold; background: #f9fafb;">
           ${cue.title}<br><br>
           <span style="font-size: 7.5pt; font-weight: normal; color: #4b5563;">
             ${cue.subCues.map(sc => `${sc}`).join('<br>')}
           </span>
-        </div>
-        <div class="print-cornell-notes">
+        </td>
+        <td class="print-cornell-notes" style="width: 70%; border-bottom: 1.5px solid #111827; padding: 10px; vertical-align: top; background: #ffffff;">
           ${fillNote(cue.modelNotes)}
-        </div>
-      </div>
+        </td>
+      </tr>
     `;
 
     html += `
       <div class="print-page">
-        <h2 class="main-title">Cornell Note-Taking: ${data.title}</h2>
-        ${detailsHtml}
+        <h2 class="main-title">Cornell Notes &bull; Topic ${topicName}: ${data.title}</h2>
+        ${specBoxHtml}
         <div style="border: 1px solid #111827; padding: 10px; margin-bottom: 10px; font-size: 8.5pt; background: #f9fafb;">
           <strong>Methodology:</strong> Use the left-hand column cues to guide your note-taking on the historical narrative. Re-read sections 1-3 to extract precise dates, groups, and motivations.
         </div>
 
-        <div class="print-cornell-grid">
-          ${page1Cues.map(renderCueRow).join('')}
-        </div>
+        <table class="print-cornell-grid" style="width: 100%; border-collapse: collapse; border: 1.5px solid #111827; margin-top: 10px; box-sizing: border-box;">
+          <tbody>
+            ${page1Cues.map(renderCueRow).join('')}
+          </tbody>
+        </table>
         
         <div class="footer-note">GCSE History Workbook &bull; Cornell Notes &bull; Page 1 of 2</div>
       </div>
 
       <div class="print-page-last">
-        <div class="print-cornell-grid">
-          ${page2Cues.map(renderCueRow).join('')}
-
-          <div class="print-cornell-summary-row">
-            <div class="print-cornell-summary-cell" style="border: 1.5px solid #111827;">
-              <strong>Synthesis Summary:</strong> ${data.cornell.synthesis.prompt}
-              ${includeAnswers ? `
-                <div style="font-size: 9.5pt; color: #16a34a; font-style: italic; margin-top: 8px;">
-                  <strong>Model Synthesis:</strong> ${data.cornell.synthesis.modelAnswer}
-                </div>
-              ` : makeDottedLines(6)}
-            </div>
-          </div>
-        </div>
+        <table class="print-cornell-grid" style="width: 100%; border-collapse: collapse; border: 1.5px solid #111827; margin-top: 10px; box-sizing: border-box;">
+          <tbody>
+            ${page2Cues.map(renderCueRow).join('')}
+            <tr class="print-cornell-summary-row">
+              <td class="print-cornell-summary-cell" colspan="2" style="padding: 10px; vertical-align: top; background: #f9fafb; font-size: 8.5pt; border-top: 1.5px solid #111827;">
+                <strong>Synthesis Summary:</strong> ${data.cornell.synthesis.prompt}
+                ${includeAnswers ? `
+                  <div style="font-size: 9.5pt; color: #16a34a; font-style: italic; margin-top: 8px;">
+                    <strong>Model Synthesis:</strong> ${data.cornell.synthesis.modelAnswer}
+                  </div>
+                ` : makeDottedLines(6)}
+              </td>
+            </tr>
+          </tbody>
+        </table>
 
         <div class="footer-note">GCSE History Workbook &bull; Cornell Notes &bull; Page 2 of 2</div>
       </div>
@@ -2951,8 +3074,8 @@ function generateWorkbookHtml(subtopicId, style, density, includeAnswers, select
 
     html += `
       <div class="print-page-last">
-        <h2 class="main-title">Graphic Organizer: ${data.title}</h2>
-        ${detailsHtml}
+        <h2 class="main-title">Graphic Organizer &bull; Topic ${topicName}: ${data.title}</h2>
+        ${specBoxHtml}
         <div style="border: 1px solid #111827; padding: 10px; margin-bottom: 10px; font-size: 8.5pt; background: #f9fafb;">
           <strong>Task 1: Causal Flowchart.</strong> In the boxes below, record the key causes, actions, and consequences for each turning point, tracing the chronology of the Mandate's collapse.
         </div>
@@ -3036,10 +3159,11 @@ function generateWorkbookHtml(subtopicId, style, density, includeAnswers, select
       }
       
       const isQuestionLast = qNum === selectedIndices.length - 1 && !includeAnswers;
+      const firstPageSpecHtml = qNum === 0 ? specBoxHtml : '';
       html += `
         <div class="${isQuestionLast ? 'print-page-last' : 'print-page'}">
-          <div class="main-title">GCSE Exam Practice: ${data.title}</div>
-          ${detailsHtml}
+          <div class="main-title">GCSE Exam Practice &bull; Topic ${topicName}: ${data.title}</div>
+          ${firstPageSpecHtml}
           <div style="font-size: 11pt; font-weight: bold; margin-bottom: 15px; border-bottom: 1.5px solid #111827; padding-bottom: 4px;">
             Question ${qNum + 1} [${marks} Marks]
           </div>
@@ -3064,7 +3188,7 @@ function generateWorkbookHtml(subtopicId, style, density, includeAnswers, select
         const isAnswerLast = qNum === selectedIndices.length - 1;
         html += `
           <div class="${isAnswerLast ? 'print-page-last' : 'print-page'}">
-            <div class="main-title">Teacher Answer Key &bull; Model Answer</div>
+            <div class="main-title">Teacher Answer Key &bull; Topic ${topicName}: Model Answer</div>
             <div style="font-size: 11pt; font-weight: bold; margin-bottom: 15px; border-bottom: 1.5px solid #111827; padding-bottom: 4px;">
               Model Answer for Question ${qNum + 1} [${marks} Marks]
             </div>

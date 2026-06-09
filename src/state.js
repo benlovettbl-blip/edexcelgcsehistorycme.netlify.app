@@ -8,6 +8,7 @@
 export const state = {
   currentView: 'dashboard',         // 'dashboard' | 'classic' | 'flashcards' | 'exam' | 'timeline' | 'bookmarks'
   selectedSubtopicId: null,         // Active sub-topic ID (e.g. 'subtopic_1_1')
+  studyLevel: 'mastery',            // 'mastery' | 'core' (Level 4 Pass mode)
   selectedKeyTopicId: null,          // Active Key Topic ID (e.g. 'topic_1')
   highlightGoingBeyondId: null,      // Active Going Beyond Card to scroll and glow (e.g. 'gb-jerusalem')
   currentMode: 'lessons',           // 'lessons' | 'classic' | 'flashcards' (sub-topic study modes)

@@ -8748,3 +8748,34 @@ details > summary::marker {
   }
 }
 
+/* Core Mode (Grade 4 Pass) Styling Overrides */
+.core-mode-active .gb-connection-wrapper-card,
+.core-mode-active .lesson-map-card,
+.core-mode-active .contemporary-source-card,
+.core-mode-active .dual-perspective-card,
+.core-mode-active .historian-interpretations-card,
+.core-mode-active .narrative-chain-container,
+.core-mode-active .revision-questions-card,
+.core-mode-active #mastery-quiz-card,
+.core-mode-active .importance-analyser-wrapper-card,
+.core-mode-active .legend-box {
+  display: none !important;
+}
+
+/* Bullet list styling in Core Mode */
+.core-mode-active .mastery-card-body ul {
+  padding-left: 20px;
+  margin: 12px 0;
+}
+
+.core-mode-active .mastery-card-body li {
+  margin-bottom: 12px;
+  line-height: 1.75;
+  font-size: 1.05rem;
+}
+
+.core-mode-active .mastery-card-body p {
+  line-height: 1.75;
+  font-size: 1.08rem;
+}
+
