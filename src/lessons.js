@@ -210,7 +210,7 @@ export function renderMasteryView(subtopicId) {
   const container = document.getElementById('mastery-content-container');
   if (!container) return;
 
-  const isCoreMode = (state.studyLevel === 'core' && subtopicId === 'subtopic_1_1');
+  const isCoreMode = (state.studyLevel === 'core');
   console.log('=== renderMasteryView ===', { subtopicId, studyLevel: state.studyLevel, isCoreMode });
   if (isCoreMode) {
     container.classList.add('core-mode-active');
@@ -723,92 +723,99 @@ export function renderMasteryView(subtopicId) {
   let vaultHtml = '';
   let formulaHtml = '';
   let scaffoldedPracticeHtml = '';
-  if (isCoreMode) {
+  if (isCoreMode && data.scaffoldedPractice) {
+    const sp = data.scaffoldedPractice;
+    let formulaTitle = '';
+    let formulaSteps = [];
+    if (sp.questionType === 'consequence') {
+      formulaTitle = 'Core Formula: How to write a 4-Mark Consequence';
+      formulaSteps = [
+        `<strong>Point (1 Mark):</strong> Clearly state the consequence. (e.g., <em>"One consequence was..."</em>)`,
+        `<strong>Evidence (1 Mark):</strong> Add specific facts, dates, or statistics.`,
+        `<strong>Explain (2 Marks):</strong> Explain what this led to or meant.`
+      ];
+    } else if (sp.questionType === 'narrative') {
+      formulaTitle = 'Core Formula: How to write a Narrative Account Paragraph';
+      formulaSteps = [
+        `<strong>Beginning (Point):</strong> State the first key event or cause of the sequence.`,
+        `<strong>Middle (Evidence/Link):</strong> Add specific details and link it to the next event.`,
+        `<strong>End (Explain/Outcome):</strong> Explain the final outcome or result.`
+      ];
+    } else if (sp.questionType === 'importance') {
+      formulaTitle = 'Core Formula: How to write an Importance Paragraph';
+      formulaSteps = [
+        `<strong>Point (1 Mark):</strong> State one reason why the factor/event was important.`,
+        `<strong>Evidence (1 Mark):</strong> Support this with specific historical facts and details.`,
+        `<strong>Explain (2 Marks):</strong> Explain how this impacted the wider outcome or course of events.`
+      ];
+    }
+
     formulaHtml = `
       <div style="background: rgba(16, 185, 129, 0.03); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: var(--border-radius-sm); padding: 14px 16px; margin-bottom: 18px; font-size: 0.88rem; line-height: 1.45; border-left: 4px solid var(--success); box-shadow: var(--shadow-sm); text-align: left;">
         <strong style="color: var(--success); font-family: var(--font-heading); display: flex; margin-bottom: 6px; font-size: 0.95rem; justify-content: flex-start; align-items: center; gap: 6px;">
-          <i class="fa-solid fa-graduation-cap"></i> Grade 4 Formula: How to write a 4-Mark Consequence
+          <i class="fa-solid fa-graduation-cap"></i> ${formulaTitle}
         </strong>
-        <p style="margin: 0 0 8px 0; color: var(--text-main);">To get all 4 marks, write one clear paragraph with three parts:</p>
+        <p style="margin: 0 0 8px 0; color: var(--text-main);">To write a strong paragraph, select these three parts in order:</p>
         <ol style="margin: 0; padding-left: 20px; color: var(--text-muted); display: flex; flex-direction: column; gap: 4px;">
-          <li><strong>Point (1 Mark):</strong> Clearly state the consequence. (e.g., <em>"One consequence of the war was a change in the borders of the Middle East..."</em>)</li>
-          <li><strong>Evidence (1 Mark):</strong> Add specific facts, dates, or statistics. (e.g., <em>"...where Israel captured 50% more land than originally planned in the UN Partition Plan."</em>)</li>
-          <li><strong>Explain (2 Marks):</strong> Explain what this led to or meant. (e.g., <em>"This meant that surrounding Arab states were left hostile, and it created a major refugee crisis as 700,000 Palestinians fled."</em>)</li>
+          ${formulaSteps.map(step => `<li>${step}</li>`).join('')}
         </ol>
       </div>
     `;
 
+    const stepsKeys = ['point', 'evidence', 'explain'];
+    const stepTitles = {
+      point: sp.questionType === 'narrative' ? 'Select the Beginning (Part 1)' : 'Select the Point (1 Mark)',
+      evidence: sp.questionType === 'narrative' ? 'Select the Middle / Link (Part 2)' : 'Select the Evidence (1 Mark)',
+      explain: sp.questionType === 'narrative' ? 'Select the End / Result (Part 3)' : 'Select the Explanation (2 Marks)'
+    };
+
+    let stepsBlocksHtml = '';
+    stepsKeys.forEach((key, idx) => {
+      const stepData = sp.steps[key];
+      const isFirst = idx === 0;
+      const opacity = isFirst ? '1' : '0.5';
+      const pointerEvents = isFirst ? 'auto' : 'none';
+
+      let optionsHtml = '';
+      stepData.options.forEach((opt, optIdx) => {
+        optionsHtml += `
+          <button class="scaffold-option-btn" data-step="${key}" data-correct="${opt.correct}" data-idx="${optIdx}" style="width: 100%; text-align: left; background: var(--bg-card); border: 1px solid var(--border-glass); color: var(--text-main); padding: 12px 16px; border-radius: var(--border-radius-sm); cursor: pointer; transition: all var(--transition-fast) ease; font-size: 0.85rem;">
+            ${opt.text}
+          </button>
+        `;
+      });
+
+      stepsBlocksHtml += `
+        <div class="scaffold-step-block" data-step="${key}" style="opacity: ${opacity}; pointer-events: ${pointerEvents}; transition: opacity 0.3s;">
+          <h4 style="margin: 0 0 10px 0; font-size: 0.92rem; color: var(--text-main); font-family: var(--font-heading); display: flex; align-items: center; gap: 8px;">
+            <span style="background: var(--primary); color: #fff; width: 20px; height: 20px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold;">${idx + 1}</span>
+            ${stepTitles[key]}
+          </h4>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            ${optionsHtml}
+          </div>
+        </div>
+      `;
+    });
+
+    const questionTypeBadge = sp.questionType.charAt(0).toUpperCase() + sp.questionType.slice(1);
+
     scaffoldedPracticeHtml = `
       <div class="mastery-card scaffold-practice-card" style="max-width: 800px; margin: 0 auto 24px auto; border-left: 4px solid var(--primary); background: rgba(168, 85, 247, 0.01); text-align: left;">
         <h3 class="mastery-card-title" style="display: flex; align-items: center; gap: 8px; border: none; margin-bottom: 6px;">
-          <i class="fa-solid fa-cubes" style="color: var(--primary);"></i> 🛠️ Grade 4 Exam Practice: 4-Mark Paragraph Builder
+          <i class="fa-solid fa-cubes" style="color: var(--primary);"></i> 🛠️ Scaffolded Practice: ${questionTypeBadge} Paragraph Builder
         </h3>
         <p style="font-style: italic; margin-top: 0; margin-bottom: 20px; color: var(--text-muted); font-size: 0.85rem;">
-          Build a model answer to the exam question below by selecting the correct Point, Evidence, and Explanation blocks in order.
+          Build a model answer to the exam question below by selecting the correct blocks in order.
         </p>
         
         <div style="background: rgba(0, 0, 0, 0.15); border: 1px solid var(--border-glass); border-radius: var(--border-radius-sm); padding: 16px; margin-bottom: 20px;">
           <strong style="color: var(--accent); display: block; font-size: 0.75rem; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 0.5px;">Exam Question:</strong>
-          <span style="font-size: 1.05rem; font-weight: 700; color: var(--text-main);">Explain one consequence of the King David Hotel bombing (1946). (4 marks)</span>
+          <span style="font-size: 1.05rem; font-weight: 700; color: var(--text-main);">${sp.questionText}</span>
         </div>
 
         <div class="scaffold-steps-container" style="display: flex; flex-direction: column; gap: 20px;">
-          <!-- Step 1: Point -->
-          <div class="scaffold-step-block" data-step="point">
-            <h4 style="margin: 0 0 10px 0; font-size: 0.92rem; color: var(--text-main); font-family: var(--font-heading); display: flex; align-items: center; gap: 8px;">
-              <span style="background: var(--primary); color: #fff; width: 20px; height: 20px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold;">1</span>
-              Select the Point (1 Mark)
-            </h4>
-            <div style="display: flex; flex-direction: column; gap: 8px;">
-              <button class="scaffold-option-btn" data-step="point" data-correct="false" data-idx="0" style="width: 100%; text-align: left; background: var(--bg-card); border: 1px solid var(--border-glass); color: var(--text-main); padding: 12px 16px; border-radius: var(--border-radius-sm); cursor: pointer; transition: all var(--transition-fast) ease; font-size: 0.85rem;">
-                A. Britain decided to launch a counter-offensive to occupy the neighboring Arab nations.
-              </button>
-              <button class="scaffold-option-btn" data-step="point" data-correct="true" data-idx="1" style="width: 100%; text-align: left; background: var(--bg-card); border: 1px solid var(--border-glass); color: var(--text-main); padding: 12px 16px; border-radius: var(--border-radius-sm); cursor: pointer; transition: all var(--transition-fast) ease; font-size: 0.85rem;">
-                B. One consequence of the bombing of the King David Hotel was that it shattered British political resolve to govern Palestine.
-              </button>
-              <button class="scaffold-option-btn" data-step="point" data-correct="false" data-idx="2" style="width: 100%; text-align: left; background: var(--bg-card); border: 1px solid var(--border-glass); color: var(--text-main); padding: 12px 16px; border-radius: var(--border-radius-sm); cursor: pointer; transition: all var(--transition-fast) ease; font-size: 0.85rem;">
-                C. One consequence was that it led to the immediate signature of the Camp David Accords.
-              </button>
-            </div>
-          </div>
-
-          <!-- Step 2: Evidence -->
-          <div class="scaffold-step-block" data-step="evidence" style="opacity: 0.5; pointer-events: none; transition: opacity 0.3s;">
-            <h4 style="margin: 0 0 10px 0; font-size: 0.92rem; color: var(--text-main); font-family: var(--font-heading); display: flex; align-items: center; gap: 8px;">
-              <span style="background: var(--primary); color: #fff; width: 20px; height: 20px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold;">2</span>
-              Select the Evidence (1 Mark)
-            </h4>
-            <div style="display: flex; flex-direction: column; gap: 8px;">
-              <button class="scaffold-option-btn" data-step="evidence" data-correct="false" data-idx="0" style="width: 100%; text-align: left; background: var(--bg-card); border: 1px solid var(--border-glass); color: var(--text-main); padding: 12px 16px; border-radius: var(--border-radius-sm); cursor: pointer; transition: all var(--transition-fast) ease; font-size: 0.85rem;">
-                A. For example, the United Nations voted in November 1947 to divide Palestine into two states.
-              </button>
-              <button class="scaffold-option-btn" data-step="evidence" data-correct="true" data-idx="1" style="width: 100%; text-align: left; background: var(--bg-card); border: 1px solid var(--border-glass); color: var(--text-main); padding: 12px 16px; border-radius: var(--border-radius-sm); cursor: pointer; transition: all var(--transition-fast) ease; font-size: 0.85rem;">
-                B. Specifically, the attack on 22 July 1946 by the Irgun killed 91 people, devastating their administrative headquarters.
-              </button>
-              <button class="scaffold-option-btn" data-step="evidence" data-correct="false" data-idx="2" style="width: 100%; text-align: left; background: var(--bg-card); border: 1px solid var(--border-glass); color: var(--text-main); padding: 12px 16px; border-radius: var(--border-radius-sm); cursor: pointer; transition: all var(--transition-fast) ease; font-size: 0.85rem;">
-                C. Specifically, President Harry Truman demanded the immediate entry of 100,000 Jewish refugees.
-              </button>
-            </div>
-          </div>
-
-          <!-- Step 3: Explanation -->
-          <div class="scaffold-step-block" data-step="explain" style="opacity: 0.5; pointer-events: none; transition: opacity 0.3s;">
-            <h4 style="margin: 0 0 10px 0; font-size: 0.92rem; color: var(--text-main); font-family: var(--font-heading); display: flex; align-items: center; gap: 8px;">
-              <span style="background: var(--primary); color: #fff; width: 20px; height: 20px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold;">3</span>
-              Select the Explanation (2 Marks)
-            </h4>
-            <div style="display: flex; flex-direction: column; gap: 8px;">
-              <button class="scaffold-option-btn" data-step="explain" data-correct="false" data-idx="0" style="width: 100%; text-align: left; background: var(--bg-card); border: 1px solid var(--border-glass); color: var(--text-main); padding: 12px 16px; border-radius: var(--border-radius-sm); cursor: pointer; transition: all var(--transition-fast) ease; font-size: 0.85rem;">
-                A. This meant that Egypt immediately blockaded the Straits of Tiran, halting all international trade.
-              </button>
-              <button class="scaffold-option-btn" data-step="explain" data-correct="true" data-idx="1" style="width: 100%; text-align: left; background: var(--bg-card); border: 1px solid var(--border-glass); color: var(--text-main); padding: 12px 16px; border-radius: var(--border-radius-sm); cursor: pointer; transition: all var(--transition-fast) ease; font-size: 0.85rem;">
-                B. This massive loss of life and security breach convinced an exhausted British government that maintaining the mandate was too dangerous and expensive, prompting them to refer the problem to the United Nations and withdraw.
-              </button>
-              <button class="scaffold-option-btn" data-step="explain" data-correct="false" data-idx="2" style="width: 100%; text-align: left; background: var(--bg-card); border: 1px solid var(--border-glass); color: var(--text-main); padding: 12px 16px; border-radius: var(--border-radius-sm); cursor: pointer; transition: all var(--transition-fast) ease; font-size: 0.85rem;">
-                C. This resulted in the Israeli Defence Forces being consolidated into a single unified national military under David Ben-Gurion.
-              </button>
-            </div>
-          </div>
+          ${stepsBlocksHtml}
         </div>
 
         <!-- Feedback & Preview Area -->
@@ -821,7 +828,7 @@ export function renderMasteryView(subtopicId) {
           <div class="scaffold-success-feedback" style="display: none; padding: 16px; background: rgba(34, 197, 94, 0.05); border-left: 4px solid var(--success); border-radius: 0 var(--border-radius-sm) var(--border-radius-sm) 0;">
             <strong style="color: var(--success); display: block; font-size: 1rem; margin-bottom: 6px;">✓ Paragraph Completed Successfully! (+10 XP)</strong>
             <p style="margin: 0 0 10px 0; font-size: 0.85rem; color: var(--text-muted); line-height: 1.45;">
-              <strong>Examiner Commentary:</strong> Excellent building! You\'ve structured a perfect 4-mark response. Notice how the response connects a clear consequence (loss of British resolve) to solid evidence (July 1946 bombing, 91 deaths) and then explains the ultimate impact (withdrawal and UN referral).
+              <strong>Examiner Commentary:</strong> ${sp.commentary}
             </p>
           </div>
         </div>
@@ -1100,65 +1107,63 @@ export function renderMasteryView(subtopicId) {
 
   let levelSelectorHtml = '';
   let coreSupportHtml = '';
-  if (subtopicId === 'subtopic_1_1') {
-    const isCore = state.studyLevel === 'core';
-    levelSelectorHtml = `
-      <div class="study-level-selector" style="display: flex; background: rgba(0, 0, 0, 0.15); border: 1px solid var(--border-glass); padding: 4px; border-radius: 20px; width: fit-content; margin: 0 auto 24px auto; gap: 4px; box-shadow: var(--shadow-sm); position: relative; z-index: 10;">
-        <button class="level-toggle-btn ${isCore ? 'active' : ''}" data-level="core" style="border: none; background: ${isCore ? 'var(--primary)' : 'transparent'}; color: ${isCore ? 'var(--text-inverse)' : 'var(--text-muted)'}; font-weight: 700; font-size: 0.82rem; padding: 8px 18px; border-radius: 16px; cursor: pointer; transition: all var(--transition-fast); display: inline-flex; align-items: center; gap: 6px; box-shadow: ${isCore ? 'var(--shadow-primary)' : 'none'};">
-          <i class="fa-solid fa-graduation-cap"></i> Core Pass (Grade 4)
-        </button>
-        <button class="level-toggle-btn ${!isCore ? 'active' : ''}" data-level="mastery" style="border: none; background: ${!isCore ? 'var(--primary)' : 'transparent'}; color: ${!isCore ? 'var(--text-inverse)' : 'var(--text-muted)'}; font-weight: 700; font-size: 0.82rem; padding: 8px 18px; border-radius: 16px; cursor: pointer; transition: all var(--transition-fast); display: inline-flex; align-items: center; gap: 6px; box-shadow: ${!isCore ? 'var(--shadow-primary)' : 'none'};">
-          <i class="fa-solid fa-trophy"></i> Mastery (Grades 5-9)
-        </button>
-      </div>
-    `;
+  const isCore = state.studyLevel === 'core';
+  levelSelectorHtml = `
+    <div class="study-level-selector" style="display: flex; background: rgba(0, 0, 0, 0.15); border: 1px solid var(--border-glass); padding: 4px; border-radius: 20px; width: fit-content; margin: 0 auto 24px auto; gap: 4px; box-shadow: var(--shadow-sm); position: relative; z-index: 10;">
+      <button class="level-toggle-btn ${isCore ? 'active' : ''}" data-level="core" style="border: none; background: ${isCore ? 'var(--primary)' : 'transparent'}; color: ${isCore ? 'var(--text-inverse)' : 'var(--text-muted)'}; font-weight: 700; font-size: 0.82rem; padding: 8px 18px; border-radius: 16px; cursor: pointer; transition: all var(--transition-fast); display: inline-flex; align-items: center; gap: 6px; box-shadow: ${isCore ? 'var(--shadow-primary)' : 'none'};">
+        <i class="fa-solid fa-graduation-cap"></i> Core Lesson
+      </button>
+      <button class="level-toggle-btn ${!isCore ? 'active' : ''}" data-level="mastery" style="border: none; background: ${!isCore ? 'var(--primary)' : 'transparent'}; color: ${!isCore ? 'var(--text-inverse)' : 'var(--text-muted)'}; font-weight: 700; font-size: 0.82rem; padding: 8px 18px; border-radius: 16px; cursor: pointer; transition: all var(--transition-fast); display: inline-flex; align-items: center; gap: 6px; box-shadow: ${!isCore ? 'var(--shadow-primary)' : 'none'};">
+        <i class="fa-solid fa-trophy"></i> Mastery
+      </button>
+    </div>
+  `;
 
-    if (isCoreMode) {
-      coreSupportHtml = `
-        <div class="core-support-container" style="max-width: 800px; margin: 0 auto 24px auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
-          
-          <!-- Vocabulary Glossary Card -->
-          <div class="mastery-card core-vocab-card" style="margin: 0; padding: 20px; border-left: 4px solid var(--secondary); background: rgba(6, 182, 212, 0.02); text-align: left;">
-            <h4 style="margin: 0 0 12px 0; font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700; color: var(--secondary); display: flex; align-items: center; gap: 8px; justify-content: flex-start;">
-              <i class="fa-solid fa-key"></i> Key Vocabulary Definitions
-            </h4>
-            <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 0.88rem; line-height: 1.45;">
-              <li><strong>Mandate:</strong> Official control given to a country (Britain) to rule an area (Palestine) until it is ready to govern itself.</li>
-              <li><strong>Zionism:</strong> The movement to create and protect a Jewish nation in Israel.</li>
-              <li><strong>Insurgency:</strong> A violent rebellion or fight against a ruling government or force.</li>
-              <li><strong>Partition:</strong> Splitting or dividing a country into separate pieces (in this case, Jewish and Arab areas).</li>
-              <li><strong>Armistice:</strong> An official agreement between enemies to stop fighting a war.</li>
-            </ul>
-          </div>
-
-          <!-- Vertical Timeline Card -->
-          <div class="mastery-card core-timeline-card" style="margin: 0; padding: 20px; border-left: 4px solid var(--accent); background: rgba(244, 63, 94, 0.02); text-align: left;">
-            <h4 style="margin: 0 0 12px 0; font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700; color: var(--accent); display: flex; align-items: center; gap: 8px; justify-content: flex-start;">
-              <i class="fa-solid fa-clock-rotate-left"></i> Core Timeline (1946–1949)
-            </h4>
-            <div style="display: flex; flex-direction: column; gap: 12px; font-size: 0.88rem; line-height: 1.4; position: relative; padding-left: 14px; border-left: 2px solid var(--border-glass);">
-              <div style="position: relative;">
-                <span style="position: absolute; left: -19px; top: 3px; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.25);"></span>
-                <strong style="color: var(--accent);">July 1946:</strong> <strong>King David Hotel Bombing</strong>. Jewish rebels attack British HQ, breaking British willpower to stay.
-              </div>
-              <div style="position: relative;">
-                <span style="position: absolute; left: -19px; top: 3px; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.25);"></span>
-                <strong style="color: var(--accent);">Nov 1947:</strong> <strong>UN Partition Plan</strong>. UN votes to split Palestine into Jewish and Arab states.
-              </div>
-              <div style="position: relative;">
-                <span style="position: absolute; left: -19px; top: 3px; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.25);"></span>
-                <strong style="color: var(--accent);">May 1948:</strong> <strong>Israel Created</strong>. British troops leave, and Israel immediately declares independence.
-              </div>
-              <div style="position: relative;">
-                <span style="position: absolute; left: -19px; top: 3px; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.25);"></span>
-                <strong style="color: var(--accent);">1948–1949:</strong> <strong>Arab-Israeli War</strong>. Five Arab nations invade; Israel wins and expands its territory.
-              </div>
-            </div>
-          </div>
-
+  if (isCoreMode && data.coreSupport) {
+    const cs = data.coreSupport;
+    let vocabListHtml = '';
+    if (cs.vocab && cs.vocab.length > 0) {
+      const vocabItems = cs.vocab.map(v => `
+        <li><strong>${v.word}:</strong> ${v.definition}</li>
+      `).join('');
+      vocabListHtml = `
+        <div class="mastery-card core-vocab-card" style="margin: 0; padding: 20px; border-left: 4px solid var(--secondary); background: rgba(6, 182, 212, 0.02); text-align: left;">
+          <h4 style="margin: 0 0 12px 0; font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700; color: var(--secondary); display: flex; align-items: center; gap: 8px; justify-content: flex-start;">
+            <i class="fa-solid fa-key"></i> Key Vocabulary Definitions
+          </h4>
+          <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 0.88rem; line-height: 1.45;">
+            ${vocabItems}
+          </ul>
         </div>
       `;
     }
+
+    let timelineListHtml = '';
+    if (cs.timeline && cs.timeline.length > 0) {
+      const timelineItems = cs.timeline.map(t => `
+        <div style="position: relative;">
+          <span style="position: absolute; left: -19px; top: 3px; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.25);"></span>
+          <strong style="color: var(--accent);">${t.date}:</strong> <strong>${t.event}</strong>. ${t.description}
+        </div>
+      `).join('');
+      timelineListHtml = `
+        <div class="mastery-card core-timeline-card" style="margin: 0; padding: 20px; border-left: 4px solid var(--accent); background: rgba(244, 63, 94, 0.02); text-align: left;">
+          <h4 style="margin: 0 0 12px 0; font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700; color: var(--accent); display: flex; align-items: center; gap: 8px; justify-content: flex-start;">
+            <i class="fa-solid fa-clock-rotate-left"></i> Core Timeline
+          </h4>
+          <div style="display: flex; flex-direction: column; gap: 12px; font-size: 0.88rem; line-height: 1.4; position: relative; padding-left: 14px; border-left: 2px solid var(--border-glass);">
+            ${timelineItems}
+          </div>
+        </div>
+      `;
+    }
+
+    coreSupportHtml = `
+      <div class="core-support-container" style="max-width: 800px; margin: 0 auto 24px auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+        ${vocabListHtml}
+        ${timelineListHtml}
+      </div>
+    `;
   }
 
   const displayHeaderIntro = isCoreMode ? (data.simplifiedHeaderIntro || data.headerIntro) : data.headerIntro;
@@ -1197,7 +1202,7 @@ export function renderMasteryView(subtopicId) {
     <!-- Specification Checklist Card -->
     ${renderSpecChecklistCard(subtopicId, SPEC_CHECKLIST_DATA[subtopicId])}
 
-    <!-- Core Pass Support Block (Vocab & Timeline) -->
+    <!-- Core Support Block (Vocab & Timeline) -->
     ${coreSupportHtml}
 
     <!-- Going Beyond Connection Card -->
