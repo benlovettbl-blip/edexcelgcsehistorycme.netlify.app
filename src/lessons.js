@@ -1808,7 +1808,7 @@ export function renderMasteryView(subtopicId) {
             btn.style.background = 'rgba(16, 185, 129, 0.05)';
             
             // Clean text of prefix "A. ", "B. ", "C. "
-            const textContent = btn.innerText.replace(/^[A-C]\.\s+/, '');
+            const textContent = btn.textContent.trim().replace(/^[A-C]\.\s+/, '');
             answers[step] = textContent;
             
             // Unlock next step
