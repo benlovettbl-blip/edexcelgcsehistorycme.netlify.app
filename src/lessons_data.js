@@ -347,6 +347,10 @@ export const LESSONS_DATA = {
       {
         "question": "Explain the importance of the refugee status of Palestinian Arabs for Israel's relations with Egypt (8 marks).",
         "answer": "<strong>Model Answer:</strong> The refugee status of Palestinian Arabs was highly important for Israel's relations with Egypt because it created a permanent source of violent border conflict between the two nations. Following the 1948-49 war, hundreds of thousands of displaced Palestinians fled into the Gaza Strip, which was under Egyptian military control, living in squalid and overcrowded refugee camps. Driven by desperation and a desire to reclaim their lost land, many of these refugees formed militant fedayeen groups and began launching frequent raids across the border into Israeli territory to attack civilian settlements, operations which the Egyptian government often supported and encouraged. Therefore, the refugee status of Palestinian Arabs was important for Israel's relations with Egypt because it resulted in a constant wave of cross-border fedayeen terrorism that severely poisoned diplomatic ties and provoked harsh Israeli military reprisals.<br><br>Additionally, the refugee status of Palestinian Arabs was important for Israel's relations with Egypt because it provided Egypt with a powerful political justification to wage a continuous economic war against Israel. Refusing to recognise the Jewish state due to its displacement of the Arab population, Egypt weaponised the Palestinian refugee crisis to rally the wider Arab world and maintain a strict anti-Israel boycott. This culminated in Egypt aggressively blocking Israeli ships and goods from using the Suez Canal and the Straits of Tiran. Consequently, the refugee status of Palestinian Arabs was crucially important for Israel's relations with Egypt because Egypt used the unresolved displacement of these refugees as the moral and political excuse to legally and economically blockade Israel, destroying any chance of peaceful post-war coexistence."
+      },
+      {
+        "question": "Write a narrative account of the 1948–49 war. (8 marks)",
+        "answer": "<strong>Model Narrative:</strong> The narrative begins in May 1948, when the British Mandate ended and Israel declared its independence, prompting an immediate invasion by five invading Arab armies that initially put the Jewish state under severe pressure. During a crucial UN-mandated ceasefire in June 1948, Israel reorganized its forces, secretly imported modern weapons from Czechoslovakia, and consolidated pre-war militias into a unified national army: the Israeli Defence Forces (IDF). This reorganization enabled the IDF to launch successful counter-offensives when fighting resumed, ultimately securing Israel's survival, expanding its borders to cover 79% of mandate Palestine, and displacing over 700,000 Palestinian Arabs."
       }
     ],
     "doNowStarter": {
@@ -452,20 +456,20 @@ export const LESSONS_DATA = {
     },
     "scaffoldedPractice": {
       "questionType": "narrative",
-      "questionText": "Write a narrative account of the creation of the Israeli Defence Forces and the Law of Return. (8 marks)",
+      "questionText": "Write a narrative account of the 1948–49 war. (Focus: The Ceasefire & Reorganisation) (8 marks)",
       "steps": {
         "point": {
           "options": [
             {
-              "text": "A. The creation of the IDF began when the UN sent peacekeepers to partition Palestine in 1948.",
+              "text": "A. One consequence of the war was that it led to the immediate signing of the Camp David Accords.",
               "correct": false
             },
             {
-              "text": "B. In May 1948, during the early stages of the Arab-Israeli War, Prime Minister David Ben-Gurion ordered the merger of underground militias (Haganah, Irgun, and Lehi) to create a single national army: the Israeli Defence Forces (IDF).",
+              "text": "B. The war began when five Arab nations invaded Israel in May 1948, but a crucial UN-mandated ceasefire in June 1948 changed the course of the conflict.",
               "correct": true
             },
             {
-              "text": "C. The IDF was created as a joint military force between Israel and Egypt.",
+              "text": "C. The conflict started with the Balfour Declaration being rejected by Arab leaders.",
               "correct": false
             }
           ]
@@ -473,15 +477,15 @@ export const LESSONS_DATA = {
         "evidence": {
           "options": [
             {
-              "text": "A. To maintain the army, Israel signed the Camp David Accords and received Soviet troops.",
+              "text": "A. For example, British forces withdrew completely and handed control over to the United Nations.",
               "correct": false
             },
             {
-              "text": "B. To maintain this army and protect the state's vulnerable borders, Israel introduced universal conscription, and in July 1950 passed the Law of Return, granting any Jew worldwide the right to settle and gain immediate citizenship.",
+              "text": "B. During this truce, Israel secretly imported modern weapons from Czechoslovakia and consolidated rival militias into the unified IDF.",
               "correct": true
             },
             {
-              "text": "C. To maintain the army, the IDF banned all Jewish immigration to prevent economic strain.",
+              "text": "C. During the ceasefire, Egypt signed an armistice returning the Gaza Strip to Israeli control.",
               "correct": false
             }
           ]
@@ -489,21 +493,21 @@ export const LESSONS_DATA = {
         "explain": {
           "options": [
             {
-              "text": "A. This resulted in Israel returning all captured lands to Jordan.",
+              "text": "A. This meant that the Suez Canal was nationalized by Egypt.",
               "correct": false
             },
             {
-              "text": "B. This meant that a massive wave of Jewish immigrants doubled the state's population in three years, which strained the economy but successfully consolidated the demographic and military manpower needed to secure the state's survival.",
+              "text": "B. This allowed the reinforced IDF to launch successful counter-offensives when fighting resumed, ultimately securing Israel's survival and expanding its territory by 50% more than the UN plan.",
               "correct": true
             },
             {
-              "text": "C. This led to the immediate creation of the state of Palestine.",
+              "text": "C. This resulted in the United States cutting all financial aid to the new state of Israel.",
               "correct": false
             }
           ]
         }
       },
-      "commentary": "Superb narrative writing! You've traced the sequence of consolidating the new state. Merging the militias to form the IDF during the war (beginning) led to universal conscription and the passage of the Law of Return in 1950 (middle), which demographically secured the manpower needed for the state's defense (end)."
+      "commentary": "Excellent work! You have constructed a strong narrative sequence. Notice how the ceasefire acts as a key turning point that connects the initial invasion (beginning) to the reorganisation and Czech arms deals (middle), leading to the final victory and territorial expansion (end)."
     }
   },
   "subtopic_1_3": {
@@ -875,6 +879,10 @@ export const LESSONS_DATA = {
       {
         "question": "Explain the importance of the events of 7 April 1967 for escalating tension between Israel, Syria and Jordan (8 marks).",
         "answer": "<strong>Model Answer:</strong> The events of 7 April 1967 were highly important for escalating tension because they resulted in a massive and highly visible military humiliation for Syria. What began as a localized dispute over an Israeli tractor farming in the demilitarised zone rapidly spiralled into a fierce aerial dogfight between the two nations. During the battle, the superior Israeli Air Force shot down six Syrian MiG fighter jets and boldly flew its planes low over the Syrian capital of Damascus to demonstrate its absolute military dominance. Therefore, the events of 7 April 1967 were important for escalating tension because the devastating loss of aircraft and the brazen flight over Damascus publicly embarrassed the Syrian government, fueling their desire for immediate military revenge.<br><br>Additionally, the events of 7 April 1967 were important because they forced the Soviet Union and Egypt to become more directly involved in the worsening border crisis. Because Syria was a key Cold War ally of the USSR and had signed a mutual defence pact with Egypt the previous year, the humiliating defeat in the sky made both Moscow and Cairo fear that the Syrian regime might collapse under Israeli military pressure. This directly motivated the Soviet Union to issue its false intelligence report in May about an Israeli troop buildup, which in turn prompted Nasser to mobilize his forces. Consequently, the events of 7 April 1967 were crucially important for escalating tension because the sheer scale of the Syrian defeat acted as a catalyst that dragged Egypt and the Soviet Union directly into the border conflict, setting off the final chain of escalations."
+      },
+      {
+        "question": "Write a narrative account of the Six-Day War (1967). (8 marks)",
+        "answer": "<strong>Model Narrative:</strong> The war began on the morning of 5 June 1967 when Israel, believing an invasion was imminent, launched a devastating pre-emptive airstrike (Operation Focus) that destroyed 338 Egyptian fighter planes on the ground, securing total air supremacy in the opening hours.<br><br>With complete control of the skies, the Israeli Defence Forces (IDF) launched a rapid ground offensive, quickly routing the Egyptian army in the Sinai Peninsula and capturing the Gaza Strip, before turning to engage Jordanian and Syrian forces who had entered the fighting.<br><br>The war ended on 10 June 1967 with a ceasefire, culminating in a total Israeli victory that resulted in the occupation of East Jerusalem, the West Bank, the Sinai Peninsula, and the Golan Heights, thereby redrawing the map of the Middle East and locking both sides into a cycle of occupation and resistance."
       }
     ],
     "doNowStarter": {
@@ -979,21 +987,21 @@ export const LESSONS_DATA = {
       ]
     },
     "scaffoldedPractice": {
-      "questionType": "consequence",
-      "questionText": "Explain one consequence of the Israeli raid on Samu (1966). (4 marks)",
+      "questionType": "narrative",
+      "questionText": "Write a narrative account of the Six-Day War (1967). (8 marks)",
       "steps": {
         "point": {
           "options": [
             {
-              "text": "A. One consequence of the raid on Samu was the signing of the Oslo Accords.",
+              "text": "A. The Six-Day War began when Egypt and Syria signed a peace treaty in 1967.",
               "correct": false
             },
             {
-              "text": "B. One consequence of the Israeli raid on Samu was a major escalation of political and military tension between Israel and Jordan.",
+              "text": "B. The war began on the morning of 5 June 1967 when Israel launched a pre-emptive airstrike (Operation Focus) that destroyed the Egyptian air force on the ground, securing complete air supremacy.",
               "correct": true
             },
             {
-              "text": "C. One consequence was that Jordan immediately declared war on Syria.",
+              "text": "C. The war began with a UN resolution partitioning the Sinai Peninsula.",
               "correct": false
             }
           ]
@@ -1001,15 +1009,15 @@ export const LESSONS_DATA = {
         "evidence": {
           "options": [
             {
-              "text": "A. Specifically, Jordan and Israel signed a permanent peace treaty the following week.",
+              "text": "A. Specifically, Jordan immediately withdrew from East Jerusalem to avoid any combat.",
               "correct": false
             },
             {
-              "text": "B. Specifically, in November 1966, after Fatah landmine attacks, the IDF launched a massive raid on the West Bank village of Samu, destroying homes and clashing with the Jordanian army, leading to numerous Jordanian casualties.",
+              "text": "B. This air dominance allowed the IDF to launch a rapid ground offensive, quickly defeating the Egyptian army in the Sinai Peninsula and capturing the Gaza Strip, before turning to fight Jordan and Syria.",
               "correct": true
             },
             {
-              "text": "C. Specifically, the United States cut off all economic aid to Israel to punish them.",
+              "text": "C. Specifically, the Soviet Union sent troops to establish a buffer zone in Sinai.",
               "correct": false
             }
           ]
@@ -1017,21 +1025,21 @@ export const LESSONS_DATA = {
         "explain": {
           "options": [
             {
-              "text": "A. This resulted in Egypt withdrawing all military forces from the Sinai Peninsula.",
+              "text": "A. This resulted in Israel returning all captured territories within a week.",
               "correct": false
             },
             {
-              "text": "B. This meant that King Hussein of Jordan felt deeply betrayed by Israel (with whom he had secret security agreements) and faced massive internal protests from West Bank Palestinians, forcing Jordan to sign a mutual defense pact with Egypt in May 1967, which directly paved the way for the Six-Day War.",
+              "text": "B. The war ended on 10 June 1967 with a ceasefire, resulting in a total Israeli victory and the occupation of East Jerusalem, the West Bank, Gaza, Sinai, and the Golan Heights, which completely transformed the map and balance of power.",
               "correct": true
             },
             {
-              "text": "C. This meant that Fatah was completely disbanded and ceased all militancy.",
+              "text": "C. This led to the immediate creation of a fully independent Palestinian state.",
               "correct": false
             }
           ]
         }
       },
-      "commentary": "Great work! This response demonstrates how the raid on Samu escalated tensions by destroying trust between Israel and Jordan and provoking protests that pressured King Hussein into a defensive alliance with Nasser, directly contributing to the outbreak of the 1967 war."
+      "commentary": "Excellent narrative sequence! You've traced the Six-Day War from the initial pre-emptive air strike (beginning) through the IDF ground offensives (middle), culminating in the ceasefire and the capture of the occupied territories (end)."
     }
   },
   "subtopic_2_2": {
@@ -1353,6 +1361,10 @@ export const LESSONS_DATA = {
         "question": "Write a narrative account analysing key events of the Yom Kippur War (1973) and its aftermath. (8 marks)",
         "answer": "<strong>Model Narrative:</strong> <strong>Paragraph 1: The Surprise Arab Offensive (October 1973)</strong><br>The war began on 6 October 1973 when Egypt and Syria launched a coordinated surprise attack on Israel during the holy day of Yom Kippur, aiming to reclaim the occupied territories lost in 1967. <strong>As a result of</strong> the surprise assault, Egyptian forces successfully crossed the Suez Canal and breached the Bar-Lev Line, while Syrian tanks swept across the Golan Heights. <strong>This led to</strong> a critical military crisis for Israel, which was caught unprepared, prompting an immediate mobilization of its reserves and an urgent request for international assistance.<br><br><strong>Paragraph 2: Superpower Intervention and Counter-Offensives (October 1973)</strong><br><strong>This military escalation culminated in</strong> direct involvement by the USA and the USSR, turning the conflict into a Cold War proxy struggle. The Soviet Union began airlifting heavy weapons to supply the Arab armies, which <strong>consequently prompted</strong> US President Nixon to launch a massive arms airlift (Operation Nickel Grass) to resupply the IDF. Equipped with modern American weaponry, the IDF launched a successful counter-offensive, crossing the Suez Canal into Egypt and surrounding the Egyptian Third Army, which pushed the superpowers to raise their military alert levels.<br><br><strong>Paragraph 3: Ceasefire and the OPEC Oil Embargo Aftermath (1973–74)</strong><br><strong>Tensions were brought to a close</strong> when the USA and the USSR co-sponsored UN Resolution 338 to enforce an immediate ceasefire on the fighting fronts. <strong>Following this ceasefire</strong>, Arab oil-producing nations launched a devastating OPEC oil embargo, quadrupling oil prices to punish Western nations for supporting Israel. <strong>Ultimately, this economic pressure caused</strong> the United States to actively mediate the peace process, leading to Kissinger's shuttle diplomacy and the disengagement of forces, which began a long-term diplomatic shift in Arab-Israeli relations.",
         "isHighProbability": true
+      },
+      {
+        "question": "Explain one consequence of the Yom Kippur War (1973). (4 marks)",
+        "answer": "<strong>Model Consequence:</strong> One consequence of the Yom Kippur War was that it shattered the myth of Israeli military invincibility and restored Arab political pride. Specifically, Israeli forces were caught entirely by surprise, allowing Egyptian troops to breach the Bar Lev Line. This initial success demonstrated that Arab armies could challenge Israel, which forced Israel to realize it could not rely purely on military dominance, paving the long-term path to the Camp David peace talks."
       }
     ],
     "doNowStarter": {
