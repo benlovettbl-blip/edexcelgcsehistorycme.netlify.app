@@ -25,7 +25,7 @@ import {
   importProfileData,
   initData
 } from './storage.js';
-import { startPastPaper, generateMockExam, initMockCreator, initBulkWorkbookCreator } from './past_papers.js';
+import { startPastPaper, generateMockExam, initMockCreator, initBulkWorkbookCreator, initWarQuizCreator } from './past_papers.js';
 import { initWorkbookCreator } from './lessons.js';
 import { CONSEQUENCE_SKILLS_DATA, NARRATIVE_SKILLS_DATA, EXAM_SKILLS_DATA } from '../questions.js';
 
@@ -102,6 +102,14 @@ function bindEvents() {
     AudioEngine.play('click');
     switchView('ai-videos');
   });
+
+  const navInd = document.getElementById('nav-individuals');
+  if (navInd) {
+    navInd.addEventListener('click', () => {
+      AudioEngine.play('click');
+      switchView('individuals');
+    });
+  }
 
   // Dashboard Shortcuts
   document.getElementById('shortcut-timeline').addEventListener('click', () => {
@@ -182,6 +190,14 @@ function bindEvents() {
     shortLeaderboard.addEventListener('click', () => {
       AudioEngine.play('click');
       switchView('leaderboard');
+    });
+  }
+
+  const shortInd = document.getElementById('shortcut-individuals');
+  if (shortInd) {
+    shortInd.addEventListener('click', () => {
+      AudioEngine.play('click');
+      switchView('individuals');
     });
   }
 
@@ -1088,6 +1104,7 @@ function bindEvents() {
   initMockCreator();
   initWorkbookCreator();
   initBulkWorkbookCreator();
+  initWarQuizCreator();
 }
 
 // --- Real-time Fact / Connective Verification Checklist for Essay Writing ---

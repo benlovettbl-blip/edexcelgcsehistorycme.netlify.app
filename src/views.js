@@ -8,19 +8,13 @@ import { LESSONS_DATA } from './lessons_data.js';
 import { MASTERY_DATA } from './mastery_data.js';
 import { DECISIONS_DATA } from './decisions_data.js';
 import { MINDMAP_DATA } from './mindmap_data.js';
-import { initCrisisGame, initTugGame, initTabooGame, initMeSimGame, initParserGame, initJaffaParserGame } from './games.js';
 import { getFallbackUrl } from './image_fallback.js';
 import { GOING_BEYOND_DATA } from './going_beyond_data.js';
 import { KEY_TOPICS_OVERVIEWS } from './key_topics_data.js';
 import { VIDEOS_DATA } from './videos_data.js';
-import { 
-  NARRATIVE_FRAMINGS, 
-  SYNTHESIS_CHALLENGES, 
-  getFactSplit, 
-  getElaborativePrompt, 
-  EXPLANATION_SPLITS, 
-  getCardRubrics 
-} from './flashcard_upgrades.js';
+
+let gamesModule = null;
+let flashcardUpgrades = null;
 
 // --- Dynamic Renders ---
 
@@ -674,8 +668,11 @@ function renderClassicView() {
 
 // 5. Flashcard View logic
 // 5. Flashcard View logic
-function startFlashcardSession(subtopicId) {
-  const timelines = NARRATIVE_FRAMINGS[subtopicId];
+async function startFlashcardSession(subtopicId) {
+  if (!flashcardUpgrades) {
+    flashcardUpgrades = await import('./flashcard_upgrades.js');
+  }
+  const timelines = flashcardUpgrades.NARRATIVE_FRAMINGS[subtopicId];
   if (timelines && timelines.length > 0) {
     // Render Chronological Prime overview screen first
     const container = document.getElementById('view-flashcards');
@@ -723,7 +720,7 @@ function startFlashcardSession(subtopicId) {
       state.flashcardSession.deck = [...questions].sort(() => Math.random() - 0.5);
       
       // Injects synoptic synthesis challenge as final card!
-      const synChallenge = SYNTHESIS_CHALLENGES[subtopicId];
+      const synChallenge = flashcardUpgrades.SYNTHESIS_CHALLENGES[subtopicId];
       if (synChallenge) {
         state.flashcardSession.deck.push({
           id: `synoptic_${subtopicId}`,
@@ -749,7 +746,7 @@ function startFlashcardSession(subtopicId) {
     state.flashcardSession.deck = [...questions].sort(() => Math.random() - 0.5);
     
     // Injects synoptic synthesis challenge as final card!
-    const synChallenge = SYNTHESIS_CHALLENGES[subtopicId];
+    const synChallenge = flashcardUpgrades.SYNTHESIS_CHALLENGES[subtopicId];
     if (synChallenge) {
       state.flashcardSession.deck.push({
         id: `synoptic_${subtopicId}`,
@@ -854,7 +851,7 @@ function renderFlashcard() {
       </div>
     `;
   } else {
-    const splits = getFactSplit(q);
+    const splits = flashcardUpgrades.getFactSplit(q);
     
     backBody.innerHTML = `
       <span class="card-answer-label">Correct Key Term</span>
@@ -1188,6 +1185,165 @@ export function updateCmeGotItButtonState() {
   correctBtn.style.pointerEvents = 'auto';
   correctBtn.style.cursor = 'pointer';
 }
+
+export const activeFigures = [
+  {
+    key: 'david ben-gurion',
+    quote: "In Israel, in order to be a realist you must believe in miracles.",
+    question: "Which declaration of independence did Ben-Gurion read in Tel Aviv on 14 May 1948?",
+    answer: "Declaration of the Establishment of the State of Israel"
+  },
+  {
+    key: 'menachem begin',
+    quote: "Peace is the beauty of life. It is sunshine. It is the smile of a child.",
+    question: "Which right-wing political party did Menachem Begin found in 1973, which won power in 1977?",
+    answer: "Likud"
+  },
+  {
+    key: 'yitzhak rabin',
+    quote: "We say to you, in a loud and clear voice: Enough of blood and tears. Enough!",
+    question: "Which peace agreements did Yitzhak Rabin sign in 1993 with Yasser Arafat?",
+    answer: "The Oslo I Accord"
+  },
+  {
+    key: 'golda meir',
+    quote: "Peace will come when the Arabs will love their children more than they hate us.",
+    question: "Which war in October 1973 caught Israel by surprise during Golda Meir's premiership?",
+    answer: "Yom Kippur War"
+  },
+  {
+    key: 'moshe dayan',
+    quote: "If you want to make peace, you don't talk to your friends. You talk to your enemies.",
+    question: "Moshe Dayan served as Minister of Defence during which lightning June 1967 war?",
+    answer: "The Six-Day War"
+  },
+  {
+    key: 'ariel sharon',
+    quote: "The security of Israel is the supreme goal.",
+    question: "Which country did Ariel Sharon lead the invasion of in 1982 to drive out the PLO?",
+    answer: "Lebanon"
+  },
+  {
+    key: 'levi eshkol',
+    quote: "The threat of war hangs over our heads.",
+    question: "Which war broke out in June 1967 when Levi Eshkol was Prime Minister of Israel?",
+    answer: "The Six-Day War"
+  },
+  {
+    key: 'yitzhak shamir',
+    quote: "No one can teach us about the pain of exile.",
+    question: "Which international conference did Yitzhak Shamir attend in 1991 to negotiate with Arab states?",
+    answer: "Madrid Peace Conference"
+  },
+  {
+    key: 'yasser arafat',
+    quote: "I come bearing an olive branch and a freedom fighter's gun. Do not let the olive branch fall from my hand.",
+    question: "Which political group did Yasser Arafat lead, serving as Chairman of the PLO from 1969?",
+    answer: "Fatah"
+  },
+  {
+    key: 'george habash',
+    quote: "Our goal is the liberation of all Palestine, by any means necessary.",
+    question: "Which radical group did George Habash found, which carried out aircraft hijackings in 1970?",
+    answer: "Popular Front for the Liberation of Palestine (PFLP)"
+  },
+  {
+    key: 'mahmoud abbas',
+    quote: "We want a peaceful resolution, a state of our own alongside Israel.",
+    question: "Which agreements did Mahmoud Abbas negotiate in secret in Norway in 1993?",
+    answer: "The Oslo Accords"
+  },
+  {
+    key: 'haj amin al-husseini',
+    quote: "We must defend our holy land from Zionist colonization.",
+    question: "What religious title did Haj Amin al-Husseini hold as the leader of Palestinian Arabs under British Mandate?",
+    answer: "Grand Mufti of Jerusalem"
+  },
+  {
+    key: 'gamal abdel nasser',
+    quote: "We will not accept any coexistence with Israel. Today the issue is not the frontier but the existence of Israel.",
+    question: "Which major waterway did Nasser nationalise in July 1956, triggering the Suez Crisis?",
+    answer: "The Suez Canal"
+  },
+  {
+    key: 'anwar sadat',
+    quote: "I have come to you today on solid ground, to shape a new life, to establish peace.",
+    question: "Which peace accords did Anwar Sadat sign with Menachem Begin at the US presidential retreat in 1978?",
+    answer: "The Camp David Accords"
+  },
+  {
+    key: 'hosni mubarak',
+    quote: "Stability is the foundation of economic progress and regional peace.",
+    question: "Following whose assassination in October 1981 did Hosni Mubarak become President of Egypt?",
+    answer: "Anwar Sadat"
+  },
+  {
+    key: 'king hussein',
+    quote: "Jordan has a boundary of over 600 kilometers with Israel. We are at the heart of this conflict.",
+    question: "Which militant group's forces did King Hussein expel from Jordan during the 'Black September' of 1970?",
+    answer: "The Palestine Liberation Organisation (PLO)"
+  },
+  {
+    key: 'king abdullah',
+    quote: "We must preserve the Arab character of Jerusalem and protect its holy sites.",
+    question: "Which elite British-trained army did King Abdullah lead in the 1948 Arab-Israeli War?",
+    answer: "The Arab Legion"
+  },
+  {
+    key: 'hafez al-assad',
+    quote: "Syria will never surrender its sovereign rights or its land.",
+    question: "Which occupied mountain territory did Hafez al-Assad attempt to recapture from Israel in the 1973 Yom Kippur War?",
+    answer: "The Golan Heights"
+  },
+  {
+    key: 'saddam hussein',
+    quote: "The road to Jerusalem lies through Kuwait.",
+    question: "Which country did Saddam Hussein invade in August 1990, triggering the Gulf War?",
+    answer: "Kuwait"
+  },
+  {
+    key: 'henry kissinger',
+    quote: "Shuttle diplomacy is about creating options.",
+    question: "What term describes Kissinger's diplomatic method of flying back and forth between capitals in 1974?",
+    answer: "Shuttle Diplomacy"
+  },
+  {
+    key: 'jimmy carter',
+    quote: "We must adapt to changing times with unchanging principles.",
+    question: "Where did President Jimmy Carter host Anwar Sadat and Menachem Begin for peace talks in September 1978?",
+    answer: "Camp David"
+  },
+  {
+    key: 'bill clinton',
+    quote: "The future is not a gift: it is an achievement.",
+    question: "On the lawn of which building did President Bill Clinton host the Rabin-Arafat handshake in September 1993?",
+    answer: "The White House"
+  },
+  {
+    key: 'mikhail gorbachev',
+    quote: "If not me, who? If not now, when?",
+    question: "Which major Cold War superpower did Mikhail Gorbachev lead, which collapsed in 1991?",
+    answer: "The Soviet Union (USSR)"
+  },
+  {
+    key: 'george h.w. bush',
+    quote: "A new world order is emerging.",
+    question: "Which international peace conference in October 1991 did President George H.W. Bush co-sponsor with the USSR?",
+    answer: "The Madrid Conference"
+  },
+  {
+    key: 'ernest bevin',
+    quote: "The Palestine problem is unworkable under the Mandate.",
+    question: "Which international organization did Ernest Bevin hand the Palestine Mandate problem to in 1947?",
+    answer: "The United Nations (UN)"
+  },
+  {
+    key: 'count folke bernadotte',
+    quote: "I am ready to take any risk to bring peace to this land.",
+    question: "Which extremist Zionist paramilitary group assassinated Count Folke Bernadotte in Jerusalem in September 1948?",
+    answer: "Lehi (also known as the Stern Gang)"
+  }
+];
 
 // 6. Timeline View Assembly
 export const KEY_FIGURES_BIO = {
@@ -4082,7 +4238,8 @@ function renderGamesView() {
     taboo: document.getElementById('btn-tab-game-taboo'),
     meSim: document.getElementById('btn-tab-game-me-sim'),
     parser: document.getElementById('btn-tab-game-parser'),
-    parserJaffa: document.getElementById('btn-tab-game-parser-jaffa')
+    parserJaffa: document.getElementById('btn-tab-game-parser-jaffa'),
+    individuals: document.getElementById('btn-tab-game-individuals')
   };
 
   const panes = {
@@ -4096,7 +4253,8 @@ function renderGamesView() {
     taboo: document.getElementById('game-taboo-container'),
     meSim: document.getElementById('game-me-sim-container'),
     parser: document.getElementById('game-parser-container'),
-    parserJaffa: document.getElementById('game-parser-jaffa-container')
+    parserJaffa: document.getElementById('game-parser-jaffa-container'),
+    individuals: document.getElementById('game-individuals-container')
   };
 
   const cleanUpGames = () => {
@@ -4118,7 +4276,7 @@ function renderGamesView() {
     }
   };
 
-  const showTab = (tabName) => {
+  const showTab = async (tabName) => {
     cleanUpGames();
 
     Object.keys(tabs).forEach(name => {
@@ -4155,18 +4313,26 @@ function renderGamesView() {
       initMindMapGame();
     } else if (tabName === 'decisions') {
       initDecisionsGame();
-    } else if (tabName === 'crisis') {
-      initCrisisGame();
-    } else if (tabName === 'tug') {
-      initTugGame();
-    } else if (tabName === 'taboo') {
-      initTabooGame();
-    } else if (tabName === 'meSim') {
-      initMeSimGame();
-    } else if (tabName === 'parser') {
-      initParserGame();
-    } else if (tabName === 'parserJaffa') {
-      initJaffaParserGame();
+    } else if (tabName === 'individuals') {
+      const indGameMod = await import('./individuals_game.js');
+      indGameMod.initIndividualsGame();
+    } else {
+      if (!gamesModule) {
+        gamesModule = await import('./games.js');
+      }
+      if (tabName === 'crisis') {
+        gamesModule.initCrisisGame();
+      } else if (tabName === 'tug') {
+        gamesModule.initTugGame();
+      } else if (tabName === 'taboo') {
+        gamesModule.initTabooGame();
+      } else if (tabName === 'meSim') {
+        gamesModule.initMeSimGame();
+      } else if (tabName === 'parser') {
+        gamesModule.initParserGame();
+      } else if (tabName === 'parserJaffa') {
+        gamesModule.initJaffaParserGame();
+      }
     }
   };
 
@@ -5507,6 +5673,132 @@ export function openStreakLeaderboard() {
   }
 }
 
+function renderKeyIndividualsView() {
+  const container = document.getElementById('key-individuals-grid');
+  if (!container) return;
+  container.innerHTML = '';
+
+  activeFigures.forEach(item => {
+    const figure = KEY_FIGURES_BIO[item.key];
+    if (!figure) return;
+
+    // Generate initials for initials fallback
+    const cleanName = figure.name.replace(/Jr\.|Chief Justice|General|Dr\./gi, '').trim();
+    const nameParts = cleanName.split(/\s+/).filter(p => p.length > 0);
+    let initials = '';
+    if (nameParts.length >= 3) {
+      initials = (nameParts[0][0] + nameParts[1][0] + nameParts[2][0]).toUpperCase();
+    } else if (nameParts.length === 2) {
+      initials = (nameParts[0][0] + nameParts[1][0]).toUpperCase();
+    } else if (nameParts.length === 1) {
+      initials = nameParts[0].substring(0, 2).toUpperCase();
+    }
+    initials = initials.substring(0, 3);
+
+    const cardContainer = document.createElement('div');
+    cardContainer.className = 'individual-card-container';
+    cardContainer.style.cssText = 'perspective: 1000px; height: 380px;';
+
+    const quoteHtml = item.quote ? `
+      <blockquote style="margin: 8px 0 12px 0; font-style: italic; font-size: 0.85rem; color: var(--text-main); line-height: 1.4; font-family: Georgia, serif; margin: 0 0 10px 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; border-left: 3px solid var(--accent); padding-left: 8px; text-align: left;">
+        "${item.quote}"
+      </blockquote>
+    ` : '<p style="font-size: 0.8rem; color: var(--text-muted); margin: 0 0 10px 0;">GCSE Key Individual</p>';
+
+    cardContainer.innerHTML = `
+      <div class="individual-card" style="position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer;">
+        <!-- FRONT OF CARD -->
+        <div class="individual-card-face front" style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: var(--border-radius-md); border: 2px solid var(--border-glass); background: var(--bg-card); display: flex; flex-direction: column; overflow: hidden; padding: 20px; box-sizing: border-box; justify-content: space-between;">
+          <!-- Top header -->
+          <div style="display: flex; flex-direction: column; gap: 4px; text-align: left;">
+            <span style="font-size: 0.68rem; font-weight: 700; text-transform: uppercase; color: var(--accent); letter-spacing: 0.5px;">${figure.role}</span>
+            <h3 style="margin: 4px 0 0 0; font-family: var(--font-heading); font-size: 1.35rem; font-weight: 800; color: var(--text-main);">${figure.name}</h3>
+          </div>
+          
+          <!-- Portrait Image -->
+          <div style="flex-grow: 1; display: flex; align-items: center; justify-content: center; margin: 10px 0;">
+            <div style="width: 130px; height: 130px; border-radius: 50%; border: 3px solid var(--accent); overflow: hidden; display: flex; align-items: center; justify-content: center; background: var(--gradient-primary); box-shadow: var(--shadow-sm); position: relative; transition: transform 0.3s ease;">
+              ${figure.image ? `
+                <img src="${figure.image}" alt="${figure.name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <span style="display: none; font-size: 2.2rem; font-weight: 800; color: #fff; font-family: var(--font-heading); text-shadow: 0 1px 3px rgba(0,0,0,0.3);">${initials}</span>
+              ` : `
+                <span style="font-size: 2.2rem; font-weight: 800; color: #fff; font-family: var(--font-heading); text-shadow: 0 1px 3px rgba(0,0,0,0.3);">${initials}</span>
+              `}
+            </div>
+          </div>
+          
+          <!-- Bottom info -->
+          <div style="text-align: center;">
+            ${quoteHtml}
+            <span style="font-size: 0.72rem; color: var(--primary); font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 4px;">
+              <i class="fa-solid fa-rotate"></i> Click Card to Flip
+            </span>
+          </div>
+        </div>
+        
+        <!-- BACK OF CARD -->
+        <div class="individual-card-face back" style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: var(--border-radius-md); border: 2px solid var(--accent); background: var(--bg-sidebar); display: flex; flex-direction: column; padding: 20px; box-sizing: border-box; justify-content: space-between; transform: rotateY(180deg);">
+          <div style="text-align: left; display: flex; flex-direction: column; gap: 10px; height: 100%; overflow-y: auto; padding-right: 4px;">
+            <!-- Header -->
+            <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid var(--border-glass); padding-bottom: 6px;">
+              <h4 style="margin: 0; font-family: var(--font-heading); font-size: 1.15rem; font-weight: 700; color: var(--text-main);">${figure.name}</h4>
+              <span style="font-size: 0.65rem; text-transform: uppercase; color: var(--accent); font-weight: 700; letter-spacing: 0.5px;">GCSE Bio</span>
+            </div>
+            
+            <!-- Biography -->
+            <p style="font-size: 0.82rem; line-height: 1.45; color: var(--text-muted); margin: 0;">
+              ${figure.bio}
+            </p>
+            
+            <!-- GCSE Practice Challenge -->
+            <div style="background: rgba(37, 99, 235, 0.05); border: 1px dashed var(--primary); border-radius: var(--border-radius-sm); padding: 10px 12px; margin-top: auto; box-sizing: border-box;">
+              <strong style="font-size: 0.72rem; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px;">
+                💡 Quick Recall Question:
+              </strong>
+              <p style="font-size: 0.8rem; line-height: 1.35; color: var(--text-main); font-weight: 600; margin: 0 0 8px 0;">
+                ${item.question}
+              </p>
+              <div class="answer-box-container">
+                <button class="btn-reveal-answer" style="background: var(--primary); border: none; color: #fff; padding: 5px 10px; font-size: 0.7rem; font-weight: 700; border-radius: var(--border-radius-sm); cursor: pointer; transition: background 0.2s;">
+                  Reveal Answer
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Flip back helper -->
+          <div style="text-align: center; margin-top: 6px; border-top: 1px dashed var(--border-glass); padding-top: 6px;">
+            <span style="font-size: 0.72rem; color: var(--text-muted); display: flex; align-items: center; justify-content: center; gap: 4px;">
+              <i class="fa-solid fa-rotate"></i> Click to Flip Back
+            </span>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const cardInner = cardContainer.querySelector('.individual-card');
+    cardInner.addEventListener('click', (e) => {
+      if (e.target.closest('.btn-reveal-answer') || e.target.closest('.reveal-answer-text')) return;
+      cardInner.classList.toggle('flipped');
+      AudioEngine.play('flip');
+    });
+
+    const revealBtn = cardContainer.querySelector('.btn-reveal-answer');
+    revealBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      AudioEngine.play('success');
+      const containerBox = revealBtn.parentElement;
+      containerBox.innerHTML = `
+        <div class="reveal-answer-text" style="font-size: 0.8rem; font-weight: 700; color: var(--success); padding: 4px 0; animation: fadeIn 0.3s ease;">
+          <i class="fa-solid fa-circle-check"></i> Answer: ${item.answer}
+        </div>
+      `;
+    });
+
+    container.appendChild(cardContainer);
+  });
+}
+
 export {
   renderSidebarNav,
   updateBookmarksUI,
@@ -5537,5 +5829,6 @@ export {
   renderKeyTopicOverview,
   renderAiVideosView,
   saveStreakHighScoreLocal,
-  validateScoreBoardInitials
+  validateScoreBoardInitials,
+  renderKeyIndividualsView
 };

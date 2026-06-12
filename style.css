@@ -2938,6 +2938,7 @@ details > summary::marker {
 
 .mastery-card-body {
   font-size: 0.95rem;
+  display: flow-root;
 }
 
 .mastery-card-body ul {
@@ -8779,3 +8780,237 @@ details > summary::marker {
   font-size: 1.08rem;
 }
 
+/* --- Mobile Responsive Layout Overrides --- */
+
+/* 1. Stack dual-perspective slider row and enlarge click targets */
+@media (max-width: 600px) {
+  .dual-perspective-slider-row {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+  }
+  .slider-wrapper {
+    grid-column: span 2 !important;
+    order: 2 !important;
+  }
+  .perspective-label.label-left {
+    justify-content: flex-start !important;
+    order: 1 !important;
+  }
+  .perspective-label.label-right {
+    justify-content: flex-end !important;
+    order: 3 !important;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Enlarge range slider thumb and label touch targets */
+  .perspective-range-slider::-webkit-slider-thumb {
+    width: 28px !important;
+    height: 28px !important;
+  }
+  .perspective-range-slider::-moz-range-thumb {
+    width: 28px !important;
+    height: 28px !important;
+  }
+  .perspective-label {
+    padding: 10px 8px !important;
+  }
+
+  /* Stack key topic columns */
+  .key-topic-columns {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  /* Timeline spacing and card tuning for small viewports */
+  .timeline-content-card {
+    padding: 14px !important;
+  }
+  .timeline-year {
+    font-size: 1.1rem !important;
+  }
+}
+
+/* --- Key Individual Spotlight Card Styles --- */
+.key-individual-card {
+  display: flex;
+  gap: 20px;
+  background: var(--bg-sidebar);
+  border: 2px solid var(--border-glass);
+  border-radius: var(--border-radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-md);
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.key-individual-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent) !important;
+  box-shadow: 0 6px 20px var(--accent-glow) !important;
+}
+
+.individual-portrait-wrapper {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  border: 3px solid var(--accent);
+  flex-shrink: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gradient-primary);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  z-index: 2;
+  transition: transform 0.3s ease;
+}
+
+.key-individual-card:hover .individual-portrait-wrapper {
+  transform: scale(1.05);
+}
+
+.individual-info {
+  flex-grow: 1;
+  z-index: 2;
+  text-align: left;
+}
+
+@media (max-width: 600px) {
+  .key-individual-card {
+    flex-direction: column;
+    text-align: center !important;
+    gap: 16px;
+    padding: 24px 16px;
+  }
+  .key-individual-card blockquote {
+    border-left: none !important;
+    border-top: 2px solid var(--accent);
+    padding-left: 0 !important;
+    padding-top: 10px;
+    margin-top: 10px;
+  }
+  .individual-info {
+    text-align: center !important;
+  }
+}
+
+/* --- Key Individuals 3D Flip Cards --- */
+.individual-card.flipped {
+  transform: rotateY(180deg) !important;
+}
+
+.individual-card-face {
+  box-sizing: border-box;
+}
+
+/* Customize scrollbar inside back face of individual card if bio is long */
+.individual-card-face.back::-webkit-scrollbar {
+  width: 4px;
+}
+.individual-card-face.back::-webkit-scrollbar-track {
+  background: transparent;
+}
+.individual-card-face.back::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+.individual-card-face.back::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* --- 10-Step Unit Mastery Journey Carousel Styles --- */
+.journey-step-node {
+  transition: all var(--transition-fast) ease;
+}
+.journey-step-node:hover {
+  transform: scale(1.12);
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+}
+.journey-step-node.active {
+  transform: scale(1.12);
+  box-shadow: 0 0 12px var(--primary-glow);
+}
+
+.journey-level-badge {
+  font-size: 0.62rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  padding: 1px 6px;
+  border-radius: 3px;
+  letter-spacing: 0.02em;
+  font-family: var(--font-heading);
+  display: inline-block;
+}
+
+/* Color codes for level types to look premium */
+.badge-recall {
+  background: rgba(59, 130, 246, 0.08);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.15);
+}
+.badge-factcheck {
+  background: rgba(16, 185, 129, 0.08);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.15);
+}
+.badge-concept {
+  background: rgba(139, 92, 246, 0.08);
+  color: #a78bfa;
+  border: 1px solid rgba(139, 92, 246, 0.15);
+}
+.badge-analysis {
+  background: rgba(245, 158, 11, 0.08);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.15);
+}
+.badge-challenge {
+  background: rgba(239, 68, 68, 0.08);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.15);
+}
+
+.journey-answer-guide {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), margin-top 0.3s ease, padding 0.3s ease;
+  padding: 0 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border-left: 2px solid var(--primary);
+  border-radius: 0 3px 3px 0;
+  margin-top: 0;
+}
+
+.journey-answer-title {
+  font-size: 0.7rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin-bottom: 4px;
+  display: block;
+}
+
+.journey-answer-text {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* Floated Source Box for space-efficient layouts */
+.source-box-floated {
+  float: right;
+  width: 320px;
+  margin: 0 0 16px 16px;
+}
+@media (max-width: 600px) {
+  .source-box-floated {
+    float: none;
+    width: 100%;
+    margin: 0 0 16px 0;
+  }
+}

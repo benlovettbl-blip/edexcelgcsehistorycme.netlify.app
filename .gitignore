@@ -16,3 +16,9 @@ dist.zip
 
 # Scratch/temp workspace files
 scratch/
+app_test.js
+chunk-*.js
+games-*.js
+workbook_data-*.js
+flashcard_upgrades-*.js
+individuals_game-*.js

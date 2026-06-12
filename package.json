@@ -5,8 +5,8 @@
   "main": "index.html",
   "scripts": {
     "dev": "vite",
-    "bundle": "npx esbuild src/main.js --bundle --minify --outfile=app.js",
-    "build": "npm run bundle && vite build && node -e \"const fs = require('fs'); fs.copyFileSync('app.js', 'dist/app.js'); fs.copyFileSync('questions.js', 'dist/questions.js'); fs.copyFileSync('later_stages_games.html', 'dist/later_stages_games.html'); fs.copyFileSync('falling_blocks.html', 'dist/falling_blocks.html'); fs.copyFileSync('interactive_timeline.html', 'dist/interactive_timeline.html');\"",
+    "bundle": "npx esbuild src/main.js --bundle --minify --format=esm --splitting --outdir=. --entry-names=app",
+    "build": "npm run bundle && vite build && node -e \"const fs = require('fs'); fs.readdirSync('.').forEach(file => { if (file.endsWith('.js') && (file.startsWith('chunk-') || file.startsWith('games-') || file.startsWith('workbook_data-') || file.startsWith('flashcard_upgrades-') || file === 'app.js' || file === 'questions.js')) { fs.copyFileSync(file, 'dist/' + file); } }); fs.copyFileSync('later_stages_games.html', 'dist/later_stages_games.html'); fs.copyFileSync('falling_blocks.html', 'dist/falling_blocks.html'); fs.copyFileSync('interactive_timeline.html', 'dist/interactive_timeline.html');\"",
     "cap:sync": "npx cap sync",
     "build:apk": "cd android && gradlew.bat assembleDebug",
     "build:aab": "cd android && gradlew.bat bundleRelease"

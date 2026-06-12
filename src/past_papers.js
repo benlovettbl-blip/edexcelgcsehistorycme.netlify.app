@@ -732,7 +732,9 @@ export function initMockCreator() {
       const printArea = document.getElementById('print-area');
       if (printArea) {
         printArea.innerHTML = html;
-        window.print();
+        setTimeout(() => {
+          window.print();
+        }, 150);
         AudioEngine.play('success');
       }
     });
@@ -1160,14 +1162,14 @@ export function initBulkWorkbookCreator() {
   const btnWord = document.getElementById('btn-bulk-workbook-word');
 
   if (btnPrint) {
-    btnPrint.addEventListener('click', () => {
+    btnPrint.addEventListener('click', async () => {
       const style = document.getElementById('bulk-workbook-style').value;
       const density = document.getElementById('bulk-workbook-density').value;
       const answers = document.getElementById('bulk-workbook-answers').value;
       
       AudioEngine.play('click');
       
-      const html = window.generateBulkWorkbookHtml(style, density, answers === 'yes');
+      const html = await window.generateBulkWorkbookHtml(style, density, answers === 'yes');
       
       const newWin = window.open();
       if (newWin) {
@@ -1180,17 +1182,65 @@ export function initBulkWorkbookCreator() {
   }
 
   if (btnWord) {
-    btnWord.addEventListener('click', () => {
+    btnWord.addEventListener('click', async () => {
       const style = document.getElementById('bulk-workbook-style').value;
       const density = document.getElementById('bulk-workbook-density').value;
       const answers = document.getElementById('bulk-workbook-answers').value;
       
       AudioEngine.play('click');
       
-      const html = window.generateBulkWorkbookHtml(style, density, answers === 'yes');
+      const html = await window.generateBulkWorkbookHtml(style, density, answers === 'yes');
       const styleLabel = style.charAt(0).toUpperCase() + style.slice(1);
       
       downloadHtmlAsWord(`Course_Worksheet_Pack_All_Lessons_${styleLabel}.doc`, html);
+      AudioEngine.play('success');
+    });
+  }
+}
+
+export function initWarQuizCreator() {
+  const btnPrint = document.getElementById('btn-war-quiz-print');
+  const btnWord = document.getElementById('btn-war-quiz-word');
+
+  if (btnPrint) {
+    btnPrint.addEventListener('click', async () => {
+      const warId = document.getElementById('war-quiz-select').value;
+      const density = document.getElementById('war-quiz-density').value;
+      const answers = document.getElementById('war-quiz-answers').value;
+      
+      AudioEngine.play('click');
+      
+      const html = await window.generateWarWorkbookHtml(warId, density, answers === 'yes');
+      
+      const printArea = document.getElementById('print-area');
+      if (printArea) {
+        printArea.innerHTML = html;
+        setTimeout(() => {
+          window.print();
+        }, 150);
+        AudioEngine.play('success');
+      }
+    });
+  }
+
+  if (btnWord) {
+    btnWord.addEventListener('click', async () => {
+      const warId = document.getElementById('war-quiz-select').value;
+      const density = document.getElementById('war-quiz-density').value;
+      const answers = document.getElementById('war-quiz-answers').value;
+      
+      AudioEngine.play('click');
+      
+      const html = await window.generateWarWorkbookHtml(warId, density, answers === 'yes');
+      const warNames = {
+        '1948_1949': '1948-49_Arab-Israeli_War',
+        '1956_suez': '1956_Suez_Crisis',
+        '1967_sixday': '1967_Six-Day_War',
+        '1973_yomkippur': '1973_Yom_Kippur_War',
+        '1982_lebanon': '1982_Lebanon_War'
+      };
+      const fileName = `War_Quiz_${warNames[warId] || warId}.doc`;
+      downloadHtmlAsWord(fileName, html);
       AudioEngine.play('success');
     });
   }

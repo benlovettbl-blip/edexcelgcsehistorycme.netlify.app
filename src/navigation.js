@@ -11,7 +11,8 @@ import {
   renderKeyTopicOverview,
   renderAiVideosView,
   openStreakLeaderboard,
-  addXp
+  addXp,
+  renderKeyIndividualsView
 } from './views.js';
 import { showExamSetup } from './exam.js';
 import { renderPastPapersView } from './past_papers.js';
@@ -103,6 +104,14 @@ export function switchView(viewName, subtopicId = null) {
     if (viewTitle) viewTitle.textContent = "Bookmarked Deck";
     state.selectedSubtopicId = null;
     renderBookmarksView();
+  } else if (viewName === 'individuals') {
+    const individualsNav = document.getElementById('nav-individuals');
+    if (individualsNav) individualsNav.classList.add('active');
+    if (headerModeSwitcher) headerModeSwitcher.style.display = 'none';
+    const viewTitle = document.getElementById('current-view-title');
+    if (viewTitle) viewTitle.textContent = "Key Individuals";
+    state.selectedSubtopicId = null;
+    renderKeyIndividualsView();
   } else if (viewName === 'timeline') {
     const timelineNav = document.getElementById('nav-timeline');
     if (timelineNav) timelineNav.classList.add('active');
@@ -233,7 +242,8 @@ export function switchView(viewName, subtopicId = null) {
     'key-topic': 'view-key-topic',
     'ai-videos': 'view-ai-videos',
     'map': 'view-map',
-    'leaderboard': 'view-leaderboard'
+    'leaderboard': 'view-leaderboard',
+    'individuals': 'view-individuals'
   };
 
   const targetViewId = viewName === 'subtopic' ? viewIdMap[state.currentMode] : viewIdMap[viewName];

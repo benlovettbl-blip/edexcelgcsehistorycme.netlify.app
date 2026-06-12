@@ -1,8 +1,7 @@
 import { LESSONS_DATA } from './lessons_data.js';
-import { PRACTICE_ROOM_DATA, practiceState } from './games.js';
 import { state } from './state.js';
 import { switchView } from './navigation.js';
-import { renderSidebarNav, updateGlobalStats, KEY_FIGURES_BIO, openVideoModal, addXp } from './views.js';
+import { renderSidebarNav, updateGlobalStats, KEY_FIGURES_BIO, openVideoModal, addXp, activeFigures } from './views.js';
 import { saveProgress } from './storage.js';
 import { AudioEngine } from './audio.js';
 import { Confetti } from './confetti.js';
@@ -17,9 +16,16 @@ import { GOING_BEYOND_DATA } from './going_beyond_data.js';
 import { LESSON_MAPS_DATA } from './lesson_maps_data.js';
 import { HISTORIAN_QUOTES } from './historian_quotes.js';
 import { downloadHtmlAsWord } from './past_papers.js';
-import { WORKBOOK_DATA } from './workbook_data.js';
 
-export function renderPracticeRoomContent() {
+let gamesModuleForPractice = null;
+let workbookDataModule = null;
+
+export async function renderPracticeRoomContent() {
+  if (!gamesModuleForPractice) {
+    gamesModuleForPractice = await import('./games.js');
+  }
+  const PRACTICE_ROOM_DATA = gamesModuleForPractice.PRACTICE_ROOM_DATA;
+  const practiceState = gamesModuleForPractice.practiceState;
   const example = PRACTICE_ROOM_DATA[practiceState.currentExampleIndex];
   
   const questionTitle = document.getElementById('practice-question-title');
@@ -96,7 +102,7 @@ export function renderPracticeRoomContent() {
   });
 }
 
-export function renderSpecChecklistCard(subtopicId, checklist) {
+export function renderSpecChecklistCard(subtopicId, checklist, isEmbedded = false) {
   if (!checklist || checklist.length === 0) return '';
   
   let checkedStates = {};
@@ -137,12 +143,17 @@ export function renderSpecChecklistCard(subtopicId, checklist) {
     `;
   }).join('');
 
+  const cardClass = isEmbedded ? '' : 'spec-checklist-card';
+  const cardStyle = isEmbedded 
+    ? 'background: transparent; border: none; padding: 0; box-shadow: none; margin: 0;'
+    : 'max-width: 800px; margin: 0 auto 24px auto;';
+
   return `
-    <div class="spec-checklist-card" style="max-width: 800px; margin: 0 auto 24px auto;">
-      <h4 class="spec-checklist-title" style="display: flex; align-items: center; gap: 8px;">
+    <div class="${cardClass}" style="${cardStyle}">
+      <h4 class="spec-checklist-title" style="display: flex; align-items: center; gap: 8px; font-size: 1.05rem;">
         <i class="fa-solid fa-clipboard-list" style="color: var(--primary);"></i> Official Spec Checklist: Topic study goals
       </h4>
-      <p class="spec-checklist-subtitle" style="margin-top: 6px; font-size: 0.85rem; color: var(--text-muted); line-height: 1.4;">
+      <p class="spec-checklist-subtitle" style="margin-top: 6px; font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; text-align: left;">
         Tick each official Edexcel specification point to expand the key facts you need for the exam:
       </p>
       <div class="spec-checklist-items">
@@ -200,6 +211,99 @@ function renderGoingBeyondConnectionCard(subtopicId) {
         Connect this historical GCSE topic to its modern-day legacy and realities in the Middle East in 2026:
       </p>
       <div style="display: flex; flex-direction: column; gap: 4px;">
+        ${cardsHtml}
+      </div>
+    </div>
+  `;
+}
+
+function renderKeyFiguresSpotlight(subtopicId) {
+  const subtopicFiguresMap = {
+    'subtopic_1_1': ['david ben-gurion', 'menachem begin', 'haj amin al-husseini', 'ernest bevin', 'count folke bernadotte', 'king abdullah'],
+    'subtopic_1_2': ['david ben-gurion', 'king abdullah', 'haj amin al-husseini'],
+    'subtopic_1_3': ['gamal abdel nasser', 'moshe dayan', 'david ben-gurion'],
+    'subtopic_2_1': ['gamal abdel nasser', 'moshe dayan', 'levi eshkol', 'king hussein'],
+    'subtopic_2_2': ['yasser arafat', 'george habash', 'king hussein'],
+    'subtopic_2_3': ['golda meir', 'moshe dayan', 'anwar sadat', 'hafez al-assad'],
+    'subtopic_3_1': ['anwar sadat', 'menachem begin', 'jimmy carter', 'henry kissinger'],
+    'subtopic_3_2': ['yasser arafat', 'ariel sharon', 'yitzhak rabin', 'hosni mubarak', 'saddam hussein'],
+    'subtopic_3_3': ['yasser arafat', 'yitzhak rabin', 'mahmoud abbas', 'bill clinton', 'yitzhak shamir', 'george h.w. bush', 'mikhail gorbachev']
+  };
+
+  const figureKeys = subtopicFiguresMap[subtopicId];
+  if (!figureKeys || figureKeys.length === 0) return '';
+
+  let cardsHtml = '';
+  figureKeys.forEach(figKey => {
+    const figure = KEY_FIGURES_BIO[figKey];
+    if (!figure) return;
+
+    let imgSrc = figure.image;
+
+    const cleanName = figure.name.replace(/Jr\.|Chief Justice|General|Dr\./gi, '').trim();
+    const nameParts = cleanName.split(/\s+/).filter(p => p.length > 0);
+    let initials = '';
+    if (nameParts.length >= 3) {
+      initials = (nameParts[0][0] + nameParts[1][0] + nameParts[2][0]).toUpperCase();
+    } else if (nameParts.length === 2) {
+      initials = (nameParts[0][0] + nameParts[1][0]).toUpperCase();
+    } else if (nameParts.length === 1) {
+      initials = nameParts[0].substring(0, 2).toUpperCase();
+    }
+    initials = initials.substring(0, 3);
+
+    const figureItem = activeFigures.find(f => f.key === figKey);
+    const quoteVal = figureItem ? figureItem.quote : '';
+    const quoteHtml = quoteVal ? `
+      <blockquote style="margin: 8px 0 12px 0; font-style: italic; font-size: 0.92rem; color: var(--text-main); line-height: 1.5; font-family: Georgia, serif; border-left: 3px solid var(--accent); padding-left: 10px; text-align: left;">
+        "${quoteVal}"
+      </blockquote>
+    ` : '';
+
+    cardsHtml += `
+      <div class="key-individual-card" style="display: flex; gap: 20px; background: var(--bg-sidebar); border: 2px solid var(--border-glass); border-radius: var(--border-radius-lg); padding: 20px; box-shadow: var(--shadow-md); transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; position: relative; overflow: hidden; align-items: center; margin-top: 10px; text-align: left; box-sizing: border-box;">
+        <!-- Portrait -->
+        <div class="individual-portrait-wrapper" style="width: 110px; height: 110px; border-radius: 50%; border: 3px solid var(--accent); flex-shrink: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; background: var(--gradient-primary); box-shadow: var(--shadow-sm); position: relative; z-index: 2; transition: transform 0.3s ease;">
+          ${imgSrc ? `
+            <img src="${imgSrc}" alt="${figure.name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <span style="display: none; font-size: 1.8rem; font-weight: 800; color: #fff; font-family: var(--font-heading); text-shadow: 0 1px 3px rgba(0,0,0,0.3);">${initials}</span>
+          ` : `
+            <span style="font-size: 1.8rem; font-weight: 800; color: #fff; font-family: var(--font-heading); text-shadow: 0 1px 3px rgba(0,0,0,0.3);">${initials}</span>
+          `}
+        </div>
+        
+        <!-- Info -->
+        <div class="individual-info" style="flex-grow: 1; z-index: 2; text-align: left;">
+          <div style="display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 4px;">
+            <h4 style="margin: 0; font-family: var(--font-heading); font-size: 1.2rem; font-weight: 700; color: var(--text-main);">${figure.name}</h4>
+            <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--accent); font-weight: 700;">${figure.role}</span>
+          </div>
+          
+          ${quoteHtml}
+          
+          <div style="font-size: 0.85rem; line-height: 1.5; color: var(--text-muted);">
+            ${figure.bio}
+          </div>
+        </div>
+        
+        <!-- Subtle icon backdrop -->
+        <div style="position: absolute; right: -15px; bottom: -15px; font-size: 6rem; color: rgba(239, 68, 68, 0.02); font-weight: 900; pointer-events: none; user-select: none;">
+          <i class="fa-solid fa-user-large"></i>
+        </div>
+      </div>
+    `;
+  });
+
+  return `
+    <div class="key-individuals-spotlight-container" style="max-width: 800px; margin: 0 auto 24px auto; background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 8px; padding: 12px 16px; box-shadow: var(--shadow-sm); transition: border-color 0.2s;">
+      <h3 onclick="const content = this.nextElementSibling; const icon = this.querySelector('.toggle-icon'); if (content.style.display === 'none') { content.style.display = 'flex'; icon.style.transform = 'rotate(90deg)'; this.parentNode.style.borderColor = 'var(--accent)'; } else { content.style.display = 'none'; icon.style.transform = 'rotate(0deg)'; this.parentNode.style.borderColor = 'var(--border-glass)'; } AudioEngine.play('flip');" 
+          style="font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700; color: var(--accent); margin: 0; display: flex; align-items: center; gap: 8px; justify-content: flex-start; cursor: pointer; user-select: none;"
+          class="spotlight-toggle-header">
+        <i class="fa-solid fa-user-tie"></i> Key Individual Spotlight
+        <span style="font-size: 0.75rem; font-weight: 500; color: var(--text-muted); margin-left: 8px; opacity: 0.8;">(Click to expand)</span>
+        <i class="fa-solid fa-chevron-right toggle-icon" style="margin-left: auto; transition: transform 0.2s; font-size: 0.85rem; color: var(--text-muted);"></i>
+      </h3>
+      <div class="spotlight-cards-wrapper" style="display: none; flex-direction: column; gap: 16px; margin-top: 16px; border-top: 1px dashed var(--border-glass); padding-top: 16px;">
         ${cardsHtml}
       </div>
     </div>
@@ -321,7 +425,7 @@ export function renderMasteryView(subtopicId) {
                   <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 6px; text-align: left; display: flex; align-items: center; gap: 4px;">
                     <i class="fa-solid fa-image" style="color: var(--primary);"></i> Visual Anchor
                   </div>
-                  <img src="${dn.image}" alt="Straits of Tiran" style="max-width: 100%; max-height: 150px; object-fit: contain; border-radius: var(--border-radius-sm);" 
+                  <img src="${dn.image}" alt="Visual Anchor" style="max-width: 100%; max-height: 150px; object-fit: contain; border-radius: var(--border-radius-sm);" 
                     onerror="const fallback = '${getFallbackUrl(dn.image) || ''}'; if (fallback && this.src !== fallback) { this.referrerPolicy = 'no-referrer'; this.src = fallback; } else { this.style.display='none'; }">
                   <div style="font-size: 0.7rem; color: var(--text-muted); line-height: 1.35; margin-top: 6px; text-align: left;">
                     ${dn.provenance}
@@ -380,104 +484,18 @@ export function renderMasteryView(subtopicId) {
         </div>
       </div>
       `;
-    } else {
+    } else if (dn.format === 'background') {
       doNowHtml = `
-      <div class="mastery-card do-now-card" style="max-width: 800px; margin: 18px auto 24px auto; border-top: 4px solid var(--accent); position: relative; padding: 24px; overflow: visible !important;">
-        <div style="position: absolute; top: -12px; left: 16px; background: var(--accent); color: #000; font-size: 0.68rem; font-weight: 800; text-transform: uppercase; padding: 3px 10px; border-radius: 12px; letter-spacing: 0.8px; box-shadow: var(--shadow-sm); z-index: 10;">
-          ⚡ DO NOW starter (5-10 MINS)
+      <div class="mastery-card background-context-card" style="max-width: 800px; margin: 18px auto 24px auto; border-left: 4px solid var(--primary); background: rgba(59, 130, 246, 0.03); position: relative; padding: 24px; overflow: visible !important;">
+        <div style="position: absolute; top: -12px; left: 16px; background: var(--primary); color: var(--text-inverse); font-size: 0.68rem; font-weight: 800; text-transform: uppercase; padding: 3px 10px; border-radius: 12px; letter-spacing: 0.8px; box-shadow: var(--shadow-sm); z-index: 10;">
+          📖 ${dn.title || 'Prior Context & Background'}
         </div>
-        
-        <div class="mastery-card-body" style="padding-top: 8px; margin: 0;">
-          ${prevLessonLinkHtml}
-          
-          <div class="do-now-split-container" style="display: flex; gap: 24px; flex-wrap: wrap;">
-            
-            <!-- Left Side: Visual Source & See-Think-Wonder -->
-            <div class="do-now-left-col" style="flex: 1; min-width: 280px; display: flex; flex-direction: column; gap: 12px;">
-              <div>
-                <div style="background: #000; border-radius: var(--border-radius-sm); overflow: hidden; padding: 8px; border: 1px solid var(--border-glass); text-align: center;">
-                  <img src="${dn.image}" alt="Starter Image" style="max-width: 100%; max-height: 170px; object-fit: contain; border-radius: var(--border-radius-sm);" 
-                    onerror="const fallback = '${getFallbackUrl(dn.image) || ''}'; if (fallback && this.src !== fallback) { this.referrerPolicy = 'no-referrer'; this.src = fallback; } else { this.style.display='none'; }">
-                  <div class="do-now-provenance-box" style="font-size: 0.72rem; color: #f8fafc; font-weight: 500; font-style: normal; margin-top: 8px; text-align: left; background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); padding: 8px 10px; border-radius: var(--border-radius-sm); line-height: 1.4;">
-                    <strong style="color: #cbd5e1;">Source Provenance:</strong> ${dn.provenance}
-                    ${dn.sourceUrl ? `
-                      <div style="margin-top: 6px; border-top: 1px dashed var(--border-glass); padding-top: 4px;">
-                        <a href="${dn.sourceUrl}" target="_blank" style="color: var(--primary); text-decoration: underline; display: inline-flex; align-items: center; gap: 4px;"><i class="fa-solid fa-arrow-up-right-from-square"></i> View Original Webpage</a>
-                      </div>
-                    ` : ''}
-                  </div>
-                </div>
-                
-                <!-- See Think Wonder Prompt Box -->
-                <div style="background: rgba(245, 158, 11, 0.04); border: 1px dashed rgba(245, 158, 11, 0.2); padding: 10px; border-radius: var(--border-radius-sm); font-size: 0.78rem; line-height: 1.35; margin-top: 10px;">
-                  <strong style="color: var(--accent); display: block; margin-bottom: 4px; font-size: 0.8rem;"><i class="fa-solid fa-lightbulb"></i> Inference: See, Think, Wonder</strong>
-                  <ul style="margin: 0; padding-left: 14px; color: var(--text-muted); display: flex; flex-direction: column; gap: 2px;">
-                    <li><strong>See:</strong> ${dn.seeThinkWonder.see}</li>
-                    <li><strong>Think:</strong> ${dn.seeThinkWonder.think}</li>
-                    <li><strong>Wonder:</strong> ${dn.seeThinkWonder.wonder}</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            
-            <!-- Right Side: 5 Factual Recall Questions -->
-            <div class="do-now-right-col" style="flex: 1.2; min-width: 300px; display: flex; flex-direction: column; gap: 12px;">
-              <div style="display: flex; flex-direction: column; gap: 10px;">
-                <div style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; border-bottom: 1px solid var(--border-glass); padding-bottom: 4px; margin-bottom: 2px;">
-                  ⚡ Factual Recall Challenge
-                </div>
-                <ol class="do-now-questions-list" style="margin: 0; padding-left: 20px; color: var(--text-main); display: flex; flex-direction: column; gap: 8px;">
-                  ${dn.recallQuestions.map((q, idx) => `
-                    <li style="font-size: 0.88rem; line-height: 1.45;">
-                      ${q.question}
-                    </li>
-                  `).join('')}
-                </ol>
-              </div>
-            </div>
-            
-          </div>
-          
-          <!-- Bottom Section: Reveal Do Now Answers Button Row -->
-          <div style="margin-top: 16px; border-top: 1px solid var(--border-glass); padding-top: 16px;">
-            <button class="mastery-btn do-now-reveal-btn" style="background: rgba(245, 158, 11, 0.1); border: 1px solid var(--accent); color: var(--accent); font-weight: bold; font-size: 0.82rem; padding: 8px 16px; border-radius: 16px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
-              <i class="fa-solid fa-graduation-cap"></i> Reveal Do Now Guide Answers
-            </button>
-            
-            <!-- Hidden structured responses drawer -->
-            <div class="do-now-answers-drawer" style="display: none; margin-top: 16px; padding: 16px; background: rgba(34, 197, 94, 0.04); border-left: 4px solid var(--success); border-radius: var(--border-radius-sm); border-top: 1px solid var(--border-glass); border-right: 1px solid var(--border-glass); border-bottom: 1px solid var(--border-glass);">
-              <h4 style="margin: 0 0 12px 0; color: var(--success); font-size: 0.95rem; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-circle-check"></i> Retrieval Answer Key:</h4>
-              <div style="display: flex; flex-direction: column; gap: 12px; font-size: 0.88rem; line-height: 1.45;">
-                ${dn.recallQuestions.map((q, idx) => `
-                  <div>
-                    <strong style="color: var(--success); display: block; font-size: 0.82rem;">Answer ${idx + 1}:</strong>
-                    <p style="margin: 4px 0 0 0; color: var(--text-base);">${q.answer}</p>
-                  </div>
-                `).join('')}
-              </div>
-            </div>
-          </div>
-          
+        <div class="mastery-card-body" style="padding-top: 8px; margin: 0; font-size: 0.92rem; line-height: 1.55; color: var(--text-base);">
+          ${dn.bodyHtml}
         </div>
       </div>
       `;
     }
-  } else if (subtopicId === 'subtopic_1_1') {
-    doNowHtml = `
-      <div class="mastery-card background-context-card" style="max-width: 800px; margin: 18px auto 24px auto; border-left: 4px solid var(--primary); background: rgba(59, 130, 246, 0.03); position: relative; padding: 24px; overflow: visible !important;">
-        <div style="position: absolute; top: -12px; left: 16px; background: var(--primary); color: var(--text-inverse); font-size: 0.68rem; font-weight: 800; text-transform: uppercase; padding: 3px 10px; border-radius: 12px; letter-spacing: 0.8px; box-shadow: var(--shadow-sm); z-index: 10;">
-          📖 Prior Context & Background (Pre-1945)
-        </div>
-        <div class="mastery-card-body" style="padding-top: 8px; margin: 0; font-size: 0.92rem; line-height: 1.55; color: var(--text-base);">
-          <p style="margin: 0 0 12px 0;">
-            To understand the crisis in 1945, you must know what happened under the British Mandate since the end of the First World War. In <strong>1917</strong>, Britain issued the <strong>Balfour Declaration</strong>, promising to support a 'national home for the Jewish people' in Palestine. Following the collapse of the Ottoman Empire, the <strong>League of Nations (1922)</strong> granted Britain official administrative control (the Mandate) over the territory.
-          </p>
-          <p style="margin: 0;">
-            Throughout the 1920s and 1930s, escalating Jewish immigration (driven by rising European antisemitism) caused intense Palestinian Arab fear of displacement, culminating in the <strong>Arab Revolt (1936–39)</strong>. To restore order, Britain issued the <strong>1939 White Paper</strong>, which placed a strict limit on Jewish immigration (75,000 over five years) and restricted land sales. Consequently, by 1945, Britain was caught in an impossible trap: Zionists were furious that immigration was blocked during the Holocaust, while Arab leaders demanded immediate independence and an end to all Zionist expansion.
-          </p>
-        </div>
-      </div>
-    `;
   }
 
   // Generate Steps HTML
@@ -549,15 +567,45 @@ export function renderMasteryView(subtopicId) {
     }
 
     if (step.isSplit) {
-      stepsHtml += `
-        <div class="mastery-card" style="max-width: 800px; margin: 0 auto 20px auto;">
-          <h3 class="mastery-card-title">${step.title}</h3>
-          <div class="mastery-split-layout">
-            ${processedBodyHtml}
+      const hasMapOrImage = processedBodyHtml.includes('<img') || processedBodyHtml.includes('map-vector-box') || processedBodyHtml.includes('map-toggles') || processedBodyHtml.includes('historical-image-placeholder');
+      const mediaStart = processedBodyHtml.indexOf('<div class="mastery-media-column"');
+
+      if (!hasMapOrImage && mediaStart !== -1) {
+        let textPart = processedBodyHtml.substring(0, mediaStart).trim();
+        let mediaPart = processedBodyHtml.substring(mediaStart).trim();
+
+        let textInner = textPart;
+        textInner = textInner.replace(/^<div class="mastery-text-column">/, '');
+        textInner = textInner.replace(/^\s*<div class="mastery-card-body card-content">/, '');
+        textInner = textInner.replace(/<\/div>\s*<\/div>\s*$/, '');
+
+        let mediaInner = mediaPart;
+        mediaInner = mediaInner.replace(/^<div class="mastery-media-column"[^>]*>/, '');
+        mediaInner = mediaInner.replace(/<\/div>\s*$/, '');
+
+        stepsHtml += `
+          <div class="mastery-card" style="max-width: 800px; margin: 0 auto 20px auto;">
+            <h3 class="mastery-card-title">${step.title}</h3>
+            <div class="mastery-card-body card-content">
+              <div class="source-box-floated">
+                ${mediaInner}
+              </div>
+              ${textInner}
+            </div>
+            ${scholarlyHtml}
           </div>
-          ${scholarlyHtml}
-        </div>
-      `;
+        `;
+      } else {
+        stepsHtml += `
+          <div class="mastery-card" style="max-width: 800px; margin: 0 auto 20px auto;">
+            <h3 class="mastery-card-title">${step.title}</h3>
+            <div class="mastery-split-layout">
+              ${processedBodyHtml}
+            </div>
+            ${scholarlyHtml}
+          </div>
+        `;
+      }
     } else {
       stepsHtml += `
         <div class="mastery-card" style="max-width: 800px; margin: 0 auto 20px auto;">
@@ -640,34 +688,7 @@ export function renderMasteryView(subtopicId) {
     `;
   }
 
-  // Generate Knowledge Check HTML
-  let kcQuestionsHtml = '';
-  data.knowledgeCheck.forEach((q, index) => {
-    kcQuestionsHtml += `
-      <div class="quiz-question-item">
-        <div class="quiz-question-text">${index + 1}. ${q.question}</div>
-        <div class="quiz-answer-text" id="ans-${index + 1}">Answer: ${q.answer}</div>
-      </div>
-    `;
-  });
 
-  let kcHtml = '';
-  if (data.knowledgeCheck.length > 0) {
-    kcHtml = `
-      <div class="mastery-card" id="mastery-quiz-card" style="max-width: 800px; margin: 0 auto 24px auto;">
-        <h3 class="mastery-card-title">Knowledge Check</h3>
-        <div class="mastery-card-body">
-          <p style="font-style: italic; margin-top: 0; margin-bottom: 20px; color: var(--text-muted);">
-            Test your memory on the exact facts examiners are looking for!
-          </p>
-          
-          <div class="quiz-questions-list">
-            ${kcQuestionsHtml}
-          </div>
-        </div>
-      </div>
-    `;
-  }
 
   // Generate Importance Analyser HTML
   let impHtml = '';
@@ -935,52 +956,71 @@ export function renderMasteryView(subtopicId) {
     }
 
     if (extensionData.revisionQuestions && extensionData.revisionQuestions.length > 0) {
-      let questionsListHtml = '';
-      extensionData.revisionQuestions.forEach(q => {
-        let badgeClass = 'badge-easy';
-        let badgeColor = 'rgba(34, 197, 94, 0.1)';
-        let textColor = '#22c55e';
-        let borderColor = 'rgba(34, 197, 94, 0.2)';
-        
+      const stepNodesHtml = extensionData.revisionQuestions.map((q, idx) => `
+        <div class="journey-step-node ${idx === 0 ? 'active' : ''}" data-step-index="${idx}" style="position: relative; z-index: 2; width: 26px; height: 26px; border-radius: 50%; background: var(--bg-card); border: 2px solid ${idx === 0 ? 'var(--primary)' : 'var(--border-glass)'}; color: ${idx === 0 ? 'var(--primary)' : 'var(--text-muted)'}; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800; cursor: pointer; transition: all 0.2s;">
+          ${idx + 1}
+        </div>
+      `).join('');
+
+      const stepCardsHtml = extensionData.revisionQuestions.map((q, idx) => {
+        let badgeClass = 'badge-recall';
         if (q.difficulty === 'Difficult') {
-          badgeClass = 'badge-difficult';
-          badgeColor = 'var(--accent-glow)';
-          textColor = 'var(--accent)';
-          borderColor = 'rgba(244, 63, 94, 0.2)';
+          badgeClass = 'badge-challenge';
         } else if (q.difficulty === 'Medium') {
-          badgeClass = 'badge-medium';
-          badgeColor = 'var(--primary-glow)';
-          textColor = 'var(--primary)';
-          borderColor = 'rgba(168, 85, 247, 0.2)';
+          badgeClass = 'badge-analysis';
         }
         
-        questionsListHtml += `
-          <div class="revision-question-item">
-            <div class="revision-question-header">
-              <span class="revision-question-title">Question ${q.number}</span>
-              <span class="revision-difficulty-badge ${badgeClass}" style="background: ${badgeColor}; color: ${textColor}; border: 1px solid ${borderColor};">
-                ${q.difficulty}
-              </span>
+        return `
+          <div class="journey-paginated-card ${idx === 0 ? 'active' : ''}" data-step-index="${idx}" style="${idx === 0 ? 'display: block;' : 'display: none;'} background: rgba(255, 255, 255, 0.01); border: 1px solid var(--border-glass); border-radius: var(--border-radius-md); padding: 16px; min-height: 140px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+              <span class="journey-level-badge ${badgeClass}">${q.difficulty}</span>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Step ${idx + 1} of 10</span>
+              </div>
             </div>
-            <div class="revision-question-text">${q.question}</div>
-            
-            <div class="revision-answer-text">
-              <strong style="color: var(--success); display: block; margin-bottom: 4px;"><i class="fa-solid fa-lightbulb"></i> Answer Guide:</strong>
-              ${q.answer}
+            <p style="margin: 0 0 12px 0; font-size: 0.92rem; font-weight: 500; color: var(--text-main); line-height: 1.45;">
+              ${q.question}
+            </p>
+            <div class="journey-answer-guide" style="max-height: 0; overflow: hidden; transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1); padding: 0 12px; background: rgba(0, 0, 0, 0.2); border-left: 3px solid var(--primary); border-radius: 0 3px 3px 0;">
+              <span class="journey-answer-title" style="font-size: 0.72rem; font-weight: bold; text-transform: uppercase; color: var(--primary); margin-bottom: 4px; display: block; padding-top: 8px;">🛡️ Answer Guide:</span>
+              <p class="journey-answer-text" style="margin: 0; font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; padding-bottom: 8px;">
+                ${q.answer}
+              </p>
             </div>
           </div>
         `;
-      });
+      }).join('');
 
       revisionQuestionsHtml = `
         <div class="mastery-card revision-questions-card" style="max-width: 800px; margin: 0 auto 24px auto;">
           <h3 class="mastery-card-title">🛡️ 10-Step Unit Mastery Journey</h3>
-          <div class="mastery-card-body">
-            <p style="font-style: italic; margin-top: 0; margin-bottom: 16px; color: var(--text-muted); font-size: 0.85rem;">
-              Missed this lesson or need a thorough refresh? Click through these 10 structured questions (ranging from basic recall to expert challenge) to master the unit!
+          <div class="mastery-card-body" style="padding-top: 6px;">
+            <p style="font-style: italic; margin-top: 0; margin-bottom: 20px; color: var(--text-muted); font-size: 0.82rem;">
+              Missed this lesson or need a thorough refresh? Work through these 10 structured steps (from basic recall to expert challenge) to master this unit!
             </p>
-            <div class="revision-questions-list">
-              ${questionsListHtml}
+            
+            <!-- Step Indicator Navigation Bar -->
+            <div class="mastery-journey-steps-bar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; position: relative; padding: 0 4px;">
+              <div class="steps-bar-line" style="position: absolute; top: 50%; left: 0; right: 0; height: 2px; background: var(--border-glass); z-index: 1; transform: translateY(-50%);"></div>
+              ${stepNodesHtml}
+            </div>
+
+            <!-- Active Step Card Content -->
+            <div class="mastery-journey-content-wrapper" style="position: relative; z-index: 2;">
+              ${stepCardsHtml}
+            </div>
+
+            <!-- Action Navigation Buttons -->
+            <div class="mastery-journey-actions" style="display: flex; justify-content: space-between; align-items: center; margin-top: 16px; border-top: 1px solid var(--border-glass); padding-top: 14px;">
+              <button class="mastery-btn journey-prev-btn" style="padding: 6px 14px; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 6px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-glass); color: var(--text-muted); cursor: not-allowed; border-radius: 4px; opacity: 0.5;" disabled>
+                <i class="fa-solid fa-arrow-left"></i> Previous
+              </button>
+              <button class="mastery-btn journey-reveal-answer-btn" style="padding: 6px 14px; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 6px; background: rgba(56, 189, 248, 0.1); border: 1px solid var(--primary); color: var(--primary); cursor: pointer; border-radius: 4px;">
+                <i class="fa-solid fa-eye"></i> Reveal Answer
+              </button>
+              <button class="mastery-btn journey-next-btn" style="padding: 6px 14px; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 6px; background: rgba(56, 189, 248, 0.2); border: 1px solid var(--primary); color: #fff; cursor: pointer; border-radius: 4px;">
+                Next <i class="fa-solid fa-arrow-right"></i>
+              </button>
             </div>
           </div>
         </div>
@@ -1048,9 +1088,6 @@ export function renderMasteryView(subtopicId) {
           <span><i class="fa-solid fa-users-rectangle"></i> Historical Interpretations: Contrasting Historian Views</span>
         </h3>
         <div class="mastery-card-body" style="padding: 0;">
-          <p style="margin-top: 0; margin-bottom: 18px; font-style: italic; color: var(--text-muted); font-size: 0.85rem; line-height: 1.45;">
-            GCSE option papers require you to analyze how and why historians arrive at different interpretations. Read these contrasting viewpoints:
-          </p>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 16px;">
             <!-- Historian 1 -->
             <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); border-radius: var(--border-radius-sm); padding: 16px; border-left: 3px solid var(--primary); display: flex; flex-direction: column; justify-content: space-between;">
@@ -1105,8 +1142,50 @@ export function renderMasteryView(subtopicId) {
     `;
   }
 
+  const STATIC_MAP_IMAGES = {
+    'subtopic_1_1': { src: 'assets/sources/un_partition_plan_1947.png', alt: 'UN Partition Plan Map (1947)' },
+    'subtopic_1_2': { src: 'assets/sources/1949_armistice_map.png', alt: '1949 Armistice Green Line Map' },
+    'subtopic_1_3': { src: 'assets/sources/suez_crisis_map.png', alt: 'Suez Crisis Military Campaign Map (1956)' },
+    'subtopic_2_1': { src: 'assets/sources/six_day_war_fronts.png', alt: 'Six-Day War Military Fronts Map (1967)' },
+    'subtopic_2_2': { src: 'assets/sources/six_day_war_map_1967.png', alt: '1967 Occupied Territories Map' },
+    'subtopic_2_3': { src: 'assets/sources/yom_kippur_map.png', alt: 'Yom Kippur War Map (1973)' },
+    'subtopic_3_1': { src: 'assets/sources/sinai_withdrawal_map.png', alt: 'Sinai Withdrawal Map' },
+    'subtopic_3_2': { src: 'assets/sources/lebanon_invasion_map.png', alt: '1982 Lebanon Invasion Map' },
+    'subtopic_3_3': { src: 'assets/sources/oslo_accord_map.png', alt: 'Oslo II Areas A, B, C Map' }
+  };
+
+  let staticMapCardHtml = '';
+  const staticMapInfo = STATIC_MAP_IMAGES[subtopicId];
+  if (staticMapInfo) {
+    staticMapCardHtml = `
+      <div class="mastery-card static-map-card" style="margin: 0; padding: 24px; border-left: 4px solid var(--primary); background: rgba(59, 130, 246, 0.02); display: flex; flex-direction: column; justify-content: space-between; box-shadow: var(--shadow-sm);">
+        <div>
+          <h3 class="mastery-card-title" style="display: flex; align-items: center; gap: 8px; border: none; margin-bottom: 12px; font-size: 1.1rem; color: var(--primary);">
+            <i class="fa-solid fa-map-location-dot"></i> Key Geographic Map
+          </h3>
+          <div style="background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border-glass); border-radius: var(--border-radius-sm); padding: 8px; text-align: center; margin-bottom: 14px;">
+            <img src="${staticMapInfo.src}" alt="${staticMapInfo.alt}" style="max-width: 100%; max-height: 200px; object-fit: contain; border-radius: 4px; display: inline-block;">
+          </div>
+        </div>
+        <div style="font-size: 0.88rem; line-height: 1.5; color: var(--text-muted);">
+          <strong style="color: var(--primary); display: block; margin-bottom: 4px;"><i class="fa-solid fa-compass"></i> Map Title & Context:</strong>
+          ${staticMapInfo.alt}
+        </div>
+      </div>
+    `;
+  }
+
+  let evidenceBlockHtml = '';
+  if (sourceCardHtml || staticMapCardHtml) {
+    evidenceBlockHtml = `
+      <div class="evidence-block-container" style="max-width: 800px; margin: 24px auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px;">
+        ${sourceCardHtml ? sourceCardHtml.replace('max-width: 800px; margin: 0 auto 24px auto;', 'margin: 0;') : ''}
+        ${staticMapCardHtml}
+      </div>
+    `;
+  }
+
   let levelSelectorHtml = '';
-  let coreSupportHtml = '';
   const isCore = state.studyLevel === 'core';
   levelSelectorHtml = `
     <div class="study-level-selector" style="display: flex; background: rgba(0, 0, 0, 0.15); border: 1px solid var(--border-glass); padding: 4px; border-radius: 20px; width: fit-content; margin: 0 auto 24px auto; gap: 4px; box-shadow: var(--shadow-sm); position: relative; z-index: 10;">
@@ -1119,7 +1198,8 @@ export function renderMasteryView(subtopicId) {
     </div>
   `;
 
-  if (isCoreMode && data.coreSupport) {
+  let referenceHtml = '';
+  if (data.coreSupport) {
     const cs = data.coreSupport;
     let vocabListHtml = '';
     if (cs.vocab && cs.vocab.length > 0) {
@@ -1127,7 +1207,7 @@ export function renderMasteryView(subtopicId) {
         <li><strong>${v.word}:</strong> ${v.definition}</li>
       `).join('');
       vocabListHtml = `
-        <div class="mastery-card core-vocab-card" style="margin: 0; padding: 20px; border-left: 4px solid var(--secondary); background: rgba(6, 182, 212, 0.02); text-align: left;">
+        <div class="mastery-card core-vocab-card" style="margin: 0; padding: 20px; border-left: 4px solid var(--secondary); background: rgba(6, 182, 212, 0.02); text-align: left; box-shadow: none;">
           <h4 style="margin: 0 0 12px 0; font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700; color: var(--secondary); display: flex; align-items: center; gap: 8px; justify-content: flex-start;">
             <i class="fa-solid fa-key"></i> Key Vocabulary Definitions
           </h4>
@@ -1141,13 +1221,13 @@ export function renderMasteryView(subtopicId) {
     let timelineListHtml = '';
     if (cs.timeline && cs.timeline.length > 0) {
       const timelineItems = cs.timeline.map(t => `
-        <div style="position: relative;">
+        <div style="position: relative; margin-bottom: 12px; padding-left: 14px;">
           <span style="position: absolute; left: -19px; top: 3px; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.25);"></span>
           <strong style="color: var(--accent);">${t.date}:</strong> <strong>${t.event}</strong>. ${t.description}
         </div>
       `).join('');
       timelineListHtml = `
-        <div class="mastery-card core-timeline-card" style="margin: 0; padding: 20px; border-left: 4px solid var(--accent); background: rgba(244, 63, 94, 0.02); text-align: left;">
+        <div class="mastery-card core-timeline-card" style="margin: 0; padding: 20px; border-left: 4px solid var(--accent); background: rgba(244, 63, 94, 0.02); text-align: left; box-shadow: none;">
           <h4 style="margin: 0 0 12px 0; font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700; color: var(--accent); display: flex; align-items: center; gap: 8px; justify-content: flex-start;">
             <i class="fa-solid fa-clock-rotate-left"></i> Core Timeline
           </h4>
@@ -1158,10 +1238,42 @@ export function renderMasteryView(subtopicId) {
       `;
     }
 
-    coreSupportHtml = `
-      <div class="core-support-container" style="max-width: 800px; margin: 0 auto 24px auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
-        ${vocabListHtml}
-        ${timelineListHtml}
+    const specChecklistCardHtml = renderSpecChecklistCard(subtopicId, SPEC_CHECKLIST_DATA[subtopicId], true);
+
+    referenceHtml = `
+      <div class="lesson-reference-collapsible-wrapper" style="max-width: 800px; margin: 18px auto 24px auto;">
+        <div class="reference-toggle-header" style="background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: var(--border-radius-sm); padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all var(--transition-fast); user-select: none;">
+          <span style="font-family: var(--font-heading); font-size: 0.88rem; font-weight: 700; color: var(--secondary); display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-book-open"></i> Lesson Reference: Spec Points & Key Terms (Click to Expand)
+          </span>
+          <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 0.8rem; transition: transform 0.2s;"></i>
+        </div>
+        <div class="reference-content-wrapper" style="display: none; margin-top: 12px; background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: var(--border-radius-sm); padding: 20px; box-shadow: var(--shadow-sm);">
+          
+          <!-- Tabbed navigation -->
+          <div class="ref-tabs" style="display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid var(--border-glass); padding-bottom: 10px;">
+            <button class="ref-tab-btn active" data-tab="checklist" style="border: none; background: transparent; color: var(--primary); font-weight: 700; font-size: 0.82rem; padding: 6px 12px; cursor: pointer; transition: all var(--transition-fast); border-bottom: 2px solid var(--primary); outline: none;">
+              <i class="fa-solid fa-clipboard-list"></i> Spec Checklist
+            </button>
+            <button class="ref-tab-btn" data-tab="vocab" style="border: none; background: transparent; color: var(--text-muted); font-weight: 700; font-size: 0.82rem; padding: 6px 12px; cursor: pointer; transition: all var(--transition-fast); border-bottom: 2px solid transparent; outline: none;">
+              <i class="fa-solid fa-key"></i> Vocabulary
+            </button>
+            <button class="ref-tab-btn" data-tab="timeline" style="border: none; background: transparent; color: var(--text-muted); font-weight: 700; font-size: 0.82rem; padding: 6px 12px; cursor: pointer; transition: all var(--transition-fast); border-bottom: 2px solid transparent; outline: none;">
+              <i class="fa-solid fa-clock-rotate-left"></i> Timeline
+            </button>
+          </div>
+          
+          <!-- Tab contents -->
+          <div class="ref-tab-content" id="ref-tab-checklist">
+            ${specChecklistCardHtml}
+          </div>
+          <div class="ref-tab-content" id="ref-tab-vocab" style="display: none;">
+            ${vocabListHtml}
+          </div>
+          <div class="ref-tab-content" id="ref-tab-timeline" style="display: none;">
+            ${timelineListHtml}
+          </div>
+        </div>
       </div>
     `;
   }
@@ -1183,7 +1295,7 @@ export function renderMasteryView(subtopicId) {
           <button class="mastery-btn view-in-timeline-btn" data-subtopic="${subtopicId}" style="background: rgba(59, 130, 246, 0.1); border: 1px solid var(--primary); color: var(--primary); font-weight: bold; font-size: 0.8rem; padding: 6px 12px; border-radius: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; margin-top: 4px;">
             <i class="fa-solid fa-timeline"></i> View in Timeline
           </button>
-          ${WORKBOOK_DATA[subtopicId] ? `
+          ${subtopicId ? `
           <button class="mastery-btn print-workbook-btn" data-subtopic="${subtopicId}" style="background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; color: #10b981; font-weight: bold; font-size: 0.8rem; padding: 6px 12px; border-radius: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; margin-top: 4px;">
             <i class="fa-solid fa-print"></i> Print Lesson Workbook
           </button>
@@ -1193,23 +1305,17 @@ export function renderMasteryView(subtopicId) {
           ` : ''}
         </div>
       </div>
-      <p class="mastery-header-intro" style="margin-bottom: ${videoHtml ? '16px' : '0'};">
+      <p class="mastery-header-intro" style="margin-bottom: ${videoHtml ? '16px' : '0'}; text-align: left;">
         ${displayHeaderIntro}
       </p>
       ${videoHtml}
     </div>
 
-    <!-- Specification Checklist Card -->
-    ${renderSpecChecklistCard(subtopicId, SPEC_CHECKLIST_DATA[subtopicId])}
+    <!-- Key Individuals Spotlight -->
+    ${renderKeyFiguresSpotlight(subtopicId)}
 
-    <!-- Core Support Block (Vocab & Timeline) -->
-    ${coreSupportHtml}
-
-    <!-- Going Beyond Connection Card -->
-    ${renderGoingBeyondConnectionCard(subtopicId)}
-
-    <!-- Interactive Lesson Map Card -->
-    ${mapHtml}
+    <!-- Collapsible Lesson Reference Drawer -->
+    ${referenceHtml}
 
     <!-- Interactive Legend and Switch -->
     <div class="mastery-controls" style="max-width: 800px; margin: 0 auto 20px auto;">
@@ -1225,9 +1331,10 @@ export function renderMasteryView(subtopicId) {
       </label>
     </div>
 
-    ${sourceCardHtml}
-
     ${stepsHtml}
+    
+    <!-- Primary Evidence Block (Contemporary Source & Static Map Side-by-Side) -->
+    ${evidenceBlockHtml}
     
     ${dualHtml}
 
@@ -1236,28 +1343,31 @@ export function renderMasteryView(subtopicId) {
     
     ${chainHtml}
     
+    <!-- Exit Ticket Practice Block -->
+    ${isCoreMode ? scaffoldedPracticeHtml : impHtml}
+    
     ${revisionQuestionsHtml}
     
-    ${kcHtml}
-    
-    ${impHtml}
-    
-    ${scaffoldedPracticeHtml}
-    
-    ${vaultHtml}
-    
     ${summaryHtml}
+    
+    <!-- Collapsible Exam Question Vault -->
+    <div class="review-exam-collapsible-wrapper" style="max-width: 800px; margin: 24px auto 40px auto;">
+      <div class="review-toggle-header" style="background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: var(--border-radius-sm); padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all var(--transition-fast); user-select: none;">
+        <span style="font-family: var(--font-heading); font-size: 0.88rem; font-weight: 700; color: var(--accent); display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-shield-halved"></i> Exam Question Vault: Model Answers & Blueprints (Click to Expand)
+        </span>
+        <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 0.8rem; transition: transform 0.2s;"></i>
+      </div>
+      <div class="review-content-wrapper" style="display: none; margin-top: 16px;">
+        ${vaultHtml}
+      </div>
+    </div>
 
     <!-- Mastery Progress Button -->
     <div style="max-width: 800px; margin: 0 auto 40px auto; padding: 0 10px;">
       <button class="mastery-btn mastery-btn-success" id="btn-mark-mastery-mastered">
         ✓ Mark Topic ${subtopicId.replace('subtopic_', '').replace('_', '.')} as Mastered
       </button>
-    </div>
-
-    <!-- Temporary Debug info -->
-    <div style="max-width: 800px; margin: 20px auto; padding: 10px; background: #000; color: #00ff00; font-family: monospace; font-size: 0.8rem; border-radius: 4px; text-align: left; border: 1px solid #00ff00; z-index: 9999; position: relative;">
-      DEBUG: subtopicId="${subtopicId}" | studyLevel="${state.studyLevel}" | isCoreMode=${isCoreMode} | vaultCount=${vaultQuestionsToRender.length} | formulaHtmlLength=${formulaHtml ? formulaHtml.length : 0}
     </div>
   `;
 
@@ -1305,10 +1415,10 @@ export function renderMasteryView(subtopicId) {
 
   const viewWorksheetPageBtn = container.querySelector('.view-worksheet-page-btn');
   if (viewWorksheetPageBtn) {
-    viewWorksheetPageBtn.addEventListener('click', () => {
+    viewWorksheetPageBtn.addEventListener('click', async () => {
       AudioEngine.play('click');
       const subtopic = viewWorksheetPageBtn.getAttribute('data-subtopic');
-      const html = generateWorkbookHtml(subtopic, 'booklet', 'comfortable', false);
+      const html = await generateWorkbookHtml(subtopic, 'booklet', 'comfortable', false);
       const newWin = window.open();
       if (newWin) {
         newWin.document.write(html);
@@ -1494,16 +1604,130 @@ export function renderMasteryView(subtopicId) {
     });
   }
 
-  // Individual revision question click to toggle answer reveal
-  const revisionQuestionsList = container.querySelector('.revision-questions-list');
-  if (revisionQuestionsList) {
-    revisionQuestionsList.addEventListener('click', (e) => {
-      const item = e.target.closest('.revision-question-item');
-      if (item) {
-        AudioEngine.play('click');
-        const isRevealing = !item.classList.contains('revealed');
-        item.classList.toggle('revealed');
-        if (isRevealing) addXp(2);
+  // 10-Step Unit Mastery Journey Carousel logic
+  const revisionCard = container.querySelector('.revision-questions-card');
+  if (revisionCard) {
+    let currentStep = 0;
+    const stepNodes = revisionCard.querySelectorAll('.journey-step-node');
+    const stepCards = revisionCard.querySelectorAll('.journey-paginated-card');
+    const prevBtn = revisionCard.querySelector('.journey-prev-btn');
+    const nextBtn = revisionCard.querySelector('.journey-next-btn');
+    const revealBtn = revisionCard.querySelector('.journey-reveal-answer-btn');
+    const viewedSlides = new Set();
+
+    // Mark step 0 viewed
+    const firstSlideKey = `${subtopicId}_0`;
+    viewedSlides.add(firstSlideKey);
+
+    function updateStepUI(index) {
+      currentStep = index;
+      AudioEngine.play('click');
+
+      // Award XP for viewing the slide for the first time
+      const slideKey = `${subtopicId}_${index}`;
+      if (!viewedSlides.has(slideKey)) {
+        viewedSlides.add(slideKey);
+        addXp(5);
+      }
+
+      // Update nodes
+      stepNodes.forEach((node, idx) => {
+        node.classList.remove('active');
+        node.style.borderColor = 'var(--border-glass)';
+        node.style.color = 'var(--text-muted)';
+        node.style.background = 'var(--bg-card)';
+        
+        if (idx === currentStep) {
+          node.classList.add('active');
+          node.style.borderColor = 'var(--primary)';
+          node.style.color = 'var(--primary)';
+          node.style.background = 'rgba(56, 189, 248, 0.08)';
+        } else if (idx < currentStep) {
+          // Completed steps colored slightly
+          node.style.borderColor = 'var(--success)';
+          node.style.color = 'var(--success)';
+          node.style.background = 'rgba(34, 197, 94, 0.05)';
+        }
+      });
+
+      // Update cards
+      stepCards.forEach((card, idx) => {
+        if (idx === currentStep) {
+          card.style.display = 'block';
+          // Keep answer hidden initially when switching to a new step
+          const answerGuide = card.querySelector('.journey-answer-guide');
+          if (answerGuide) {
+            answerGuide.style.maxHeight = '0px';
+            answerGuide.style.padding = '0 12px';
+          }
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      // Update buttons
+      if (currentStep === 0) {
+        prevBtn.disabled = true;
+        prevBtn.style.opacity = '0.5';
+        prevBtn.style.cursor = 'not-allowed';
+      } else {
+        prevBtn.disabled = false;
+        prevBtn.style.opacity = '1';
+        prevBtn.style.cursor = 'pointer';
+      }
+
+      if (currentStep === stepCards.length - 1) {
+        nextBtn.innerHTML = 'Finish <i class="fa-solid fa-circle-check" style="margin-left: 4px; color: var(--success);"></i>';
+      } else {
+        nextBtn.innerHTML = 'Next <i class="fa-solid fa-arrow-right"></i>';
+      }
+      
+      revealBtn.innerHTML = '<i class="fa-solid fa-eye"></i> Reveal Answer';
+      revealBtn.style.background = 'rgba(56, 189, 248, 0.1)';
+      revealBtn.style.color = 'var(--primary)';
+      revealBtn.style.borderColor = 'var(--primary)';
+    }
+
+    // Bind Node Clicks
+    stepNodes.forEach((node, idx) => {
+      node.addEventListener('click', () => updateStepUI(idx));
+    });
+
+    prevBtn.addEventListener('click', () => {
+      if (currentStep > 0) {
+        updateStepUI(currentStep - 1);
+      }
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (currentStep < stepCards.length - 1) {
+        updateStepUI(currentStep + 1);
+      } else {
+        AudioEngine.play('success');
+        addXp(15); // Bonus XP on completion
+        Confetti.spawn(50);
+        alert("🎉 Congratulations! You have completed the 10-Step Unit Mastery Journey!");
+      }
+    });
+
+    // Bind Reveal Click
+    revealBtn.addEventListener('click', () => {
+      const activeCard = stepCards[currentStep];
+      const answerGuide = activeCard.querySelector('.journey-answer-guide');
+      if (answerGuide) {
+        const isRevealed = answerGuide.style.maxHeight && answerGuide.style.maxHeight !== '0px';
+        if (isRevealed) {
+          AudioEngine.play('click');
+          answerGuide.style.maxHeight = '0px';
+          answerGuide.style.padding = '0 12px';
+          revealBtn.innerHTML = '<i class="fa-solid fa-eye"></i> Reveal Answer';
+        } else {
+          AudioEngine.play('success');
+          answerGuide.style.maxHeight = '1000px';
+          answerGuide.style.padding = '8px 12px';
+          revealBtn.innerHTML = '<i class="fa-solid fa-eye-slash"></i> Hide Answer';
+          addXp(2);
+        }
       }
     });
   }
@@ -1897,15 +2121,72 @@ export function renderMasteryView(subtopicId) {
     });
   }
 
+  // Reference Drawer Collapsible Toggle
+  const refToggleHeader = container.querySelector('.reference-toggle-header');
+  const refContentWrapper = container.querySelector('.reference-content-wrapper');
+  if (refToggleHeader && refContentWrapper) {
+    refToggleHeader.addEventListener('click', () => {
+      AudioEngine.play('click');
+      const isHidden = refContentWrapper.style.display === 'none' || !refContentWrapper.style.display;
+      const chevron = refToggleHeader.querySelector('.fa-chevron-down');
+      if (isHidden) {
+        refContentWrapper.style.display = 'block';
+        if (chevron) chevron.style.transform = 'rotate(180deg)';
+      } else {
+        refContentWrapper.style.display = 'none';
+        if (chevron) chevron.style.transform = 'rotate(0deg)';
+      }
+    });
+  }
+
+  // Reference Drawer Tabs Switching
+  const refTabBtns = container.querySelectorAll('.ref-tab-btn');
+  refTabBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      AudioEngine.play('click');
+      const selectedTab = btn.getAttribute('data-tab');
+      
+      refTabBtns.forEach(b => {
+        b.classList.remove('active');
+        b.style.color = 'var(--text-muted)';
+        b.style.borderBottom = '2px solid transparent';
+      });
+      btn.classList.add('active');
+      btn.style.color = 'var(--primary)';
+      btn.style.borderBottom = '2px solid var(--primary)';
+      
+      const tabContents = container.querySelectorAll('.ref-tab-content');
+      tabContents.forEach(content => {
+        content.style.display = 'none';
+      });
+      const targetContent = container.querySelector(`#ref-tab-${selectedTab}`);
+      if (targetContent) {
+        targetContent.style.display = 'block';
+      }
+    });
+  });
+
+  // Review Drawer Collapsible Toggle
+  const revToggleHeader = container.querySelector('.review-toggle-header');
+  const revContentWrapper = container.querySelector('.review-content-wrapper');
+  if (revToggleHeader && revContentWrapper) {
+    revToggleHeader.addEventListener('click', () => {
+      AudioEngine.play('click');
+      const isHidden = revContentWrapper.style.display === 'none' || !revContentWrapper.style.display;
+      const chevron = revToggleHeader.querySelector('.fa-chevron-down');
+      if (isHidden) {
+        revContentWrapper.style.display = 'block';
+        if (chevron) chevron.style.transform = 'rotate(180deg)';
+      } else {
+        revContentWrapper.style.display = 'none';
+        if (chevron) chevron.style.transform = 'rotate(0deg)';
+      }
+    });
+  }
+
   // Formatting vault answers
   formatVaultImportanceAnswers(container);
-
-  // Initialize Leaflet Map
-  if (mapConfig && window.L) {
-    setTimeout(() => {
-      initializeLessonLeafletMap(subtopicId, mapConfig);
-    }, 100);
-  }
 }
 
 export function setupHardModeKeywords(container) {
@@ -2200,7 +2481,7 @@ export function initWorkbookCreator() {
   }
 
   if (btnPrint) {
-    btnPrint.addEventListener('click', () => {
+    btnPrint.addEventListener('click', async () => {
       const style = document.getElementById('workbook-creator-style').value;
       const density = document.getElementById('workbook-creator-density').value;
       const answers = document.getElementById('workbook-creator-answers').value;
@@ -2215,7 +2496,7 @@ export function initWorkbookCreator() {
         }
       }
 
-      const html = generateWorkbookHtml(activeWorkbookSubtopicId, style, density, answers === 'yes', selectedIndices);
+      const html = await generateWorkbookHtml(activeWorkbookSubtopicId, style, density, answers === 'yes', selectedIndices);
       
       const printArea = document.getElementById('print-area');
       if (printArea) {
@@ -2223,12 +2504,14 @@ export function initWorkbookCreator() {
       }
       
       AudioEngine.play('success');
-      window.print();
+      setTimeout(() => {
+        window.print();
+      }, 150);
     });
   }
 
   if (btnWord) {
-    btnWord.addEventListener('click', () => {
+    btnWord.addEventListener('click', async () => {
       const style = document.getElementById('workbook-creator-style').value;
       const density = document.getElementById('workbook-creator-density').value;
       const answers = document.getElementById('workbook-creator-answers').value;
@@ -2243,7 +2526,7 @@ export function initWorkbookCreator() {
         }
       }
 
-      const html = generateWorkbookHtml(activeWorkbookSubtopicId, style, density, answers === 'yes', selectedIndices);
+      const html = await generateWorkbookHtml(activeWorkbookSubtopicId, style, density, answers === 'yes', selectedIndices);
       const styleLabel = style.charAt(0).toUpperCase() + style.slice(1);
       downloadHtmlAsWord(`Lesson_Workbook_${activeWorkbookSubtopicId.replace('subtopic_', '')}_${styleLabel}.doc`, html);
       AudioEngine.play('success');
@@ -2252,621 +2535,297 @@ export function initWorkbookCreator() {
 }
 
 
-function generateWorkbookHtml(subtopicId, style, density, includeAnswers, selectedIndices = []) {
-  const data = WORKBOOK_DATA[subtopicId];
+const TIMELINE_WORKSHEET_PROMPTS = {
+  "subtopic_1_1": [
+    {
+      q: "Why did British Foreign Secretary Ernest Bevin restrict Jewish immigration to a quota of 1,500 a month in 1945?",
+      a: "Britain feared an Arab revolt that might threaten its access to vital Middle Eastern oil."
+    },
+    {
+      q: "What consequence did the King David Hotel bombing (22 July 1946) have for British political willpower?",
+      a: "It killed 91 people, shattered British morale, and made the Mandate politically and financially unsustainable."
+    },
+    {
+      q: "Why did the British government decide to refer the Palestine Mandate to the UN in February 1947?",
+      a: "Britain was exhausted by Zionist insurgency and the immense financial cost of maintaining 100,000 troops."
+    },
+    {
+      q: "What was the main consequence of the 1948-49 Arab-Israeli War for the Palestinian Arab population?",
+      a: "The Nakba (Catastrophe), which resulted in the displacement and refugee crisis of 700,000 Palestinians."
+    }
+  ],
+  "subtopic_1_2": [
+    {
+      q: "Explain one territorial consequence of the 1949 Armistice Agreements for the city of Jerusalem.",
+      a: "Jerusalem was divided: West Jerusalem was controlled by Israel, while Jordan occupied East Jerusalem."
+    },
+    {
+      q: "What consequence did the Law of Return (July 1950) have on Israel's demographics and economy?",
+      a: "It doubled Israel's population in three years, providing military security but causing severe economic strain and food rationing."
+    },
+    {
+      q: "Why did Palestinian Fedayeen launch cross-border raids into Israel from the Gaza Strip in the early 1950s?",
+      a: "They were displaced refugees seeking to return to their lands, steal property, and attack Israeli settlements."
+    },
+    {
+      q: "Why did the United States provide $300 million in financial aid to Israel during the 1950s?",
+      a: "To prevent the economic collapse of the new state under the heavy costs of absorbing mass Jewish immigration."
+    }
+  ],
+  "subtopic_1_3": [
+    {
+      q: "Why did Egypt sign a major arms deal with Czechoslovakia in September 1955?",
+      a: "To obtain modern Soviet-bloc weapons to defend against Israeli reprisal raids and end Western arms dominance."
+    },
+    {
+      q: "What triggered President Nasser to nationalise the Suez Canal Company in July 1956?",
+      a: "The USA and Britain abruptly withdrew their funding for the Aswan High Dam, prompting Nasser to use canal tolls to fund it."
+    },
+    {
+      q: "What was the secret pretext agreed upon in the Protocol of Sèvres in October 1956?",
+      a: "Israel would invade Sinai, allowing Britain and France to intervene as 'peacekeepers' and seize the Suez Canal."
+    },
+    {
+      q: "What consequence did superpower intervention (US economic pressure) have on Britain's status in November 1956?",
+      a: "Britain was forced into a humiliating withdrawal, marking the end of its status as a global superpower."
+    }
+  ],
+  "subtopic_2_1": [
+    {
+      q: "What was the key decision made by Arab leaders at the Cairo Conference in 1964 regarding water resources?",
+      a: "Arab states decided to divert the headwaters of the River Jordan to reduce Israel's water supply, escalating tensions."
+    },
+    {
+      q: "What consequence did the Samu Raid (November 1966) have on King Hussein of Jordan?",
+      a: "It sparked massive public protests in Jordan against the monarchy, pushing King Hussein to sign a defense pact with Egypt."
+    },
+    {
+      q: "What aggressive military actions did President Nasser take in Sinai in May 1967?",
+      a: "He expelled UN peacekeepers, mobilized the Egyptian army, and blockaded the Straits of Tiran to Israeli shipping."
+    },
+    {
+      q: "What territorial changes resulted from Israel's preemptive airstrikes and victories in the June 1967 Six-Day War?",
+      a: "Israel captured the Sinai Peninsula and Gaza Strip (from Egypt), the West Bank and East Jerusalem (from Jordan), and the Golan Heights (from Syria)."
+    }
+  ],
+  "subtopic_2_2": [
+    {
+      q: "Explain the central 'land for peace' formula proposed in UN Resolution 242 in November 1967.",
+      a: "It called for the withdrawal of Israeli forces from occupied territories in exchange for Arab recognition of Israel's right to exist."
+    },
+    {
+      q: "What was the strategic objective of Egypt's War of Attrition (1967-70) along the Suez Canal?",
+      a: "Nasser wanted to wear down the Israeli military with constant artillery shelling and force a withdrawal from Sinai."
+    },
+    {
+      q: "What consequence did the Dawson's Field hijackings (September 1970) have for the PLO in Jordan?",
+      a: "It triggered King Hussein's military crackdown (Black September), resulting in the PLO's violent expulsion from Jordan to Lebanon."
+    },
+    {
+      q: "How did Israel respond to the Munich Olympics massacre in September 1972?",
+      a: "Israel launched Operation Wrath of God, a covert global assassination campaign targeting PLO militants."
+    }
+  ],
+  "subtopic_2_3": [
+    {
+      q: "Why did Anwar Sadat expel 15,000 Soviet military advisors from Egypt in 1972?",
+      a: "To signal to the USA that Egypt was open to American diplomacy, and to gain sole control of Egypt's military strategy."
+    },
+    {
+      q: "What was the main military objective of the joint Egypt-Syria surprise attack on 6 October 1973 (Yom Kippur)?",
+      a: "To break the diplomatic stalemate, cross the Suez Canal/Golan Heights, and force Israel to negotiate the return of occupied lands."
+    },
+    {
+      q: "What consequence did the OPEC oil embargo have on Western countries supporting Israel during the war?",
+      a: "It caused a severe global energy crisis, quadrupling oil prices, triggering inflation, and forcing the West to push for peace."
+    },
+    {
+      q: "What political consequence did the Yom Kippur War have for the Israeli government and public confidence?",
+      a: "It shattered the myth of IDF invincibility, leading to public outrage, an inquiry into intelligence failures, and the resignation of Golda Meir."
+    }
+  ],
+  "subtopic_3_1": [
+    {
+      q: "What did Henry Kissinger's 'Shuttle Diplomacy' (1974-75) accomplish in the Middle East?",
+      a: "It negotiated military disengagement agreements in Sinai and Golan, establishing buffer zones and reducing Soviet influence."
+    },
+    {
+      q: "What was the significance of Anwar Sadat's historic visit to the Israeli Knesset in November 1977?",
+      a: "It was the first time an Arab leader recognized Israel, breaking 30 years of hostility and opening direct peace talks."
+    },
+    {
+      q: "What was the main compromise agreed upon in the Camp David Accords (September 1978)?",
+      a: "Israel agreed to return the entire Sinai Peninsula to Egypt in exchange for full diplomatic recognition and peace."
+    },
+    {
+      q: "What consequence did the 1979 Washington Peace Treaty have for Egypt's relations with the wider Arab world?",
+      a: "Egypt was expelled from the Arab League and isolated, and President Sadat was assassinated by Islamist extremists in 1981."
+    }
+  ],
+  "subtopic_3_2": [
+    {
+      q: "What triggered Israel's Litani Operation (invasion of southern Lebanon) in March 1978?",
+      a: "The Coastal Road Massacre, where PLO/Fatah militants hijacked buses in Israel and killed 38 civilians."
+    },
+    {
+      q: "What consequence did the June 1982 Lebanon invasion have for Palestinian refugees in the Sabra and Shatila camps?",
+      a: "Christian Phalangist militias massacred hundreds of refugees while the Israeli military controlled the surrounding area."
+    },
+    {
+      q: "What event triggered the outbreak of the First Intifada in Gaza in December 1987?",
+      a: "An Israeli military transport vehicle crashed into civilian cars, killing four Palestinian workers."
+    },
+    {
+      q: "What consequence did Yitzhak Rabin's 'Iron Fist' policy have on international public opinion?",
+      a: "It drew global criticism of Israel for excessive force, raising international sympathy for the Palestinian cause."
+    }
+  ],
+  "subtopic_3_3": [
+    {
+      q: "Why was the Madrid Conference convened in October 1991 following the Gulf War?",
+      a: "To initiate the first face-to-face peace negotiations between Israel, Syria, Lebanon, Jordan, and a joint Jordanian-Palestinian delegation."
+    },
+    {
+      q: "What key agreements were established in the Oslo I Accords in September 1993?",
+      a: "Mutual recognition between Israel and the PLO, and the creation of the Palestinian Authority to manage self-rule in Gaza and Jericho."
+    },
+    {
+      q: "What was the significance of the October 1994 peace treaty between Israel and Jordan?",
+      a: "Jordan became the second Arab nation to officially sign a peace treaty and normalize diplomatic relations with Israel."
+    },
+    {
+      q: "What consequence did the assassination of Yitzhak Rabin (November 1995) have on the peace process?",
+      a: "It shattered Israeli political unity, derailed the momentum of the Oslo peace process, and led to the election of right-wing opposition."
+    }
+  ]
+};
+
+const TIMELINE_KEYWORDS = {
+  "subtopic_1_1": [
+    "Holocaust survivors", "diplomatic pressure", "Bevin", "1,500",
+    "King David Hotel", "91 deaths", "Irgun", "British sergeants",
+    "SS Exodus", "UN", "Resolution 181", "withdraw", "State of Israel",
+    "Arab armies", "Nakba"
+  ],
+  "subtopic_1_2": [
+    "Green Line", "700,000", "refugees", "Nakba", "UNRWA",
+    "Law of Return", "doubles", "Tzena", "Fedayeen", "reprisal raids",
+    "Suez", "Straits of Tiran", "300 million", "Count Bernadotte", "assassinated"
+  ],
+  "subtopic_1_3": [
+    "Soviet arms deal", "balance shifts", "Nasser", "nationalizes",
+    "Suez Canal", "Aswan Dam", "Sinai", "Sèvres pact", "economic pressure",
+    "UNEF"
+  ],
+  "subtopic_2_1": [
+    "Arab League", "PLO", "water diversion", "reprisal", "West Bank/Jordan tensions",
+    "UNEF expelled", "Nasser", "Tiran", "false warning", "preemptive strikes",
+    "Sinai", "Gaza", "West Bank", "Golan"
+  ],
+  "subtopic_2_2": [
+    "Resolution 242", "Land for Peace", "Khartoum Conference", "Three Nos",
+    "Suez", "settlements", "West Bank", "PFLP", "Black September",
+    "PLO", "11 Israeli athletes", "Wrath of God"
+  ],
+  "subtopic_2_3": [
+    "Sadat", "15,000", "Soviet advisors", "cross", "Suez/Golan",
+    "Yom Kippur", "embargo", "energy crisis", "Resolution 338", "shuttle diplomacy",
+    "Suez"
+  ],
+  "subtopic_3_1": [
+    "Kissinger", "Suez Canal", "Sadat", "Jerusalem", "parliament",
+    "Carter", "Begin", "autonomy", "peace treaty", "Sinai", "Egypt",
+    "Arab League"
+  ],
+  "subtopic_3_2": [
+    "IDF", "Lebanon", "PLO", "Beirut", "Sabra & Shatila", "Tunis",
+    "Hezbollah", "uprising", "Gaza", "stones campaign", "Rabin",
+    "physical force", "Hamas", "charter"
+  ],
+  "subtopic_3_3": [
+    "summit", "direct talks", "Declaration of Principles", "Clinton",
+    "handshake", "Jordan", "peace treaty", "46-year", "Right-wing",
+    "Rabin", "peace process"
+  ]
+};
+
+function getBlankedAndAnswers(desc, keywords) {
+  const sortedKeywords = [...keywords].sort((a, b) => b.length - a.length);
+  let template = desc;
+  const replacedPhrases = [];
+  const blankedWords = [];
+  
+  sortedKeywords.forEach((kw) => {
+    const escaped = kw.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    const regex = new RegExp(escaped, 'i');
+    
+    let match;
+    while ((match = template.match(regex)) !== null) {
+      const actualKw = match[0];
+      const placeholderIdx = replacedPhrases.length;
+      replacedPhrases.push(actualKw);
+      blankedWords.push(actualKw);
+      template = template.replace(regex, `@@@${placeholderIdx}@@@`);
+    }
+  });
+  
+  let studentText = template;
+  let teacherText = template;
+  
+  replacedPhrases.forEach((phrase, idx) => {
+    const placeholder = `@@@${idx}@@@`;
+    studentText = studentText.replaceAll(placeholder, `<strong>_______</strong>`);
+    teacherText = teacherText.replaceAll(placeholder, `<span style="font-weight: bold; text-decoration: underline; color: #16a34a;">${phrase}</span>`);
+  });
+  
+  return { studentText, teacherText, blankedWords };
+}
+
+async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, selectedIndices = []) {
+  if (!workbookDataModule) {
+    workbookDataModule = await import('./workbook_data.js');
+  }
+  const data = workbookDataModule.WORKBOOK_DATA[subtopicId];
   if (!data) {
     return `<html><body><h3>Workbook pack not available for subtopic: ${subtopicId}</h3></body></html>`;
   }
   const topicName = subtopicId.replace('subtopic_', '').replace('_', '.');
+  const cleanTitle = data.title.replace(/\s*\(\d{4}[–-—\d]*\)/, '');
 
   const specList = SPEC_CHECKLIST_DATA[subtopicId] || [];
 
   const specBoxHtml = specList.length > 0 ? `
     <div class="spec-box" style="border: 1px solid #d1d5db; padding: 6px 10px; margin-bottom: 10px; font-size: 7.5pt; background: #f9fafb; border-radius: 4px; line-height: 1.3; box-sizing: border-box; text-align: left;">
       <strong style="text-transform: uppercase; font-size: 8pt; color: #111827; display: block; margin-bottom: 3px;">📋 Curriculum Specification Checklist (Pearson Edexcel)</strong>
-      <ul style="margin: 0; padding-left: 14px;">
-        ${specList.map(item => `<li style="margin: 0 0 2px 0; padding: 0;">${item.point}</li>`).join('')}
+      <ul style="margin: 0; padding-left: 0; list-style: none;">
+        ${specList.map(item => `<li style="margin: 0 0 2px 0; padding: 0; list-style: none;">☐ ${item.point}</li>`).join('')}
       </ul>
     </div>
   ` : '';
 
   const detailsHtml = '';
 
-  if (style === 'booklet') {
-    const narrativeHtml = data.narrative.map(sec => `
-      <div class="sub-title">${sec.title}</div>
-      ${sec.paragraphs.map(p => `<p>${p}</p>`).join('')}
-    `).join('');
-
-    const vocabHtml = data.vocabulary.map(item => `
-      <div class="vocab-item"><strong>${item.term}</strong>: ${item.definition}</div>
-    `).join('');
-
-    const timelineCells = [];
-    data.timeline.forEach((item, idx) => {
-      timelineCells.push(`
-        <td class="timeline-card">
-          <div class="timeline-date">${item.date}</div>
-          <div class="timeline-desc">${item.desc}</div>
-        </td>
-      `);
-      if (idx < data.timeline.length - 1) {
-        timelineCells.push(`
-          <td style="text-align: center; font-size: 11pt; width: 4%; vertical-align: middle; color: #9ca3af;">➔</td>
-        `);
-      }
-    });
-
-    const comprehensionHtml = data.comprehensionCheck.map((q, idx) => `
-      <div class="question-block">
-        <span class="question-title">${q.title}</span>
-        <span class="scaffold-tip">${q.scaffold}</span>
-        ${q.stretch ? `<span class="stretch-challenge">${q.stretch}</span>` : ''}
-      </div>
-    `).join('');
-
-    const matrixHeaders = data.causationMatrix.columns.map(col => `
-      <th class="matrix-header" style="width: ${100 / data.causationMatrix.columns.length}%;">${col}</th>
-    `).join('');
-    const matrixCells = data.causationMatrix.columns.map(() => `
-      <td class="matrix-cell"></td>
-    `).join('');
-    const factBankText = data.causationMatrix.factBank.map((fact, idx) => `(${idx + 1}) ${fact}`).join(' • ');
-
-    const matrixHtml = `
-      <table class="matrix-table">
-        <tr>${matrixHeaders}</tr>
-        <tr>${matrixCells}</tr>
-      </table>
-    `;
-
-    let sourcesTable = '';
-    if (data.sources && data.sources.length > 0) {
-      sourcesTable += `<table style="width: 100%; border-collapse: collapse; margin-bottom: 3px;">`;
-      for (let i = 0; i < data.sources.length; i += 2) {
-        sourcesTable += `<tr>`;
-        const s1 = data.sources[i];
-        sourcesTable += `
-          <td style="width: 50%; padding-right: 4px; padding-bottom: 4px; vertical-align: top;">
-            <div class="source-box">
-              <strong>${s1.id}: ${s1.title}</strong>
-              <p style="font-family: 'Times New Roman', Times, serif; font-size: 7.5pt; margin: 2px 0 0 0; line-height: 1.2;">
-                "${s1.text}"
-              </p>
-            </div>
-          </td>
-        `;
-        const s2 = data.sources[i + 1];
-        if (s2) {
-          sourcesTable += `
-            <td style="width: 50%; padding-left: 4px; padding-bottom: 4px; vertical-align: top;">
-              <div class="source-box">
-                <strong>${s2.id}: ${s2.title}</strong>
-                <p style="font-family: 'Times New Roman', Times, serif; font-size: 7.5pt; margin: 2px 0 0 0; line-height: 1.2;">
-                  "${s2.text}"
-                </p>
+  const retrievalPrompts = TIMELINE_WORKSHEET_PROMPTS[subtopicId] || [];
+  let retrievalQuestionsHtml = '';
+  if (retrievalPrompts.length > 0) {
+    retrievalQuestionsHtml = `
+      <div class="retrieval-questions-section" style="border: 1.5px solid #111827; padding: 8px 10px; margin-top: 15px; background: #ffffff; border-radius: 4px; box-sizing: border-box; text-align: left;">
+        <strong style="text-transform: uppercase; font-size: 8pt; color: #111827; display: block; margin-bottom: 5px; border-bottom: 1.5px solid #111827; padding-bottom: 2px;">✏️ Quick-Fire Retrieval Questions</strong>
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          ${retrievalPrompts.map((p, idx) => {
+            const answerArea = includeAnswers 
+              ? `<span style="font-size: 7.5pt; line-height: 1.25; color: #16a34a; font-style: italic; padding-left: 5px;"><strong>Model Answer:</strong> ${p.a}</span>`
+              : `<div class="dotted-writing-line" style="border-bottom: 1px dashed #9ca3af; height: 18px; margin-top: 2px;"></div>`;
+            return `
+              <div style="font-size: 7.5pt; line-height: 1.35; color: #1f2937;">
+                <strong>Q${idx + 1}:</strong> ${p.q}
+                ${answerArea}
               </div>
-            </td>
-          `;
-        } else {
-          sourcesTable += `<td style="width: 50%;"></td>`;
-        }
-        sourcesTable += `</tr>`;
-      }
-      sourcesTable += `</table>`;
-    }
-
-    const sourceTasksHtml = data.sourceTasks.map(task => `
-      <span class="scaffold-tip"><strong>${task.title}:</strong> ${task.scaffold}</span>
-    `).join('');
-
-    const examQuestionsHtml = data.examPractice.questions.map((q, idx) => {
-      if (q.stimulus) {
-        return `
-          <div style="margin-bottom: 4px;">
-            <span style="font-weight: bold; font-size: 8pt;">${q.title}:</span>
-            <span style="display: block; font-size: 7.5pt; color: #374151; margin-bottom: 2px;">${q.text}</span>
-            <div style="font-size: 6.5pt; color: #4b5563; line-height: 1.25; border-left: 2px solid #d1d5db; padding-left: 6px; margin-left: 2px; margin-top: 2px;">
-              You may use the following in your answer:<br>
-              ${q.stimulus.map(s => `• ${s}<br>`).join('')}
-              You must also use information of your own.
-            </div>
-          </div>
-        `;
-      } else {
-        return `
-          <div style="margin-bottom: 4px;">
-            <span style="font-weight: bold; font-size: 8pt;">${q.title}:</span>
-            <span style="display: block; font-size: 7.5pt; color: #374151;">${q.text}</span>
-          </div>
-        `;
-      }
-    }).join('');
-
-    const examWordBankText = data.examPractice.wordBank.join(' • ');
-
-    const quizItemsHtml = data.peerQuiz.map(item => `
-      <li style="margin: 0 0 1.5px 0; padding: 0;">${item.q}</li>
-    `).join('');
-
-    const mindMapBranchesHtml = data.mindMap.branches.map(br => `
-      <div class="map-branch-item">
-        <strong>${br.title}</strong>
-        <div class="keyword-pill-box">🔑 ${br.keywords.join(' • ')}</div>
+            `;
+          }).join('')}
+        </div>
       </div>
-    `).join('');
-
-    return `<!DOCTYPE html>
-<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-<head>
-  <meta charset="utf-8">
-  <title>GCSE History Lesson Resource - ${data.title}</title>
-  <style>
-    @page {
-      size: 21cm 29.7cm; /* A4 */
-      margin: 0.8cm 1.0cm 0.8cm 1.0cm;
-      mso-page-orientation: portrait;
-    }
-    body {
-      font-family: 'Arial', sans-serif;
-      font-size: 9.5pt;
-      color: #1f2937;
-      line-height: 1.3;
-      background: #ffffff;
-      margin: 0;
-      padding: 0;
-    }
-    .print-page, .print-page-last {
-      clear: both;
-      box-sizing: border-box;
-      position: relative;
-      background: #ffffff;
-    }
-    .print-page {
-      page-break-after: always;
-    }
-    .print-page-last {
-      page-break-after: avoid;
-    }
-    @media screen {
-      body {
-        background-color: #f3f4f6;
-        padding: 20px 0;
-      }
-      .print-page, .print-page-last {
-        width: 21cm;
-        min-height: 29.7cm;
-        margin: 0 auto 20px auto;
-        padding: 0.8cm 1.0cm;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        border: 1px solid #e5e7eb;
-        border-radius: 4px;
-      }
-    }
-    @media print {
-      body {
-        background: #ffffff !important;
-        color: #1f2937 !important;
-        font-size: 9.5pt !important;
-        line-height: 1.3 !important;
-      }
-      .print-page, .print-page-last {
-        width: 100% !important;
-        min-height: 27.7cm !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        box-shadow: none !important;
-        border: none !important;
-        border-radius: 0 !important;
-      }
-    }
-    
-    .main-title {
-      font-size: 13pt;
-      font-weight: 800;
-      border-bottom: 2px solid #111827;
-      padding-bottom: 3px;
-      margin-top: 0;
-      margin-bottom: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: #111827;
-    }
-    .section-title {
-      font-size: 9.2pt;
-      font-weight: bold;
-      text-transform: uppercase;
-      color: #111827;
-      border-bottom: 1.5px solid #4b5563;
-      padding-bottom: 1px;
-      margin-top: 5px;
-      margin-bottom: 2px;
-    }
-    .sub-title {
-      font-size: 8.2pt;
-      font-weight: bold;
-      color: #111827;
-      margin-top: 4px;
-      margin-bottom: 1px;
-    }
-    
-    .narrative-layout {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 4px;
-    }
-    .narrative-text {
-      width: 70%;
-      padding-right: 10px;
-      vertical-align: top;
-      text-align: justify;
-      font-size: 8pt;
-      line-height: 1.25;
-    }
-    .narrative-text p {
-      margin: 0 0 2px 0;
-    }
-    .side-panel {
-      width: 30%;
-      padding-left: 8px;
-      border-left: 1px solid #d1d5db;
-      vertical-align: top;
-    }
-    
-    .spec-box {
-      border: 1px solid #d1d5db;
-      padding: 4px 6px;
-      margin-bottom: 4px;
-      background: #f9fafb;
-      font-size: 7.5pt;
-      line-height: 1.15;
-    }
-    .spec-box ul {
-      margin: 1px 0 0 0;
-      padding-left: 12px;
-    }
-    .active-reading-box {
-      border: 1px solid #d1d5db;
-      padding: 4px 6px;
-      background: #f3f4f6;
-      margin-bottom: 4px;
-      font-size: 7.5pt;
-      line-height: 1.15;
-    }
-    .vocab-box {
-      background: #f9fafb;
-      padding: 4px;
-      border: 1px solid #e5e7eb;
-      border-radius: 4px;
-    }
-    .vocab-box h4 {
-      font-size: 7.2pt;
-      font-weight: bold;
-      text-transform: uppercase;
-      margin-top: 0;
-      margin-bottom: 2px;
-      border-bottom: 1px solid #9ca3af;
-      padding-bottom: 1px;
-    }
-    .vocab-item {
-      font-size: 6.8pt;
-      line-height: 1.15;
-      margin-bottom: 2px;
-    }
-    .source-box {
-      border-left: 3px solid #4b5563;
-      background: #f9fafb;
-      padding: 4px 6px;
-      font-size: 7.2pt;
-      margin-bottom: 3px;
-      box-sizing: border-box;
-      height: 100%;
-    }
-    
-    .timeline-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 4px;
-    }
-    .timeline-card {
-      border: 1px solid #d1d5db;
-      padding: 3px 4px;
-      width: 22%;
-      vertical-align: top;
-      background: #f9fafb;
-    }
-    .timeline-date {
-      font-weight: bold;
-      font-size: 7.2pt;
-      text-transform: uppercase;
-      border-bottom: 1px solid #e5e7eb;
-      margin-bottom: 2px;
-      padding-bottom: 1px;
-    }
-    .timeline-desc {
-      font-size: 6.8pt;
-      line-height: 1.15;
-    }
-    
-    .question-block {
-      margin-bottom: 3px;
-      padding: 4px 6px;
-      background: #ffffff;
-      border: 1px solid #e5e7eb;
-      border-radius: 4px;
-    }
-    .question-title {
-      font-size: 8.2pt;
-      font-weight: bold;
-      display: block;
-      margin-bottom: 1px;
-    }
-    .scaffold-tip {
-      font-size: 6.8pt;
-      color: #4b5563;
-      font-style: italic;
-      display: block;
-      margin-bottom: 1px;
-    }
-    .stretch-challenge {
-      font-size: 6.8pt;
-      color: #b45309;
-      font-weight: bold;
-      display: block;
-      margin-top: 1px;
-    }
-    
-    .matrix-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 4px;
-    }
-    .matrix-header {
-      font-weight: bold;
-      font-size: 7.2pt;
-      text-transform: uppercase;
-      text-align: center;
-      background-color: #f3f4f6;
-      border: 1px solid #9ca3af;
-      padding: 2px;
-    }
-    .matrix-cell {
-      border: 1px solid #9ca3af;
-      padding: 3px;
-      min-height: 30px;
-      vertical-align: top;
-      font-size: 6.8pt;
-      color: #9ca3af;
-      font-style: italic;
-    }
-    
-    .framework-container {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 3px;
-      font-size: 6.8pt;
-      background: #f9fafb;
-      border: 1px solid #d1d5db;
-      border-radius: 4px;
-    }
-    .framework-column {
-      vertical-align: top;
-      padding: 4px;
-    }
-
-    .retention-box {
-      border: 1.5px solid #111827;
-      background: #ffffff;
-      border-radius: 4px;
-      margin-top: 3px;
-      padding: 3px 6px;
-    }
-    .retention-header {
-      font-weight: bold;
-      font-size: 8.2pt;
-      color: #111827;
-      text-transform: uppercase;
-      border-bottom: 1.5px solid #111827;
-      padding-bottom: 1px;
-      margin-bottom: 2px;
-    }
-    .split-layout {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    .split-col-left {
-      width: 50%;
-      border-right: 1px dashed #d1d5db;
-      padding-right: 8px;
-      vertical-align: top;
-    }
-    .split-col-right {
-      width: 50%;
-      padding-left: 8px;
-      vertical-align: top;
-    }
-    .quiz-title-box {
-      font-weight: bold;
-      font-size: 7.2pt;
-      text-transform: uppercase;
-      color: #4b5563;
-      margin-bottom: 2px;
-    }
-    .quiz-list {
-      margin: 0;
-      padding-left: 14px;
-      font-size: 7.2pt;
-      line-height: 1.15;
-    }
-    .quiz-list li {
-      margin-bottom: 1px;
-    }
-    .map-blueprint {
-      font-size: 7pt;
-      line-height: 1.15;
-    }
-    .map-branch-item {
-      margin-bottom: 2px;
-      background: #f9fafb;
-      padding: 2px 4px;
-      border-left: 2px solid #b45309;
-    }
-    .map-branch-item strong {
-      color: #111827;
-      display: block;
-    }
-    .keyword-pill-box {
-      margin-top: 2px;
-      font-style: italic;
-      color: #4b5563;
-    }
-    
-    .footer-note {
-      font-size: 7pt;
-      color: #6b7280;
-      text-align: center;
-      border-top: 1px solid #e5e7eb;
-      padding-top: 2px;
-      margin-top: 5px;
-      clear: both;
-    }
-    @media screen {
-      .footer-note {
-        position: absolute;
-        bottom: 0.8cm;
-        left: 1.0cm;
-        right: 1.0cm;
-        margin-top: 0;
-      }
-    }
-    @media print {
-      .footer-note {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        margin-top: 0;
-      }
-    }
-  </style>
-</head>
-<body>
-
-  <!-- PAGE 1: NARRATIVE & TIMELINE -->
-  <div class="print-page">
-    <h2 class="main-title">Topic ${topicName}: ${data.title}</h2>
-    ${specBoxHtml}
-
-    <div class="active-reading-box">
-      <strong>✍️ Active Reading Focus:</strong> ${data.activeReadingFocus}
-    </div>
-
-    <div class="section-title" style="margin-top: 5px; margin-bottom: 3px;">Section 1: Historical Narrative & Core Knowledge</div>
-    
-    <table class="narrative-layout">
-      <tr>
-        <td class="narrative-text">
-          ${narrativeHtml}
-        </td>
-        <td class="side-panel">
-          <div class="vocab-box">
-            <h4>Vocabulary Focus</h4>
-            ${vocabHtml}
-          </div>
-        </td>
-      </tr>
-    </table>
-
-    <div class="section-title" style="margin-top: 5px; margin-bottom: 3px;">Section 2: Visual Chronological Timeline</div>
-    <p style="font-size: 7.5pt; color: #4b5563; margin: 0 0 3px 0; font-style: italic;">
-      <strong>Timeline Task:</strong> In your exercise book, choose any two events from the timeline below. Write a short explanation of how the earlier event directly led to or caused the later event.
-    </p>
-    <table class="timeline-table" style="margin-bottom: 3px;">
-      <tr>
-        ${timelineCells.join('')}
-      </tr>
-    </table>
-    <div class="footer-note">Page 1</div>
-  </div>
-
-  <!-- PAGE 2: ANALYTICAL TASKS & ASSESSMENT PREP -->
-  <div class="print-page-last">
-    <div class="section-title" style="margin-top: 0; margin-bottom: 3px;">Section 3: Comprehension Check (AO1)</div>
-    <p style="font-size: 7.5pt; color: #4b5563; margin: 0 0 3px 0; font-style: italic;">Provide structured analytical answers in your exercise book using the prompts below.</p>
-
-    ${comprehensionHtml}
-
-    <div class="section-title" style="margin-top: 6px; margin-bottom: 3px;">Section 4: Causation Matrix (Analytical Essay Prep)</div>
-    <p style="font-size: 7.5pt; color: #4b5563; margin: 0 0 3px 0; font-style: italic;">
-      <strong>Task:</strong> In your exercise book, recreate and populate this matrix. Categorize by writing the fact numbers (1-6) from the Fact Bank in the corresponding columns, then write a short sentence explaining which factor was the most important.
-    </p>
-    
-    <div style="border: 1px dashed #9ca3af; padding: 3px 6px; font-size: 7pt; background: #f9fafb; line-height: 1.25; border-radius: 4px; margin-bottom: 3px;">
-      <strong>Fact Bank:</strong> ${factBankText}
-    </div>
-
-    ${matrixHtml}
-
-    <div class="section-title" style="margin-top: 6px; margin-bottom: 3px;">Section 5: Historical Sources & Evidence (AO3)</div>
-    <p style="font-size: 7.5pt; color: #4b5563; margin: 0 0 3px 0; font-style: italic;">Analyze the conflicting viewpoints surrounding the topic using the evidence below.</p>
-    
-    ${sourcesTable}
-
-    <div class="question-block" style="margin-bottom: 4px; padding: 4px 6px;">
-      <span class="question-title" style="font-size: 8pt;">Source Tasks (Answer in your exercise book):</span>
-      ${sourceTasksHtml}
-    </div>
-
-    <div class="section-title" style="margin-top: 6px; margin-bottom: 3px;">Section 6: Exam Practice & Higher Tier Synthesis</div>
-    
-    <table class="framework-container" style="margin-bottom: 0;">
-      <tr>
-        <td class="framework-column" style="width: 52%; padding-right: 6px; border-right: 1px solid #e5e7eb;">
-          <strong>📝 Exam Practice Questions (Answer in your exercise book):</strong>
-          <div style="margin-top: 3px;">
-            ${examQuestionsHtml}
-          </div>
-        </td>
-        <td class="framework-column" style="width: 48%; padding-left: 6px;">
-          <strong>🏆 Exam Word Bank &amp; Writing Support:</strong>
-          <div style="margin-top: 2px; font-size: 7pt; line-height: 1.25;">
-            <strong>Word Bank:</strong> ${examWordBankText}
-            <div style="margin-top: 3px; font-style: italic; color: #4b5563;">
-              <strong>Synthesis Model:</strong> ${data.examPractice.synthesisModel}
-            </div>
-          </div>
-        </td>
-      </tr>
-    </table>
-
-    <div class="retention-box">
-      <div class="retention-header">🧠 Section 7: Knowledge Retention &amp; Synoptic Revision Guide</div>
-      <table class="split-layout">
-        <tr>
-          <td class="split-col-left">
-            <div class="quiz-title-box">⚡ Quick-Fire Peer-To-Peer Quiz</div>
-            <ol class="quiz-list" style="margin: 0; padding-left: 14px;">
-              ${quizItemsHtml}
-            </ol>
-          </td>
-          
-          <td class="split-col-right">
-            <div class="quiz-title-box">🗺️ Exercise Book Mind-Map Blueprint</div>
-            <div class="map-blueprint">
-              <p style="margin: 0 0 4px 0; font-style: italic; color: #4b5563;">In your book, construct a central node titled <strong>"${data.mindMap.centralNode}"</strong> and link these three core analytical branches using the keywords:</p>
-              
-              ${mindMapBranchesHtml}
-            </div>
-          </td>
-        </tr>
-      </table>
-    </div>
-
-    <div class="footer-note">Page 2</div>
-  </div>
-
-</body>
-</html>`;
+    `;
   }
 
   let html = `<!DOCTYPE html>
@@ -2956,33 +2915,7 @@ function generateWorkbookHtml(subtopicId, style, density, includeAnswers, select
       height: 28px;
       margin-bottom: 4px;
     }
-    .footer-note {
-      font-size: 7pt;
-      color: #6b7280;
-      text-align: center;
-      border-top: 1px solid #e5e7eb;
-      padding-top: 2px;
-      margin-top: 15px;
-      clear: both;
-    }
-    @media screen {
-      .footer-note {
-        position: absolute;
-        bottom: 1.0cm;
-        left: 1.0cm;
-        right: 1.0cm;
-        margin-top: 0;
-      }
-    }
-    @media print {
-      .footer-note {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        margin-top: 0;
-      }
-    }
+
     /* Cornell grid styles */
     .print-cornell-grid {
       display: table;
@@ -3099,191 +3032,140 @@ function generateWorkbookHtml(subtopicId, style, density, includeAnswers, select
 <body>
 `;
 
-  if (style === 'cloze') {
-    // Scramble the word bank so words do not appear in chronological order of the blanks
-    const scrambledWordBank = [...data.cloze.wordBank].sort(() => Math.random() - 0.5);
-    const wordBank = scrambledWordBank.join(' | ');
-    
-    const fill = (word) => {
-      if (includeAnswers) {
-        return `<span style="font-weight: bold; text-decoration: underline; color: #16a34a;">${word}</span>`;
-      } else {
-        return `<strong>____________________</strong>`;
-      }
-    };
-
-    const parseClozeText = (text) => {
-      return text.replace(/\[\[(.*?)\]\]/g, (match, p1) => {
-        return fill(p1);
-      });
-    };
-
-    const clozeSectionsHtml = data.cloze.sections.map(sec => `
-      <h3 class="sub-title">${sec.title}</h3>
-      <p>
-        ${parseClozeText(sec.text)}
-      </p>
+  if (style === 'study') {
+    // Narrative HTML: complete paragraphs
+    const narrativeHtml = data.narrative.map(sec => `
+      <div style="margin-bottom: 8px;">
+        <h4 style="margin: 0 0 3px 0; font-size: 7.8pt; color: #111827; font-weight: bold; border-bottom: 1px solid #e5e7eb; padding-bottom: 1px;">${sec.title}</h4>
+        ${sec.paragraphs.map(p => `<p style="margin: 0 0 4px 0; font-size: 7.2pt; line-height: 1.3; text-align: justify; color: #374151;">${p}</p>`).join('')}
+      </div>
     `).join('');
 
-    html += `
-      <div class="print-page-last">
-        <h2 class="main-title">Guided Cloze Review &bull; Topic ${topicName}: ${data.title}</h2>
-        ${specBoxHtml}
-        <div style="border: 1px solid #111827; padding: 10px; margin-bottom: 15px; font-size: 9pt; background: #f9fafb;">
-          <strong>Instructions:</strong> Read the passage below and fill in the blanks using the terms from the Word Bank at the bottom.
-        </div>
-        
-        <div style="font-size: 10pt; line-height: 1.8; text-align: justify;">
-          ${clozeSectionsHtml}
-        </div>
-
-        <div style="border: 1.5px solid #111827; padding: 12px; margin-top: 30px; background: #f9fafb; border-radius: 4px;">
-          <strong style="display: block; margin-bottom: 6px; text-transform: uppercase; font-size: 8.5pt;">Word Bank</strong>
-          <div style="font-size: 8.5pt; line-height: 1.5; text-align: center; font-style: italic;">
-            ${wordBank}
-          </div>
-        </div>
-        
-        <div class="footer-note">GCSE History Workbook &bull; Guided Cloze Review &bull; Page 1 of 1</div>
+    // Vocabulary Focus HTML
+    const vocabHtml = data.vocabulary.map(v => `
+      <div style="margin-bottom: 4px; font-size: 7pt; line-height: 1.2; color: #374151;">
+        <strong style="color: #111827;">${v.term}</strong>: ${v.definition}
       </div>
-    `;
+    `).join('');
 
-  } else if (style === 'cornell') {
-    const linesCount = density === 'compact' ? 5 : 8;
-    const makeDottedLines = (count) => Array(count).fill('<div class="dotted-writing-line"></div>').join('');
-    
-    const fillNote = (ans) => {
-      if (includeAnswers) {
-        return `<div style="font-size: 9.5pt; color: #16a34a; font-style: italic; padding: 5px 0;"><strong>Model Notes:</strong> ${ans}</div>`;
-      } else {
-        return makeDottedLines(linesCount);
-      }
-    };
+    // Timeline Reference HTML: complete events fully written out
+    const timelineRefHtml = data.timeline.map(item => `
+      <div style="margin-bottom: 5px; font-size: 7pt; line-height: 1.25; color: #374151;">
+        <strong style="color: #111827;">${item.date}</strong><br>
+        ${item.desc}
+      </div>
+    `).join('');
 
-    const cues = data.cornell.cues;
-    const page1Cues = cues.slice(0, 3);
-    const page2Cues = cues.slice(3);
+    const pageTitleStudy = includeAnswers ? 'Teacher Answer Key &bull; ' : '';
 
-    const renderCueRow = (cue) => `
-      <tr class="print-cornell-row">
-        <td class="print-cornell-cues" style="width: 30%; border-right: 1.5px solid #111827; border-bottom: 1.5px solid #111827; padding: 10px; vertical-align: top; font-size: 8pt; font-weight: bold; background: #f9fafb;">
-          ${cue.title}<br><br>
-          <span style="font-size: 7.5pt; font-weight: normal; color: #4b5563;">
-            ${cue.subCues.map(sc => `${sc}`).join('<br>')}
-          </span>
-        </td>
-        <td class="print-cornell-notes" style="width: 70%; border-bottom: 1.5px solid #111827; padding: 10px; vertical-align: top; background: #ffffff;">
-          ${fillNote(cue.modelNotes)}
-        </td>
+    // Page 2: Timeline Analysis (identical to Level 9 page 2 of 'timeline' style)
+    const prompts = TIMELINE_WORKSHEET_PROMPTS[subtopicId] || [];
+    const dummyGridRow = `
+      <tr style="height: 0px; line-height: 0px; font-size: 0px;">
+        <td width="42%" style="width: 42%; height: 0px; padding: 0; margin: 0; border: 0;">&nbsp;</td>
+        <td width="8%" style="width: 8%; height: 0px; padding: 0; margin: 0; border: 0;">&nbsp;</td>
+        <td width="8%" style="width: 8%; height: 0px; padding: 0; margin: 0; border: 0;">&nbsp;</td>
+        <td width="42%" style="width: 42%; height: 0px; padding: 0; margin: 0; border: 0;">&nbsp;</td>
       </tr>
     `;
-
-    html += `
-      <div class="print-page">
-        <h2 class="main-title">Cornell Notes &bull; Topic ${topicName}: ${data.title}</h2>
-        ${specBoxHtml}
-        <div style="border: 1px solid #111827; padding: 10px; margin-bottom: 10px; font-size: 8.5pt; background: #f9fafb;">
-          <strong>Methodology:</strong> Use the left-hand column cues to guide your note-taking on the historical narrative. Re-read sections 1-3 to extract precise dates, groups, and motivations.
+    let tableRowsL9 = dummyGridRow;
+    data.timeline.forEach((event, idx) => {
+      const prompt = prompts[idx] || { q: "Connection question not found", a: "" };
+      
+      const answerArea = includeAnswers 
+        ? `<div style="font-size: 7.2pt; line-height: 1.25; color: #16a34a; font-style: italic; border-left: 2.5px solid #16a34a; padding-left: 5px; margin-top: 4px;"><strong>Model Answer:</strong> ${prompt.a}</div>`
+        : `<div style="border-bottom: 1px dashed #9ca3af; height: 18px; margin-top: 2px;"></div>
+           <div style="border-bottom: 1px dashed #9ca3af; height: 18px; margin-top: 2px;"></div>
+           <div style="border-bottom: 1px dashed #9ca3af; height: 18px; margin-top: 2px;"></div>
+           <div style="border-bottom: 1px dashed #9ca3af; height: 18px; margin-top: 2px;"></div>`;
+           
+      const questionBox = `
+        <div class="timeline-box" style="border: 1px solid #111827; border-radius: 4px; padding: 8px 10px; background: #ffffff; min-height: 90px; box-sizing: border-box;">
+          <span style="font-size: 7.5pt; line-height: 1.35; display: block; color: #1f2937; font-weight: bold; margin-bottom: 4px;">
+            ${prompt.q}
+          </span>
+          ${answerArea}
         </div>
-
-        <table class="print-cornell-grid" style="width: 100%; border-collapse: collapse; border: 1.5px solid #111827; margin-top: 10px; box-sizing: border-box;">
-          <tbody>
-            ${page1Cues.map(renderCueRow).join('')}
-          </tbody>
-        </table>
-        
-        <div class="footer-note">GCSE History Workbook &bull; Cornell Notes &bull; Page 1 of 2</div>
-      </div>
-
-      <div class="print-page-last">
-        <table class="print-cornell-grid" style="width: 100%; border-collapse: collapse; border: 1.5px solid #111827; margin-top: 10px; box-sizing: border-box;">
-          <tbody>
-            ${page2Cues.map(renderCueRow).join('')}
-            <tr class="print-cornell-summary-row">
-              <td class="print-cornell-summary-cell" colspan="2" style="padding: 10px; vertical-align: top; background: #f9fafb; font-size: 8.5pt; border-top: 1.5px solid #111827;">
-                <strong>Synthesis Summary:</strong> ${data.cornell.synthesis.prompt}
-                ${includeAnswers ? `
-                  <div style="font-size: 9.5pt; color: #16a34a; font-style: italic; margin-top: 8px;">
-                    <strong>Model Synthesis:</strong> ${data.cornell.synthesis.modelAnswer}
-                  </div>
-                ` : makeDottedLines(6)}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-
-        <div class="footer-note">GCSE History Workbook &bull; Cornell Notes &bull; Page 2 of 2</div>
-      </div>
-    `;
-
-  } else if (style === 'organizer') {
-    const flowchartLines = density === 'compact' ? 3 : 5;
-    const makeDottedLines = (count) => Array(count).fill('<div class="dotted-writing-line"></div>').join('');
-    
-    const fillBox = (ans) => {
-      if (includeAnswers) {
-        return `<div style="font-size: 8pt; color: #16a34a; font-style: italic; line-height: 1.4;"><strong>Key Points:</strong> ${ans}</div>`;
-      } else {
-        return makeDottedLines(flowchartLines);
-      }
-    };
-
-    const boxes = data.organizer.boxes;
-    const vocabMatch = data.organizer.vocabMatch;
-
-    const flowchartCells = [];
-    boxes.forEach((box, idx) => {
-      flowchartCells.push(`
-        <td class="flowchart-box">
-          <div style="font-weight: bold; font-size: 8.5pt; text-transform: uppercase; border-bottom: 1px solid #111827; margin-bottom: 6px; padding-bottom: 2px;">
-            ${box.title}
-          </div>
-          ${fillBox(box.modelNotes)}
-        </td>
-      `);
-      if (idx < boxes.length - 1) {
-        flowchartCells.push(`<td class="flowchart-arrow">➔</td>`);
+      `;
+      
+      const isLeft = idx % 2 === 0;
+      const leftContent = isLeft ? questionBox : '&nbsp;';
+      const rightContent = isLeft ? '&nbsp;' : questionBox;
+      
+      tableRowsL9 += `
+        <tr>
+          <td width="42%" style="width: 42%;">&nbsp;</td>
+          <td colspan="2" width="16%" style="width: 16%; text-align: center; vertical-align: middle; padding: 4px 0;">
+            <div style="background: #111827; color: #ffffff; padding: 3px 6px; border-radius: 4px; font-size: 6.8pt; font-weight: bold; display: inline-block; white-space: nowrap;">
+              ${event.date}
+            </div>
+          </td>
+          <td width="42%" style="width: 42%;">&nbsp;</td>
+        </tr>
+        <tr height="90" style="height: 90px;">
+          <td width="42%" style="width: 42%; vertical-align: top;">${leftContent}</td>
+          <td width="8%" style="width: 8%; border-right: 2px solid #111827;">&nbsp;</td>
+          <td width="8%" style="width: 8%;">&nbsp;</td>
+          <td width="42%" style="width: 42%; vertical-align: top;">${rightContent}</td>
+        </tr>
+      `;
+      
+      if (idx < data.timeline.length - 1) {
+        tableRowsL9 += `
+          <tr style="height: 12px; font-size: 1px; line-height: 1px;">
+            <td width="42%" style="width: 42%; font-size: 1px; line-height: 1px;">&nbsp;</td>
+            <td width="8%" style="width: 8%; border-right: 2px solid #111827; height: 12px; font-size: 1px; line-height: 1px;">&nbsp;</td>
+            <td width="8%" style="width: 8%; height: 12px; font-size: 1px; line-height: 1px;">&nbsp;</td>
+            <td width="42%" style="width: 42%; font-size: 1px; line-height: 1px;">&nbsp;</td>
+          </tr>
+        `;
       }
     });
 
-    const sortedDefs = [...vocabMatch].sort((a, b) => a.match.localeCompare(b.match));
-    const vocabRows = vocabMatch.map((item, idx) => `
-      <tr>
-        <td class="vocab-td"><strong>${item.term}</strong></td>
-        <td class="vocab-td" style="text-align: center; font-weight: bold; color: #16a34a;">${includeAnswers ? item.match : ""}</td>
-        <td class="vocab-td">${sortedDefs[idx].match}. ${sortedDefs[idx].definition}</td>
-      </tr>
-    `).join('');
-
     html += `
-      <div class="print-page-last">
-        <h2 class="main-title">Graphic Organizer &bull; Topic ${topicName}: ${data.title}</h2>
+      <!-- SIDE 1: STUDY REFERENCE -->
+      <div class="print-page" style="position: relative; min-height: 27.2cm; box-sizing: border-box;">
+        <h2 class="main-title">${pageTitleStudy}Topic ${topicName}: ${cleanTitle}</h2>
         ${specBoxHtml}
-        <div style="border: 1px solid #111827; padding: 10px; margin-bottom: 10px; font-size: 8.5pt; background: #f9fafb;">
-          <strong>Task 1: Causal Flowchart.</strong> In the boxes below, record the key causes, actions, and consequences for each turning point, tracing the chronology of the Mandate's collapse.
-        </div>
-
-        <table class="flowchart-table">
+        
+        <table style="width: 100%; border-collapse: collapse; margin-top: 5px; table-layout: fixed;">
           <tr>
-            ${flowchartCells.join('')}
+            <td style="width: 63%; vertical-align: top; padding-right: 12px; box-sizing: border-box;">
+              <strong style="text-transform: uppercase; font-size: 7.8pt; color: #111827; display: block; margin-bottom: 5px; border-bottom: 1.5px solid #111827; padding-bottom: 2px;">📖 Lesson Narrative</strong>
+              ${narrativeHtml}
+            </td>
+            <td style="width: 37%; vertical-align: top; border-left: 1px solid #d1d5db; padding-left: 12px; box-sizing: border-box;">
+              <div class="vocab-section" style="margin-bottom: 10px;">
+                <strong style="text-transform: uppercase; font-size: 7.8pt; color: #111827; display: block; margin-bottom: 5px; border-bottom: 1.5px solid #111827; padding-bottom: 2px;">📖 Key Vocabulary</strong>
+                ${vocabHtml}
+              </div>
+              <div class="timeline-section">
+                <strong style="text-transform: uppercase; font-size: 7.8pt; color: #111827; display: block; margin-bottom: 5px; border-bottom: 1.5px solid #111827; padding-bottom: 2px;">⏳ Chronology Reference</strong>
+                ${timelineRefHtml}
+              </div>
+            </td>
           </tr>
         </table>
+        ${retrievalQuestionsHtml}
+      </div>
 
-        <div class="section-title">Task 2: Key Vocabulary Match-Up</div>
-        <table class="vocab-table">
-          <thead>
-            <tr>
-              <th class="vocab-th" style="width: 25%;">Historical Term</th>
-              <th class="vocab-th" style="width: 15%; text-align: center;">Your Match</th>
-              <th class="vocab-th" style="width: 60%;">Definition / Significance</th>
-            </tr>
-          </thead>
+      <!-- SIDE 2: CHRONOLOGICAL ANALYSIS -->
+      <div class="print-page-last" style="position: relative; min-height: 27.2cm; box-sizing: border-box; margin-top: 20px; page-break-before: always;">
+        <h3 style="font-size: 10pt; font-weight: bold; border-bottom: 1.5px solid #111827; padding-bottom: 2px; margin-top: 0; margin-bottom: 8px; text-transform: uppercase; color: #111827; letter-spacing: 0.5px;">
+          Topic ${topicName}: ${cleanTitle}${includeAnswers ? ' (Teacher Answer Key)' : ''}
+        </h3>
+        
+        <table class="timeline-recall-table" style="width: 100%; border-collapse: collapse; margin-top: 5px; table-layout: fixed;">
+          <colgroup>
+            <col width="42%" style="width: 42%;">
+            <col width="8%" style="width: 8%;">
+            <col width="8%" style="width: 8%;">
+            <col width="42%" style="width: 42%;">
+          </colgroup>
           <tbody>
-            ${vocabRows}
+            ${tableRowsL9}
           </tbody>
         </table>
-
-        <div class="footer-note">GCSE History Workbook &bull; Graphic Organizer &bull; Page 1 of 1</div>
       </div>
     `;
 
@@ -3345,7 +3227,7 @@ function generateWorkbookHtml(subtopicId, style, density, includeAnswers, select
       const firstPageSpecHtml = qNum === 0 ? specBoxHtml : '';
       html += `
         <div class="${isQuestionLast ? 'print-page-last' : 'print-page'}">
-          <div class="main-title">GCSE Exam Practice &bull; Topic ${topicName}: ${data.title}</div>
+          <div class="main-title">Topic ${topicName}: ${cleanTitle}</div>
           ${firstPageSpecHtml}
           <div style="font-size: 11pt; font-weight: bold; margin-bottom: 15px; border-bottom: 1.5px solid #111827; padding-bottom: 4px;">
             Question ${qNum + 1} [${marks} Marks]
@@ -3362,8 +3244,6 @@ function generateWorkbookHtml(subtopicId, style, density, includeAnswers, select
           <div class="rubric-box">
             ${rubricHtml}
           </div>
-
-          <div class="footer-note">GCSE History Workbook &bull; Exam Practice &bull; Page ${qNum + 1}</div>
         </div>
       `;
       
@@ -3383,12 +3263,393 @@ function generateWorkbookHtml(subtopicId, style, density, includeAnswers, select
             <div style="border-left: 3px solid #16a34a; background: #f0fdf4; padding: 12px; font-size: 10pt; line-height: 1.6; text-align: justify; margin-top: 15px;">
               ${qAnswer}
             </div>
-            
-            <div class="footer-note">GCSE History Workbook &bull; Exam Practice Answer Key &bull; Page ${qNum + 1}</div>
           </div>
         `;
       }
     });
+  } else if (style === 'timeline') {
+    const prompts = TIMELINE_WORKSHEET_PROMPTS[subtopicId] || [];
+    const keywords = TIMELINE_KEYWORDS[subtopicId] || [];
+    
+    const processedEvents = [];
+    const allBlankedWords = [];
+    
+    data.timeline.forEach((event) => {
+      const { studentText, teacherText, blankedWords } = getBlankedAndAnswers(event.desc, keywords);
+      allBlankedWords.push(...blankedWords);
+      processedEvents.push({
+        date: event.date,
+        studentText,
+        teacherText,
+        rawDesc: event.desc
+      });
+    });
+    
+    const uniqueBlanked = [...new Set(allBlankedWords)];
+    const scrambledWordBank = uniqueBlanked.sort(() => Math.random() - 0.5);
+    
+    // --- PAGE 1: LEVEL 4 SUPPORT ---
+    const dummyGridRow = `
+      <tr style="height: 0px; line-height: 0px; font-size: 0px;">
+        <td width="42%" style="width: 42%; height: 0px; padding: 0; margin: 0; border: 0;">&nbsp;</td>
+        <td width="8%" style="width: 8%; height: 0px; padding: 0; margin: 0; border: 0;">&nbsp;</td>
+        <td width="8%" style="width: 8%; height: 0px; padding: 0; margin: 0; border: 0;">&nbsp;</td>
+        <td width="42%" style="width: 42%; height: 0px; padding: 0; margin: 0; border: 0;">&nbsp;</td>
+      </tr>
+    `;
+    let tableRowsL4 = dummyGridRow;
+    processedEvents.forEach((event, idx) => {
+      const prompt = prompts[idx] || { q: "Connection question not found", a: "" };
+      const descText = includeAnswers ? event.teacherText : event.studentText;
+      
+      const answerArea = includeAnswers 
+        ? `<div style="font-size: 7.2pt; line-height: 1.25; color: #16a34a; font-style: italic; border-left: 2.5px solid #16a34a; padding-left: 5px; margin-top: 4px;"><strong>Model Answer:</strong> ${prompt.a}</div>`
+        : `<div style="border-bottom: 1px dashed #9ca3af; height: 18px; margin-top: 2px;"></div>
+           <div style="border-bottom: 1px dashed #9ca3af; height: 18px; margin-top: 2px;"></div>`;
+           
+      const recallBox = `
+        <div class="timeline-box" style="border: 1px solid #9ca3af; border-radius: 4px; padding: 6px 8px; background: #ffffff; min-height: 55px; box-sizing: border-box;">
+          <strong style="font-size: 7.5pt; color: #4b5563; text-transform: uppercase; display: block; margin-bottom: 2px;">Active Recall</strong>
+          <span style="font-size: 7.5pt; line-height: 1.35; display: block; color: #1f2937;">
+            ${descText}
+          </span>
+        </div>
+      `;
+      
+      const taskBox = `
+        <div class="timeline-box" style="border: 1px solid #111827; border-radius: 4px; padding: 6px 8px; background: #f9fafb; min-height: 55px; box-sizing: border-box;">
+          <strong style="font-size: 7.5pt; color: #111827; text-transform: uppercase; display: block; margin-bottom: 2px;">Guided Task</strong>
+          <span style="font-size: 7.2pt; line-height: 1.25; display: block; color: #1f2937; font-weight: bold; margin-bottom: 3px;">
+            ${prompt.q}
+          </span>
+          ${answerArea}
+        </div>
+      `;
+      
+      const isLeftRecall = idx % 2 === 0;
+      const leftContent = isLeftRecall ? recallBox : taskBox;
+      const rightContent = isLeftRecall ? taskBox : recallBox;
+      
+      tableRowsL4 += `
+        <tr>
+          <td width="42%" style="width: 42%;">&nbsp;</td>
+          <td colspan="2" width="16%" style="width: 16%; text-align: center; vertical-align: middle; padding: 4px 0;">
+            <div style="background: #111827; color: #ffffff; padding: 3px 6px; border-radius: 4px; font-size: 6.8pt; font-weight: bold; display: inline-block; white-space: nowrap;">
+              ${event.date}
+            </div>
+          </td>
+          <td width="42%" style="width: 42%;">&nbsp;</td>
+        </tr>
+        <tr height="55" style="height: 55px;">
+          <td width="42%" style="width: 42%; vertical-align: top;">${leftContent}</td>
+          <td width="8%" style="width: 8%; border-right: 2px solid #111827;">&nbsp;</td>
+          <td width="8%" style="width: 8%;">&nbsp;</td>
+          <td width="42%" style="width: 42%; vertical-align: top;">${rightContent}</td>
+        </tr>
+      `;
+      
+      if (idx < processedEvents.length - 1) {
+        tableRowsL4 += `
+          <tr style="height: 12px; font-size: 1px; line-height: 1px;">
+            <td width="42%" style="width: 42%; font-size: 1px; line-height: 1px;">&nbsp;</td>
+            <td width="8%" style="width: 8%; border-right: 2px solid #111827; height: 12px; font-size: 1px; line-height: 1px;">&nbsp;</td>
+            <td width="8%" style="width: 8%; height: 12px; font-size: 1px; line-height: 1px;">&nbsp;</td>
+            <td width="42%" style="width: 42%; font-size: 1px; line-height: 1px;">&nbsp;</td>
+          </tr>
+        `;
+      }
+    });
+
+    const vocabSpotlight = `
+      <div class="vocab-spotlight" style="border: 1px solid #111827; padding: 6px 10px; margin-bottom: 10px; font-size: 7.5pt; background: #f9fafb; border-radius: 4px; line-height: 1.3; box-sizing: border-box; text-align: left;">
+        <strong style="text-transform: uppercase; font-size: 8pt; color: #111827; display: block; margin-bottom: 3px;">📖 Vocabulary Spotlight</strong>
+        <div style="display: flex; flex-wrap: wrap; gap: 4px 15px;">
+          ${data.vocabulary.map(item => `
+            <div style="flex: 1 1 45%; min-width: 200px; font-size: 7.2pt; line-height: 1.2;"><strong>${item.term}</strong>: ${item.definition}</div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+
+    const wordBankHtml = `
+      <div style="border: 1.5px solid #111827; padding: 8px 10px; margin-top: 10px; background: #f9fafb; border-radius: 4px; box-sizing: border-box;">
+        <strong style="display: block; margin-bottom: 3px; text-transform: uppercase; font-size: 7.5pt; color: #111827;">🔑 Scrambled Word Bank</strong>
+        <div style="font-size: 7.2pt; line-height: 1.3; text-align: center; font-style: italic; color: #374151;">
+          ${scrambledWordBank.join('  &bull;  ')}
+        </div>
+      </div>
+    `;
+
+    const pageTitleL4 = includeAnswers ? 'Teacher Answer Key &bull; ' : '';
+
+    // --- PAGE 2: LEVEL 9 CHALLENGE ---
+    let tableRowsL9 = dummyGridRow;
+    processedEvents.forEach((event, idx) => {
+      const prompt = prompts[idx] || { q: "Connection question not found", a: "" };
+      
+      const answerArea = includeAnswers 
+        ? `<div style="font-size: 7.2pt; line-height: 1.25; color: #16a34a; font-style: italic; border-left: 2.5px solid #16a34a; padding-left: 5px; margin-top: 4px;"><strong>Model Answer:</strong> ${prompt.a}</div>`
+        : `<div style="border-bottom: 1px dashed #9ca3af; height: 18px; margin-top: 2px;"></div>
+           <div style="border-bottom: 1px dashed #9ca3af; height: 18px; margin-top: 2px;"></div>
+           <div style="border-bottom: 1px dashed #9ca3af; height: 18px; margin-top: 2px;"></div>
+           <div style="border-bottom: 1px dashed #9ca3af; height: 18px; margin-top: 2px;"></div>`;
+           
+      const questionBox = `
+        <div class="timeline-box" style="border: 1px solid #111827; border-radius: 4px; padding: 8px 10px; background: #ffffff; min-height: 90px; box-sizing: border-box;">
+          <span style="font-size: 7.5pt; line-height: 1.35; display: block; color: #1f2937; font-weight: bold; margin-bottom: 4px;">
+            ${prompt.q}
+          </span>
+          ${answerArea}
+        </div>
+      `;
+      
+      const isLeft = idx % 2 === 0;
+      const leftContent = isLeft ? questionBox : '&nbsp;';
+      const rightContent = isLeft ? '&nbsp;' : questionBox;
+      
+      tableRowsL9 += `
+        <tr>
+          <td width="42%" style="width: 42%;">&nbsp;</td>
+          <td colspan="2" width="16%" style="width: 16%; text-align: center; vertical-align: middle; padding: 4px 0;">
+            <div style="background: #111827; color: #ffffff; padding: 3px 6px; border-radius: 4px; font-size: 6.8pt; font-weight: bold; display: inline-block; white-space: nowrap;">
+              ${event.date}
+            </div>
+          </td>
+          <td width="42%" style="width: 42%;">&nbsp;</td>
+        </tr>
+        <tr height="90" style="height: 90px;">
+          <td width="42%" style="width: 42%; vertical-align: top;">${leftContent}</td>
+          <td width="8%" style="width: 8%; border-right: 2px solid #111827;">&nbsp;</td>
+          <td width="8%" style="width: 8%;">&nbsp;</td>
+          <td width="42%" style="width: 42%; vertical-align: top;">${rightContent}</td>
+        </tr>
+      `;
+      
+      if (idx < processedEvents.length - 1) {
+        tableRowsL9 += `
+          <tr style="height: 12px; font-size: 1px; line-height: 1px;">
+            <td width="42%" style="width: 42%; font-size: 1px; line-height: 1px;">&nbsp;</td>
+            <td width="8%" style="width: 8%; border-right: 2px solid #111827; height: 12px; font-size: 1px; line-height: 1px;">&nbsp;</td>
+            <td width="8%" style="width: 8%; height: 12px; font-size: 1px; line-height: 1px;">&nbsp;</td>
+            <td width="42%" style="width: 42%; font-size: 1px; line-height: 1px;">&nbsp;</td>
+          </tr>
+        `;
+      }
+    });
+
+
+    html += `
+      <!-- SIDE 1: LEVEL 4 ACTIVE RECALL -->
+      <div class="print-page" style="position: relative; min-height: 27.2cm; box-sizing: border-box;">
+        <h2 class="main-title">${pageTitleL4}Topic ${topicName}: ${cleanTitle}</h2>
+        ${specBoxHtml}
+        ${vocabSpotlight}
+        
+        <table class="timeline-recall-table" style="width: 100%; border-collapse: collapse; margin-top: 5px; table-layout: fixed;">
+          <colgroup>
+            <col width="42%" style="width: 42%;">
+            <col width="8%" style="width: 8%;">
+            <col width="8%" style="width: 8%;">
+            <col width="42%" style="width: 42%;">
+          </colgroup>
+          <tbody>
+            ${tableRowsL4}
+          </tbody>
+        </table>
+        
+        ${wordBankHtml}
+        ${retrievalQuestionsHtml}
+      </div>
+
+      <!-- SIDE 2: LEVEL 9 MASTER Chronological Analysis -->
+      <div class="print-page-last" style="position: relative; min-height: 27.2cm; box-sizing: border-box; margin-top: 20px; page-break-before: always;">
+        <h3 style="font-size: 10pt; font-weight: bold; border-bottom: 1.5px solid #111827; padding-bottom: 2px; margin-top: 0; margin-bottom: 8px; text-transform: uppercase; color: #111827; letter-spacing: 0.5px;">
+          Topic ${topicName}: ${cleanTitle}${includeAnswers ? ' (Teacher Answer Key)' : ''}
+        </h3>
+        
+        <table class="timeline-recall-table" style="width: 100%; border-collapse: collapse; margin-top: 5px; table-layout: fixed;">
+          <colgroup>
+            <col width="42%" style="width: 42%;">
+            <col width="8%" style="width: 8%;">
+            <col width="8%" style="width: 8%;">
+            <col width="42%" style="width: 42%;">
+          </colgroup>
+          <tbody>
+            ${tableRowsL9}
+          </tbody>
+        </table>
+      </div>
+    `;
+  } else if (style === 'quiz') {
+    const subtopicData = QUIZ_DATA.flatMap(t => t.subtopics).find(s => s.id === subtopicId) || { easy: [], medium: [], difficult: [] };
+    const easyQs = subtopicData.easy || [];
+    const mediumQs = subtopicData.medium || [];
+    const difficultQs = subtopicData.difficult || [];
+
+    const selectedQuestions = [];
+    selectedQuestions.push(...easyQs.slice(0, Math.min(5, easyQs.length)));
+    selectedQuestions.push(...mediumQs.slice(0, Math.min(5, mediumQs.length)));
+    selectedQuestions.push(...difficultQs.slice(0, Math.min(5, difficultQs.length)));
+
+    // Fallback if we need to reach 15 questions
+    if (selectedQuestions.length < 15) {
+      const allQs = [...easyQs, ...mediumQs, ...difficultQs];
+      for (const q of allQs) {
+        if (!selectedQuestions.some(sq => sq.id === q.id)) {
+          selectedQuestions.push(q);
+          if (selectedQuestions.length === 15) break;
+        }
+      }
+    }
+
+    // Split selected questions into two columns for Page 1 (Q1-8, Q9-15)
+    const col1Questions = selectedQuestions.slice(0, 8);
+    const col2Questions = selectedQuestions.slice(8, 15);
+
+    const renderQuizQuestion = (q, qIdx) => {
+      const answerArea = includeAnswers 
+        ? `<div style="color: #16a34a; font-style: italic; font-weight: bold; margin-top: 2px; font-size: 7.2pt;">Ans: ${q.answer}</div>`
+        : `<div class="dotted-writing-line" style="border-bottom: 1px dashed #9ca3af; height: 18px; margin-top: 2px; width: 95%;"></div>`;
+      return `
+        <div style="margin-bottom: 14px; min-height: 48px; box-sizing: border-box; padding-right: 10px;">
+          <div style="font-size: 7.8pt; line-height: 1.3; color: #111827; font-weight: bold;">
+            Q${qIdx + 1}: <span style="font-weight: normal; color: #1f2937;">${q.question}</span>
+          </div>
+          ${answerArea}
+        </div>
+      `;
+    };
+
+    const renderExplanationRow = (q, qIdx) => {
+      return `
+        <div style="margin-bottom: 14px; min-height: 55px; border-bottom: 1px solid #f3f4f6; padding-bottom: 6px; padding-right: 10px; box-sizing: border-box;">
+          <div style="font-size: 7.5pt; line-height: 1.25; color: #111827; font-weight: bold;">
+            Q${qIdx + 1}: <span style="font-weight: normal; color: #4b5563;">${q.question}</span>
+          </div>
+          <div style="font-size: 7.5pt; font-weight: bold; color: #16a34a; margin-top: 2px;">
+            Correct Answer: <span style="font-weight: normal; color: #111827;">${q.answer}</span>
+          </div>
+          <div style="font-size: 7pt; color: #4b5563; line-height: 1.25; margin-top: 2px;">
+            <em>${q.explanation}</em>
+          </div>
+        </div>
+      `;
+    };
+
+    const col1Html = col1Questions.map((q, idx) => renderQuizQuestion(q, idx)).join('');
+    const col2Html = col2Questions.map((q, idx) => renderQuizQuestion(q, idx + 8)).join('');
+
+    const col1ExpHtml = col1Questions.map((q, idx) => renderExplanationRow(q, idx)).join('');
+    const col2ExpHtml = col2Questions.map((q, idx) => renderExplanationRow(q, idx + 8)).join('');
+
+    const pageTitleQuiz = includeAnswers ? 'Teacher Answer Key &bull; ' : '';
+
+    html += `
+      <!-- SIDE 1: STUDENT QUIZ -->
+      <div class="print-page" style="position: relative; min-height: 27.2cm; box-sizing: border-box;">
+        <h2 class="main-title">${pageTitleQuiz}Topic ${topicName}: Quick-Fire Quiz</h2>
+        ${specBoxHtml}
+        
+        <div style="border: 1.5px solid #111827; padding: 10px; background: #f9fafb; border-radius: 4px; margin-bottom: 15px; box-sizing: border-box; text-align: left;">
+          <strong style="text-transform: uppercase; font-size: 8.5pt; color: #111827; display: block; margin-bottom: 4px;">✏️ Instructions</strong>
+          <span style="font-size: 7.5pt; line-height: 1.35; color: #374151; display: block;">
+            Answer all 15 questions from memory. Write your answers clearly on the dotted lines. Keep your answers brief.
+          </span>
+        </div>
+
+        <table style="width: 100%; border-collapse: collapse; margin-top: 10px; table-layout: fixed;">
+          <colgroup>
+            <col width="50%" style="width: 50%;">
+            <col width="50%" style="width: 50%;">
+          </colgroup>
+          <tbody>
+            <tr>
+              <td style="width: 50%; vertical-align: top; border-right: 1px solid #d1d5db; padding-right: 10px;">
+                ${col1Html}
+              </td>
+              <td style="width: 50%; vertical-align: top; padding-left: 15px;">
+                ${col2Html}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- SIDE 2: ANSWER KEY & SELF-MARKING -->
+      <div class="print-page-last" style="position: relative; min-height: 27.2cm; box-sizing: border-box; margin-top: 20px; page-break-before: always;">
+        <h3 style="font-size: 10pt; font-weight: bold; border-bottom: 1.5px solid #111827; padding-bottom: 2px; margin-top: 0; margin-bottom: 12px; text-transform: uppercase; color: #111827; letter-spacing: 0.5px;">
+          Topic ${topicName}: Quiz Answer Key & Explanations
+        </h3>
+
+        <table style="width: 100%; border-collapse: collapse; margin-top: 5px; table-layout: fixed;">
+          <colgroup>
+            <col width="50%" style="width: 50%;">
+            <col width="50%" style="width: 50%;">
+          </colgroup>
+          <tbody>
+            <tr>
+              <td style="width: 50%; vertical-align: top; border-right: 1px solid #d1d5db; padding-right: 10px;">
+                ${col1ExpHtml}
+              </td>
+              <td style="width: 50%; vertical-align: top; padding-left: 15px;">
+                ${col2ExpHtml}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Scoreboard & Diagnostic Feedback -->
+        <table style="width: 100%; border-collapse: collapse; margin-top: 15px; border: 1.5px solid #111827; background: #f9fafb; table-layout: fixed; box-sizing: border-box;">
+          <colgroup>
+            <col width="30%" style="width: 30%;">
+            <col width="40%" style="width: 40%;">
+            <col width="30%" style="width: 30%;">
+          </colgroup>
+          <tbody>
+            <tr>
+              <td style="padding: 10px; border-right: 1.5px solid #111827; text-align: center; vertical-align: middle; width: 30%;">
+                <div style="font-size: 9pt; font-weight: bold; color: #111827; text-transform: uppercase; margin-bottom: 4px;">Score Tracker</div>
+                <div style="font-size: 15pt; font-weight: 800; color: #111827; border: 1.5px dashed #9ca3af; padding: 4px 10px; display: inline-block; background: #ffffff;">
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / 15
+                </div>
+              </td>
+              <td style="padding: 10px; border-right: 1.5px solid #111827; font-size: 7.2pt; line-height: 1.3; color: #374151; width: 40%;">
+                <strong style="font-size: 7.8pt; color: #111827; text-transform: uppercase; display: block; margin-bottom: 3px;">📊 Performance Boundaries</strong>
+                <div style="margin-bottom: 2px;"><strong>13–15 Marks:</strong> Mastery (Level 9 Focus) - Excellent recall.</div>
+                <div style="margin-bottom: 2px;"><strong>10–12 Marks:</strong> Strong (Level 7 Focus) - Solid foundation.</div>
+                <div><strong>Under 10 Marks:</strong> Focus Needed - Re-read narrative & vocabulary.</div>
+              </td>
+              <td style="padding: 10px; font-size: 7.2pt; line-height: 1.3; color: #374151; width: 30%;">
+                <strong style="font-size: 7.8pt; color: #111827; text-transform: uppercase; display: block; margin-bottom: 3px;">🔍 Diagnostic study guide</strong>
+                <div>If you struggled with any question:</div>
+                <div style="margin-top: 3px;">1. Re-read the Lesson Study Narrative.</div>
+                <div>2. Review the Vocab Spotlight terms.</div>
+                <div>3. Re-test using active recall.</div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    `;
+
+    const warMap = {
+      'subtopic_1_2': '1948_1949',
+      'subtopic_1_3': '1956_suez',
+      'subtopic_2_1': '1967_sixday',
+      'subtopic_2_3': '1973_yomkippur',
+      'subtopic_3_2': '1982_lebanon'
+    };
+    const warId = warMap[subtopicId];
+    if (warId) {
+      html = html.replace('class="print-page-last"', 'class="print-page"');
+      const warHtml = await generateWarWorkbookHtml(warId, density, includeAnswers);
+      const bodyStartIdx = warHtml.indexOf('<body>');
+      const bodyEndIdx = warHtml.lastIndexOf('</body>');
+      if (bodyStartIdx !== -1 && bodyEndIdx !== -1) {
+        const warBodyContent = warHtml.substring(bodyStartIdx + 6, bodyEndIdx).trim();
+        html += '\n' + warBodyContent;
+      }
+    }
   }
 
   html += `
@@ -3398,7 +3659,7 @@ function generateWorkbookHtml(subtopicId, style, density, includeAnswers, select
   return html;
 }
 
-export function generateBulkWorkbookHtml(style, density, includeAnswers) {
+export async function generateBulkWorkbookHtml(style, density, includeAnswers) {
   const subtopicIds = [
     'subtopic_1_1', 'subtopic_1_2', 'subtopic_1_3',
     'subtopic_2_1', 'subtopic_2_2', 'subtopic_2_3',
@@ -3408,14 +3669,15 @@ export function generateBulkWorkbookHtml(style, density, includeAnswers) {
   let combinedBodyContent = '';
   let documentHeader = '';
   
-  subtopicIds.forEach((subId, index) => {
+  for (let index = 0; index < subtopicIds.length; index++) {
+    const subId = subtopicIds[index];
     let selectedIndices = [];
     if (style === 'exam') {
       const questionsData = LESSONS_DATA[subId]?.questionVault || [];
       selectedIndices = questionsData.map((_, idx) => idx);
     }
 
-    const html = generateWorkbookHtml(subId, style, density, includeAnswers, selectedIndices);
+    const html = await generateWorkbookHtml(subId, style, density, includeAnswers, selectedIndices);
     
     const bodyStartIdx = html.indexOf('<body>');
     const bodyEndIdx = html.lastIndexOf('</body>');
@@ -3433,13 +3695,261 @@ export function generateBulkWorkbookHtml(style, density, includeAnswers) {
     if (index === 0) {
       documentHeader = html.substring(0, bodyStartIdx + 6);
     }
-  });
+  }
 
   return documentHeader + combinedBodyContent + '\n</body>\n</html>';
 }
 
 window.generateWorkbookHtml = generateWorkbookHtml;
 window.generateBulkWorkbookHtml = generateBulkWorkbookHtml;
+
+export async function generateWarWorkbookHtml(warId, density, includeAnswers) {
+  const warNames = {
+    '1948_1949': '1948–49 Arab-Israeli War',
+    '1956_suez': '1956 Suez Crisis / Suez War',
+    '1967_sixday': '1967 Six-Day War',
+    '1973_yomkippur': '1973 Yom Kippur War',
+    '1982_lebanon': '1982 Lebanon War'
+  };
+  const warSubtopicMap = {
+    '1948_1949': 'subtopic_1_2',
+    '1956_suez': 'subtopic_1_3',
+    '1967_sixday': 'subtopic_2_1',
+    '1973_yomkippur': 'subtopic_2_3',
+    '1982_lebanon': 'subtopic_3_2'
+  };
+
+  const warTitle = warNames[warId] || 'GCSE History Revision';
+  const subtopicId = warSubtopicMap[warId];
+  const subtopicData = QUIZ_DATA.flatMap(t => t.subtopics).find(s => s.id === subtopicId) || { easy: [], medium: [], difficult: [] };
+
+  const easyPool = subtopicData.easy || [];
+  const mediumPool = subtopicData.medium || [];
+  const difficultPool = subtopicData.difficult || [];
+
+  const selectedQuestions = [];
+  selectedQuestions.push(...easyPool.slice(0, 5));
+  selectedQuestions.push(...mediumPool.slice(0, 5));
+  selectedQuestions.push(...difficultPool.slice(0, 5));
+
+  const col1Questions = selectedQuestions.slice(0, 8);
+  const col2Questions = selectedQuestions.slice(8, 15);
+
+  const renderQuizQuestion = (q, qIdx) => {
+    const linesCount = density === 'compact' ? 1 : 2;
+    const linesHtml = Array(linesCount).fill('<div class="dotted-writing-line" style="border-bottom: 1px dashed #9ca3af; height: 18px; margin-top: 2px; width: 95%;"></div>').join('');
+    
+    const answerArea = includeAnswers 
+      ? `<div style="color: #16a34a; font-style: italic; font-weight: bold; margin-top: 2px; font-size: 7.2pt;">Ans: ${q.answer}</div>`
+      : linesHtml;
+    return `
+      <div style="margin-bottom: 14px; min-height: 48px; box-sizing: border-box; padding-right: 10px;">
+        <div style="font-size: 7.8pt; line-height: 1.3; color: #111827; font-weight: bold;">
+          Q${qIdx + 1}: <span style="font-weight: normal; color: #1f2937;">${q.question}</span>
+        </div>
+        ${answerArea}
+      </div>
+    `;
+  };
+
+  const renderExplanationRow = (q, qIdx) => {
+    return `
+      <div style="margin-bottom: 14px; min-height: 55px; border-bottom: 1px solid #f3f4f6; padding-bottom: 6px; padding-right: 10px; box-sizing: border-box;">
+        <div style="font-size: 7.5pt; line-height: 1.25; color: #111827; font-weight: bold;">
+          Q${qIdx + 1}: <span style="font-weight: normal; color: #4b5563;">${q.question}</span>
+        </div>
+        <div style="font-size: 7.5pt; font-weight: bold; color: #16a34a; margin-top: 2px;">
+          Correct Answer: <span style="font-weight: normal; color: #111827;">${q.answer}</span>
+        </div>
+        <div style="font-size: 7pt; color: #4b5563; line-height: 1.25; margin-top: 2px;">
+          <em>${q.explanation}</em>
+        </div>
+      </div>
+    `;
+  };
+
+  const col1Html = col1Questions.map((q, idx) => renderQuizQuestion(q, idx)).join('');
+  const col2Html = col2Questions.map((q, idx) => renderQuizQuestion(q, idx + 8)).join('');
+
+  const col1ExpHtml = col1Questions.map((q, idx) => renderExplanationRow(q, idx)).join('');
+  const col2ExpHtml = col2Questions.map((q, idx) => renderExplanationRow(q, idx + 8)).join('');
+
+  const pageTitleQuiz = includeAnswers ? 'Teacher Answer Key &bull; ' : '';
+
+  let html = `<!DOCTYPE html>
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+  <meta charset="utf-8">
+  <title>GCSE History Lesson Resource - Major War Revision Quiz</title>
+  <style>
+    @page {
+      size: 21cm 29.7cm; /* A4 */
+      margin: 1.0cm;
+      mso-page-orientation: portrait;
+    }
+    body {
+      font-family: 'Arial', sans-serif;
+      font-size: 9.5pt;
+      color: #1f2937;
+      line-height: 1.4;
+      background: #ffffff;
+      margin: 0;
+      padding: 0;
+    }
+    .print-page, .print-page-last {
+      clear: both;
+      box-sizing: border-box;
+      position: relative;
+      background: #ffffff;
+    }
+    .print-page {
+      page-break-after: always;
+    }
+    .print-page-last {
+      page-break-after: avoid;
+    }
+    @media screen {
+      body {
+        background-color: #f3f4f6;
+        padding: 20px 0;
+      }
+      .print-page, .print-page-last {
+        width: 21cm;
+        min-height: 29.7cm;
+        margin: 0 auto 20px auto;
+        padding: 1.0cm;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        border: 1px solid #e5e7eb;
+        border-radius: 4px;
+      }
+    }
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #1f2937 !important;
+        font-size: 9.5pt !important;
+        line-height: 1.4 !important;
+      }
+      .print-page, .print-page-last {
+        width: 100% !important;
+        min-height: 27.2cm !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        border: none !important;
+        border-radius: 0 !important;
+      }
+    }
+    .main-title {
+      font-size: 13.5pt;
+      font-weight: 800;
+      border-bottom: 2px solid #111827;
+      padding-bottom: 3px;
+      margin-top: 0;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #111827;
+    }
+    .dotted-writing-line {
+      border-bottom: 1px dashed #9ca3af;
+      height: 28px;
+      margin-bottom: 4px;
+    }
+  </style>
+</head>
+<body>
+  <!-- SIDE 1: STUDENT QUIZ -->
+  <div class="print-page" style="position: relative; min-height: 27.2cm; box-sizing: border-box;">
+    <h2 class="main-title">${pageTitleQuiz}GCSE Revision: Quick-Fire Quiz - ${warTitle}</h2>
+    
+    <div style="border: 1.5px solid #111827; padding: 10px; background: #f9fafb; border-radius: 4px; margin-bottom: 15px; box-sizing: border-box; text-align: left;">
+      <strong style="text-transform: uppercase; font-size: 8.5pt; color: #111827; display: block; margin-bottom: 4px;">✏️ Instructions</strong>
+      <span style="font-size: 7.5pt; line-height: 1.35; color: #374151; display: block;">
+        Answer all 15 questions from memory. Write your answers clearly on the dotted lines. Keep your answers brief.
+      </span>
+    </div>
+
+    <table style="width: 100%; border-collapse: collapse; margin-top: 10px; table-layout: fixed;">
+      <colgroup>
+        <col width="50%" style="width: 50%;">
+        <col width="50%" style="width: 50%;">
+      </colgroup>
+      <tbody>
+        <tr>
+          <td style="width: 50%; vertical-align: top; border-right: 1px solid #d1d5db; padding-right: 10px;">
+            ${col1Html}
+          </td>
+          <td style="width: 50%; vertical-align: top; padding-left: 15px;">
+            ${col2Html}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SIDE 2: ANSWER KEY & SELF-MARKING -->
+  <div class="print-page-last" style="position: relative; min-height: 27.2cm; box-sizing: border-box; margin-top: 20px; page-break-before: always;">
+    <h3 style="font-size: 10pt; font-weight: bold; border-bottom: 1.5px solid #111827; padding-bottom: 2px; margin-top: 0; margin-bottom: 12px; text-transform: uppercase; color: #111827; letter-spacing: 0.5px;">
+      ${warTitle}: Quiz Answer Key & Explanations
+    </h3>
+
+    <table style="width: 100%; border-collapse: collapse; margin-top: 5px; table-layout: fixed;">
+      <colgroup>
+        <col width="50%" style="width: 50%;">
+        <col width="50%" style="width: 50%;">
+      </colgroup>
+      <tbody>
+        <tr>
+          <td style="width: 50%; vertical-align: top; border-right: 1px solid #d1d5db; padding-right: 10px;">
+            ${col1ExpHtml}
+          </td>
+          <td style="width: 50%; vertical-align: top; padding-left: 15px;">
+            ${col2ExpHtml}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Scoreboard & Diagnostic Feedback -->
+    <table style="width: 100%; border-collapse: collapse; margin-top: 15px; border: 1.5px solid #111827; background: #f9fafb; table-layout: fixed; box-sizing: border-box;">
+      <colgroup>
+        <col width="30%" style="width: 30%;">
+        <col width="40%" style="width: 40%;">
+        <col width="30%" style="width: 30%;">
+      </colgroup>
+      <tbody>
+        <tr>
+          <td style="padding: 10px; border-right: 1.5px solid #111827; text-align: center; vertical-align: middle; width: 30%;">
+            <div style="font-size: 9pt; font-weight: bold; color: #111827; text-transform: uppercase; margin-bottom: 4px;">Score Tracker</div>
+            <div style="font-size: 15pt; font-weight: 800; color: #111827; border: 1.5px dashed #9ca3af; padding: 4px 10px; display: inline-block; background: #ffffff;">
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / 15
+            </div>
+          </td>
+          <td style="padding: 10px; border-right: 1.5px solid #111827; font-size: 7.2pt; line-height: 1.3; color: #374151; width: 40%;">
+            <strong style="font-size: 7.8pt; color: #111827; text-transform: uppercase; display: block; margin-bottom: 3px;">📊 Performance Boundaries</strong>
+            <div style="margin-bottom: 2px;"><strong>13–15 Marks:</strong> Mastery (Level 9 Focus) - Excellent recall.</div>
+            <div style="margin-bottom: 2px;"><strong>10–12 Marks:</strong> Strong (Level 7 Focus) - Solid foundation.</div>
+            <div><strong>Under 10 Marks:</strong> Focus Needed - Re-read narrative & vocabulary.</div>
+          </td>
+          <td style="padding: 10px; font-size: 7.2pt; line-height: 1.3; color: #374151; width: 30%;">
+            <strong style="font-size: 7.8pt; color: #111827; text-transform: uppercase; display: block; margin-bottom: 3px;">🔍 Diagnostic study guide</strong>
+            <div>If you struggled with any question:</div>
+            <div style="margin-top: 3px;">1. Review the key dates and causes of the war.</div>
+            <div>2. Check the model explanations above.</div>
+            <div>3. Re-test active recall on these specific topics.</div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>
+  `;
+  return html;
+}
+
+window.generateWarWorkbookHtml = generateWarWorkbookHtml;
 
 
 

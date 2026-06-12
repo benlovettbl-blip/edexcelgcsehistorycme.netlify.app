@@ -129,7 +129,9 @@ window.L = {
   marker: () => ({
     addTo: function() { return this; },
     bindPopup: function() { return this; },
-    openPopup: function() { return this; }
+    openPopup: function() { return this; },
+    bindTooltip: function() { return this; },
+    on: function() { return this; }
   }),
   polyline: () => ({
     addTo: function() { return this; },
@@ -149,7 +151,11 @@ window.addEventListener = function(event, callback, options) {
 
 // 3. Load script files into the window context
 function loadScript(path) {
-  const code = fs.readFileSync(path, 'utf8');
+  let finalPath = path;
+  if (path === 'app.js' && fs.existsSync('app_test.js')) {
+    finalPath = 'app_test.js';
+  }
+  const code = fs.readFileSync(finalPath, 'utf8');
   window.eval(code);
 }
 
@@ -174,6 +180,7 @@ function fireClick(element) {
 }
 
 // 4. Run tests
+(async () => {
 try {
   // Trigger DOMContentLoaded
   if (domContentLoadedCallback) {
@@ -312,6 +319,7 @@ try {
   console.log("  - Testing Flashcard Study Session:");
   const btnFC = modeSwitcher.querySelector('[data-mode="flashcards"]');
   fireClick(btnFC);
+  await new Promise(resolve => setTimeout(resolve, 50));
   
   const primeContinue = document.getElementById('btn-prime-continue');
   if (primeContinue) {
@@ -525,17 +533,18 @@ try {
     { btnId: 'btn-tab-game-parser-jaffa', containerId: 'game-parser-jaffa-container', name: 'Chronology Command: Jaffa to Gaza (1947–1953)' }
   ];
 
-  gameTabs.forEach(g => {
+  for (const g of gameTabs) {
     const tabBtn = document.getElementById(g.btnId);
     if (!tabBtn) throw new Error(`Game tab button ${g.btnId} not found!`);
     fireClick(tabBtn);
+    await new Promise(resolve => setTimeout(resolve, 50));
     
     const pane = document.getElementById(g.containerId);
     if (pane.style.display === 'none') {
       throw new Error(`Game pane ${g.containerId} is not visible after selecting tab!`);
     }
     console.log(`  - Loaded Game: ${g.name}`);
-  });
+  }
 
   // Verify specific game features
   console.log("  - Running verification on individual games:");
@@ -543,6 +552,7 @@ try {
   // 7a. Crisis Game
   console.log("    * Verifying Crisis Hotline 1973:");
   fireClick(document.getElementById('btn-tab-game-crisis'));
+  await new Promise(resolve => setTimeout(resolve, 50));
   const firstChoiceBtn = document.querySelector('#crisis-choices-box .choice-btn');
   if (firstChoiceBtn) {
     fireClick(firstChoiceBtn);
@@ -552,6 +562,7 @@ try {
   // 7b. Tug Game
   console.log("    * Verifying Chronological Tug-of-War:");
   fireClick(document.getElementById('btn-tab-game-tug'));
+  await new Promise(resolve => setTimeout(resolve, 50));
   const escalateBtn = document.getElementById('btn-escalate');
   if (escalateBtn) {
     fireClick(escalateBtn);
@@ -561,6 +572,7 @@ try {
   // 7c. Taboo Game
   console.log("    * Verifying Taboo Game:");
   fireClick(document.getElementById('btn-tab-game-taboo'));
+  await new Promise(resolve => setTimeout(resolve, 50));
   const initTabooBtn = document.getElementById('btn-taboo-initialize');
   if (initTabooBtn) {
     fireClick(initTabooBtn);
@@ -572,6 +584,7 @@ try {
   // 7d. Haifa to Sinai: Text Adventure Game
   console.log("    * Verifying Haifa to Sinai: Text Adventure:");
   fireClick(document.getElementById('btn-tab-game-parser'));
+  await new Promise(resolve => setTimeout(resolve, 50));
   dom.window.initParserGame();
   const parserForm = document.getElementById('me-parser-form');
   const parserField = document.getElementById('me-user-input');
@@ -615,6 +628,7 @@ try {
   // 7e. Chronology Command: Jaffa to Gaza (1947–1953) Game
   console.log("    * Verifying Chronology Command: Jaffa to Gaza (1947–1953):");
   fireClick(document.getElementById('btn-tab-game-parser-jaffa'));
+  await new Promise(resolve => setTimeout(resolve, 50));
   dom.window.initJaffaParserGame();
   const jaffaForm = document.getElementById('jaffa-parser-form');
   const jaffaField = document.getElementById('jaffa-user-input');
@@ -664,12 +678,12 @@ try {
     'subtopic_2_1', 'subtopic_2_2', 'subtopic_2_3',
     'subtopic_3_1', 'subtopic_3_2', 'subtopic_3_3'
   ];
-  const styles = ['booklet', 'cloze', 'cornell', 'organizer', 'exam'];
+  const styles = ['study', 'timeline', 'exam', 'quiz'];
   
-  subtopicIds.forEach(subId => {
-    styles.forEach(style => {
+  for (const subId of subtopicIds) {
+    for (const style of styles) {
       const selectedIndices = [0, 1];
-      const resultHtml = dom.window.generateWorkbookHtml(subId, style, 'standard', false, selectedIndices);
+      const resultHtml = await dom.window.generateWorkbookHtml(subId, style, 'standard', false, selectedIndices);
       if (!resultHtml || typeof resultHtml !== 'string') {
         throw new Error(`Workbook HTML is not a string for ${subId} and style ${style}`);
       }
@@ -679,15 +693,15 @@ try {
       if (resultHtml.length < 100) {
         throw new Error(`Workbook HTML is too short for ${subId} and style ${style}`);
       }
-    });
-  });
+    }
+  }
   console.log("✓ All workbook generations run and verified successfully without ReferenceError or 'undefined' markers.");
 
   // Test 9: Bulk Workbook HTML Generation for All Styles
   console.log("\n--- TEST 9: Course-Wide Bulk Workbook HTML Generation ---");
-  const bulkStyles = ['booklet', 'cloze', 'cornell', 'organizer', 'exam'];
-  bulkStyles.forEach(style => {
-    const resultHtml = dom.window.generateBulkWorkbookHtml(style, 'standard', false);
+  const bulkStyles = ['study', 'timeline', 'exam', 'quiz'];
+  for (const style of bulkStyles) {
+    const resultHtml = await dom.window.generateBulkWorkbookHtml(style, 'standard', false);
     if (!resultHtml || typeof resultHtml !== 'string') {
       throw new Error(`Bulk Workbook HTML is not a string for style ${style}`);
     }
@@ -698,8 +712,18 @@ try {
       throw new Error(`Bulk Workbook HTML is too short for style ${style} (${resultHtml.length} chars)`);
     }
     console.log(`  - Style ${style}: Generated ${resultHtml.length} characters.`);
-  });
+  }
   console.log("✓ Bulk workbook generations run and verified successfully without ReferenceError or 'undefined' markers.");
+
+  console.log("\n--- TEST 10: War-Specific Quiz Sheets ---");
+  const wars = ['1948_1949', '1956_suez', '1967_sixday', '1973_yomkippur', '1982_lebanon'];
+  for (const warId of wars) {
+    const warHtml = await window.generateWarWorkbookHtml(warId, 'standard', false);
+    if (!warHtml.includes('GCSE Revision:') || warHtml.includes('undefined') || warHtml.includes('[object Promise]')) {
+      throw new Error(`War-Specific Quiz Sheet for ${warId} is corrupted or missing title!`);
+    }
+  }
+  console.log("✓ All war-specific quiz sheets verified successfully!");
 
   console.log("\n=================================================");
   console.log("ALL FEATURES VERIFIED AND CONFIRMED FUNCTIONAL!");
@@ -712,3 +736,4 @@ try {
   console.error(e.stack);
   process.exit(1);
 }
+})();

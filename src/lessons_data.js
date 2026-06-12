@@ -53,7 +53,7 @@ export const LESSONS_DATA = {
       {
         "title": "Step 4: The 1948–49 Arab-Israeli War",
         "isSplit": true,
-        "bodyHtml": "<div class=\"mastery-text-column\">\r\n          <div class=\"mastery-card-body card-content\">\r\n            <p>As the British Mandate officially expired in May 1948, <strong>David Ben-Gurion</strong> declared the independent State of Israel on 14 May. The regular armies of five Arab states (Egypt, Syria, Jordan, Lebanon, and Iraq) invaded immediately.</p>\r\n            <ul>\r\n              <li><strong>Why did Israel survive and win?</strong>\r\n                <ul>\r\n                  <li><strong>Arab Disunity:</strong> The invading armies were uncoordinated and lacked a single commander and unified goal.</li>\r\n                  <li><strong>Desperate Motivation & Tactics:</strong> The Jewish forces were fighting desperately for survival with highly coordinated tactics.</li>\r\n                  <li><strong>Military Consolidation:</strong> Prime Minister David Ben-Gurion merged various paramilitary forces (Haganah, Irgun, Lehi) into a single, unified national military: the <strong>Israeli Defence Forces (IDF)</strong>.</li>\r\n                  <li><strong>Truces & Czech Deal:</strong> During ceasefires, Israel used the time to bring in modern weapons illegally from <strong>Czechoslovakia</strong> and double its troop numbers from <strong>35,000</strong> to <strong>108,000</strong>.</li>\r\n                </ul>\r\n              </li>\r\n            </ul>\r\n            <p><strong>So What?</strong> By the time of the 1949 armistices, Israel won a decisive victory, expanding its borders to capture <strong>50% more land</strong> than originally allotted to the Arab state under the UN plan, and creating a massive Palestinian refugee crisis (the Nakba).</p>\r\n          </div>\r\n        </div>\r\n        <div class=\"mastery-media-column\">\r\n          <div class=\"examiner-tip-box\" style=\"margin: 0; background: var(--bg-app); border-left: 4px solid var(--primary); font-size: 0.85rem; padding: 14px;\">\r\n            <strong style=\"display: block; margin-bottom: 6px; color: var(--primary);\">📝 Source B: From David Ben-Gurion's Diary (July 1948)</strong>\r\n            <p style=\"font-style: italic; line-height: 1.4; color: var(--text-muted); margin: 0;\">\r\n              \"The truce was a godsend. It has given us the precious weeks we needed to coordinate our defense under a single flag, consolidate our forces into the IDF, and bring in the modern equipment needed to secure our borders.\"\r\n            </p>\r\n          </div>\r\n        </div>",
+        "bodyHtml": "<div class=\"mastery-text-column\">\r\n          <div class=\"mastery-card-body card-content\">\r\n            <p>As the British Mandate officially expired in May 1948, <strong>David Ben-Gurion</strong> declared the independent State of Israel on 14 May. The regular armies of five Arab states (Egypt, Syria, Jordan, Lebanon, and Iraq) invaded immediately.</p>\r\n            <ul>\r\n              <li><strong>Why did Israel survive and win?</strong>\r\n                <ul>\r\n                  <li><strong>Arab Disunity:</strong> The invading armies were uncoordinated and lacked a single commander and unified goal.</li>\r\n                  <li><strong>Desperate Motivation & Tactics:</strong> The Jewish forces were fighting desperately for survival with highly coordinated tactics.</li>\r\n                  <li><strong>Military Consolidation:</strong> Prime Minister David Ben-Gurion merged various paramilitary forces (Haganah, Irgun, Lehi) into a single, unified national military: the <strong>Israeli Defence Forces (IDF)</strong>.</li>\r\n                  <li><strong>Truces & Czech Deal:</strong> During ceasefires, Israel used the time to bring in modern weapons illegally from <strong>Czechoslovakia</strong> and double its troop numbers from <strong>35,000</strong> to <strong>108,000</strong>.</li>\r\n                </ul>\r\n              </li>\r\n              <li><strong>UN Mediation & Bernadotte:</strong> During the war, UN mediator <strong>Count Folke Bernadotte</strong> was sent to negotiate peace and truces, but he was assassinated in Jerusalem in September 1948 by the extremist Stern Gang.</li>\r\n            </ul>\r\n            <p><strong>So What?</strong> By the time of the 1949 armistices, Israel won a decisive victory, expanding its borders to capture <strong>50% more land</strong> than originally allotted to the Arab state under the UN plan, and creating a massive Palestinian refugee crisis (the Nakba).</p>\r\n          </div>\r\n        </div>\r\n        <div class=\"mastery-media-column\">\r\n          <div class=\"examiner-tip-box\" style=\"margin: 0; background: var(--bg-app); border-left: 4px solid var(--primary); font-size: 0.85rem; padding: 14px;\">\r\n            <strong style=\"display: block; margin-bottom: 6px; color: var(--primary);\">📝 Source B: From David Ben-Gurion's Diary (July 1948)</strong>\r\n            <p style=\"font-style: italic; line-height: 1.4; color: var(--text-muted); margin: 0;\">\r\n              \"The truce was a godsend. It has given us the precious weeks we needed to coordinate our defense under a single flag, consolidate our forces into the IDF, and bring in the modern equipment needed to secure our borders.\"\r\n            </p>\r\n          </div>\r\n        </div>",
         "scholarlyDepth": {
           "title": "Scholarly Perspective: The Czech Arms Lifeline",
           "body": "Historian Avi Shlaim argues that the first UN ceasefire in June 1948 was the turning point of the war. While Arab armies remained disorganized and failed to resupply, Israel negotiated a secret arms deal with Czechoslovakia, importing modern rifles and ammunition to outclass the invaders."
@@ -94,7 +94,6 @@ export const LESSONS_DATA = {
       "successText": "Excellent! You have built a chronological sequence: The bombing made the mandate unworkable, leading the UN to partition the land, which triggered the Arab invasion.",
       "failText": "Timeline out of order! Chronological flow: Bombing (1946) -> Partition (1947) -> War (1948). Click the highlighted blocks to reset."
     },
-    "knowledgeCheck": [],
     "importanceAnalyser": null,
     "questionVault": [
       {
@@ -118,7 +117,11 @@ export const LESSONS_DATA = {
         "answer": "<strong>Model Answer:</strong> The Arab-Israeli war (1948-49) was highly important for the creation of Israel because it forced the new nation to immediately centralise and consolidate its military forces to survive. Prior to the invasion by five Arab armies in May 1948, the Jewish fighting forces were split into various paramilitary groups such as the Haganah, Irgun, and Lehi. However, the desperate need to defend the newly declared state against overwhelming initial odds allowed Prime Minister David Ben-Gurion to merge these groups into a single, unified command structure known as the Israeli Defence Forces (IDF). Therefore, the Arab-Israeli war (1948-49) was important for the creation of Israel because the existential threat of the conflict accelerated the establishment of a disciplined, national army which successfully secured the state's existence.<br><br>Additionally, the Arab-Israeli war (1948-49) was important for the creation of Israel because it defined the physical borders of the new state. While UN Resolution 181 had provided the political foundation for statehood, its proposed borders were heavily contested. By launching successful, coordinated counter-offensives against the Arab armies, Israeli forces captured strategic territories far beyond what was originally allocated to them. Consequently, the Arab-Israeli war (1948-49) was crucially important for the creation of Israel because the military victories won during the conflict physically expanded the nation's territory, leaving Israel with 50% more land than allotted by the Partition Plan by the time the fighting ended in 1949."
       }
     ],
-    "doNowStarter": null,
+    "doNowStarter": {
+      "format": "background",
+      "title": "Prior Context & Background (Pre-1945)",
+      "bodyHtml": "<p style=\"margin: 0 0 12px 0;\">To understand the crisis in 1945, you must know what happened under the British Mandate since the end of the First World War. In <strong>1917</strong>, Britain issued the <strong>Balfour Declaration</strong>, promising to support a 'national home for the Jewish people' in Palestine. Following the collapse of the Ottoman Empire, the <strong>League of Nations (1922)</strong> granted Britain official administrative control (the Mandate) over the territory.</p><p style=\"margin: 0;\">Throughout the 1920s and 1930s, escalating Jewish immigration (driven by rising European antisemitism) caused intense Palestinian Arab fear of displacement, culminating in the <strong>Arab Revolt (1936–39)</strong>. To restore order, Britain issued the <strong>1939 White Paper</strong>, which placed a strict limit on Jewish immigration (75,000 over five years) and restricted land sales. Consequently, by 1945, Britain was caught in an impossible trap: Zionists were furious that immigration was blocked during the Holocaust, while Arab leaders demanded immediate independence and an end to all Zionist expansion.</p>"
+    },
     "causalLinks": {
       "question": "Explain why Britain decided to withdraw from the Palestine Mandate in 1947.",
       "successText": "Excellent! You matched the key causes of the British withdrawal: violent insurgency, international pressure, and public relations disasters.",
@@ -256,7 +259,7 @@ export const LESSONS_DATA = {
       {
         "title": "Step 1: Territorial Changes and the New Map",
         "isSplit": true,
-        "bodyHtml": "<div class=\"mastery-text-column\">\r\n          <div class=\"mastery-card-body card-content\">\r\n            <p>As a result of the war, the proposed independent Arab state was completely wiped off the map.</p>\r\n            <ul>\r\n              <li><strong>Israel's Expansion:</strong> Israel captured <strong>50% more land</strong> than originally allocated (expanding its territory to cover <strong>79%</strong> of mandate Palestine), gaining control of vast new territories including the fertile <strong>Galilee</strong> region, the <strong>Negev Desert</strong>, and <strong>West Jerusalem</strong>.</li>\r\n              <li><strong>Jordan and Egypt:</strong> Transjordan occupied the <strong>West Bank</strong> and East Jerusalem, annexing it in <strong>1951</strong>. Egypt took military control of the <strong>Gaza Strip</strong>.</li>\r\n              <li><strong>The Green Line:</strong> The new borders were defined by the 1949 Armistice Agreements and became known as the <strong>Green Line</strong>.</li>\r\n            </ul>\r\n          </div>\r\n        </div>\r\n        <div class=\"mastery-media-column\">\r\n          <div class=\"map-vector-box\" style=\"padding: 0;\">\r\n            <img id=\"map-image-placeholder\" class=\"map-image-display\" src=\"assets/sources/1949_armistice_map.png?v=3\" alt=\"1949 Armistice Borders\" style=\"width: 100%; height: 100%; object-fit: contain; display: block; border-radius: var(--border-radius-md);\">\r\n          </div>\r\n          <div class=\"map-toggles\">\r\n            <button class=\"map-toggle-btn\" id=\"btn-map-partition\">[1947 UN Partition Plan]</button>\r\n            <button class=\"map-toggle-btn active\" id=\"btn-map-borders\">[1949 Post-War Borders]</button>\r\n          </div>\r\n        </div>"
+        "bodyHtml": "<div class=\"mastery-text-column\">\r\n          <div class=\"mastery-card-body card-content\">\r\n            <p>As a result of the war, the proposed independent Arab state was completely wiped off the map.</p>\r\n            <ul>\r\n              <li><strong>Israel's Expansion:</strong> Israel captured <strong>50% more land</strong> than originally allocated (expanding its territory to cover <strong>79%</strong> of mandate Palestine), gaining control of vast new territories including the fertile <strong>Galilee</strong> region, the <strong>Negev Desert</strong>, and <strong>West Jerusalem</strong>.</li>\r\n              <li><strong>Jordan and Egypt:</strong> Transjordan occupied the <strong>West Bank</strong> and East Jerusalem, annexing it in <strong>1951</strong>. Egypt took military control of the <strong>Gaza Strip</strong>.</li>\r\n              <li><strong>The Green Line:</strong> The new borders were defined by the 1949 Armistice Agreements and became known as the <strong>Green Line</strong>.</li>\r\n            </ul>\r\n          </div>\r\n        </div>\r\n        <div class=\"mastery-media-column\">\r\n          <div class=\"map-vector-box\" style=\"padding: 0;\">\r\n            <img id=\"map-image-placeholder\" class=\"map-image-display\" src=\"assets/sources/1949_armistice_map.png?v=3\" alt=\"1949 Armistice Borders\" style=\"width: 100%; height: 100%; object-fit: contain; display: block; border-radius: var(--border-radius-md);\">\r\n          </div>\r\n          <div class=\"map-toggles\">\r\n            <button class=\"map-toggle-btn\" id=\"btn-map-partition\">[1947 UN Partition Plan]</button>\r\n            <button class=\"map-toggle-btn active\" id=\"btn-map-borders\">[1949 Post-War Borders]</button>\r\n          </div>\r\n          <div class=\"map-analysis-box\" style=\"margin-top: 12px; background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: var(--border-radius-sm); padding: 12px; font-size: 0.82rem; line-height: 1.4; color: var(--text-muted);\">\r\n            <strong style=\"display: block; margin-bottom: 4px; color: var(--accent);\"><i class=\"fa-solid fa-map-location-dot\"></i> Geographical Significance:</strong>\r\n            The Green Line borders created highly vulnerable frontiers: Israel's coastal plain was left only 9 miles wide at its narrowest point (the 'narrow waist'), making security and border defense a dominant political priority for the new state.\r\n          </div>\r\n        </div>"
       },
       {
         "title": "Step 2: The Palestinian Refugee Crisis (The Nakba)",
@@ -270,7 +273,7 @@ export const LESSONS_DATA = {
       {
         "title": "Step 3: Consolidating the State of Israel",
         "isSplit": true,
-        "bodyHtml": "<div class=\"mastery-text-column\">\r\n          <div class=\"mastery-card-body card-content\">\r\n            <ul>\r\n              <li><strong>The Law of Return (1950):</strong> In July 1950, Israel passed this law, granting any Jew in the world the right to immigrate and receive immediate citizenship. Israel's population doubled within three years, welcoming Holocaust survivors and Jews fleeing Arab countries. This massive demographic growth strained the fragile economy, leading to strict food rationing (<strong>Tzena</strong>) and tent cities.</li>\r\n              <li><strong>The IDF Conscription:</strong> To secure the state during the fighting in May 1948, David Ben-Gurion forcibly merged pre-war militias (such as the <strong>Haganah</strong>, <strong>Irgun</strong>, and <strong>Lehi</strong>) into a single unified army: the <strong>Israeli Defence Forces (IDF)</strong>. In 1949, Israel introduced universal conscription, ensuring a massive reserve force to defend its borders.</li>\r\n              <li><strong>US Aid:</strong> To prevent economic collapse, the Israeli government applied to the USA for urgent financial assistance, resulting in grants amounting to <strong>$300 million</strong> to help support and house the new Jewish immigrants.</li>\r\n              <li><strong>UN Mediation & Bernadotte:</strong> During the war, UN mediator <strong>Count Folke Bernadotte</strong> was sent to negotiate peace and truces, but he was assassinated in Jerusalem in September 1948 by the extremist Stern Gang.</li>\r\n            </ul>\r\n          </div>\r\n        </div>\r\n        <div class=\"mastery-media-column\">\r\n          <div class=\"examiner-tip-box\" style=\"margin: 0; background: var(--bg-app); border-left: 4px solid var(--primary); font-size: 0.85rem; padding: 14px;\">\r\n            <strong style=\"display: block; margin-bottom: 6px; color: var(--primary);\">📝 Source B: Israeli Government Statement (1950)</strong>\r\n            <p style=\"font-style: italic; line-height: 1.4; color: var(--text-muted); margin: 0;\">\r\n              \"This state will be open for Jewish immigration and for the Ingathering of the Exiles. It will promote the development of the country for the benefit of all its inhabitants.\"\r\n            </p>\r\n          </div>\r\n        </div>",
+        "bodyHtml": "<div class=\"mastery-text-column\">\r\n          <div class=\"mastery-card-body card-content\">\r\n            <ul>\r\n              <li><strong>The Law of Return (1950):</strong> In July 1950, Israel passed this law, granting any Jew in the world the right to immigrate and receive immediate citizenship. Israel's population doubled within three years, welcoming Holocaust survivors and Jews fleeing Arab countries. This massive demographic growth strained the fragile economy, leading to strict food rationing (<strong>Tzena</strong>) and tent cities.</li>\r\n              <li><strong>The IDF Conscription:</strong> To secure the state during the fighting in May 1948, David Ben-Gurion forcibly merged pre-war militias (such as the <strong>Haganah</strong>, <strong>Irgun</strong>, and <strong>Lehi</strong>) into a single unified army: the <strong>Israeli Defence Forces (IDF)</strong>. In 1949, Israel introduced universal conscription, ensuring a massive reserve force to defend its borders.</li>\r\n              <li><strong>US Aid:</strong> To prevent economic collapse, the Israeli government applied to the USA for urgent financial assistance, resulting in grants amounting to <strong>$300 million</strong> to help support and house the new Jewish immigrants.</li>\r\n            </ul>\r\n          </div>\r\n        </div>\r\n        <div class=\"mastery-media-column\">\r\n          <div class=\"examiner-tip-box\" style=\"margin: 0; background: var(--bg-app); border-left: 4px solid var(--primary); font-size: 0.85rem; padding: 14px;\">\r\n            <strong style=\"display: block; margin-bottom: 6px; color: var(--primary);\">📝 Source B: Israeli Government Statement (1950)</strong>\r\n            <p style=\"font-style: italic; line-height: 1.4; color: var(--text-muted); margin: 0;\">\r\n              \"This state will be open for Jewish immigration and for the Ingathering of the Exiles. It will promote the development of the country for the benefit of all its inhabitants.\"\r\n            </p>\r\n          </div>\r\n        </div>",
         "scholarlyDepth": {
           "title": "Scholarly Perspective: The Economic Strains of Absorption",
           "body": "The Law of Return in 1950 caused massive population growth but also extreme economic strain. Prime Minister David Ben-Gurion prioritized 'Ingathering of Exiles' over economic stability. To keep the state afloat, Israel implemented a strict austerity regime (Tzena) with food rationing, heavily reliant on US loans and German Holocaust reparations."
@@ -316,7 +319,6 @@ export const LESSONS_DATA = {
       "successText": "Excellent! You mapped the narrative: Israel's war victory displaced 700,000 refugees, who then organized into Fedayeen groups in Gaza to launch raids.",
       "failText": "Timeline out of order! Chronological flow: War ends (1949) -> Refugees settle (1949) -> Fedayeen raids escalate (1950s). Click the highlighted blocks to reset."
     },
-    "knowledgeCheck": [],
     "importanceAnalyser": null,
     "questionVault": [
       {
@@ -588,7 +590,6 @@ export const LESSONS_DATA = {
       "successText": "Excellent! The withdrawal of Western loans provoked Nasser into nationalising the canal, leading directly to the secret Protocol of Sèvres collusion.",
       "failText": "Timeline out of order! Chronological flow: Loans withdrawn (July 1956) -> Suez nationalised (July 1956) -> Protocol signed (Oct 1956). Click the highlighted blocks to reset."
     },
-    "knowledgeCheck": [],
     "importanceAnalyser": null,
     "questionVault": [
       {
@@ -848,7 +849,6 @@ export const LESSONS_DATA = {
       "successText": "Excellent! The false Soviet intelligence provoked Nasser into mobilizing troops and blockading the Straits, triggering Israel's pre-emptive strike.",
       "failText": "Timeline out of order! Chronological flow: False intelligence (May 1967) -> Straits blockaded (22 May) -> Preemptive strike (5 June). Click the highlighted blocks to reset."
     },
-    "knowledgeCheck": [],
     "importanceAnalyser": null,
     "questionVault": [
       {
@@ -1115,7 +1115,6 @@ export const LESSONS_DATA = {
       "successText": "Excellent! Israel's 1967 victory pushed the Palestinians to use terrorism, such as the 1970 airplane hijackings, which provoked King Hussein into expelling the PLO from Jordan.",
       "failText": "Timeline out of order! Chronological flow: Six Day War (1967) -> Dawson's Field Hijackings (1970) -> Black September PLO expulsion (1970–71). Click the highlighted blocks to reset."
     },
-    "knowledgeCheck": [],
     "importanceAnalyser": null,
     "questionVault": [
       {
@@ -1319,7 +1318,14 @@ export const LESSONS_DATA = {
         "bodyHtml": "<div class=\"mastery-text-column\">\r\n          <div class=\"mastery-card-body card-content\">\r\n            <ul>\r\n              <li><strong>The Oil Embargo:</strong> Furious at U.S. military support for Israel, Arab oil ministers cut production and embargoed oil exports to the West, quadrupling prices. This caused fuel shortages, electricity rationing, and recession in the USA and Europe.</li>\r\n              <li><strong>UN Resolution 338:</strong> To avoid direct conflict, the USA and USSR jointly negotiated a ceasefire under <strong>Resolution 338</strong>.</li>\r\n              <li><strong>The Aftermath:</strong> Egypt held its canal positions, restoring Arab pride, while Israel realized its security could not rely purely on military force. This paved the way for future peace negotiations.</li>\r\n            </ul>\r\n          </div>\r\n        </div>\r\n        <div class=\"mastery-media-column\">\r\n          <div class=\"map-vector-box\" style=\"padding: 0;\">\r\n            <img class=\"map-image-display\" src=\"assets/sources/yom_kippur_map.png\" alt=\"Yom Kippur War Map\" style=\"width: 100%; height: 100%; object-fit: contain; display: block; border-radius: var(--border-radius-md);\">\r\n          </div>\r\n        </div>"
       }
     ],
-    "dualPerspective": null,
+    "dualPerspective": {
+      "leftHeadline": "Traditional Israeli Narrative",
+      "leftText": "This perspective focuses on the war as a deeply traumatic surprise attack that shattered the complacency of the 'Concepzia' (the belief that Arab states would not attack). It emphasizes the desperate heroism of IDF soldiers who, despite initial setbacks on Yom Kippur, stabilized both fronts, crossed the Suez Canal to encircle the Egyptian Third Army, and recaptured the Golan Heights, proving Israel's ultimate military resilience.",
+      "rightHeadline": "Egyptian and Arab Narrative",
+      "rightText": "This perspective celebrates the war (known in Egypt as the October War or Ramadan War) as a historic victory that shattered the myth of Israeli invincibility. It highlights the brilliant engineering feat of crossing the Suez Canal and breaching the Bar-Lev Line, restoring Arab military pride and national honor lost in 1967. This success forced Israel and the superpowers to take Arab diplomacy seriously, paving the path to peace.",
+      "neutralTitle": "⚖️ Dual Interpretation: The Yom Kippur War of 1973",
+      "tipHtml": "<div class=\"examiner-tip-box\" style=\"margin-top: 18px; margin-bottom: 0;\">\r\n        <span class=\"tip-icon\">💡</span>\r\n        <div>\r\n          <strong>AO2 Exam Skill:</strong> Contrast how the same military outcomes (e.g. crossing the Suez Canal) were interpreted as a traumatic close call by Israel, but as a glorious victory by Egypt!\r\n        </div>\r\n      </div>"
+    },
     "narrativeChain": {
       "chainData": [
         {
@@ -1346,7 +1352,6 @@ export const LESSONS_DATA = {
       "successText": "Excellent! The surprise attack triggered the U.S. airlift, which then provoked the Arab oil embargo against Western nations.",
       "failText": "Timeline out of order! Chronological flow: Surprise attack (6 Oct) -> US Airlift (mid-Oct) -> Oil Embargo (17 Oct). Click the highlighted blocks to reset."
     },
-    "knowledgeCheck": [],
     "importanceAnalyser": null,
     "questionVault": [
       {
@@ -1563,7 +1568,14 @@ export const LESSONS_DATA = {
         "bodyHtml": "<div class=\"mastery-text-column\">\r\n          <div class=\"mastery-card-body card-content\">\r\n            <p>The Accords culminated in the signing of the formal **Treaty of Washington** (March 1979):</p>\r\n            <ul>\r\n              <li><strong>Historic Peace:</strong> Egypt became the very first Arab state to sign a peace treaty and recognize Israel, in exchange for complete Sinai withdrawal.</li>\r\n              <li><strong>The Backlash:</strong> Egypt was expelled from the Arab League, and Sadat was denounced as a traitor. In October 1981, Sadat was assassinated by Islamic extremists in Cairo.</li>\r\n              <li><strong>Mubarak's Rule:</strong> Sadat's successor, <strong>Hosni Mubarak</strong>, assumed the presidency, preserving the peace treaty with Israel and ruling Egypt for three decades.</li>\r\n            </ul>\r\n          </div>\r\n        </div>\r\n        <div class=\"mastery-media-column\">\r\n          <div class=\"examiner-tip-box\" style=\"margin: 0; background: var(--bg-app); border-left: 4px solid var(--primary); font-size: 0.85rem; padding: 14px;\">\r\n            <strong style=\"display: block; margin-bottom: 6px; color: var(--primary);\">📝 Source B: The Treaty of Washington (1979)</strong>\r\n            <p style=\"font-style: italic; line-height: 1.4; color: var(--text-muted); margin: 0;\">\r\n              \"The state of war between the Parties will be terminated and peace will be established between them... Israel will withdraw all its armed forces and civilians from the Sinai, and Egypt will recognize Israel's sovereign rights.\"\r\n            </p>\r\n          </div>\r\n        </div>"
       }
     ],
-    "dualPerspective": null,
+    "dualPerspective": {
+      "leftHeadline": "Traditional Israeli Narrative",
+      "leftText": "This perspective celebrates the 1979 treaty as a historic victory for peace and security. It highlights that Israel was willing to make painful territorial compromises (returning the oil-rich Sinai Peninsula and dismantling Sinai settlements) in exchange for formal recognition and a secure southern border, breaking the Arab refusal to recognize Israel's right to exist.",
+      "rightHeadline": "Arab and Palestinian Narrative",
+      "rightText": "This perspective views the treaty as a betrayal of the Palestinian cause and pan-Arab solidarity. It argues that Anwar Sadat broke ranks with the Arab world to sign a separate peace, which isolated Egypt and fractured Arab leverage. Critics point out that the vague framework for Palestinian self-rule did not halt Jewish settlements in the West Bank and Gaza or lead to a sovereign Palestinian state.",
+      "neutralTitle": "⚖️ Dual Interpretation: The Camp David Breakthrough & Betrayal",
+      "tipHtml": "<div class=\"examiner-tip-box\" style=\"margin-top: 18px; margin-bottom: 0;\">\r\n        <span class=\"tip-icon\">💡</span>\r\n        <div>\r\n          <strong>AO2 Exam Skill:</strong> Be prepared to explain why Egypt's exit from the conflict was viewed as a major strategic victory by Israel, but as a severe betrayal by other Arab nations and the PLO!\r\n        </div>\r\n      </div>"
+    },
     "narrativeChain": {
       "chainData": [
         {
@@ -1590,7 +1602,6 @@ export const LESSONS_DATA = {
       "successText": "Excellent! Sadat's Knesset speech paved the way for the 1978 Camp David Accords, culminating in the 1979 formal peace treaty.",
       "failText": "Timeline out of order! Chronological flow: Knesset Speech (1977) -> Camp David Accords (1978) -> Peace Treaty (1979). Click the highlighted blocks to reset."
     },
-    "knowledgeCheck": [],
     "importanceAnalyser": null,
     "questionVault": [
       {
@@ -1803,7 +1814,14 @@ export const LESSONS_DATA = {
         "bodyHtml": "<div class=\"mastery-text-column\">\r\n          <div class=\"mastery-card-body card-content\">\r\n            <ul>\r\n              <li><strong>The Spark:</strong> In December 1987, spontaneous mass protests broke out after an Israeli army truck killed four Palestinians in Gaza. Decades of frustration under Israeli occupation exploded into a grassroots uprising known as the <strong>Intifada</strong> (meaning 'shaking off').</li>\r\n              <li><strong>David vs. Goliath:</strong> Palestinian youths famously fought heavily armed Israeli soldiers by throwing stones and petrol bombs. The uprising also featured mass civil disobedience, strikes, and boycotts of Israeli goods.</li>\r\n              <li><strong>The Iron Fist:</strong> Under the government of Likud Prime Minister <strong>Yitzhak Shamir</strong>, Israel's Defence Minister Yitzhak Rabin responded with a harsh <strong>'Iron Fist' policy</strong> (using tear gas, beatings, and live ammunition) to suppress the uprising, drawing massive international condemnation.</li>\r\n              <li><strong>Rise of Hamas:</strong> The uprising led to the emergence of a new, radical Islamic militant group called <strong>Hamas</strong>, which challenged the PLO's leadership and rejected compromise.</li>\r\n            </ul>\r\n          </div>\r\n        </div>\r\n        <div class=\"mastery-media-column\">\r\n          <div class=\"examiner-tip-box\" style=\"margin: 0; background: var(--bg-app); border-left: 4px solid var(--primary); font-size: 0.85rem; padding: 14px;\">\r\n            <strong style=\"display: block; margin-bottom: 6px; color: var(--primary);\">📝 Source B: PALESTINIAN INTIFADA LEAFLET (1988)</strong>\r\n            <p style=\"font-style: italic; line-height: 1.4; color: var(--text-muted); margin: 0;\">\r\n              \"We throw stones because we have no other voice. The occupation has taken our lands and our youth. We will strike and boycott their markets until they leave our homes and recognize our state.\"\r\n            </p>\r\n          </div>\r\n        </div>"
       }
     ],
-    "dualPerspective": null,
+    "dualPerspective": {
+      "leftHeadline": "Traditional Israeli Narrative",
+      "leftText": "This perspective defends the 1982 Lebanon invasion as a necessary measure to stop PLO rocket fire targeting northern border towns, and views the First Intifada as a violent threat to national security. It argues that Rabin's 'Iron Fist' policy and military force were required to restore order, maintain security, and defend Israeli citizens from civil riots and coordinated terror attacks.",
+      "rightHeadline": "Palestinian and Lebanese Narrative",
+      "rightText": "This perspective views the 1982 invasion as a devastating act of aggression that caused massive civilian suffering and culminated in the horrific Sabra and Shatila massacres. It represents the First Intifada as a legitimate, spontaneous grassroots uprising against military occupation, symbolised by youth throwing stones at tanks to demand basic human rights and self-determination.",
+      "neutralTitle": "⚖️ Dual Interpretation: The Lebanon Invasion & Grassroots Intifada",
+      "tipHtml": "<div class=\"examiner-tip-box\" style=\"margin-top: 18px; margin-bottom: 0;\">\r\n        <span class=\"tip-icon\">💡</span>\r\n        <div>\r\n          <strong>AO2 Exam Skill:</strong> Reflect on how the asymmetry of force (e.g. stone-throwing youth vs Israeli tanks) changed international media perception, drawing global sympathy for the Palestinians during the First Intifada.\r\n        </div>\r\n      </div>"
+    },
     "narrativeChain": {
       "chainData": [
         {
@@ -1830,7 +1848,6 @@ export const LESSONS_DATA = {
       "successText": "Excellent! The PLO's cross-border raids provoked Israel into launching a massive invasion in 1982, which ultimately resulted in the Siege of Beirut and the expulsion of Arafat to Tunis.",
       "failText": "Timeline out of order! Chronological flow: Rocket Attacks / Fatahland (1970s) -> Invasion (June 1982) -> Beirut Siege & Expulsion (August 1982). Click the highlighted blocks to reset."
     },
-    "knowledgeCheck": [],
     "importanceAnalyser": null,
     "questionVault": [
       {
@@ -2042,7 +2059,14 @@ export const LESSONS_DATA = {
         }
       }
     ],
-    "dualPerspective": null,
+    "dualPerspective": {
+      "leftHeadline": "Traditional Israeli Narrative",
+      "leftText": "This perspective defends Oslo as a brave and pragmatic effort to secure Israel's long-term future through territorial compromise and diplomacy. However, it emphasizes that the subsequent wave of Hamas suicide bombings, combined with Arafat's failure to suppress terrorist infrastructure, proved that ceding land compromised national security, leading to deep public disillusionment with the peace process.",
+      "rightHeadline": "Palestinian Narrative",
+      "rightText": "This perspective views Oslo as a deeply flawed, unequal agreement that failed to address core Palestinian rights. Critics point out that it did not halt the expansion of Jewish settlements, did not guarantee a sovereign Palestinian state, and divided the West Bank into disconnected enclaves (Areas A, B, and C) under continued military occupation, leaving the PNA as a subcontractor for Israeli security.",
+      "neutralTitle": "⚖️ Dual Interpretation: The Promise & Pitfalls of Oslo",
+      "tipHtml": "<div class=\"examiner-tip-box\" style=\"margin-top: 18px; margin-bottom: 0;\">\r\n        <span class=\"tip-icon\">💡</span>\r\n        <div>\r\n          <strong>AO2 Exam Skill:</strong> Reflect on how opposition from extremists on both sides (Hamas suicide bombings and Rabin's assassination by Yigal Amir) acted as political catalysts to destroy the momentum of peace.\r\n        </div>\r\n      </div>"
+    },
     "narrativeChain": {
       "chainData": [
         {
@@ -2069,7 +2093,6 @@ export const LESSONS_DATA = {
       "successText": "Excellent! The collapse of Soviet funding and the fallout from the Gulf War weakened the PLO, forcing Arafat into secret talks in Norway that ultimately resulted in the historic Oslo Accords.",
       "failText": "Timeline out of order! Chronological flow: End of Cold War / Gulf War (1989–91) -> Secret Norway Talks (1992–93) -> Signing of Oslo Accords (Sept 1993). Click the highlighted blocks to reset."
     },
-    "knowledgeCheck": [],
     "importanceAnalyser": null,
     "questionVault": [
       {
