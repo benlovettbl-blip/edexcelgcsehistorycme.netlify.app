@@ -49,6 +49,31 @@ export function switchView(viewName, subtopicId = null) {
     }
   }
 
+  const logoEl = document.getElementById('header-brand-logo');
+  if (logoEl) {
+    if (viewName === 'leaderboard') {
+      logoEl.className = "bouncy-chimney brand-icon";
+      logoEl.title = "Fareham Chimney Sweep (Click to cycle quote)";
+      logoEl.innerHTML = `
+        <div class="smoke-particle smoke-1"></div>
+        <div class="smoke-particle smoke-2"></div>
+        <div class="smoke-particle smoke-3"></div>
+        <svg width="24" height="28" viewBox="0 0 24 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="5" y="24" width="14" height="2" rx="0.5" fill="#a03018" />
+          <polygon points="6,24 8,4 16,4 18,24" fill="#e65c00" />
+          <rect x="7" y="2" width="10" height="2" rx="0.5" fill="#b34700" />
+          <rect x="7.8" y="6" width="8.4" height="1.5" fill="#ffffff" />
+          <rect x="8.0" y="9.5" width="8.0" height="1.5" fill="#ffffff" />
+          <rect x="8.2" y="13" width="7.6" height="1.5" fill="#ffffff" />
+        </svg>
+      `;
+    } else {
+      logoEl.className = "brand-icon";
+      logoEl.title = "Conflict in the Middle East (Click to cycle study tips)";
+      logoEl.innerHTML = `<i class="fa-solid fa-globe"></i>`;
+    }
+  }
+
   const now = Date.now();
   if (now - lastViewSwitchTime > 3000) {
     lastViewSwitchTime = now;
