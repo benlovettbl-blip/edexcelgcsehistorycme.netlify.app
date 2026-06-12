@@ -466,13 +466,23 @@ function renderDashboard() {
     const mainBadgeStyle = pct === 0 
       ? 'background: rgba(148, 163, 184, 0.15); color: var(--text-muted);' 
       : 'background: #ffb703; color: #0b0f19; font-weight: 800;';
+
+    let topicIcon = 'fa-book-open';
+    if (topic.id === 'topic_1') topicIcon = 'fa-monument';
+    else if (topic.id === 'topic_2') topicIcon = 'fa-jet-fighter';
+    else if (topic.id === 'topic_3') topicIcon = 'fa-dove';
     
     card.innerHTML = `
       <div class="topic-list-info" style="border-bottom: 1px solid var(--border-glass); padding-bottom: 12px; margin-bottom: 6px; display: flex; flex-direction: column; width: 100%; gap: 6px; min-height: 105px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-          <span class="topic-list-name" style="font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700; color: var(--text-main); line-height: 1.25;">
-            ${topic.title}
-          </span>
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%; gap: 10px;">
+          <div style="display: flex; gap: 10px; align-items: flex-start;">
+            <div style="width: 32px; height: 32px; border-radius: 8px; background: var(--primary-glow); border: 1px solid var(--border-glass); display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 1rem; flex-shrink: 0; margin-top: 2px;">
+              <i class="fa-solid ${topicIcon}"></i>
+            </div>
+            <span class="topic-list-name" style="font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700; color: var(--text-main); line-height: 1.25;">
+              ${topic.title}
+            </span>
+          </div>
           <span class="nav-item-progress" style="font-size: 0.75rem; ${mainBadgeStyle} padding: 2px 8px; border-radius: 12px; font-weight: 700; flex-shrink: 0; margin-left: 8px;">${pct}%</span>
         </div>
         <div class="topic-list-inquiry" style="font-size: 0.78rem; color: var(--text-main); opacity: 0.8; font-style: italic; line-height: 1.3; margin-top: 4px; display: flex; align-items: flex-start; gap: 6px; width: 100%;">

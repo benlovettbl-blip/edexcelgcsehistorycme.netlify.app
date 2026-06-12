@@ -77,7 +77,7 @@ export function switchView(viewName, subtopicId = null) {
     if (dashboardNav) dashboardNav.classList.add('active');
     if (headerModeSwitcher) headerModeSwitcher.style.display = 'none';
     const viewTitle = document.getElementById('current-view-title');
-    if (viewTitle) viewTitle.textContent = "Study Dashboard";
+    if (viewTitle) viewTitle.textContent = "Conflict in the Middle East (1945–1995)";
     state.selectedSubtopicId = null;
     renderDashboard();
   } else if (viewName === 'leaderboard') {
