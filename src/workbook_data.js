@@ -88,7 +88,7 @@ export const WORKBOOK_DATA = {
       },
       {
         "date": "🏁 1948-49: Outbreak",
-        "desc": "British forces withdraw; State of Israel declared; Arab armies invade; IDF victory results in Nakba."
+        "desc": "British forces withdraw; State of Israel declared; Arab armies invade; UN mediator Count Bernadotte assassinated; IDF victory results in Nakba."
       }
     ],
     "comprehensionCheck": [
@@ -147,16 +147,7 @@ export const WORKBOOK_DATA = {
         "text": "\"Palestine is an Arab country. The United Nations has no right to partition our land against the will of its majority, giving 55% of the territory to a minority that represents only 33% of the population.\""
       }
     ],
-    "sourceTasks": [
-      {
-        "title": "Question A (Cross-Reference)",
-        "scaffold": "How does the Jewish insurgent view in Source B support or challenge Ernest Bevin's concerns about British forces in Source A?"
-      },
-      {
-        "title": "Question B (Synthesis)",
-        "scaffold": "Compare the conflicting reactions to partition and war in Source C and Source D. How does this explain the escalation of civil conflict in 1948?"
-      }
-    ],
+    
     "examPractice": {
       "questions": [
         {
@@ -510,7 +501,7 @@ export const WORKBOOK_DATA = {
       },
       {
         "date": "🇺🇸 1950s: Superpower Aid",
-        "desc": "US grants $300 million in financial aid to prevent Israel's economic collapse. Count Bernadotte assassinated."
+        "desc": "US grants $300 million in financial aid to prevent Israel's economic collapse."
       }
     ],
     "comprehensionCheck": [
@@ -568,16 +559,7 @@ export const WORKBOOK_DATA = {
         "text": "\"We cannot tolerate constant incursions that slaughter our border families. Reprisals are our only defense. Furthermore, the Egyptian blockade of the Straits of Tiran is a clear act of war closing Eilat to our shipping.\""
       }
     ],
-    "sourceTasks": [
-      {
-        "title": "Question A (Cross-Reference)",
-        "scaffold": "How does the Egyptian broadcast in Source C justify the border raids compared to the UN refugee description in Source A?"
-      },
-      {
-        "title": "Question B (Synthesis)",
-        "scaffold": "Compare Israel's immigration priority in Source B with the security concerns in Source D. How did they create conflicting national priorities?"
-      }
-    ],
+    
     "examPractice": {
       "questions": [
         {
@@ -982,16 +964,7 @@ export const WORKBOOK_DATA = {
         "text": "\"The Israeli forces will launch a large-scale attack on Egyptian forces in Sinai. The British and French governments will then appeal to both combatants to withdraw from the Canal, landing troops to secure navigation.\""
       }
     ],
-    "sourceTasks": [
-      {
-        "title": "Question A (Cross-Reference)",
-        "scaffold": "How does the British prime minister's view of Nasser in Source B contrast with Nasser's own justification in Source A?"
-      },
-      {
-        "title": "Question B (Synthesis)",
-        "scaffold": "Compare the secret military planning in Source D with the superpower reality in Source C. How does this explain the failure of the invasion?"
-      }
-    ],
+    
     "examPractice": {
       "questions": [
         {
@@ -1388,16 +1361,7 @@ export const WORKBOOK_DATA = {
         "text": "\"The fulfillment of Charter principles requires the establishment of a just peace which should include: (i) Withdrawal of Israel armed forces from territories occupied in the recent conflict; (ii) Termination of all claims of belligerency.\""
       }
     ],
-    "sourceTasks": [
-      {
-        "title": "Question A (Cross-Reference)",
-        "scaffold": "How does Nasser's declaration of blockade in Source B support Levi Eshkol's justification for war in Source C?"
-      },
-      {
-        "title": "Question B (Synthesis)",
-        "scaffold": "Compare the initial goals of the PLO in Source A with the UN Resolution 242 framework in Source D. Why did this make a diplomatic compromise difficult?"
-      }
-    ],
+    
     "examPractice": {
       "questions": [
         {
@@ -1796,16 +1760,7 @@ export const WORKBOOK_DATA = {
         "text": "\"The slaughter of our athletes in Munich is an outrage against humanity. We will hunt down these murderers wherever they hide. There will be no sanctuary for terrorists.\""
       }
     ],
-    "sourceTasks": [
-      {
-        "title": "Question A (Cross-Reference)",
-        "scaffold": "How does King Hussein's security address in Source C justify the military action against the PLO's actions in Source B?"
-      },
-      {
-        "title": "Question B (Synthesis)",
-        "scaffold": "Compare the diplomatic stance in Source A with Golda Meir's response to terrorism in Source D. How did they prevent peaceful negotiations?"
-      }
-    ],
+    
     "examPractice": {
       "questions": [
         {
@@ -2206,16 +2161,7 @@ export const WORKBOOK_DATA = {
         "text": "\"The war threatened global economic collapse and nuclear war. We had to supply Israel to prevent its defeat, but then force both sides into a ceasefire to protect our oil interests.\""
       }
     ],
-    "sourceTasks": [
-      {
-        "title": "Question A (Cross-Reference)",
-        "scaffold": "How does the complacency described in Source B explain the initial success of Sadat's military plan in Source A?"
-      },
-      {
-        "title": "Question B (Synthesis)",
-        "scaffold": "Compare the OPEC oil strategy in Source C with Henry Kissinger's intervention in Source D. How did oil influence superpower diplomacy?"
-      }
-    ],
+    
     "examPractice": {
       "questions": [
         {
@@ -2615,16 +2561,7 @@ export const WORKBOOK_DATA = {
         "text": "\"Dismantling our civilian settlements in Sinai (Yamit) is a painful cost of peace. But securing our southern border with Egypt allows us to concentrate our military assets elsewhere.\""
       }
     ],
-    "sourceTasks": [
-      {
-        "title": "Question A (Cross-Reference)",
-        "scaffold": "How does Sadat's demand for land in Source A match or conflict with the practical actions taken by Israel in Source D?"
-      },
-      {
-        "title": "Question B (Synthesis)",
-        "scaffold": "Compare the optimism of Menachem Begin in Source B with the Arab League condemnation in Source C. How did they affect Egypt's position in the Arab world?"
-      }
-    ],
+    
     "examPractice": {
       "questions": [
         {
@@ -3024,16 +2961,7 @@ export const WORKBOOK_DATA = {
         "text": "\"We must restore order. We will use force, power, and blows to break their will. We will prove that violence against our soldiers does not pay.\""
       }
     ],
-    "sourceTasks": [
-      {
-        "title": "Question A (Cross-Reference)",
-        "scaffold": "How does the military instruction in Source D contrast with the popular resistance tactics described in the leaflet in Source C?"
-      },
-      {
-        "title": "Question B (Synthesis)",
-        "scaffold": "Compare the political fallout in Source B with the PLO's exile status in Source A. How did the Lebanon War weaken both Israeli and PLO leadership?"
-      }
-    ],
+    
     "examPractice": {
       "questions": [
         {
@@ -3430,16 +3358,7 @@ export const WORKBOOK_DATA = {
         "text": "\"I acted alone on God's orders to save this country. Rabin was giving away our ancestral homeland of Judea and Samaria to terrorists. He had to be stopped.\""
       }
     ],
-    "sourceTasks": [
-      {
-        "title": "Question A (Cross-Reference)",
-        "scaffold": "How does the message of peace in Source B contrast with the extremist opposition shown in Source C and Source D?"
-      },
-      {
-        "title": "Question B (Synthesis)",
-        "scaffold": "Compare the legal commitments of Oslo I in Source A with the security arguments of the assassin in Source D. How did they demonstrate the internal divisions in Israel?"
-      }
-    ],
+    
     "examPractice": {
       "questions": [
         {

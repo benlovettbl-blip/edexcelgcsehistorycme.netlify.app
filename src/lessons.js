@@ -2483,7 +2483,7 @@ export function initWorkbookCreator() {
   if (btnPrint) {
     btnPrint.addEventListener('click', async () => {
       const style = document.getElementById('workbook-creator-style').value;
-      const density = document.getElementById('workbook-creator-density').value;
+      const density = 'comfortable';
       const answers = document.getElementById('workbook-creator-answers').value;
       
       let selectedIndices = [];
@@ -2513,7 +2513,7 @@ export function initWorkbookCreator() {
   if (btnWord) {
     btnWord.addEventListener('click', async () => {
       const style = document.getElementById('workbook-creator-style').value;
-      const density = document.getElementById('workbook-creator-density').value;
+      const density = 'comfortable';
       const answers = document.getElementById('workbook-creator-answers').value;
       
       let selectedIndices = [];
@@ -2805,7 +2805,10 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
 
   const detailsHtml = '';
 
-  const retrievalPrompts = TIMELINE_WORKSHEET_PROMPTS[subtopicId] || [];
+  const quizSubtopicData = QUIZ_DATA.flatMap(t => t.subtopics).find(s => s.id === subtopicId) || { easy: [], medium: [], difficult: [] };
+  const allQuizQs = [...(quizSubtopicData.easy || []), ...(quizSubtopicData.medium || [])];
+  const shuffledQs = [...allQuizQs].sort(() => 0.5 - Math.random());
+  const retrievalPrompts = shuffledQs.slice(0, 5).map(q => ({ q: q.question, a: q.answer }));
   let retrievalQuestionsHtml = '';
   if (retrievalPrompts.length > 0) {
     retrievalQuestionsHtml = `
@@ -3632,24 +3635,10 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
       </div>
     `;
 
-    const warMap = {
-      'subtopic_1_2': '1948_1949',
-      'subtopic_1_3': '1956_suez',
-      'subtopic_2_1': '1967_sixday',
-      'subtopic_2_3': '1973_yomkippur',
-      'subtopic_3_2': '1982_lebanon'
-    };
-    const warId = warMap[subtopicId];
-    if (warId) {
-      html = html.replace('class="print-page-last"', 'class="print-page"');
-      const warHtml = await generateWarWorkbookHtml(warId, density, includeAnswers);
-      const bodyStartIdx = warHtml.indexOf('<body>');
-      const bodyEndIdx = warHtml.lastIndexOf('</body>');
-      if (bodyStartIdx !== -1 && bodyEndIdx !== -1) {
-        const warBodyContent = warHtml.substring(bodyStartIdx + 6, bodyEndIdx).trim();
-        html += '\n' + warBodyContent;
-      }
-    }
+
+
+
+
   }
 
   html += `
@@ -3711,245 +3700,88 @@ export async function generateWarWorkbookHtml(warId, density, includeAnswers) {
     '1973_yomkippur': '1973 Yom Kippur War',
     '1982_lebanon': '1982 Lebanon War'
   };
-  const warSubtopicMap = {
-    '1948_1949': 'subtopic_1_2',
-    '1956_suez': 'subtopic_1_3',
-    '1967_sixday': 'subtopic_2_1',
-    '1973_yomkippur': 'subtopic_2_3',
-    '1982_lebanon': 'subtopic_3_2'
-  };
-
-  const warTitle = warNames[warId] || 'GCSE History Revision';
-  const subtopicId = warSubtopicMap[warId];
-  const subtopicData = QUIZ_DATA.flatMap(t => t.subtopics).find(s => s.id === subtopicId) || { easy: [], medium: [], difficult: [] };
-
-  const easyPool = subtopicData.easy || [];
-  const mediumPool = subtopicData.medium || [];
-  const difficultPool = subtopicData.difficult || [];
-
-  const selectedQuestions = [];
-  selectedQuestions.push(...easyPool.slice(0, 5));
-  selectedQuestions.push(...mediumPool.slice(0, 5));
-  selectedQuestions.push(...difficultPool.slice(0, 5));
-
-  const col1Questions = selectedQuestions.slice(0, 8);
-  const col2Questions = selectedQuestions.slice(8, 15);
-
-  const renderQuizQuestion = (q, qIdx) => {
-    const linesCount = density === 'compact' ? 1 : 2;
-    const linesHtml = Array(linesCount).fill('<div class="dotted-writing-line" style="border-bottom: 1px dashed #9ca3af; height: 18px; margin-top: 2px; width: 95%;"></div>').join('');
-    
-    const answerArea = includeAnswers 
-      ? `<div style="color: #16a34a; font-style: italic; font-weight: bold; margin-top: 2px; font-size: 7.2pt;">Ans: ${q.answer}</div>`
-      : linesHtml;
-    return `
-      <div style="margin-bottom: 14px; min-height: 48px; box-sizing: border-box; padding-right: 10px;">
-        <div style="font-size: 7.8pt; line-height: 1.3; color: #111827; font-weight: bold;">
-          Q${qIdx + 1}: <span style="font-weight: normal; color: #1f2937;">${q.question}</span>
-        </div>
-        ${answerArea}
-      </div>
-    `;
-  };
-
-  const renderExplanationRow = (q, qIdx) => {
-    return `
-      <div style="margin-bottom: 14px; min-height: 55px; border-bottom: 1px solid #f3f4f6; padding-bottom: 6px; padding-right: 10px; box-sizing: border-box;">
-        <div style="font-size: 7.5pt; line-height: 1.25; color: #111827; font-weight: bold;">
-          Q${qIdx + 1}: <span style="font-weight: normal; color: #4b5563;">${q.question}</span>
-        </div>
-        <div style="font-size: 7.5pt; font-weight: bold; color: #16a34a; margin-top: 2px;">
-          Correct Answer: <span style="font-weight: normal; color: #111827;">${q.answer}</span>
-        </div>
-        <div style="font-size: 7pt; color: #4b5563; line-height: 1.25; margin-top: 2px;">
-          <em>${q.explanation}</em>
-        </div>
-      </div>
-    `;
-  };
-
-  const col1Html = col1Questions.map((q, idx) => renderQuizQuestion(q, idx)).join('');
-  const col2Html = col2Questions.map((q, idx) => renderQuizQuestion(q, idx + 8)).join('');
-
-  const col1ExpHtml = col1Questions.map((q, idx) => renderExplanationRow(q, idx)).join('');
-  const col2ExpHtml = col2Questions.map((q, idx) => renderExplanationRow(q, idx + 8)).join('');
-
-  const pageTitleQuiz = includeAnswers ? 'Teacher Answer Key &bull; ' : '';
+  const warTitle = warNames[warId] || 'Major War';
 
   let html = `<!DOCTYPE html>
 <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
 <head>
   <meta charset="utf-8">
-  <title>GCSE History Lesson Resource - Major War Revision Quiz</title>
+  <title>Key Events of a War: ${warTitle}</title>
   <style>
-    @page {
-      size: 21cm 29.7cm; /* A4 */
-      margin: 1.0cm;
-      mso-page-orientation: portrait;
-    }
-    body {
-      font-family: 'Arial', sans-serif;
-      font-size: 9.5pt;
-      color: #1f2937;
-      line-height: 1.4;
-      background: #ffffff;
-      margin: 0;
-      padding: 0;
-    }
-    .print-page, .print-page-last {
-      clear: both;
-      box-sizing: border-box;
-      position: relative;
-      background: #ffffff;
-    }
-    .print-page {
-      page-break-after: always;
-    }
-    .print-page-last {
-      page-break-after: avoid;
-    }
+    @page { size: 21cm 29.7cm; margin: 1.0cm; mso-page-orientation: portrait; }
+    body { font-family: 'Arial', sans-serif; font-size: 9.5pt; color: #1f2937; line-height: 1.4; background: #ffffff; margin: 0; padding: 0; }
+    .print-page { clear: both; box-sizing: border-box; position: relative; background: #ffffff; page-break-after: always; height: 100vh; max-height: 27.7cm; overflow: hidden; display: flex; flex-direction: column; }
+    .print-page-last { clear: both; box-sizing: border-box; position: relative; background: #ffffff; height: 100vh; max-height: 27.7cm; overflow: hidden; display: flex; flex-direction: column; }
     @media screen {
-      body {
-        background-color: #f3f4f6;
-        padding: 20px 0;
-      }
-      .print-page, .print-page-last {
-        width: 21cm;
-        min-height: 29.7cm;
-        margin: 0 auto 20px auto;
-        padding: 1.0cm;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        border: 1px solid #e5e7eb;
-        border-radius: 4px;
-      }
-    }
-    @media print {
-      body {
-        background: #ffffff !important;
-        color: #1f2937 !important;
-        font-size: 9.5pt !important;
-        line-height: 1.4 !important;
-      }
-      .print-page, .print-page-last {
-        width: 100% !important;
-        min-height: 27.2cm !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        box-shadow: none !important;
-        border: none !important;
-        border-radius: 0 !important;
-      }
-    }
-    .main-title {
-      font-size: 13.5pt;
-      font-weight: 800;
-      border-bottom: 2px solid #111827;
-      padding-bottom: 3px;
-      margin-top: 0;
-      margin-bottom: 8px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: #111827;
-    }
-    .dotted-writing-line {
-      border-bottom: 1px dashed #9ca3af;
-      height: 28px;
-      margin-bottom: 4px;
+      body { background-color: #f3f4f6; padding: 20px 0; }
+      .print-page, .print-page-last { width: 21cm; min-height: 29.7cm; margin: 0 auto 20px auto; padding: 1.0cm; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; border-radius: 4px; }
     }
   </style>
 </head>
 <body>
-  <!-- SIDE 1: STUDENT QUIZ -->
-  <div class="print-page" style="position: relative; min-height: 27.2cm; box-sizing: border-box;">
-    <h2 class="main-title">${pageTitleQuiz}GCSE Revision: Quick-Fire Quiz - ${warTitle}</h2>
-    
-    <div style="border: 1.5px solid #111827; padding: 10px; background: #f9fafb; border-radius: 4px; margin-bottom: 15px; box-sizing: border-box; text-align: left;">
-      <strong style="text-transform: uppercase; font-size: 8.5pt; color: #111827; display: block; margin-bottom: 4px;">✏️ Instructions</strong>
-      <span style="font-size: 7.5pt; line-height: 1.35; color: #374151; display: block;">
-        Answer all 15 questions from memory. Write your answers clearly on the dotted lines. Keep your answers brief.
-      </span>
+  <!-- PAGE 1: 3 Paragraphs -->
+  <div class="print-page">
+    <div style="border-bottom: 2px solid #111827; padding-bottom: 8px; margin-bottom: 12px;">
+      <h2 style="margin: 0; font-size: 14pt; color: #111827; text-transform: uppercase;">Key Events of a War: ${warTitle}</h2>
+      <p style="margin: 4px 0 0 0; font-size: 8.5pt; color: #4b5563;">
+        <strong>Edexcel Specification Requirement:</strong> Write an analytical narrative of the key events of this war. 
+        Write three detailed paragraphs focusing on the causes/outbreak, the main events/battles, and the consequences/aftermath. 
+        Include precise historical details (names, dates, statistics).
+      </p>
     </div>
-
-    <table style="width: 100%; border-collapse: collapse; margin-top: 10px; table-layout: fixed;">
-      <colgroup>
-        <col width="50%" style="width: 50%;">
-        <col width="50%" style="width: 50%;">
-      </colgroup>
-      <tbody>
-        <tr>
-          <td style="width: 50%; vertical-align: top; border-right: 1px solid #d1d5db; padding-right: 10px;">
-            ${col1Html}
-          </td>
-          <td style="width: 50%; vertical-align: top; padding-left: 15px;">
-            ${col2Html}
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    
+    <div style="flex: 1; display: flex; flex-direction: column; gap: 15px;">
+      <div style="flex: 1; border: 1.5px solid #d1d5db; border-radius: 6px; padding: 10px; display: flex; flex-direction: column;">
+        <h3 style="margin: 0 0 8px 0; font-size: 10pt; color: #374151;">Paragraph 1: Causes & Outbreak</h3>
+        <div style="flex: 1; border-top: 1px dashed #e5e7eb; background: repeating-linear-gradient(transparent, transparent 23px, #e5e7eb 23px, #e5e7eb 24px); margin-top: 5px;"></div>
+      </div>
+      <div style="flex: 1; border: 1.5px solid #d1d5db; border-radius: 6px; padding: 10px; display: flex; flex-direction: column;">
+        <h3 style="margin: 0 0 8px 0; font-size: 10pt; color: #374151;">Paragraph 2: Key Events & Battles</h3>
+        <div style="flex: 1; border-top: 1px dashed #e5e7eb; background: repeating-linear-gradient(transparent, transparent 23px, #e5e7eb 23px, #e5e7eb 24px); margin-top: 5px;"></div>
+      </div>
+      <div style="flex: 1; border: 1.5px solid #d1d5db; border-radius: 6px; padding: 10px; display: flex; flex-direction: column;">
+        <h3 style="margin: 0 0 8px 0; font-size: 10pt; color: #374151;">Paragraph 3: Consequences & Aftermath</h3>
+        <div style="flex: 1; border-top: 1px dashed #e5e7eb; background: repeating-linear-gradient(transparent, transparent 23px, #e5e7eb 23px, #e5e7eb 24px); margin-top: 5px;"></div>
+      </div>
+    </div>
   </div>
 
-  <!-- SIDE 2: ANSWER KEY & SELF-MARKING -->
-  <div class="print-page-last" style="position: relative; min-height: 27.2cm; box-sizing: border-box; margin-top: 20px; page-break-before: always;">
-    <h3 style="font-size: 10pt; font-weight: bold; border-bottom: 1.5px solid #111827; padding-bottom: 2px; margin-top: 0; margin-bottom: 12px; text-transform: uppercase; color: #111827; letter-spacing: 0.5px;">
-      ${warTitle}: Quiz Answer Key & Explanations
-    </h3>
-
-    <table style="width: 100%; border-collapse: collapse; margin-top: 5px; table-layout: fixed;">
-      <colgroup>
-        <col width="50%" style="width: 50%;">
-        <col width="50%" style="width: 50%;">
-      </colgroup>
-      <tbody>
-        <tr>
-          <td style="width: 50%; vertical-align: top; border-right: 1px solid #d1d5db; padding-right: 10px;">
-            ${col1ExpHtml}
-          </td>
-          <td style="width: 50%; vertical-align: top; padding-left: 15px;">
-            ${col2ExpHtml}
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
-    <!-- Scoreboard & Diagnostic Feedback -->
-    <table style="width: 100%; border-collapse: collapse; margin-top: 15px; border: 1.5px solid #111827; background: #f9fafb; table-layout: fixed; box-sizing: border-box;">
-      <colgroup>
-        <col width="30%" style="width: 30%;">
-        <col width="40%" style="width: 40%;">
-        <col width="30%" style="width: 30%;">
-      </colgroup>
-      <tbody>
-        <tr>
-          <td style="padding: 10px; border-right: 1.5px solid #111827; text-align: center; vertical-align: middle; width: 30%;">
-            <div style="font-size: 9pt; font-weight: bold; color: #111827; text-transform: uppercase; margin-bottom: 4px;">Score Tracker</div>
-            <div style="font-size: 15pt; font-weight: 800; color: #111827; border: 1.5px dashed #9ca3af; padding: 4px 10px; display: inline-block; background: #ffffff;">
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / 15
+  <!-- PAGE 2: Timeline -->
+  <div class="print-page-last">
+    <div style="border-bottom: 2px solid #111827; padding-bottom: 8px; margin-bottom: 20px;">
+      <h2 style="margin: 0; font-size: 14pt; color: #111827; text-transform: uppercase;">Chronological Analysis: ${warTitle}</h2>
+      <p style="margin: 4px 0 0 0; font-size: 8.5pt; color: #4b5563;">
+        Plot the 6 most important events of the war in chronological order. Include the date and a brief explanation of why the event was significant.
+      </p>
+    </div>
+    
+    <div style="flex: 1; position: relative; padding-left: 20px;">
+      <!-- Vertical line -->
+      <div style="position: absolute; left: 35px; top: 10px; bottom: 20px; width: 4px; background-color: #9ca3af; border-radius: 2px;"></div>
+      
+      <div style="display: flex; flex-direction: column; gap: 20px; height: 100%;">
+        ${Array(6).fill(0).map((_, i) => `
+          <div style="position: relative; display: flex; align-items: stretch; flex: 1; min-height: 120px; margin-bottom: 10px;">
+            <div style="position: absolute; left: 8px; top: 15px; width: 16px; height: 16px; background-color: #3b82f6; border-radius: 50%; border: 3px solid #ffffff; box-shadow: 0 0 0 1px #9ca3af; z-index: 2;"></div>
+            <div style="margin-left: 45px; border: 1.5px solid #d1d5db; border-radius: 6px; padding: 10px; width: 100%; display: flex; flex-direction: column;">
+              <div style="display: flex; gap: 10px; align-items: flex-end; margin-bottom: 8px;">
+                <span style="font-weight: bold; font-size: 9pt;">Date:</span>
+                <div style="border-bottom: 1px dashed #9ca3af; flex: 0 0 120px; margin-bottom: 4px;"></div>
+                <span style="font-weight: bold; font-size: 9pt; margin-left: 10px;">Event Title:</span>
+                <div style="border-bottom: 1px dashed #9ca3af; flex: 1; margin-bottom: 4px;"></div>
+              </div>
+              <span style="font-weight: bold; font-size: 9pt; margin-bottom: 4px;">Significance:</span>
+              <div style="flex: 1; border-top: 1px dashed #e5e7eb; background: repeating-linear-gradient(transparent, transparent 23px, #e5e7eb 23px, #e5e7eb 24px); margin-top: 5px;"></div>
             </div>
-          </td>
-          <td style="padding: 10px; border-right: 1.5px solid #111827; font-size: 7.2pt; line-height: 1.3; color: #374151; width: 40%;">
-            <strong style="font-size: 7.8pt; color: #111827; text-transform: uppercase; display: block; margin-bottom: 3px;">📊 Performance Boundaries</strong>
-            <div style="margin-bottom: 2px;"><strong>13–15 Marks:</strong> Mastery (Level 9 Focus) - Excellent recall.</div>
-            <div style="margin-bottom: 2px;"><strong>10–12 Marks:</strong> Strong (Level 7 Focus) - Solid foundation.</div>
-            <div><strong>Under 10 Marks:</strong> Focus Needed - Re-read narrative & vocabulary.</div>
-          </td>
-          <td style="padding: 10px; font-size: 7.2pt; line-height: 1.3; color: #374151; width: 30%;">
-            <strong style="font-size: 7.8pt; color: #111827; text-transform: uppercase; display: block; margin-bottom: 3px;">🔍 Diagnostic study guide</strong>
-            <div>If you struggled with any question:</div>
-            <div style="margin-top: 3px;">1. Review the key dates and causes of the war.</div>
-            <div>2. Check the model explanations above.</div>
-            <div>3. Re-test active recall on these specific topics.</div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+          </div>
+        `).join('')}
+      </div>
+    </div>
   </div>
 </body>
-</html>
-  `;
+</html>`;
+  
   return html;
 }
 
 window.generateWarWorkbookHtml = generateWarWorkbookHtml;
-
-
-

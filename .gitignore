@@ -22,3 +22,7 @@ games-*.js
 workbook_data-*.js
 flashcard_upgrades-*.js
 individuals_game-*.js
+
+playwright-report/
+test-results/
+state-*.js

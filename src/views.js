@@ -5842,3 +5842,162 @@ export {
   validateScoreBoardInitials,
   renderKeyIndividualsView
 };
+// End of file 
+
+import { CARDS_DATA } from './cards_data.js';
+
+export function renderGarbagePailBinder() {
+  const container = document.getElementById("gpk-binder-grid");
+  if (!container) return;
+  container.innerHTML = "";
+
+  const unlockedIds = state.userStats.unlockedCards || [];
+
+  CARDS_DATA.forEach(card => {
+    const isUnlocked = unlockedIds.includes(card.id);
+
+    const wrapperEl = document.createElement("div");
+    wrapperEl.className = "gpk-card-container gpk-flippable";
+
+    const innerEl = document.createElement("div");
+    innerEl.className = "gpk-flip-card-inner";
+
+    // Front Face
+    const frontEl = document.createElement("div");
+    frontEl.className = "gpk-flip-card-front";
+    if (isUnlocked) {
+      frontEl.className += " gpk-card-unlocked";
+      frontEl.style.backgroundImage = `url('${card.image}')`;
+      frontEl.innerHTML = '<div class="hologram"></div>';
+    } else {
+      frontEl.className += " gpk-card-locked";
+      frontEl.innerHTML = `
+        <i class="fa-solid fa-lock" style="font-size: 2rem; color: rgba(255,255,255,0.2); margin-bottom: 10px;"></i>
+        <div class="locked-hint">
+          ${card.unlockMessage}
+        </div>
+      `;
+    }
+
+    // Back Face
+    const backEl = document.createElement("div");
+    backEl.className = "gpk-flip-card-back";
+    
+    if (isUnlocked && card.stats) {
+      backEl.innerHTML = `
+        <div class="gpk-back-content">
+          <div class="gpk-back-header">
+            <h4>${card.name}</h4>
+          </div>
+          <div class="gpk-bio">${card.bio}</div>
+          <div class="gpk-stats-box">
+            <div class="gpk-stat-row">
+              <span class="stat-label">Audacity</span>
+              <span class="gpk-stat-value">
+                <div class="gpk-stat-bar" style="width: ${card.stats.audacity}%"></div>
+                ${card.stats.audacity}
+              </span>
+            </div>
+            <div class="gpk-stat-row">
+              <span class="stat-label">Sneakiness</span>
+              <span class="gpk-stat-value">
+                <div class="gpk-stat-bar" style="width: ${card.stats.diplomaticSneakiness}%"></div>
+                ${card.stats.diplomaticSneakiness}
+              </span>
+            </div>
+            <div class="gpk-stat-row">
+              <span class="stat-label">Military</span>
+              <span class="gpk-stat-value">
+                <div class="gpk-stat-bar" style="width: ${card.stats.militaryMight}%"></div>
+                ${card.stats.militaryMight}
+              </span>
+            </div>
+            <div class="gpk-stat-row">
+              <span class="stat-label">Legacy</span>
+              <span class="gpk-stat-value">
+                <div class="gpk-stat-bar" style="width: ${card.stats.legacyScore}%"></div>
+                ${card.stats.legacyScore}
+              </span>
+            </div>
+          </div>
+        </div>
+      `;
+    } else {
+      backEl.innerHTML = `<div class="gpk-back-content"><i class="fa-solid fa-question" style="font-size: 3rem; opacity: 0.1;"></i></div>`;
+    }
+
+    innerEl.appendChild(frontEl);
+    innerEl.appendChild(backEl);
+    wrapperEl.appendChild(innerEl);
+
+    if (isUnlocked) {
+      wrapperEl.onclick = () => {
+        AudioEngine.play('cardFlip');
+        innerEl.classList.toggle('flipped');
+      };
+    }
+
+    container.appendChild(wrapperEl);
+  });
+}
+window.renderGarbagePailBinder = renderGarbagePailBinder;
+
+export function triggerPackOpening(cardId) {
+  const matchedCard = CARDS_DATA.find(c => c.id === cardId);
+  if (!matchedCard) return;
+
+  const overlay = document.getElementById('pack-opening-overlay');
+  const cardImg = document.getElementById('pack-opening-card-image');
+  const foilPack = document.getElementById('foil-pack-element');
+  const revealedContainer = document.getElementById('revealed-card-container');
+  const closeBtn = document.getElementById('btn-close-pack-opening');
+  
+  if (overlay && cardImg && foilPack && revealedContainer) {
+    // Reset states
+    foilPack.classList.remove('tearing');
+    foilPack.style.display = 'flex';
+    revealedContainer.classList.remove('popped');
+    closeBtn.style.opacity = '0';
+    
+    cardImg.style.backgroundImage = `url('${matchedCard.image}')`;
+    overlay.classList.add('active');
+    
+    foilPack.onclick = () => {
+      AudioEngine.play('click');
+      foilPack.classList.add('tearing');
+      
+      setTimeout(() => {
+        foilPack.style.display = 'none';
+        AudioEngine.play('cheer');
+        revealedContainer.classList.add('popped');
+        
+        // Spawn special pack confetti
+        for(let i=0; i<30; i++) {
+          const conf = document.createElement('div');
+          conf.className = 'pack-confetti';
+          conf.style.left = Math.random() * 100 + '%';
+          conf.style.background = ['#ffb703', '#fb8500', '#8ecae6', '#219ebc', '#023047'][Math.floor(Math.random()*5)];
+          conf.style.animationDelay = (Math.random() * 0.5) + 's';
+          document.getElementById('pack-confetti-container').appendChild(conf);
+          setTimeout(() => conf.remove(), 2500);
+        }
+
+        closeBtn.style.opacity = '1';
+      }, 1000);
+    };
+
+    closeBtn.onclick = () => {
+      overlay.classList.remove('active');
+      // Ensure the binder visually updates with the new card
+      if (window.renderGarbagePailBinder) {
+        window.renderGarbagePailBinder();
+      }
+      // Scroll to the binder
+      const binderSec = document.getElementById('gpk-binder-section');
+      if (binderSec) {
+        binderSec.scrollIntoView({ behavior: 'smooth' });
+      }
+    };
+  }
+}
+window.triggerPackOpening = triggerPackOpening;

@@ -1164,7 +1164,7 @@ export function initBulkWorkbookCreator() {
   if (btnPrint) {
     btnPrint.addEventListener('click', async () => {
       const style = document.getElementById('bulk-workbook-style').value;
-      const density = document.getElementById('bulk-workbook-density').value;
+      const density = 'comfortable';
       const answers = document.getElementById('bulk-workbook-answers').value;
       
       AudioEngine.play('click');
@@ -1184,7 +1184,7 @@ export function initBulkWorkbookCreator() {
   if (btnWord) {
     btnWord.addEventListener('click', async () => {
       const style = document.getElementById('bulk-workbook-style').value;
-      const density = document.getElementById('bulk-workbook-density').value;
+      const density = 'comfortable';
       const answers = document.getElementById('bulk-workbook-answers').value;
       
       AudioEngine.play('click');

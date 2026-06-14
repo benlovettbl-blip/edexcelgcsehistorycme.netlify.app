@@ -1,4 +1,5 @@
-import { initData } from './storage.js';
+import { initData, setMastered } from './storage.js';
+import { state } from './state.js';
 console.log("=== MAIN.JS EXECUTING IN WINDOW CONTEXT ===");
 import { renderSidebarNav, updateGlobalStats, closeVideoModal } from './views.js';
 import { bindEvents } from './layout.js';
@@ -13,6 +14,8 @@ window.addEventListener('DOMContentLoaded', () => {
   updateGlobalStats();
   bindEvents();
   window.switchView = switchView;
+  window.state = state;
+  window.setMastered = setMastered;
   
   // Bind video modal close events
   const closeBtn = document.getElementById('video-modal-close-btn');
@@ -66,4 +69,7 @@ window.addEventListener('DOMContentLoaded', () => {
   
   // Render default Dashboard view
   switchView('dashboard');
+  if (window.renderGarbagePailBinder) {
+    window.renderGarbagePailBinder();
+  }
 });

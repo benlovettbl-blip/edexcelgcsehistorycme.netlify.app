@@ -1,4 +1,5 @@
 import { state } from './state.js';
+import { CARDS_DATA } from './cards_data.js';
 import { QUIZ_DATA } from '../questions.js';
 import { updateSoundBtnUI } from './layout.js';
 import { updateGlobalStats, updateBookmarksUI } from './views.js';
@@ -165,6 +166,9 @@ export function initData() {
     state.pastPaperSession.completedQuestions = storedPastCompleted ? JSON.parse(storedPastCompleted) : [];
     
     state.userStats = storedUserStats ? JSON.parse(storedUserStats) : { xp: 0, level: 1, streak: 0, lastLoginDate: null };
+    if (!state.userStats.unlockedCards) {
+      state.userStats.unlockedCards = [];
+    }
   } catch (e) {
     console.error("LocalStorage load error:", e);
   }
@@ -207,10 +211,24 @@ export function setMastered(questionId, isMastered) {
       const subtopicQuestions = state.allQuestions.filter(q => q.subtopicId === question.subtopicId);
       const masteredInSubtopic = subtopicQuestions.filter(q => state.mastery[q.id]);
       
+      
       if (masteredInSubtopic.length === subtopicQuestions.length) {
         AudioEngine.play('cheer');
         Confetti.spawn(100);
+
+        // CHECK GAMIFICATION CARD UNLOCKS
+        const matchedCard = CARDS_DATA.find(c => c.subtopicId === question.subtopicId);
+        if (matchedCard && !state.userStats.unlockedCards.includes(matchedCard.id)) {
+          state.userStats.unlockedCards.push(matchedCard.id);
+          saveProgress();
+          
+          // Trigger Pack Opening UI
+          if (window.triggerPackOpening) {
+            window.triggerPackOpening(matchedCard.id);
+          }
+        }
       }
+
     }
   }
 }

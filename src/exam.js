@@ -100,7 +100,7 @@ function startExam(scope, length, timeLimit) {
   const selection = [...selectedEasy, ...selectedMedium, ...selectedDifficult];
 
   // Optional: Chronological sort or randomized shuffle
-  const sortOrder = document.getElementById('exam-order-select').value;
+  const sortOrder = 'random';
   if (sortOrder === 'chronological') {
     selection.sort((a, b) => a.year - b.year);
   } else {

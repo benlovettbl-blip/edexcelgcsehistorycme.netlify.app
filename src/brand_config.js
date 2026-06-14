@@ -44,21 +44,20 @@ export function updateBrandBanner() {
   if (brandBannerTimeout) clearTimeout(brandBannerTimeout);
   if (brandBannerHideTimeout) clearTimeout(brandBannerHideTimeout);
 
+  const viewTitleEl = document.getElementById('current-view-title');
+
   // Only display on home screen (dashboard view)
   if (state.currentView !== 'dashboard') {
     container.style.display = 'none';
+    if (viewTitleEl) viewTitleEl.style.display = 'block';
     return;
+  } else {
+    container.style.display = 'flex';
+    if (viewTitleEl) viewTitleEl.style.display = 'none';
   }
 
   const startDismissTimer = () => {
-    if (brandBannerTimeout) clearTimeout(brandBannerTimeout);
-    if (brandBannerHideTimeout) clearTimeout(brandBannerHideTimeout);
-    brandBannerTimeout = setTimeout(() => {
-      container.style.opacity = '0';
-      brandBannerHideTimeout = setTimeout(() => {
-        container.style.display = 'none';
-      }, 500);
-    }, 5000);
+    // Disabled auto-hide so the quote is always visible as requested by user
   };
 
   // Setup click listener once to cycle/refresh quotes on demand

@@ -168,6 +168,41 @@ function bindEvents() {
     });
   }
 
+  // Leaderboard Tabs
+  const tabStandings = document.getElementById('tab-leaderboard-standings');
+  const tabGpk = document.getElementById('tab-leaderboard-gpk');
+  const viewStandings = document.getElementById('leaderboard-standings-view');
+  const viewGpk = document.getElementById('leaderboard-gpk-view');
+
+  if (tabStandings && tabGpk && viewStandings && viewGpk) {
+    tabStandings.addEventListener('click', () => {
+      viewStandings.style.display = 'block';
+      viewGpk.style.display = 'none';
+      tabStandings.style.background = 'var(--primary)';
+      tabStandings.style.color = 'white';
+      tabStandings.style.border = 'none';
+      tabGpk.style.background = 'transparent';
+      tabGpk.style.color = 'var(--text-main)';
+      tabGpk.style.border = '1px solid var(--border-glass)';
+    });
+
+    tabGpk.addEventListener('click', () => {
+      viewStandings.style.display = 'none';
+      viewGpk.style.display = 'block';
+      tabGpk.style.background = 'var(--primary)';
+      tabGpk.style.color = 'white';
+      tabGpk.style.border = 'none';
+      tabStandings.style.background = 'transparent';
+      tabStandings.style.color = 'var(--text-main)';
+      tabStandings.style.border = '1px solid var(--border-glass)';
+      
+      // Render the binder grid when opened
+      if (window.renderGarbagePailBinder) {
+        window.renderGarbagePailBinder();
+      }
+    });
+  }
+
   // Dashboard New Shortcuts
   const shortMap = document.getElementById('shortcut-map');
   if (shortMap) {
@@ -198,6 +233,56 @@ function bindEvents() {
     shortInd.addEventListener('click', () => {
       AudioEngine.play('click');
       switchView('individuals');
+    });
+  }
+
+  // Mobile Bottom Navigation bindings
+  const mobDash = document.getElementById('mobile-nav-dashboard');
+  if (mobDash) {
+    mobDash.addEventListener('click', (e) => {
+      e.preventDefault();
+      AudioEngine.play('click');
+      switchView('dashboard');
+      updateMobileNavActive('mobile-nav-dashboard');
+    });
+  }
+
+  const mobTopics = document.getElementById('mobile-nav-topics');
+  if (mobTopics) {
+    mobTopics.addEventListener('click', (e) => {
+      e.preventDefault();
+      AudioEngine.play('click');
+      switchView('dashboard');
+      updateMobileNavActive('mobile-nav-topics');
+      const topicsList = document.getElementById('dashboard-topics-list');
+      if (topicsList) {
+        setTimeout(() => topicsList.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+      }
+    });
+  }
+
+  const mobGames = document.getElementById('mobile-nav-games');
+  if (mobGames) {
+    mobGames.addEventListener('click', (e) => {
+      e.preventDefault();
+      AudioEngine.play('click');
+      switchView('games');
+      updateMobileNavActive('mobile-nav-games');
+    });
+  }
+
+  const mobMore = document.getElementById('mobile-nav-more');
+  if (mobMore) {
+    mobMore.addEventListener('click', (e) => {
+      e.preventDefault();
+      AudioEngine.play('click');
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+      if (sidebar && overlay) {
+        sidebar.classList.add('active');
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
     });
   }
 
@@ -361,23 +446,6 @@ function bindEvents() {
     const len = document.getElementById('exam-length-select').value;
     const limit = document.getElementById('exam-timer-select').value;
     startExam(scope, len, limit);
-  });
-
-  document.getElementById('btn-exam-skip').addEventListener('click', () => {
-    if (state.examSession.activeIndex >= state.examSession.questions.length) return;
-    // Record empty answer and grade incorrect
-    const q = state.examSession.questions[state.examSession.activeIndex];
-    state.examSession.answers[q.id] = "(Skipped)";
-    state.examSession.grades[q.id] = false;
-    
-    AudioEngine.play('fail');
-    state.examSession.activeIndex++;
-    
-    if (state.examSession.activeIndex >= state.examSession.questions.length) {
-      finishExam();
-    } else {
-      displayExamQuestion();
-    }
   });
 
   // Quiz Generator Next Question
@@ -1290,4 +1358,12 @@ export {
   updateRealTimeFeedback,
   updateProfileDropdownUI
 };
-
+
+
+export function updateMobileNavActive(activeId) {
+  document.querySelectorAll('.mobile-nav-item').forEach(item => {
+    item.classList.remove('active');
+  });
+  const activeEl = document.getElementById(activeId);
+  if (activeEl) activeEl.classList.add('active');
+}
