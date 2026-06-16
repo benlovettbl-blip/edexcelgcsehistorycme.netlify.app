@@ -94,6 +94,6 @@ export const state = {
     level: 1,
     streak: 0,
     lastLoginDate: null,
-    unlockedCards: [] // Tracks IDs of Garbage Pail Kids cards unlocked
+    unlockedCards: [] // Tracks IDs of Syllabus Scumbags cards unlocked
   }
 };

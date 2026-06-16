@@ -14,12 +14,12 @@ test.describe('App Visual and Logic Tests', () => {
     await expect(chimneyTitle).toHaveText('Fareham Chimney Sweep Inc.');
   });
 
-  test('Garbage Pail Kids pack triggers on mastery', async ({ page }) => {
+  test('Syllabus Scumbags pack triggers on mastery', async ({ page }) => {
     await page.goto('/');
 
     // We can simulate mastery by directly interacting with the window object,
     // or by clicking through the UI. Interacting with the window object is more robust
-    // for testing the storage/GPK logic specifically without relying on specific DOM clicks
+    // for testing the storage/Scumbag logic specifically without relying on specific DOM clicks
     // that might change in flashcards.
     
     // Simulate mastering all questions in subtopic_1_1 (which has card_balfour)

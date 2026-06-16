@@ -170,35 +170,35 @@ function bindEvents() {
 
   // Leaderboard Tabs
   const tabStandings = document.getElementById('tab-leaderboard-standings');
-  const tabGpk = document.getElementById('tab-leaderboard-gpk');
+  const tabScumbag = document.getElementById('tab-leaderboard-scumbag');
   const viewStandings = document.getElementById('leaderboard-standings-view');
-  const viewGpk = document.getElementById('leaderboard-gpk-view');
+  const viewScumbag = document.getElementById('leaderboard-scumbag-view');
 
-  if (tabStandings && tabGpk && viewStandings && viewGpk) {
+  if (tabStandings && tabScumbag && viewStandings && viewScumbag) {
     tabStandings.addEventListener('click', () => {
       viewStandings.style.display = 'block';
-      viewGpk.style.display = 'none';
+      viewScumbag.style.display = 'none';
       tabStandings.style.background = 'var(--primary)';
       tabStandings.style.color = 'white';
       tabStandings.style.border = 'none';
-      tabGpk.style.background = 'transparent';
-      tabGpk.style.color = 'var(--text-main)';
-      tabGpk.style.border = '1px solid var(--border-glass)';
+      tabScumbag.style.background = 'transparent';
+      tabScumbag.style.color = 'var(--text-main)';
+      tabScumbag.style.border = '1px solid var(--border-glass)';
     });
 
-    tabGpk.addEventListener('click', () => {
+    tabScumbag.addEventListener('click', () => {
       viewStandings.style.display = 'none';
-      viewGpk.style.display = 'block';
-      tabGpk.style.background = 'var(--primary)';
-      tabGpk.style.color = 'white';
-      tabGpk.style.border = 'none';
+      viewScumbag.style.display = 'block';
+      tabScumbag.style.background = 'var(--primary)';
+      tabScumbag.style.color = 'white';
+      tabScumbag.style.border = 'none';
       tabStandings.style.background = 'transparent';
       tabStandings.style.color = 'var(--text-main)';
       tabStandings.style.border = '1px solid var(--border-glass)';
       
       // Render the binder grid when opened
-      if (window.renderGarbagePailBinder) {
-        window.renderGarbagePailBinder();
+      if (window.renderScumbagBinder) {
+        window.renderScumbagBinder();
       }
     });
   }

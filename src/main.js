@@ -69,7 +69,8 @@ window.addEventListener('DOMContentLoaded', () => {
   
   // Render default Dashboard view
   switchView('dashboard');
-  if (window.renderGarbagePailBinder) {
-    window.renderGarbagePailBinder();
+  updateGlobalStats();
+  if (window.renderScumbagBinder) {
+    window.renderScumbagBinder();
   }
 });
