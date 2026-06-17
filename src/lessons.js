@@ -2795,8 +2795,8 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
   const specList = SPEC_CHECKLIST_DATA[subtopicId] || [];
 
   const specBoxHtml = specList.length > 0 ? `
-    <div class="spec-box" style="border: 1px solid #d1d5db; padding: 6px 10px; margin-bottom: 10px; font-size: 7.5pt; background: #f9fafb; border-radius: 4px; line-height: 1.3; box-sizing: border-box; text-align: left;">
-      <strong style="text-transform: uppercase; font-size: 8pt; color: #111827; display: block; margin-bottom: 3px;">📋 Curriculum Specification Checklist (Pearson Edexcel)</strong>
+    <div class="spec-box" style="border: 1px solid #d1d5db; padding: 6px 10px; margin-bottom: 10px; font-size: 9pt; background: #f9fafb; border-radius: 4px; line-height: 1.3; box-sizing: border-box; text-align: left;">
+      <strong style="text-transform: uppercase; font-size: 9.5pt; color: #000000; display: block; margin-bottom: 3px;">📋 Curriculum Specification Checklist (Pearson Edexcel)</strong>
       <ul style="margin: 0; padding-left: 0; list-style: none;">
         ${specList.map(item => `<li style="margin: 0 0 2px 0; padding: 0; list-style: none;">☐ ${item.point}</li>`).join('')}
       </ul>
@@ -2812,15 +2812,15 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
   let retrievalQuestionsHtml = '';
   if (retrievalPrompts.length > 0) {
     retrievalQuestionsHtml = `
-      <div class="retrieval-questions-section" style="border: 1.5px solid #111827; padding: 8px 10px; margin-top: 15px; background: #ffffff; border-radius: 4px; box-sizing: border-box; text-align: left;">
-        <strong style="text-transform: uppercase; font-size: 8pt; color: #111827; display: block; margin-bottom: 5px; border-bottom: 1.5px solid #111827; padding-bottom: 2px;">✏️ Quick-Fire Retrieval Questions</strong>
+      <div class="retrieval-questions-section" style="border: 1.5px solid #000000; padding: 8px 10px; margin-top: 15px; background: #ffffff; border-radius: 4px; box-sizing: border-box; text-align: left;">
+        <strong style="text-transform: uppercase; font-size: 11.5pt; color: #000000; display: block; margin-bottom: 5px; border-bottom: 1.5px solid #000000; padding-bottom: 2px;">✏️ Quick-Fire Retrieval Questions</strong>
         <div style="display: flex; flex-direction: column; gap: 6px;">
           ${retrievalPrompts.map((p, idx) => {
             const answerArea = includeAnswers 
-              ? `<span style="font-size: 7.5pt; line-height: 1.25; color: #16a34a; font-style: italic; padding-left: 5px;"><strong>Model Answer:</strong> ${p.a}</span>`
+              ? `<span style="font-size: 10.5pt; line-height: 1.25; color: #16a34a; font-style: italic; padding-left: 5px;"><strong>Model Answer:</strong> ${p.a}</span>`
               : `<div class="dotted-writing-line" style="border-bottom: 1px dashed #9ca3af; height: 18px; margin-top: 2px;"></div>`;
             return `
-              <div style="font-size: 7.5pt; line-height: 1.35; color: #1f2937;">
+              <div style="font-size: 10.5pt; line-height: 1.35; color: #000000;">
                 <strong>Q${idx + 1}:</strong> ${p.q}
                 ${answerArea}
               </div>
@@ -2844,8 +2844,8 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
     }
     body {
       font-family: 'Arial', sans-serif;
-      font-size: 9.5pt;
-      color: #1f2937;
+      font-size: 11pt;
+      color: #000000;
       line-height: 1.4;
       background: #ffffff;
       margin: 0;
@@ -2881,8 +2881,8 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
     @media print {
       body {
         background: #ffffff !important;
-        color: #1f2937 !important;
-        font-size: 9.5pt !important;
+        color: #000000 !important;
+        font-size: 11pt !important;
         line-height: 1.4 !important;
       }
       .print-page, .print-page-last {
@@ -2896,20 +2896,20 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
       }
     }
     .main-title {
-      font-size: 13.5pt;
+      font-size: 15pt;
       font-weight: 800;
-      border-bottom: 2px solid #111827;
+      border-bottom: 2px solid #000000;
       padding-bottom: 3px;
       margin-top: 0;
       margin-bottom: 8px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      color: #111827;
+      color: #000000;
     }
     .sub-title {
-      font-size: 8.5pt;
+      font-size: 10pt;
       font-weight: bold;
-      color: #111827;
+      color: #000000;
       margin-top: 6px;
       margin-bottom: 2px;
     }
@@ -2923,7 +2923,7 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
     .print-cornell-grid {
       display: table;
       width: 100%;
-      border: 1.5px solid #111827;
+      border: 1.5px solid #000000;
       margin-top: 10px;
       box-sizing: border-box;
     }
@@ -2933,18 +2933,18 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
     .print-cornell-cues {
       display: table-cell;
       width: 30%;
-      border-right: 1.5px solid #111827;
-      border-bottom: 1.5px solid #111827;
+      border-right: 1.5px solid #000000;
+      border-bottom: 1.5px solid #000000;
       padding: 10px;
       vertical-align: top;
-      font-size: 8pt;
+      font-size: 9.5pt;
       font-weight: bold;
       background: #f9fafb;
     }
     .print-cornell-notes {
       display: table-cell;
       width: 70%;
-      border-bottom: 1.5px solid #111827;
+      border-bottom: 1.5px solid #000000;
       padding: 10px;
       vertical-align: top;
       background: #ffffff;
@@ -2958,7 +2958,7 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
       padding: 10px;
       vertical-align: top;
       background: #f9fafb;
-      font-size: 8.5pt;
+      font-size: 10pt;
     }
     /* Flowchart styles */
     .flowchart-table {
@@ -2968,20 +2968,20 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
       margin-bottom: 15px;
     }
     .flowchart-box {
-      border: 1.5px solid #111827;
+      border: 1.5px solid #000000;
       padding: 8px;
       width: 22%;
       vertical-align: top;
       background: #ffffff;
-      font-size: 8pt;
+      font-size: 9.5pt;
     }
     .flowchart-arrow {
       text-align: center;
-      font-size: 14pt;
+      font-size: 15.5pt;
       font-weight: bold;
       width: 4%;
       vertical-align: middle;
-      color: #4b5563;
+      color: #000000;
     }
     /* Vocabulary Match-up styles */
     .vocab-table {
@@ -2992,7 +2992,7 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
     }
     .vocab-th {
       font-weight: bold;
-      font-size: 7.5pt;
+      font-size: 9pt;
       text-transform: uppercase;
       background-color: #f3f4f6;
       border: 1px solid #9ca3af;
@@ -3002,16 +3002,16 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
     .vocab-td {
       border: 1px solid #9ca3af;
       padding: 5px 6px;
-      font-size: 7.5pt;
+      font-size: 9pt;
       vertical-align: middle;
     }
     /* Exam Rubric styles */
     .rubric-box {
-      border: 1px solid #111827;
+      border: 1px solid #000000;
       background: #f9fafb;
       padding: 8px;
       margin-top: 15px;
-      font-size: 8pt;
+      font-size: 9.5pt;
     }
     @media screen {
       body {
@@ -3039,22 +3039,22 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
     // Narrative HTML: complete paragraphs
     const narrativeHtml = data.narrative.map(sec => `
       <div style="margin-bottom: 8px;">
-        <h4 style="margin: 0 0 3px 0; font-size: 7.8pt; color: #111827; font-weight: bold; border-bottom: 1px solid #e5e7eb; padding-bottom: 1px;">${sec.title}</h4>
-        ${sec.paragraphs.map(p => `<p style="margin: 0 0 4px 0; font-size: 7.2pt; line-height: 1.3; text-align: justify; color: #374151;">${p}</p>`).join('')}
+        <h4 style="margin: 0 0 3px 0; font-size: 9.3pt; color: #000000; font-weight: bold; border-bottom: 1px solid #e5e7eb; padding-bottom: 1px;">${sec.title}</h4>
+        ${sec.paragraphs.map(p => `<p style="margin: 0 0 4px 0; font-size: 8.7pt; line-height: 1.3; text-align: justify; color: #000000;">${p}</p>`).join('')}
       </div>
     `).join('');
 
     // Vocabulary Focus HTML
     const vocabHtml = data.vocabulary.map(v => `
-      <div style="margin-bottom: 4px; font-size: 7pt; line-height: 1.2; color: #374151;">
-        <strong style="color: #111827;">${v.term}</strong>: ${v.definition}
+      <div style="margin-bottom: 4px; font-size: 8.5pt; line-height: 1.2; color: #000000;">
+        <strong style="color: #000000;">${v.term}</strong>: ${v.definition}
       </div>
     `).join('');
 
     // Timeline Reference HTML: complete events fully written out
     const timelineRefHtml = data.timeline.map(item => `
-      <div style="margin-bottom: 5px; font-size: 7pt; line-height: 1.25; color: #374151;">
-        <strong style="color: #111827;">${item.date}</strong><br>
+      <div style="margin-bottom: 5px; font-size: 8.5pt; line-height: 1.25; color: #000000;">
+        <strong style="color: #000000;">${item.date}</strong><br>
         ${item.desc}
       </div>
     `).join('');
@@ -3076,15 +3076,15 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
       const prompt = prompts[idx] || { q: "Connection question not found", a: "" };
       
       const answerArea = includeAnswers 
-        ? `<div style="font-size: 7.2pt; line-height: 1.25; color: #16a34a; font-style: italic; border-left: 2.5px solid #16a34a; padding-left: 5px; margin-top: 4px;"><strong>Model Answer:</strong> ${prompt.a}</div>`
+        ? `<div style="font-size: 8.7pt; line-height: 1.25; color: #16a34a; font-style: italic; border-left: 2.5px solid #16a34a; padding-left: 5px; margin-top: 4px;"><strong>Model Answer:</strong> ${prompt.a}</div>`
         : `<div style="border-bottom: 1px dashed #9ca3af; height: 18px; margin-top: 2px;"></div>
            <div style="border-bottom: 1px dashed #9ca3af; height: 18px; margin-top: 2px;"></div>
            <div style="border-bottom: 1px dashed #9ca3af; height: 18px; margin-top: 2px;"></div>
            <div style="border-bottom: 1px dashed #9ca3af; height: 18px; margin-top: 2px;"></div>`;
            
       const questionBox = `
-        <div class="timeline-box" style="border: 1px solid #111827; border-radius: 4px; padding: 8px 10px; background: #ffffff; min-height: 90px; box-sizing: border-box;">
-          <span style="font-size: 7.5pt; line-height: 1.35; display: block; color: #1f2937; font-weight: bold; margin-bottom: 4px;">
+        <div class="timeline-box" style="border: 1px solid #000000; border-radius: 4px; padding: 8px 10px; background: #ffffff; min-height: 90px; box-sizing: border-box;">
+          <span style="font-size: 9pt; line-height: 1.35; display: block; color: #000000; font-weight: bold; margin-bottom: 4px;">
             ${prompt.q}
           </span>
           ${answerArea}
@@ -3099,7 +3099,7 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
         <tr>
           <td width="42%" style="width: 42%;">&nbsp;</td>
           <td colspan="2" width="16%" style="width: 16%; text-align: center; vertical-align: middle; padding: 4px 0;">
-            <div style="background: #111827; color: #ffffff; padding: 3px 6px; border-radius: 4px; font-size: 6.8pt; font-weight: bold; display: inline-block; white-space: nowrap;">
+            <div style="background: #000000; color: #ffffff; padding: 3px 6px; border-radius: 4px; font-size: 8.3pt; font-weight: bold; display: inline-block; white-space: nowrap;">
               ${event.date}
             </div>
           </td>
@@ -3107,7 +3107,7 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
         </tr>
         <tr height="90" style="height: 90px;">
           <td width="42%" style="width: 42%; vertical-align: top;">${leftContent}</td>
-          <td width="8%" style="width: 8%; border-right: 2px solid #111827;">&nbsp;</td>
+          <td width="8%" style="width: 8%; border-right: 2px solid #000000;">&nbsp;</td>
           <td width="8%" style="width: 8%;">&nbsp;</td>
           <td width="42%" style="width: 42%; vertical-align: top;">${rightContent}</td>
         </tr>
@@ -3117,7 +3117,7 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
         tableRowsL9 += `
           <tr style="height: 12px; font-size: 1px; line-height: 1px;">
             <td width="42%" style="width: 42%; font-size: 1px; line-height: 1px;">&nbsp;</td>
-            <td width="8%" style="width: 8%; border-right: 2px solid #111827; height: 12px; font-size: 1px; line-height: 1px;">&nbsp;</td>
+            <td width="8%" style="width: 8%; border-right: 2px solid #000000; height: 12px; font-size: 1px; line-height: 1px;">&nbsp;</td>
             <td width="8%" style="width: 8%; height: 12px; font-size: 1px; line-height: 1px;">&nbsp;</td>
             <td width="42%" style="width: 42%; font-size: 1px; line-height: 1px;">&nbsp;</td>
           </tr>
@@ -3134,16 +3134,16 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
         <table style="width: 100%; border-collapse: collapse; margin-top: 5px; table-layout: fixed;">
           <tr>
             <td style="width: 63%; vertical-align: top; padding-right: 12px; box-sizing: border-box;">
-              <strong style="text-transform: uppercase; font-size: 7.8pt; color: #111827; display: block; margin-bottom: 5px; border-bottom: 1.5px solid #111827; padding-bottom: 2px;">📖 Lesson Narrative</strong>
+              <strong style="text-transform: uppercase; font-size: 9.3pt; color: #000000; display: block; margin-bottom: 5px; border-bottom: 1.5px solid #000000; padding-bottom: 2px;">📖 Lesson Narrative</strong>
               ${narrativeHtml}
             </td>
             <td style="width: 37%; vertical-align: top; border-left: 1px solid #d1d5db; padding-left: 12px; box-sizing: border-box;">
               <div class="vocab-section" style="margin-bottom: 10px;">
-                <strong style="text-transform: uppercase; font-size: 7.8pt; color: #111827; display: block; margin-bottom: 5px; border-bottom: 1.5px solid #111827; padding-bottom: 2px;">📖 Key Vocabulary</strong>
+                <strong style="text-transform: uppercase; font-size: 9.3pt; color: #000000; display: block; margin-bottom: 5px; border-bottom: 1.5px solid #000000; padding-bottom: 2px;">📖 Key Vocabulary</strong>
                 ${vocabHtml}
               </div>
               <div class="timeline-section">
-                <strong style="text-transform: uppercase; font-size: 7.8pt; color: #111827; display: block; margin-bottom: 5px; border-bottom: 1.5px solid #111827; padding-bottom: 2px;">⏳ Chronology Reference</strong>
+                <strong style="text-transform: uppercase; font-size: 9.3pt; color: #000000; display: block; margin-bottom: 5px; border-bottom: 1.5px solid #000000; padding-bottom: 2px;">⏳ Chronology Reference</strong>
                 ${timelineRefHtml}
               </div>
             </td>
@@ -3154,7 +3154,7 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
 
       <!-- SIDE 2: CHRONOLOGICAL ANALYSIS -->
       <div class="print-page-last" style="position: relative; min-height: 27.2cm; box-sizing: border-box; margin-top: 20px; page-break-before: always;">
-        <h3 style="font-size: 10pt; font-weight: bold; border-bottom: 1.5px solid #111827; padding-bottom: 2px; margin-top: 0; margin-bottom: 8px; text-transform: uppercase; color: #111827; letter-spacing: 0.5px;">
+        <h3 style="font-size: 11.5pt; font-weight: bold; border-bottom: 1.5px solid #000000; padding-bottom: 2px; margin-top: 0; margin-bottom: 8px; text-transform: uppercase; color: #000000; letter-spacing: 0.5px;">
           Topic ${topicName}: ${cleanTitle}${includeAnswers ? ' (Teacher Answer Key)' : ''}
         </h3>
         
@@ -3196,14 +3196,14 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
       const qTextLower = qText.toLowerCase();
       if (qTextLower.includes('consequence')) {
         rubricHtml = `
-          <strong style="text-transform: uppercase; display: block; margin-bottom: 4px; color: #111827; font-size: 8.5pt;">Consequence Rubric (4 Marks)</strong>
+          <strong style="text-transform: uppercase; display: block; margin-bottom: 4px; color: #000000; font-size: 10pt;">Consequence Rubric (4 Marks)</strong>
           <label style="display: block; margin-bottom: 4px;"><input type="checkbox"> [ ] <strong>Point:</strong> Clearly state one consequence of the event [1 Mark]</label>
           <label style="display: block; margin-bottom: 4px;"><input type="checkbox"> [ ] <strong>Detail:</strong> Support with specific historical details (dates/names/key terms) [1 Mark]</label>
           <label style="display: block; margin-bottom: 4px;"><input type="checkbox"> [ ] <strong>Explanation:</strong> Explain exactly how the consequence resulted from the event [2 Marks]</label>
         `;
       } else if (qTextLower.includes('narrative')) {
         rubricHtml = `
-          <strong style="text-transform: uppercase; display: block; margin-bottom: 4px; color: #111827; font-size: 8.5pt;">Narrative Account Rubric (8 Marks)</strong>
+          <strong style="text-transform: uppercase; display: block; margin-bottom: 4px; color: #000000; font-size: 10pt;">Narrative Account Rubric (8 Marks)</strong>
           <label style="display: block; margin-bottom: 4px;"><input type="checkbox"> [ ] <strong>Sequence:</strong> Structure the account in clear chronological order (Beginning &rarr; Middle &rarr; End) [2 Marks]</label>
           <label style="display: block; margin-bottom: 4px;"><input type="checkbox"> [ ] <strong>Linkage:</strong> Use connection words (e.g. 'This led to', 'As a direct result') to link events [2 Marks]</label>
           <label style="display: block; margin-bottom: 4px;"><input type="checkbox"> [ ] <strong>Knowledge:</strong> Support with precise historical details (dates, names, key terms) [2 Marks]</label>
@@ -3211,7 +3211,7 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
         `;
       } else if (qTextLower.includes('importance')) {
         rubricHtml = `
-          <strong style="text-transform: uppercase; display: block; margin-bottom: 4px; color: #111827; font-size: 8.5pt;">Importance Rubric (8 Marks)</strong>
+          <strong style="text-transform: uppercase; display: block; margin-bottom: 4px; color: #000000; font-size: 10pt;">Importance Rubric (8 Marks)</strong>
           <label style="display: block; margin-bottom: 4px;"><input type="checkbox"> [ ] <strong>Significance:</strong> State why the event is important for the specified development [2 Marks]</label>
           <label style="display: block; margin-bottom: 4px;"><input type="checkbox"> [ ] <strong>Before/After:</strong> Explain the 'before' and 'after' state to show the change/significance [2 Marks]</label>
           <label style="display: block; margin-bottom: 4px;"><input type="checkbox"> [ ] <strong>Knowledge:</strong> Support with precise historical facts (dates, names, events) [2 Marks]</label>
@@ -3219,7 +3219,7 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
         `;
       } else {
         rubricHtml = `
-          <strong style="text-transform: uppercase; display: block; margin-bottom: 4px; color: #111827; font-size: 8.5pt;">Self-Evaluation Rubric</strong>
+          <strong style="text-transform: uppercase; display: block; margin-bottom: 4px; color: #000000; font-size: 10pt;">Self-Evaluation Rubric</strong>
           <label style="display: block; margin-bottom: 4px;"><input type="checkbox"> [ ] Answered in full, grammatically correct sentences.</label>
           <label style="display: block; margin-bottom: 4px;"><input type="checkbox"> [ ] Included specific historical details (dates, names, events).</label>
           <label style="display: block; margin-bottom: 4px;"><input type="checkbox"> [ ] Explained the connection between cause and consequence or narrative progression.</label>
@@ -3232,11 +3232,11 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
         <div class="${isQuestionLast ? 'print-page-last' : 'print-page'}">
           <div class="main-title">Topic ${topicName}: ${cleanTitle}</div>
           ${firstPageSpecHtml}
-          <div style="font-size: 11pt; font-weight: bold; margin-bottom: 15px; border-bottom: 1.5px solid #111827; padding-bottom: 4px;">
+          <div style="font-size: 12.5pt; font-weight: bold; margin-bottom: 15px; border-bottom: 1.5px solid #000000; padding-bottom: 4px;">
             Question ${qNum + 1} [${marks} Marks]
           </div>
           
-          <p style="font-size: 11pt; font-weight: bold; margin-bottom: 12px; line-height: 1.45;">
+          <p style="font-size: 12.5pt; font-weight: bold; margin-bottom: 12px; line-height: 1.45;">
             ${qText}
           </p>
 
@@ -3255,15 +3255,15 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
         html += `
           <div class="${isAnswerLast ? 'print-page-last' : 'print-page'}">
             <div class="main-title">Teacher Answer Key &bull; Topic ${topicName}: Model Answer</div>
-            <div style="font-size: 11pt; font-weight: bold; margin-bottom: 15px; border-bottom: 1.5px solid #111827; padding-bottom: 4px;">
+            <div style="font-size: 12.5pt; font-weight: bold; margin-bottom: 15px; border-bottom: 1.5px solid #000000; padding-bottom: 4px;">
               Model Answer for Question ${qNum + 1} [${marks} Marks]
             </div>
             
-            <p style="font-size: 10pt; font-weight: bold; margin-bottom: 10px; font-style: italic; color: #4b5563;">
+            <p style="font-size: 11.5pt; font-weight: bold; margin-bottom: 10px; font-style: italic; color: #000000;">
               Question: ${qText}
             </p>
 
-            <div style="border-left: 3px solid #16a34a; background: #f0fdf4; padding: 12px; font-size: 10pt; line-height: 1.6; text-align: justify; margin-top: 15px;">
+            <div style="border-left: 3px solid #16a34a; background: #f0fdf4; padding: 12px; font-size: 11.5pt; line-height: 1.6; text-align: justify; margin-top: 15px;">
               ${qAnswer}
             </div>
           </div>
@@ -3306,23 +3306,23 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
       const descText = includeAnswers ? event.teacherText : event.studentText;
       
       const answerArea = includeAnswers 
-        ? `<div style="font-size: 7.2pt; line-height: 1.25; color: #16a34a; font-style: italic; border-left: 2.5px solid #16a34a; padding-left: 5px; margin-top: 4px;"><strong>Model Answer:</strong> ${prompt.a}</div>`
+        ? `<div style="font-size: 8.7pt; line-height: 1.25; color: #16a34a; font-style: italic; border-left: 2.5px solid #16a34a; padding-left: 5px; margin-top: 4px;"><strong>Model Answer:</strong> ${prompt.a}</div>`
         : `<div style="border-bottom: 1px dashed #9ca3af; height: 18px; margin-top: 2px;"></div>
            <div style="border-bottom: 1px dashed #9ca3af; height: 18px; margin-top: 2px;"></div>`;
            
       const recallBox = `
         <div class="timeline-box" style="border: 1px solid #9ca3af; border-radius: 4px; padding: 6px 8px; background: #ffffff; min-height: 55px; box-sizing: border-box;">
-          <strong style="font-size: 7.5pt; color: #4b5563; text-transform: uppercase; display: block; margin-bottom: 2px;">Active Recall</strong>
-          <span style="font-size: 7.5pt; line-height: 1.35; display: block; color: #1f2937;">
+          <strong style="font-size: 9pt; color: #000000; text-transform: uppercase; display: block; margin-bottom: 2px;">Active Recall</strong>
+          <span style="font-size: 9pt; line-height: 1.35; display: block; color: #000000;">
             ${descText}
           </span>
         </div>
       `;
       
       const taskBox = `
-        <div class="timeline-box" style="border: 1px solid #111827; border-radius: 4px; padding: 6px 8px; background: #f9fafb; min-height: 55px; box-sizing: border-box;">
-          <strong style="font-size: 7.5pt; color: #111827; text-transform: uppercase; display: block; margin-bottom: 2px;">Guided Task</strong>
-          <span style="font-size: 7.2pt; line-height: 1.25; display: block; color: #1f2937; font-weight: bold; margin-bottom: 3px;">
+        <div class="timeline-box" style="border: 1px solid #000000; border-radius: 4px; padding: 6px 8px; background: #f9fafb; min-height: 55px; box-sizing: border-box;">
+          <strong style="font-size: 9pt; color: #000000; text-transform: uppercase; display: block; margin-bottom: 2px;">Guided Task</strong>
+          <span style="font-size: 8.7pt; line-height: 1.25; display: block; color: #000000; font-weight: bold; margin-bottom: 3px;">
             ${prompt.q}
           </span>
           ${answerArea}
@@ -3337,7 +3337,7 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
         <tr>
           <td width="42%" style="width: 42%;">&nbsp;</td>
           <td colspan="2" width="16%" style="width: 16%; text-align: center; vertical-align: middle; padding: 4px 0;">
-            <div style="background: #111827; color: #ffffff; padding: 3px 6px; border-radius: 4px; font-size: 6.8pt; font-weight: bold; display: inline-block; white-space: nowrap;">
+            <div style="background: #000000; color: #ffffff; padding: 3px 6px; border-radius: 4px; font-size: 8.3pt; font-weight: bold; display: inline-block; white-space: nowrap;">
               ${event.date}
             </div>
           </td>
@@ -3345,7 +3345,7 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
         </tr>
         <tr height="55" style="height: 55px;">
           <td width="42%" style="width: 42%; vertical-align: top;">${leftContent}</td>
-          <td width="8%" style="width: 8%; border-right: 2px solid #111827;">&nbsp;</td>
+          <td width="8%" style="width: 8%; border-right: 2px solid #000000;">&nbsp;</td>
           <td width="8%" style="width: 8%;">&nbsp;</td>
           <td width="42%" style="width: 42%; vertical-align: top;">${rightContent}</td>
         </tr>
@@ -3355,7 +3355,7 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
         tableRowsL4 += `
           <tr style="height: 12px; font-size: 1px; line-height: 1px;">
             <td width="42%" style="width: 42%; font-size: 1px; line-height: 1px;">&nbsp;</td>
-            <td width="8%" style="width: 8%; border-right: 2px solid #111827; height: 12px; font-size: 1px; line-height: 1px;">&nbsp;</td>
+            <td width="8%" style="width: 8%; border-right: 2px solid #000000; height: 12px; font-size: 1px; line-height: 1px;">&nbsp;</td>
             <td width="8%" style="width: 8%; height: 12px; font-size: 1px; line-height: 1px;">&nbsp;</td>
             <td width="42%" style="width: 42%; font-size: 1px; line-height: 1px;">&nbsp;</td>
           </tr>
@@ -3364,20 +3364,20 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
     });
 
     const vocabSpotlight = `
-      <div class="vocab-spotlight" style="border: 1px solid #111827; padding: 6px 10px; margin-bottom: 10px; font-size: 7.5pt; background: #f9fafb; border-radius: 4px; line-height: 1.3; box-sizing: border-box; text-align: left;">
-        <strong style="text-transform: uppercase; font-size: 8pt; color: #111827; display: block; margin-bottom: 3px;">📖 Vocabulary Spotlight</strong>
+      <div class="vocab-spotlight" style="border: 1px solid #000000; padding: 6px 10px; margin-bottom: 10px; font-size: 9pt; background: #f9fafb; border-radius: 4px; line-height: 1.3; box-sizing: border-box; text-align: left;">
+        <strong style="text-transform: uppercase; font-size: 9.5pt; color: #000000; display: block; margin-bottom: 3px;">📖 Vocabulary Spotlight</strong>
         <div style="display: flex; flex-wrap: wrap; gap: 4px 15px;">
           ${data.vocabulary.map(item => `
-            <div style="flex: 1 1 45%; min-width: 200px; font-size: 7.2pt; line-height: 1.2;"><strong>${item.term}</strong>: ${item.definition}</div>
+            <div style="flex: 1 1 45%; min-width: 200px; font-size: 8.7pt; line-height: 1.2;"><strong>${item.term}</strong>: ${item.definition}</div>
           `).join('')}
         </div>
       </div>
     `;
 
     const wordBankHtml = `
-      <div style="border: 1.5px solid #111827; padding: 8px 10px; margin-top: 10px; background: #f9fafb; border-radius: 4px; box-sizing: border-box;">
-        <strong style="display: block; margin-bottom: 3px; text-transform: uppercase; font-size: 7.5pt; color: #111827;">🔑 Scrambled Word Bank</strong>
-        <div style="font-size: 7.2pt; line-height: 1.3; text-align: center; font-style: italic; color: #374151;">
+      <div style="border: 1.5px solid #000000; padding: 8px 10px; margin-top: 10px; background: #f9fafb; border-radius: 4px; box-sizing: border-box;">
+        <strong style="display: block; margin-bottom: 3px; text-transform: uppercase; font-size: 9pt; color: #000000;">🔑 Scrambled Word Bank</strong>
+        <div style="font-size: 8.7pt; line-height: 1.3; text-align: center; font-style: italic; color: #000000;">
           ${scrambledWordBank.join('  &bull;  ')}
         </div>
       </div>
@@ -3391,15 +3391,15 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
       const prompt = prompts[idx] || { q: "Connection question not found", a: "" };
       
       const answerArea = includeAnswers 
-        ? `<div style="font-size: 7.2pt; line-height: 1.25; color: #16a34a; font-style: italic; border-left: 2.5px solid #16a34a; padding-left: 5px; margin-top: 4px;"><strong>Model Answer:</strong> ${prompt.a}</div>`
+        ? `<div style="font-size: 8.7pt; line-height: 1.25; color: #16a34a; font-style: italic; border-left: 2.5px solid #16a34a; padding-left: 5px; margin-top: 4px;"><strong>Model Answer:</strong> ${prompt.a}</div>`
         : `<div style="border-bottom: 1px dashed #9ca3af; height: 18px; margin-top: 2px;"></div>
            <div style="border-bottom: 1px dashed #9ca3af; height: 18px; margin-top: 2px;"></div>
            <div style="border-bottom: 1px dashed #9ca3af; height: 18px; margin-top: 2px;"></div>
            <div style="border-bottom: 1px dashed #9ca3af; height: 18px; margin-top: 2px;"></div>`;
            
       const questionBox = `
-        <div class="timeline-box" style="border: 1px solid #111827; border-radius: 4px; padding: 8px 10px; background: #ffffff; min-height: 90px; box-sizing: border-box;">
-          <span style="font-size: 7.5pt; line-height: 1.35; display: block; color: #1f2937; font-weight: bold; margin-bottom: 4px;">
+        <div class="timeline-box" style="border: 1px solid #000000; border-radius: 4px; padding: 8px 10px; background: #ffffff; min-height: 90px; box-sizing: border-box;">
+          <span style="font-size: 9pt; line-height: 1.35; display: block; color: #000000; font-weight: bold; margin-bottom: 4px;">
             ${prompt.q}
           </span>
           ${answerArea}
@@ -3414,7 +3414,7 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
         <tr>
           <td width="42%" style="width: 42%;">&nbsp;</td>
           <td colspan="2" width="16%" style="width: 16%; text-align: center; vertical-align: middle; padding: 4px 0;">
-            <div style="background: #111827; color: #ffffff; padding: 3px 6px; border-radius: 4px; font-size: 6.8pt; font-weight: bold; display: inline-block; white-space: nowrap;">
+            <div style="background: #000000; color: #ffffff; padding: 3px 6px; border-radius: 4px; font-size: 8.3pt; font-weight: bold; display: inline-block; white-space: nowrap;">
               ${event.date}
             </div>
           </td>
@@ -3422,7 +3422,7 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
         </tr>
         <tr height="90" style="height: 90px;">
           <td width="42%" style="width: 42%; vertical-align: top;">${leftContent}</td>
-          <td width="8%" style="width: 8%; border-right: 2px solid #111827;">&nbsp;</td>
+          <td width="8%" style="width: 8%; border-right: 2px solid #000000;">&nbsp;</td>
           <td width="8%" style="width: 8%;">&nbsp;</td>
           <td width="42%" style="width: 42%; vertical-align: top;">${rightContent}</td>
         </tr>
@@ -3432,7 +3432,7 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
         tableRowsL9 += `
           <tr style="height: 12px; font-size: 1px; line-height: 1px;">
             <td width="42%" style="width: 42%; font-size: 1px; line-height: 1px;">&nbsp;</td>
-            <td width="8%" style="width: 8%; border-right: 2px solid #111827; height: 12px; font-size: 1px; line-height: 1px;">&nbsp;</td>
+            <td width="8%" style="width: 8%; border-right: 2px solid #000000; height: 12px; font-size: 1px; line-height: 1px;">&nbsp;</td>
             <td width="8%" style="width: 8%; height: 12px; font-size: 1px; line-height: 1px;">&nbsp;</td>
             <td width="42%" style="width: 42%; font-size: 1px; line-height: 1px;">&nbsp;</td>
           </tr>
@@ -3466,7 +3466,7 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
 
       <!-- SIDE 2: LEVEL 9 MASTER Chronological Analysis -->
       <div class="print-page-last" style="position: relative; min-height: 27.2cm; box-sizing: border-box; margin-top: 20px; page-break-before: always;">
-        <h3 style="font-size: 10pt; font-weight: bold; border-bottom: 1.5px solid #111827; padding-bottom: 2px; margin-top: 0; margin-bottom: 8px; text-transform: uppercase; color: #111827; letter-spacing: 0.5px;">
+        <h3 style="font-size: 11.5pt; font-weight: bold; border-bottom: 1.5px solid #000000; padding-bottom: 2px; margin-top: 0; margin-bottom: 8px; text-transform: uppercase; color: #000000; letter-spacing: 0.5px;">
           Topic ${topicName}: ${cleanTitle}${includeAnswers ? ' (Teacher Answer Key)' : ''}
         </h3>
         
@@ -3511,12 +3511,12 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
 
     const renderQuizQuestion = (q, qIdx) => {
       const answerArea = includeAnswers 
-        ? `<div style="color: #16a34a; font-style: italic; font-weight: bold; margin-top: 2px; font-size: 7.2pt;">Ans: ${q.answer}</div>`
+        ? `<div style="color: #16a34a; font-style: italic; font-weight: bold; margin-top: 2px; font-size: 11pt;">Ans: ${q.answer}</div>`
         : `<div class="dotted-writing-line" style="border-bottom: 1px dashed #9ca3af; height: 18px; margin-top: 2px; width: 95%;"></div>`;
       return `
         <div style="margin-bottom: 14px; min-height: 48px; box-sizing: border-box; padding-right: 10px;">
-          <div style="font-size: 7.8pt; line-height: 1.3; color: #111827; font-weight: bold;">
-            Q${qIdx + 1}: <span style="font-weight: normal; color: #1f2937;">${q.question}</span>
+          <div style="font-size: 11.5pt; line-height: 1.3; color: #000000; font-weight: bold;">
+            Q${qIdx + 1}: <span style="font-weight: normal; color: #000000;">${q.question}</span>
           </div>
           ${answerArea}
         </div>
@@ -3526,13 +3526,13 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
     const renderExplanationRow = (q, qIdx) => {
       return `
         <div style="margin-bottom: 14px; min-height: 55px; border-bottom: 1px solid #f3f4f6; padding-bottom: 6px; padding-right: 10px; box-sizing: border-box;">
-          <div style="font-size: 7.5pt; line-height: 1.25; color: #111827; font-weight: bold;">
-            Q${qIdx + 1}: <span style="font-weight: normal; color: #4b5563;">${q.question}</span>
+          <div style="font-size: 11pt; line-height: 1.25; color: #000000; font-weight: bold;">
+            Q${qIdx + 1}: <span style="font-weight: normal; color: #000000;">${q.question}</span>
           </div>
-          <div style="font-size: 7.5pt; font-weight: bold; color: #16a34a; margin-top: 2px;">
-            Correct Answer: <span style="font-weight: normal; color: #111827;">${q.answer}</span>
+          <div style="font-size: 11pt; font-weight: bold; color: #16a34a; margin-top: 2px;">
+            Correct Answer: <span style="font-weight: normal; color: #000000;">${q.answer}</span>
           </div>
-          <div style="font-size: 7pt; color: #4b5563; line-height: 1.25; margin-top: 2px;">
+          <div style="font-size: 10.5pt; color: #000000; line-height: 1.25; margin-top: 2px;">
             <em>${q.explanation}</em>
           </div>
         </div>
@@ -3553,9 +3553,9 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
         <h2 class="main-title">${pageTitleQuiz}Topic ${topicName}: Quick-Fire Quiz</h2>
         ${specBoxHtml}
         
-        <div style="border: 1.5px solid #111827; padding: 10px; background: #f9fafb; border-radius: 4px; margin-bottom: 15px; box-sizing: border-box; text-align: left;">
-          <strong style="text-transform: uppercase; font-size: 8.5pt; color: #111827; display: block; margin-bottom: 4px;">✏️ Instructions</strong>
-          <span style="font-size: 7.5pt; line-height: 1.35; color: #374151; display: block;">
+        <div style="border: 1.5px solid #000000; padding: 10px; background: #f9fafb; border-radius: 4px; margin-bottom: 15px; box-sizing: border-box; text-align: left;">
+          <strong style="text-transform: uppercase; font-size: 10pt; color: #000000; display: block; margin-bottom: 4px;">✏️ Instructions</strong>
+          <span style="font-size: 9pt; line-height: 1.35; color: #000000; display: block;">
             Answer all 15 questions from memory. Write your answers clearly on the dotted lines. Keep your answers brief.
           </span>
         </div>
@@ -3580,7 +3580,7 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
 
       <!-- SIDE 2: ANSWER KEY & SELF-MARKING -->
       <div class="print-page-last" style="position: relative; min-height: 27.2cm; box-sizing: border-box; margin-top: 20px; page-break-before: always;">
-        <h3 style="font-size: 10pt; font-weight: bold; border-bottom: 1.5px solid #111827; padding-bottom: 2px; margin-top: 0; margin-bottom: 12px; text-transform: uppercase; color: #111827; letter-spacing: 0.5px;">
+        <h3 style="font-size: 11.5pt; font-weight: bold; border-bottom: 1.5px solid #000000; padding-bottom: 2px; margin-top: 0; margin-bottom: 12px; text-transform: uppercase; color: #000000; letter-spacing: 0.5px;">
           Topic ${topicName}: Quiz Answer Key & Explanations
         </h3>
 
@@ -3602,7 +3602,7 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
         </table>
 
         <!-- Scoreboard & Diagnostic Feedback -->
-        <table style="width: 100%; border-collapse: collapse; margin-top: 15px; border: 1.5px solid #111827; background: #f9fafb; table-layout: fixed; box-sizing: border-box;">
+        <table style="width: 100%; border-collapse: collapse; margin-top: 15px; border: 1.5px solid #000000; background: #f9fafb; table-layout: fixed; box-sizing: border-box;">
           <colgroup>
             <col width="30%" style="width: 30%;">
             <col width="40%" style="width: 40%;">
@@ -3610,20 +3610,20 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
           </colgroup>
           <tbody>
             <tr>
-              <td style="padding: 10px; border-right: 1.5px solid #111827; text-align: center; vertical-align: middle; width: 30%;">
-                <div style="font-size: 9pt; font-weight: bold; color: #111827; text-transform: uppercase; margin-bottom: 4px;">Score Tracker</div>
-                <div style="font-size: 15pt; font-weight: 800; color: #111827; border: 1.5px dashed #9ca3af; padding: 4px 10px; display: inline-block; background: #ffffff;">
+              <td style="padding: 10px; border-right: 1.5px solid #000000; text-align: center; vertical-align: middle; width: 30%;">
+                <div style="font-size: 10.5pt; font-weight: bold; color: #000000; text-transform: uppercase; margin-bottom: 4px;">Score Tracker</div>
+                <div style="font-size: 16.5pt; font-weight: 800; color: #000000; border: 1.5px dashed #9ca3af; padding: 4px 10px; display: inline-block; background: #ffffff;">
                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / 15
                 </div>
               </td>
-              <td style="padding: 10px; border-right: 1.5px solid #111827; font-size: 7.2pt; line-height: 1.3; color: #374151; width: 40%;">
-                <strong style="font-size: 7.8pt; color: #111827; text-transform: uppercase; display: block; margin-bottom: 3px;">📊 Performance Boundaries</strong>
+              <td style="padding: 10px; border-right: 1.5px solid #000000; font-size: 8.7pt; line-height: 1.3; color: #000000; width: 40%;">
+                <strong style="font-size: 9.3pt; color: #000000; text-transform: uppercase; display: block; margin-bottom: 3px;">📊 Performance Boundaries</strong>
                 <div style="margin-bottom: 2px;"><strong>13–15 Marks:</strong> Mastery (Level 9 Focus) - Excellent recall.</div>
                 <div style="margin-bottom: 2px;"><strong>10–12 Marks:</strong> Strong (Level 7 Focus) - Solid foundation.</div>
                 <div><strong>Under 10 Marks:</strong> Focus Needed - Re-read narrative & vocabulary.</div>
               </td>
-              <td style="padding: 10px; font-size: 7.2pt; line-height: 1.3; color: #374151; width: 30%;">
-                <strong style="font-size: 7.8pt; color: #111827; text-transform: uppercase; display: block; margin-bottom: 3px;">🔍 Diagnostic study guide</strong>
+              <td style="padding: 10px; font-size: 8.7pt; line-height: 1.3; color: #000000; width: 30%;">
+                <strong style="font-size: 9.3pt; color: #000000; text-transform: uppercase; display: block; margin-bottom: 3px;">🔍 Diagnostic study guide</strong>
                 <div>If you struggled with any question:</div>
                 <div style="margin-top: 3px;">1. Re-read the Lesson Study Narrative.</div>
                 <div>2. Review the Vocab Spotlight terms.</div>
@@ -3709,7 +3709,7 @@ export async function generateWarWorkbookHtml(warId, density, includeAnswers) {
   <title>Key Events of a War: ${warTitle}</title>
   <style>
     @page { size: 21cm 29.7cm; margin: 1.0cm; mso-page-orientation: portrait; }
-    body { font-family: 'Arial', sans-serif; font-size: 9.5pt; color: #1f2937; line-height: 1.4; background: #ffffff; margin: 0; padding: 0; }
+    body { font-family: 'Arial', sans-serif; font-size: 11pt; color: #000000; line-height: 1.4; background: #ffffff; margin: 0; padding: 0; }
     .print-page { clear: both; box-sizing: border-box; position: relative; background: #ffffff; page-break-after: always; height: 100vh; max-height: 27.7cm; overflow: hidden; display: flex; flex-direction: column; }
     .print-page-last { clear: both; box-sizing: border-box; position: relative; background: #ffffff; height: 100vh; max-height: 27.7cm; overflow: hidden; display: flex; flex-direction: column; }
     @media screen {
@@ -3721,9 +3721,9 @@ export async function generateWarWorkbookHtml(warId, density, includeAnswers) {
 <body>
   <!-- PAGE 1: 3 Paragraphs -->
   <div class="print-page">
-    <div style="border-bottom: 2px solid #111827; padding-bottom: 8px; margin-bottom: 12px;">
-      <h2 style="margin: 0; font-size: 14pt; color: #111827; text-transform: uppercase;">Key Events of a War: ${warTitle}</h2>
-      <p style="margin: 4px 0 0 0; font-size: 8.5pt; color: #4b5563;">
+    <div style="border-bottom: 2px solid #000000; padding-bottom: 8px; margin-bottom: 12px;">
+      <h2 style="margin: 0; font-size: 15.5pt; color: #000000; text-transform: uppercase;">Key Events of a War: ${warTitle}</h2>
+      <p style="margin: 4px 0 0 0; font-size: 10pt; color: #000000;">
         <strong>Edexcel Specification Requirement:</strong> Write an analytical narrative of the key events of this war. 
         Write three detailed paragraphs focusing on the causes/outbreak, the main events/battles, and the consequences/aftermath. 
         Include precise historical details (names, dates, statistics).
@@ -3732,15 +3732,15 @@ export async function generateWarWorkbookHtml(warId, density, includeAnswers) {
     
     <div style="flex: 1; display: flex; flex-direction: column; gap: 15px;">
       <div style="flex: 1; border: 1.5px solid #d1d5db; border-radius: 6px; padding: 10px; display: flex; flex-direction: column;">
-        <h3 style="margin: 0 0 8px 0; font-size: 10pt; color: #374151;">Paragraph 1: Causes & Outbreak</h3>
+        <h3 style="margin: 0 0 8px 0; font-size: 11.5pt; color: #000000;">Paragraph 1: Causes & Outbreak</h3>
         <div style="flex: 1; border-top: 1px dashed #e5e7eb; background: repeating-linear-gradient(transparent, transparent 23px, #e5e7eb 23px, #e5e7eb 24px); margin-top: 5px;"></div>
       </div>
       <div style="flex: 1; border: 1.5px solid #d1d5db; border-radius: 6px; padding: 10px; display: flex; flex-direction: column;">
-        <h3 style="margin: 0 0 8px 0; font-size: 10pt; color: #374151;">Paragraph 2: Key Events & Battles</h3>
+        <h3 style="margin: 0 0 8px 0; font-size: 11.5pt; color: #000000;">Paragraph 2: Key Events & Battles</h3>
         <div style="flex: 1; border-top: 1px dashed #e5e7eb; background: repeating-linear-gradient(transparent, transparent 23px, #e5e7eb 23px, #e5e7eb 24px); margin-top: 5px;"></div>
       </div>
       <div style="flex: 1; border: 1.5px solid #d1d5db; border-radius: 6px; padding: 10px; display: flex; flex-direction: column;">
-        <h3 style="margin: 0 0 8px 0; font-size: 10pt; color: #374151;">Paragraph 3: Consequences & Aftermath</h3>
+        <h3 style="margin: 0 0 8px 0; font-size: 11.5pt; color: #000000;">Paragraph 3: Consequences & Aftermath</h3>
         <div style="flex: 1; border-top: 1px dashed #e5e7eb; background: repeating-linear-gradient(transparent, transparent 23px, #e5e7eb 23px, #e5e7eb 24px); margin-top: 5px;"></div>
       </div>
     </div>
@@ -3748,9 +3748,9 @@ export async function generateWarWorkbookHtml(warId, density, includeAnswers) {
 
   <!-- PAGE 2: Timeline -->
   <div class="print-page-last">
-    <div style="border-bottom: 2px solid #111827; padding-bottom: 8px; margin-bottom: 20px;">
-      <h2 style="margin: 0; font-size: 14pt; color: #111827; text-transform: uppercase;">Chronological Analysis: ${warTitle}</h2>
-      <p style="margin: 4px 0 0 0; font-size: 8.5pt; color: #4b5563;">
+    <div style="border-bottom: 2px solid #000000; padding-bottom: 8px; margin-bottom: 20px;">
+      <h2 style="margin: 0; font-size: 15.5pt; color: #000000; text-transform: uppercase;">Chronological Analysis: ${warTitle}</h2>
+      <p style="margin: 4px 0 0 0; font-size: 10pt; color: #000000;">
         Plot the 6 most important events of the war in chronological order. Include the date and a brief explanation of why the event was significant.
       </p>
     </div>
@@ -3765,12 +3765,12 @@ export async function generateWarWorkbookHtml(warId, density, includeAnswers) {
             <div style="position: absolute; left: 8px; top: 15px; width: 16px; height: 16px; background-color: #3b82f6; border-radius: 50%; border: 3px solid #ffffff; box-shadow: 0 0 0 1px #9ca3af; z-index: 2;"></div>
             <div style="margin-left: 45px; border: 1.5px solid #d1d5db; border-radius: 6px; padding: 10px; width: 100%; display: flex; flex-direction: column;">
               <div style="display: flex; gap: 10px; align-items: flex-end; margin-bottom: 8px;">
-                <span style="font-weight: bold; font-size: 9pt;">Date:</span>
+                <span style="font-weight: bold; font-size: 10.5pt;">Date:</span>
                 <div style="border-bottom: 1px dashed #9ca3af; flex: 0 0 120px; margin-bottom: 4px;"></div>
-                <span style="font-weight: bold; font-size: 9pt; margin-left: 10px;">Event Title:</span>
+                <span style="font-weight: bold; font-size: 10.5pt; margin-left: 10px;">Event Title:</span>
                 <div style="border-bottom: 1px dashed #9ca3af; flex: 1; margin-bottom: 4px;"></div>
               </div>
-              <span style="font-weight: bold; font-size: 9pt; margin-bottom: 4px;">Significance:</span>
+              <span style="font-weight: bold; font-size: 10.5pt; margin-bottom: 4px;">Significance:</span>
               <div style="flex: 1; border-top: 1px dashed #e5e7eb; background: repeating-linear-gradient(transparent, transparent 23px, #e5e7eb 23px, #e5e7eb 24px); margin-top: 5px;"></div>
             </div>
           </div>
