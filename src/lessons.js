@@ -2813,14 +2813,14 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
   if (retrievalPrompts.length > 0) {
     retrievalQuestionsHtml = `
       <div class="retrieval-questions-section" style="border: 1.5px solid #000000; padding: 8px 10px; margin-top: 15px; background: #ffffff; border-radius: 4px; box-sizing: border-box; text-align: left;">
-        <strong style="text-transform: uppercase; font-size: 11.5pt; color: #000000; display: block; margin-bottom: 5px; border-bottom: 1.5px solid #000000; padding-bottom: 2px;">✏️ Quick-Fire Retrieval Questions</strong>
+        <strong style="text-transform: uppercase; font-size: 12.5pt; color: #000000; display: block; margin-bottom: 5px; border-bottom: 1.5px solid #000000; padding-bottom: 2px;">✏️ Quick-Fire Retrieval Questions</strong>
         <div style="display: flex; flex-direction: column; gap: 6px;">
           ${retrievalPrompts.map((p, idx) => {
             const answerArea = includeAnswers 
-              ? `<span style="font-size: 10.5pt; line-height: 1.25; color: #16a34a; font-style: italic; padding-left: 5px;"><strong>Model Answer:</strong> ${p.a}</span>`
+              ? `<span style="font-size: 11.5pt; line-height: 1.25; color: #000000; font-style: italic; font-weight: bold; padding-left: 5px;"><strong>Model Answer:</strong> ${p.a}</span>`
               : `<div class="dotted-writing-line" style="border-bottom: 1px dashed #9ca3af; height: 18px; margin-top: 2px;"></div>`;
             return `
-              <div style="font-size: 10.5pt; line-height: 1.35; color: #000000;">
+              <div style="font-size: 11.5pt; line-height: 1.35; color: #000000;">
                 <strong>Q${idx + 1}:</strong> ${p.q}
                 ${answerArea}
               </div>
@@ -3511,12 +3511,12 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
 
     const renderQuizQuestion = (q, qIdx) => {
       const answerArea = includeAnswers 
-        ? `<div style="color: #16a34a; font-style: italic; font-weight: bold; margin-top: 2px; font-size: 11pt;">Ans: ${q.answer}</div>`
+        ? `<div style="color: #000000; font-style: italic; font-weight: bold; margin-top: 2px; font-size: 12pt;">Ans: ${q.answer}</div>`
         : `<div class="dotted-writing-line" style="border-bottom: 1px dashed #9ca3af; height: 18px; margin-top: 2px; width: 95%;"></div>`;
       return `
         <div style="margin-bottom: 14px; min-height: 48px; box-sizing: border-box; padding-right: 10px;">
-          <div style="font-size: 11.5pt; line-height: 1.3; color: #000000; font-weight: bold;">
-            Q${qIdx + 1}: <span style="font-weight: normal; color: #000000;">${q.question}</span>
+          <div style="font-size: 12.5pt; line-height: 1.3; color: #000000; font-weight: bold;">
+            Q${qIdx + 1}: <span style="font-weight: bold; color: #000000;">${q.question}</span>
           </div>
           ${answerArea}
         </div>
@@ -3526,13 +3526,13 @@ async function generateWorkbookHtml(subtopicId, style, density, includeAnswers, 
     const renderExplanationRow = (q, qIdx) => {
       return `
         <div style="margin-bottom: 14px; min-height: 55px; border-bottom: 1px solid #f3f4f6; padding-bottom: 6px; padding-right: 10px; box-sizing: border-box;">
-          <div style="font-size: 11pt; line-height: 1.25; color: #000000; font-weight: bold;">
-            Q${qIdx + 1}: <span style="font-weight: normal; color: #000000;">${q.question}</span>
+          <div style="font-size: 12pt; line-height: 1.25; color: #000000; font-weight: bold;">
+            Q${qIdx + 1}: <span style="font-weight: bold; color: #000000;">${q.question}</span>
           </div>
-          <div style="font-size: 11pt; font-weight: bold; color: #16a34a; margin-top: 2px;">
-            Correct Answer: <span style="font-weight: normal; color: #000000;">${q.answer}</span>
+          <div style="font-size: 12pt; font-weight: bold; color: #000000; margin-top: 2px;">
+            Correct Answer: <span style="font-weight: bold; color: #000000;">${q.answer}</span>
           </div>
-          <div style="font-size: 10.5pt; color: #000000; line-height: 1.25; margin-top: 2px;">
+          <div style="font-size: 11.5pt; color: #000000; line-height: 1.25; margin-top: 2px; font-weight: bold;">
             <em>${q.explanation}</em>
           </div>
         </div>
