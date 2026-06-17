@@ -5851,11 +5851,13 @@ export function renderScumbagBinder() {
   if (!container) return;
   container.innerHTML = "";
 
-    const totalXP = (window.state && window.state.userStats && window.state.userStats.totalXP) || 0;
+  const totalXP = (window.state && window.state.userStats && window.state.userStats.xp) || 0;
+  const unlockedCards = (window.state && window.state.userStats && window.state.userStats.unlockedCards) || [];
 
   CARDS_DATA.forEach((card, index) => {
     const requiredXP = (index + 1) * 200;
-    const isUnlocked = totalXP >= requiredXP;
+    const hasEnoughXP = totalXP >= requiredXP;
+    const isOpened = unlockedCards.includes(card.id);
 
     const wrapperEl = document.createElement("div");
     wrapperEl.className = "scumbag-card-container scumbag-flippable";
@@ -5866,10 +5868,23 @@ export function renderScumbagBinder() {
     // Front Face
     const frontEl = document.createElement("div");
     frontEl.className = "scumbag-flip-card-front";
-    if (isUnlocked) {
+    if (hasEnoughXP && isOpened) {
       frontEl.className += " scumbag-card-unlocked";
       frontEl.style.backgroundImage = `url('${card.image}')`;
       frontEl.innerHTML = '<div class="hologram"></div>';
+    } else if (hasEnoughXP && !isOpened) {
+      frontEl.className += " scumbag-card-ready";
+      frontEl.innerHTML = `
+        <div class="foil-pack-body" style="position: absolute; inset: 0; background-image: url('assets/mr_lovett_wrapper.png?v=2'); background-size: cover; background-position: center; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding: 20px; color: white; text-align: center; border: 2px solid #facc15; box-shadow: 0 0 15px rgba(250, 204, 21, 0.5); animation: pulse 2s infinite; border-radius: 12px; overflow: hidden; cursor: pointer;">
+          <div style="background: rgba(0,0,0,0.8); padding: 15px; border-radius: 8px; width: 100%; border: 1px solid #facc15;">
+            <i class="fa-solid fa-gift" style="font-size: 2rem; margin-bottom: 10px; color: #facc15; animation: bounce 1s infinite;"></i>
+            <h3 style="margin-bottom: 5px; color: #facc15; text-transform: uppercase;">Tap to Open!</h3>
+          </div>
+        </div>
+      `;
+      frontEl.onclick = () => {
+        if (window.triggerPackOpening) window.triggerPackOpening(card.id);
+      };
     } else {
       frontEl.className += " scumbag-card-locked";
       frontEl.innerHTML = `
@@ -5885,7 +5900,7 @@ export function renderScumbagBinder() {
     const backEl = document.createElement("div");
     backEl.className = "scumbag-flip-card-back";
     
-    if (isUnlocked && card.stats) {
+    if (hasEnoughXP && isOpened && card.stats) {
       backEl.innerHTML = `
         <div class="scumbag-back-content">
           <div class="scumbag-back-header">
@@ -5932,7 +5947,7 @@ export function renderScumbagBinder() {
     innerEl.appendChild(backEl);
     wrapperEl.appendChild(innerEl);
 
-    if (isUnlocked) {
+    if (hasEnoughXP && isOpened) {
       wrapperEl.onclick = () => {
         AudioEngine.play('cardFlip');
         innerEl.classList.toggle('flipped');
@@ -5947,6 +5962,19 @@ window.renderScumbagBinder = renderScumbagBinder;
 export function triggerPackOpening(cardId) {
   const matchedCard = CARDS_DATA.find(c => c.id === cardId);
   if (!matchedCard) return;
+
+  // Add to unlocked cards
+  if (window.state && window.state.userStats) {
+    if (!window.state.userStats.unlockedCards) {
+      window.state.userStats.unlockedCards = [];
+    }
+    if (!window.state.userStats.unlockedCards.includes(cardId)) {
+      window.state.userStats.unlockedCards.push(cardId);
+      try {
+        localStorage.setItem('edexcel_prefs_user_stats', JSON.stringify(window.state.userStats));
+      } catch(e) {}
+    }
+  }
 
   const overlay = document.getElementById('pack-opening-overlay');
   const cardImg = document.getElementById('pack-opening-card-image');

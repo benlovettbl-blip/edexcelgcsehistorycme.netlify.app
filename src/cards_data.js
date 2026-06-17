@@ -5,7 +5,7 @@ export const CARDS_DATA = [
     subtopicId: "subtopic_1_1", 
     image: "assets/card_balfour.png",
     description: "Tangled in a massive, messy web of conflicting promise letters! The ultimate over-promiser.",
-    unlockMessage: "Unlock by achieving 100% Mastery in Topic 1.1: British Withdrawal",
+    unlockMessage: "Reach 200 XP to unlock",
     bio: "Arthur Balfour promised the same piece of land to multiple different groups, creating a messy geopolitical tangle. A master of the vague declaration!",
     stats: {
       audacity: 90,
@@ -20,7 +20,7 @@ export const CARDS_DATA = [
     subtopicId: "subtopic_1_2",
     image: "assets/card_bengurion.png",
     description: "Literally carrying the entire newly formed State of Israel on his back while plowing through sand.",
-    unlockMessage: "Unlock by achieving 100% Mastery in Topic 1.2: The 1948-49 War",
+    unlockMessage: "Reach 400 XP to unlock",
     bio: "The driving force behind the creation of Israel. When the UN offered a partition plan, he grabbed it and built a nation while fighting off multiple armies.",
     stats: {
       audacity: 95,
@@ -35,7 +35,7 @@ export const CARDS_DATA = [
     subtopicId: "subtopic_1_3",
     image: "assets/card_hussein.png",
     description: "King Hussein of Jordan frantically juggling refugees, borders, and crowns while hovering over a map.",
-    unlockMessage: "Unlock by achieving 100% Mastery in Topic 1.3: The Refugee Crisis",
+    unlockMessage: "Reach 600 XP to unlock",
     bio: "Caught in the middle of every major conflict, King Hussein spent decades trying to balance the needs of Palestinian refugees with his own kingdom's survival.",
     stats: {
       audacity: 60,
@@ -50,7 +50,7 @@ export const CARDS_DATA = [
     subtopicId: "subtopic_1_4",
     image: "assets/card_dayan.png",
     description: "Moshe Dayan looking intense, inspecting a tiny battlefield with an oversized magnifying glass strapped to his eyepatch.",
-    unlockMessage: "Unlock by achieving 100% Mastery in Topic 1.4: Impact of the 1948 War",
+    unlockMessage: "Reach 800 XP to unlock",
     bio: "The iconic eye-patch wearing military mastermind. Often seen directing lightning-fast tank offensives across the Sinai desert.",
     stats: {
       audacity: 88,
@@ -65,7 +65,7 @@ export const CARDS_DATA = [
     subtopicId: "subtopic_2_1",
     image: "assets/card_nasser.png",
     description: "Violently stuffing a dripping-wet cargo ship into his jacket pocket. Sploosh!",
-    unlockMessage: "Unlock by achieving 100% Mastery in Topic 2.1: The Suez Crisis",
+    unlockMessage: "Reach 1000 XP to unlock",
     bio: "Shocked the world by seizing the Suez Canal! Played the US and USSR against each other while championing Pan-Arabism.",
     stats: {
       audacity: 99,
@@ -80,7 +80,7 @@ export const CARDS_DATA = [
     subtopicId: "subtopic_2_2",
     image: "assets/card_eshkol.png",
     description: "Levi Eshkol riding a lightning bolt while holding a stopwatch that reads exactly '6 Days'.",
-    unlockMessage: "Unlock by achieving 100% Mastery in Topic 2.2: The Six Day War",
+    unlockMessage: "Reach 1200 XP to unlock",
     bio: "Reluctantly went to war in 1967, but oversaw one of the most stunningly swift and decisive military victories in modern history.",
     stats: {
       audacity: 70,
@@ -95,7 +95,7 @@ export const CARDS_DATA = [
     subtopicId: "subtopic_2_3",
     image: "assets/card_golda.png",
     description: "Looking impossibly tough, holding a massive smoking red telephone as she sips from a very strong cup of coffee.",
-    unlockMessage: "Unlock by achieving 100% Mastery in Topic 2.3: The Yom Kippur War",
+    unlockMessage: "Reach 1400 XP to unlock",
     bio: "Israel's 'Iron Lady'. Caught off-guard by the 1973 surprise attack, she chain-smoked her way through the crisis and eventually pushed the invaders back.",
     stats: {
       audacity: 85,
@@ -110,7 +110,7 @@ export const CARDS_DATA = [
     subtopicId: "subtopic_3_1",
     image: "assets/card_arafat.png",
     description: "Balancing on a precarious tightrope while juggling an olive branch, a microphone, and a keffiyeh.",
-    unlockMessage: "Unlock by achieving 100% Mastery in Topic 3.1: The PLO and Arafat",
+    unlockMessage: "Reach 1600 XP to unlock",
     bio: "The face of the PLO. Master of political survival, shifting from armed struggle to diplomatic negotiations over decades of conflict.",
     stats: {
       audacity: 92,
@@ -125,7 +125,7 @@ export const CARDS_DATA = [
     subtopicId: "subtopic_3_2",
     image: "assets/card_sharon.png",
     description: "Ariel Sharon aggressively driving a comically small, but heavily armored bulldozer through a roadblock.",
-    unlockMessage: "Unlock by achieving 100% Mastery in Topic 3.2: The Invasion of Lebanon",
+    unlockMessage: "Reach 1800 XP to unlock",
     bio: "Known as 'The Bulldozer'. Pushed his tanks all the way to Beirut in 1982, ignoring orders and creating massive international controversy.",
     stats: {
       audacity: 98,
@@ -140,7 +140,7 @@ export const CARDS_DATA = [
     subtopicId: "subtopic_3_3",
     image: "assets/card_carter.png",
     description: "Sweating bullets trying to physically force two angry action figures to hug.",
-    unlockMessage: "Unlock by achieving 100% Mastery in Topic 3.3: Camp David Accords",
+    unlockMessage: "Reach 2000 XP to unlock",
     bio: "Locked Begin and Sadat in a cabin until they agreed to peace. An incredible display of stubborn diplomatic endurance.",
     stats: {
       audacity: 80,
@@ -155,7 +155,7 @@ export const CARDS_DATA = [
     subtopicId: "subtopic_3_4",
     image: "assets/card_rabin.png",
     description: "Yitzhak Rabin shaking hands enthusiastically while using a massive Nobel Peace Prize as a protective shield.",
-    unlockMessage: "Unlock by achieving 100% Mastery in Topic 3.4: First Intifada & Oslo",
+    unlockMessage: "Reach 2200 XP to unlock",
     bio: "A hardened war hero who famously forced himself to shake hands with Arafat on the White House lawn in pursuit of peace.",
     stats: {
       audacity: 85,

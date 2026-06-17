@@ -216,17 +216,7 @@ export function setMastered(questionId, isMastered) {
         AudioEngine.play('cheer');
         Confetti.spawn(100);
 
-        // CHECK GAMIFICATION CARD UNLOCKS
-        const matchedCard = CARDS_DATA.find(c => c.subtopicId === question.subtopicId);
-        if (matchedCard && !state.userStats.unlockedCards.includes(matchedCard.id)) {
-          state.userStats.unlockedCards.push(matchedCard.id);
-          saveProgress();
-          
-          // Trigger Pack Opening UI
-          if (window.triggerPackOpening) {
-            window.triggerPackOpening(matchedCard.id);
-          }
-        }
+
       }
 
     }
